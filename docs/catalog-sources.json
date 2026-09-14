@@ -1,0 +1,1581 @@
+{
+  "verified_at": "2026-09-10",
+  "source": "Hugging Face public API, commit sha and LFS metadata",
+  "added": 200,
+  "models": [
+    {
+      "id": "qwen35-2b",
+      "repo": "unsloth/Qwen3.5-2B-GGUF",
+      "revision": "f6d5376be1edb4d416d56da11e5397a961aca8ae",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen35-4b",
+      "repo": "unsloth/Qwen3.5-4B-GGUF",
+      "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen35-9b",
+      "repo": "unsloth/Qwen3.5-9B-GGUF",
+      "revision": "3885219b6810b007914f3a7950a8d1b469d598a5",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen35-27b",
+      "repo": "unsloth/Qwen3.5-27B-GGUF",
+      "revision": "3221f178a6b842d04f1fb42f1c413534adcc0a6a",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "ministral3-3b",
+      "repo": "unsloth/Ministral-3-3B-Instruct-2512-GGUF",
+      "revision": "7564922f37fa5bbb62b87f09a55c12f1f91d7a6a",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "ministral3-8b",
+      "repo": "unsloth/Ministral-3-8B-Instruct-2512-GGUF",
+      "revision": "3731507ec3e867db16d620f73e14d689125758f4",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen3-mini",
+      "repo": "Qwen/Qwen3-0.6B-GGUF",
+      "revision": "23749fefcc72300e3a2ad315e1317431b06b590a",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "smollm2",
+      "repo": "HuggingFaceTB/SmolLM2-1.7B-Instruct-GGUF",
+      "revision": "2d4a76a30b4af41ecd395c35725ac11688d4cfe4",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen3-balanced",
+      "repo": "Qwen/Qwen3-4B-GGUF",
+      "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen3-expanded",
+      "repo": "Qwen/Qwen3-8B-GGUF",
+      "revision": "7c41481f57cb95916b40956ab2f0b139b296d974",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "gemma4-e2b",
+      "repo": "google/gemma-4-E2B-it-qat-q4_0-gguf",
+      "revision": "675cff42a74c774d6cb76f76d8eacb49b48c9b93",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "gemma4-e4b",
+      "repo": "google/gemma-4-E4B-it-qat-q4_0-gguf",
+      "revision": "4b4a2c1d584be7264f87aac328a1bc739ce81b6c",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "gemma4-12b",
+      "repo": "google/gemma-4-12B-it-qat-q4_0-gguf",
+      "revision": "29d097773436b69ff9feafd636ab4cf873786537",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "deepseek-r1-1.5b",
+      "repo": "lmstudio-community/DeepSeek-R1-Distill-Qwen-1.5B-GGUF",
+      "revision": "29f63ea6272ffa55e5e93632a33a3e2ec95dbd05",
+      "license": "MIT · base Qwen Apache-2.0"
+    },
+    {
+      "id": "deepseek-r1-7b",
+      "repo": "lmstudio-community/DeepSeek-R1-Distill-Qwen-7B-GGUF",
+      "revision": "959510a4c8eff7bae27769e9232dca7d3d2b4ed3",
+      "license": "MIT · base Qwen Apache-2.0"
+    },
+    {
+      "id": "deepseek-r1-8b",
+      "repo": "lmstudio-community/DeepSeek-R1-Distill-Llama-8B-GGUF",
+      "revision": "d0ac80a21158e6315dccfd568bebfa5b3ed3f1d3",
+      "license": "MIT + Llama 3.1 Community"
+    },
+    {
+      "id": "deepseek-r1-14b",
+      "repo": "lmstudio-community/DeepSeek-R1-Distill-Qwen-14B-GGUF",
+      "revision": "45db3b6758edf0cf590ff9335c384492d2ee0b5c",
+      "license": "MIT · base Qwen Apache-2.0"
+    },
+    {
+      "id": "deepseek-r1-32b",
+      "repo": "lmstudio-community/DeepSeek-R1-Distill-Qwen-32B-GGUF",
+      "revision": "2c8db776f8037c44c2af1fa197699a0d0c6c4b7a",
+      "license": "MIT · base Qwen Apache-2.0"
+    },
+    {
+      "id": "qwen3-1.7b",
+      "repo": "Qwen/Qwen3-1.7B-GGUF",
+      "revision": "90862c4b9d2787eaed51d12237eafdfe7c5f6077",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen3-14b",
+      "repo": "Qwen/Qwen3-14B-GGUF",
+      "revision": "530227a7d994db8eca5ab5ced2fb692b614357fd",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen3-30b-a3b",
+      "repo": "Qwen/Qwen3-30B-A3B-GGUF",
+      "revision": "e4d4bafdfb96a411a163846265362aceb0b9c63a",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "gpt-oss-20b",
+      "repo": "ggml-org/gpt-oss-20b-GGUF",
+      "revision": "ef9b12f2ff56c69cf32153a02784e7a3c88bf524",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "gpt-oss-120b",
+      "repo": "ggml-org/gpt-oss-120b-GGUF",
+      "revision": "238abdd290bb874b90a5da1b4549881b7d05c091",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "phi4-mini",
+      "repo": "bartowski/microsoft_Phi-4-mini-instruct-GGUF",
+      "revision": "7ff82c2aaa4dde30121698a973765f39be5288c0",
+      "license": "MIT"
+    },
+    {
+      "id": "llama32-3b",
+      "repo": "bartowski/Llama-3.2-3B-Instruct-GGUF",
+      "revision": "5ab33fa94d1d04e903623ae72c95d1696f09f9e8",
+      "license": "Llama 3.2 Community"
+    },
+    {
+      "id": "mistral7b",
+      "repo": "bartowski/Mistral-7B-Instruct-v0.3-GGUF",
+      "revision": "61fd4167fff3ab01ee1cfe0da183fa27a944db48",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen25-coder-1.5b",
+      "repo": "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF",
+      "revision": "f86cb2c1fa58255f8052cc32aeede1b7482d4361",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen25-coder-7b",
+      "repo": "Qwen/Qwen2.5-Coder-7B-Instruct-GGUF",
+      "revision": "13fb94bfda8c8cf22497dc57b78f391a9acb426a",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen25-coder-14b",
+      "repo": "Qwen/Qwen2.5-Coder-14B-Instruct-GGUF",
+      "revision": "d0a692ef765eefbf2fabb130b3cb2e8917e3d225",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "hf-12d7a45f0ca7e294",
+      "base_model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "repo": "unsloth/Qwen3-235B-A22B-Instruct-2507-GGUF",
+      "revision": "437d6915c5c512869e4cf8b16b840bbe3fb172bc",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-0b98eff8ec9331ec",
+      "base_model": "deepseek-ai/DeepSeek-R1-0528",
+      "repo": "unsloth/DeepSeek-R1-0528-GGUF",
+      "revision": "72f5d5bd7f0821bc0be039b094cc1501bdbf232a",
+      "license": "mit"
+    },
+    {
+      "id": "hf-4599c09e554125f1",
+      "base_model": "Kwaipilot/KAT-Coder-V2.5-Dev",
+      "repo": "bartowski/Kwaipilot_KAT-Coder-V2.5-Dev-GGUF",
+      "revision": "d8f684f08d2950ea9d2db6a35ef7dada0707858b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-06769d5e04080a91",
+      "base_model": "Qwen/Qwen3-Next-80B-A3B-Thinking",
+      "repo": "bartowski/Qwen_Qwen3-Next-80B-A3B-Thinking-GGUF",
+      "revision": "c36ac5f15be18742fcd09baa61d48dfc016aae79",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-0311af13fabfa2c5",
+      "base_model": "Qwen/Qwen2.5-7B-Instruct",
+      "repo": "bartowski/Qwen2.5-7B-Instruct-GGUF",
+      "revision": "8911e8a47f92bac19d6f5c64a2e2095bd2f7d031",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-8946b41cdfda236a",
+      "base_model": "inclusionAI/Ling-3.0-tiny",
+      "repo": "bartowski/Ling-3.0-tiny-GGUF",
+      "revision": "ea072726af0d2e8ba325b2f90fc0efa762105a91",
+      "license": "mit"
+    },
+    {
+      "id": "hf-4b05be1db928c8a9",
+      "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+      "repo": "bartowski/Qwen2.5-0.5B-Instruct-GGUF",
+      "revision": "41ba88dbac95fed2528c92514c131d73eb5a174b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-d882d79fbcacbf63",
+      "base_model": "Qwen/Qwen2.5-14B-Instruct",
+      "repo": "bartowski/Qwen2.5-14B-Instruct-GGUF",
+      "revision": "05244aa5d871c661c80082a15d3bce44714d068d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-4966979a5713dcc6",
+      "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+      "repo": "bartowski/Qwen2.5-1.5B-Instruct-GGUF",
+      "revision": "9eadc66189c7641e1ddd226b8267a9119b2ce2d4",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-b745acd26c3cf40e",
+      "base_model": "microsoft/Phi-3.5-mini-instruct",
+      "repo": "bartowski/Phi-3.5-mini-instruct-GGUF",
+      "revision": "6d70da17e749a471ccb62ade694486011a75cda3",
+      "license": "mit"
+    },
+    {
+      "id": "hf-3043e59271d93057",
+      "base_model": "Qwen/Qwen2.5-Coder-32B-Instruct",
+      "repo": "bartowski/Qwen2.5-Coder-32B-Instruct-GGUF",
+      "revision": "40b525506a4f98ed425882fa6dfc90cc8139065e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-06992c5fb70498b7",
+      "base_model": "Qwen/Qwen2.5-32B-Instruct",
+      "repo": "bartowski/Qwen2.5-32B-Instruct-GGUF",
+      "revision": "2116cbb385b8ce3a4d28cf3bf1cd2039a55821a6",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-e5120c0968e806a0",
+      "base_model": "SicariusSicariiStuff/Qwen2.5-14B_Uncensored_Instruct",
+      "repo": "bartowski/Qwen2.5-14B_Uncensored_Instruct-GGUF",
+      "revision": "2e7d5957ae9b9434ab58620f1073cae1fd0cf60a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-18bb1e23e6a70cd9",
+      "base_model": "allenai/Olmo-3.1-32B-Think",
+      "repo": "bartowski/allenai_Olmo-3.1-32B-Think-GGUF",
+      "revision": "7258621a8adfe86d6ce31bc19c22be2398dbe96a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-0786009ba3d03eb3",
+      "base_model": "huihui-ai/Qwen3-14B-abliterated",
+      "repo": "bartowski/huihui-ai_Qwen3-14B-abliterated-GGUF",
+      "revision": "623c0f3fc42a4699d4583fb16e022942c003d1b7",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-488d58dac229bbfb",
+      "base_model": "HuggingFaceTB/SmolLM3-3B",
+      "repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",
+      "revision": "86b3536ed1ca0dcb4716745642db4e6804bf3d32",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-b68b303bbb4c0551",
+      "base_model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "repo": "bartowski/SmolLM2-135M-Instruct-GGUF",
+      "revision": "09816acd5d99df7be770d85ea30822623dab342c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-05c49557a6b9e176",
+      "base_model": "huihui-ai/Qwen2.5-Coder-7B-Instruct-abliterated",
+      "repo": "bartowski/Qwen2.5-Coder-7B-Instruct-abliterated-GGUF",
+      "revision": "a416f57ecabe9841551055493e6945895e54e135",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-95d6efd706635953",
+      "base_model": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+      "repo": "bartowski/moonshotai_Kimi-Linear-48B-A3B-Instruct-GGUF",
+      "revision": "228dbe476e5a02091624a19068f4c962caa8a1c5",
+      "license": "mit"
+    },
+    {
+      "id": "hf-851a9c369bc3adc2",
+      "base_model": "cognitivecomputations/Dolphin-Mistral-24B-Venice-Edition",
+      "repo": "bartowski/cognitivecomputations_Dolphin-Mistral-24B-Venice-Edition-GGUF",
+      "revision": "708d0be4ed30e671c5121304fe840e02a60beaf0",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-b88eb7d11f1636a2",
+      "base_model": "huihui-ai/Qwen2.5-Coder-14B-Instruct-abliterated",
+      "repo": "bartowski/Qwen2.5-Coder-14B-Instruct-abliterated-GGUF",
+      "revision": "91e7d17796389c79de80776bbd947afa81c1e34d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-fe44bc9a33a8d325",
+      "base_model": "mistralai/Mistral-Nemo-Instruct-2407",
+      "repo": "bartowski/Mistral-Nemo-Instruct-2407-GGUF",
+      "revision": "a2dd64a0a76ea1bdb2bb6ab6fa5496b003c7c908",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-eae70b94da5d4c7c",
+      "base_model": "Qwen/Qwen3-Coder-Next",
+      "repo": "bartowski/Qwen_Qwen3-Coder-Next-GGUF",
+      "revision": "d32741c4b434bf1f927798d0c093564c7f4e92fd",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-3070f85d9c7c6439",
+      "base_model": "huihui-ai/Huihui-Qwen3-Coder-Next-abliterated",
+      "repo": "bartowski/huihui-ai_Qwen3-Coder-Next-abliterated-GGUF",
+      "revision": "4b24fbac95c8496ceb09c3e95d15f9f9d11427d4",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-3686b34685508dcf",
+      "base_model": "Qwen/Qwen2.5-Math-1.5B-Instruct",
+      "repo": "bartowski/Qwen2.5-Math-1.5B-Instruct-GGUF",
+      "revision": "951ed2aea09c43e331c612e74d83e4a23ca98e3b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-a8215e327e5efcb2",
+      "base_model": "inclusionAI/Ling-3.0-flash",
+      "repo": "bartowski/Ling-3.0-flash-GGUF",
+      "revision": "7e1a1243566501d52af98e9aa7a7a61986279c6d",
+      "license": "mit"
+    },
+    {
+      "id": "hf-ec67699b60ad817e",
+      "base_model": "Nanbeige/Nanbeige4.2-3B",
+      "repo": "bartowski/Nanbeige_Nanbeige4.2-3B-GGUF",
+      "revision": "17562eefe9752007209148d5f7a6e275fc8d8077",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-5aeca844e58aa55e",
+      "base_model": "Qwen/Qwen2.5-Math-7B-Instruct",
+      "repo": "bartowski/Qwen2.5-Math-7B-Instruct-GGUF",
+      "revision": "22e2c9c42470193b2b643636564765c84bcb06cb",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-f3730f12e4a86e5f",
+      "base_model": "ibm-granite/granite-4.2-30b",
+      "repo": "bartowski/granite-4.2-30b-GGUF",
+      "revision": "1847d3b70241af9d656f382a4cf29d5c6573e584",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-e400bd914a4192eb",
+      "base_model": "cognitivecomputations/Dolphin3.0-Qwen2.5-1.5B",
+      "repo": "bartowski/Dolphin3.0-Qwen2.5-1.5B-GGUF",
+      "revision": "0ff632a6d9820453a9d38dbb3fb9b476d6a3f5a9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-45363f1dab78e110",
+      "base_model": "Qwen/Qwen3-32B",
+      "repo": "bartowski/Qwen_Qwen3-32B-GGUF",
+      "revision": "533fbb1ae5f2ce96c9171acc169e1f68f9352eca",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-7039c88efbfe0258",
+      "base_model": "zai-org/GLM-4.7-Flash",
+      "repo": "bartowski/zai-org_GLM-4.7-Flash-GGUF",
+      "revision": "464d07505b441959737cd04d900f047469614c8d",
+      "license": "mit"
+    },
+    {
+      "id": "hf-2241d22a1b9b6c86",
+      "base_model": "allenai/OLMoE-1B-7B-0924-Instruct",
+      "repo": "bartowski/OLMoE-1B-7B-0924-Instruct-GGUF",
+      "revision": "7448e4317d367a3d6838fe367fe996758da6fc6e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-313371a783457c88",
+      "base_model": "huihui-ai/Qwen2.5-Coder-32B-Instruct-abliterated",
+      "repo": "bartowski/Qwen2.5-Coder-32B-Instruct-abliterated-GGUF",
+      "revision": "7cd04a4a248f1fa1c841f9a56b940e9531d290ae",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-ffd15ef0c60dc9ea",
+      "base_model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+      "repo": "bartowski/SmolLM2-360M-Instruct-GGUF",
+      "revision": "7be6f65f1db715fe5dc5a4634c0d459b4eed42ec",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-977706e6cfac498e",
+      "base_model": "ibm-granite/granite-20b-code-instruct",
+      "repo": "bartowski/granite-20b-code-instruct-GGUF",
+      "revision": "016fa3329fe4e9bbb3c6cee4c3ccf98b5dec9f27",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-b92067fead340953",
+      "base_model": "mlabonne/Qwen3-8B-abliterated",
+      "repo": "bartowski/mlabonne_Qwen3-8B-abliterated-GGUF",
+      "revision": "0e66e6f836c802246b69941780ec8ef32670dc09",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-354f35c20b74e1d6",
+      "base_model": "01-ai/Yi-Coder-1.5B-Chat",
+      "repo": "bartowski/Yi-Coder-1.5B-Chat-GGUF",
+      "revision": "442545c4f577cfdab9a70b38fec719c47d393b8b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-da73719c575130e3",
+      "base_model": "mistralai/Devstral-Small-2-24B-Instruct-2512",
+      "repo": "bartowski/mistralai_Devstral-Small-2-24B-Instruct-2512-GGUF",
+      "revision": "027695770ae1de77c2f6fb19f8e1ba9d65fcd15d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-3c57923b0cbf8355",
+      "base_model": "microsoft/Phi-3-mini-128k-instruct",
+      "repo": "bartowski/Phi-3.1-mini-128k-instruct-GGUF",
+      "revision": "32f6acf8f29d7293ef5a43718796aff2a719e44e",
+      "license": "mit"
+    },
+    {
+      "id": "hf-d20388ba9cca79b0",
+      "base_model": "WhiteRabbitNeo/WhiteRabbitNeo-V3-7B",
+      "repo": "bartowski/WhiteRabbitNeo_WhiteRabbitNeo-V3-7B-GGUF",
+      "revision": "5cc667f09d00b213c07530c716a0f900dd59f5aa",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-6a286573a9f8f152",
+      "base_model": "aws-prototyping/MegaBeam-Mistral-7B-512k",
+      "repo": "bartowski/MegaBeam-Mistral-7B-512k-GGUF",
+      "revision": "f6a596eaf9072a24f79a9b9a175d2ce103ca665b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-7aceaf6cdc55136c",
+      "base_model": "microsoft/phi-4",
+      "repo": "bartowski/phi-4-GGUF",
+      "revision": "19cd65f97c2f1712a81c506611d3f9c94b16a1e1",
+      "license": "mit"
+    },
+    {
+      "id": "hf-29c43dac0af45b19",
+      "base_model": "mistralai/Mistral-Small-24B-Instruct-2501",
+      "repo": "bartowski/Mistral-Small-24B-Instruct-2501-GGUF",
+      "revision": "62a613c92d5a5f73bba6d348b51433b232c4640c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-eb02be8002d06b4f",
+      "base_model": "CohereLabs/North-Mini-Code-1.0",
+      "repo": "bartowski/North-Mini-Code-1.0-GGUF",
+      "revision": "6ff6563002170723a6f7a672bf4c99775be6c0dd",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-93317410be0316ab",
+      "base_model": "SicariusSicariiStuff/Qwen2.5-14B_Uncencored",
+      "repo": "bartowski/Qwen2.5-14B_Uncencored-GGUF",
+      "revision": "e4ef839bab9ff5b89e5e68e8ae2a3cbc628605c9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-bcba91f4371475e2",
+      "base_model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+      "repo": "bartowski/Qwen_Qwen3-Next-80B-A3B-Instruct-GGUF",
+      "revision": "c07b9268d97d8ba09d0529980627f3bd70f5f90a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-bd8f4325d2d8d1d5",
+      "base_model": "Ateron/Gemma-4-Novelist-Eclipse-31B",
+      "repo": "bartowski/Ateron_Gemma-4-Novelist-Eclipse-31B-GGUF",
+      "revision": "9ec2785f323fe44df5bac7fa107ffdc59b64192d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-60c408bdf3663bcf",
+      "base_model": "allenai/Olmo-3.1-32B-Instruct",
+      "repo": "bartowski/allenai_Olmo-3.1-32B-Instruct-GGUF",
+      "revision": "9333dd15d3493f228eccc9723f67cb6cdb77fb6d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-82ffdd323b79338e",
+      "base_model": "sophosympatheia/Glistening-Gem-31B-v2.0",
+      "repo": "bartowski/sophosympatheia_Glistening-Gem-31B-v2.0-GGUF",
+      "revision": "ba984949aab21e14be2c85aecece5dc39d312cf1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-459093a712ea88d2",
+      "base_model": "AiCloser/Qwen2.5-32B-AGI",
+      "repo": "bartowski/Qwen2.5-32B-AGI-GGUF",
+      "revision": "343ac91b21054eca220b9dc6a08c8c04f04d525f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-579f3be2354dc363",
+      "base_model": "microsoft/Phi-3-mini-4k-instruct",
+      "repo": "bartowski/Phi-3.1-mini-4k-instruct-GGUF",
+      "revision": "66a614ace4d069a12c2f6043f4ea92621c898d4a",
+      "license": "mit"
+    },
+    {
+      "id": "hf-d90c16215efd7e05",
+      "base_model": "ibm-granite/granite-4.2-8b",
+      "repo": "bartowski/granite-4.2-8b-GGUF",
+      "revision": "a592100df8fe4931c7cffbac7b28e8176a1d52da",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-92649fe940fbf104",
+      "base_model": "SicariusSicariiStuff/Phi-3.5-mini-instruct_Uncensored",
+      "repo": "bartowski/Phi-3.5-mini-instruct_Uncensored-GGUF",
+      "revision": "ee8d5d6896f1ac8d0f95f7dff87bc2b2d7aa6e72",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-4754edc851931818",
+      "base_model": "huihui-ai/Mistral-Small-24B-Instruct-2501-abliterated",
+      "repo": "bartowski/huihui-ai_Mistral-Small-24B-Instruct-2501-abliterated-GGUF",
+      "revision": "710fa4d4a7bb81385efbbf5256c919b1195fa514",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-21ea37fc340222b8",
+      "base_model": "ai9stars/G9v3-3B",
+      "repo": "bartowski/ai9stars_G9v3-3B-GGUF",
+      "revision": "11fe5d21c70f1c6f5e66ca433d1a533738998225",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-c9afc80e891c1a5c",
+      "base_model": "RWKV/v6-Finch-7B-HF",
+      "repo": "bartowski/v6-Finch-7B-HF-GGUF",
+      "revision": "ac36c828d44824254baafb221a15c4fe902cb68a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-9cc069e6407f0b80",
+      "base_model": "microsoft/Phi-4-reasoning-plus",
+      "repo": "bartowski/microsoft_Phi-4-reasoning-plus-GGUF",
+      "revision": "96b602db19694b8323c8638ad771289fb5be0863",
+      "license": "mit"
+    },
+    {
+      "id": "hf-4c3400428d4a0e24",
+      "base_model": "poolside/Laguna-XS-2.1",
+      "repo": "bartowski/Laguna-XS-2.1-GGUF",
+      "revision": "8f7579d6ab7d3122716100116cf1a62f490ab6f3",
+      "license": "openmdw-1.1"
+    },
+    {
+      "id": "hf-21b2d503b3ad73df",
+      "base_model": "huihui-ai/QwQ-32B-abliterated",
+      "repo": "bartowski/huihui-ai_QwQ-32B-abliterated-GGUF",
+      "revision": "7086e7f19ce31617f6ed21f452ef28c270576576",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-a08fd4b66460f4bc",
+      "base_model": "microsoft/Phi-3-medium-4k-instruct",
+      "repo": "bartowski/Phi-3-medium-4k-instruct-GGUF",
+      "revision": "2e478770bcb73c17668a4f9fa028e8c8228f6fb4",
+      "license": "mit"
+    },
+    {
+      "id": "hf-ae569090743e2396",
+      "base_model": "Qwen/Qwen2.5-Coder-14B",
+      "repo": "bartowski/Qwen2.5-Coder-14B-GGUF",
+      "revision": "0e179a81290a5e9b04bb1b4f1badf79bc880b261",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-0759f98afb70140d",
+      "base_model": "inclusionAI/Ling-3.0-flash-Fin",
+      "repo": "bartowski/Ling-3.0-flash-Fin-GGUF",
+      "revision": "a792b6bd51d2cb47b5aa8687ff5dd4f2974acdb4",
+      "license": "mit"
+    },
+    {
+      "id": "hf-d009add516e3fcc6",
+      "base_model": "rombodawg/Rombos-LLM-V2.5-Qwen-14b",
+      "repo": "bartowski/Replete-LLM-V2.5-Qwen-14b-GGUF",
+      "revision": "7e2bac14ec5aab23d2a1b286314da2db995c4f69",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-369e9279ccd1aa93",
+      "base_model": "ClosedCharacter/Peach-9B-8k-Roleplay",
+      "repo": "bartowski/Peach-9B-8k-Roleplay-GGUF",
+      "revision": "54f224c29f64339e063a5037eea3fc1f19cb76dd",
+      "license": "mit"
+    },
+    {
+      "id": "hf-a78899496c391207",
+      "base_model": "deepseek-ai/DeepSeek-R1-0528-Qwen3-8B",
+      "repo": "bartowski/deepseek-ai_DeepSeek-R1-0528-Qwen3-8B-GGUF",
+      "revision": "75b8e3d4ecafa21b1f9a06209712f726d0ed77bc",
+      "license": "mit"
+    },
+    {
+      "id": "hf-6d4f47f87786791c",
+      "base_model": "Qwen/Qwen2.5-VL-32B-Instruct",
+      "repo": "bartowski/Qwen_Qwen2.5-VL-32B-Instruct-GGUF",
+      "revision": "da3f1818472b91c1a0c6d15f79a2c133b67ae016",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-1fad7f1a9b74d814",
+      "base_model": "nbeerbower/phi3.5-gutenberg-4B",
+      "repo": "bartowski/phi3.5-gutenberg-4B-GGUF",
+      "revision": "c612c0f519f219a32d680cf090424f0baf9905ad",
+      "license": "mit"
+    },
+    {
+      "id": "hf-74df827ec5ffc82b",
+      "base_model": "Gryphe/Gemma-4-31B-StyleTune",
+      "repo": "bartowski/Gryphe_Gemma-4-31B-StyleTune-GGUF",
+      "revision": "48c25e900473b10f0487c37191c58f727b470515",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-e321f8788f75a9d5",
+      "base_model": "tencent/Hy3",
+      "repo": "bartowski/Hy3-GGUF",
+      "revision": "3ee5a3c4d76226edd9cdaec017969d24b589b64e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-15bc38058a3c161a",
+      "base_model": "TheDrummer/Behemoth-128B-v3",
+      "repo": "bartowski/TheDrummer_Behemoth-128B-v3-GGUF",
+      "revision": "3efe0f8305084ad7d2d9e590fcf47ea68467bc06",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-b2c6f49f4b1b91f2",
+      "base_model": "HuggingFaceTB/SmolLM-1.7B-Instruct-v0.2",
+      "repo": "bartowski/SmolLM-1.7B-Instruct-v0.2-GGUF",
+      "revision": "647435534b383ba5e4aeff797074c4a6e327099e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-9b2f03836518f8bf",
+      "base_model": "microsoft/Phi-3-medium-128k-instruct",
+      "repo": "bartowski/Phi-3-medium-128k-instruct-GGUF",
+      "revision": "950c8154e91f33193217eebf1c26903af44c6e13",
+      "license": "mit"
+    },
+    {
+      "id": "hf-152cd258b6966605",
+      "base_model": "agentica-org/DeepScaleR-1.5B-Preview",
+      "repo": "bartowski/agentica-org_DeepScaleR-1.5B-Preview-GGUF",
+      "revision": "9632aa047524c44510438cb3a7bc6262833e9014",
+      "license": "mit"
+    },
+    {
+      "id": "hf-92d3d3dceffd089f",
+      "base_model": "arcee-ai/AFM-4.5B",
+      "repo": "bartowski/arcee-ai_AFM-4.5B-GGUF",
+      "revision": "7c01c520766d940d39da6874cce439de7f9b8b79",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-c626d4625e8e1683",
+      "base_model": "ArliAI/Phi-3.5-mini-3.8B-ArliAI-RPMax-v1.1",
+      "repo": "bartowski/Phi-3.5-mini-3.8B-ArliAI-RPMax-v1.1-GGUF",
+      "revision": "e2cb7d402d2b539ddf264ac6c5afed7b79e551e5",
+      "license": "mit"
+    },
+    {
+      "id": "hf-91fc2f9181ead95b",
+      "base_model": "THUDM/GLM-4-32B-0414",
+      "repo": "bartowski/THUDM_GLM-4-32B-0414-GGUF",
+      "revision": "b650220dbf94ac4b4423e9aaa2f230629929e65f",
+      "license": "mit"
+    },
+    {
+      "id": "hf-af0e45b984d673d1",
+      "base_model": "ibm-granite/granite-4.2-3b",
+      "repo": "bartowski/granite-4.2-3b-GGUF",
+      "revision": "4093456941a783ab5d8268e00a7725532c1e9af3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-b9e8ec760c0eb63a",
+      "base_model": "anthracite-org/magnum-12b-v2",
+      "repo": "bartowski/magnum-12b-v2-GGUF",
+      "revision": "d4d67420ba1568cdbe63161b180f38a5745b23e3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-3be5266b4c705f43",
+      "base_model": "ibm-granite/granite-embedding-107m-multilingual",
+      "repo": "bartowski/granite-embedding-107m-multilingual-GGUF",
+      "revision": "52fed1c818636b7cb8c4e4e3ae73189efeb78081",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-f8c4adce58e349cd",
+      "base_model": "microsoft/Phi-3.5-MoE-instruct",
+      "repo": "bartowski/Phi-3.5-MoE-instruct-GGUF",
+      "revision": "4b580329100cf44d7d041b6f63967b26869a6937",
+      "license": "mit"
+    },
+    {
+      "id": "hf-7afb99fd2aca19ba",
+      "base_model": "Qwen/QwQ-32B-Preview",
+      "repo": "bartowski/QwQ-32B-Preview-GGUF",
+      "revision": "8f5be0e405df00fdc3cc2905ca63aaccedafd59f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-25edf1e359965763",
+      "base_model": "ibm-granite/granite-3.1-8b-instruct",
+      "repo": "bartowski/granite-3.1-8b-instruct-GGUF",
+      "revision": "7a0f633d54069de889707a76353bc28b70361d9f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-056c44ffc0dbcbb3",
+      "base_model": "ibm-granite/granite-3.1-3b-a800m-instruct",
+      "repo": "bartowski/granite-3.1-3b-a800m-instruct-GGUF",
+      "revision": "be9a36f042806cb586bc65556c527079782b78e0",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-a06062c47f5743f2",
+      "base_model": "ArliAI/GLM-4.6-Derestricted",
+      "repo": "bartowski/ArliAI_GLM-4.6-Derestricted-GGUF",
+      "revision": "1a1e9ad00ce8275babd33e9a560cddea31fa7224",
+      "license": "mit"
+    },
+    {
+      "id": "hf-71af0752ec5aedf6",
+      "base_model": "arcee-ai/SuperNova-Medius",
+      "repo": "bartowski/SuperNova-Medius-GGUF",
+      "revision": "24aea8e4d840631c6a4460a4fb8d4a602fe8978b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-2d8e14f0ee145d20",
+      "base_model": "PocketDoc/Dans-PersonalityEngine-V1.3.0-24b",
+      "repo": "bartowski/PocketDoc_Dans-PersonalityEngine-V1.3.0-24b-GGUF",
+      "revision": "88b0671ffe0dbb4238ff356e681c4774cfd81be8",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-1f0bb75f6377693a",
+      "base_model": "EVA-UNIT-01/EVA-Qwen2.5-14B-v0.2",
+      "repo": "bartowski/EVA-Qwen2.5-14B-v0.2-GGUF",
+      "revision": "b515210d59dce34e630c1ea7d5c6237bbd993547",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-3f395f497e6eeac2",
+      "base_model": "h2oai/h2o-danube3-500m-chat",
+      "repo": "bartowski/h2o-danube3-500m-chat-GGUF",
+      "revision": "34005c67faf918e19c8748e501fa8418b51060fe",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-669c7aa567bcc169",
+      "base_model": "EpistemeAI/Athene-Phi-3.5-mini-instruct-orpo",
+      "repo": "bartowski/Athene-Phi-3.5-mini-instruct-orpo-GGUF",
+      "revision": "f0db5923958cacc543fd4cb1f4eed9a669801f80",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-13689ae18046b5c2",
+      "base_model": "huihui-ai/Qwen2.5-Coder-1.5B-Instruct-abliterated",
+      "repo": "bartowski/Qwen2.5-Coder-1.5B-Instruct-abliterated-GGUF",
+      "revision": "823ab8183896816dec7d29899310b556e655ad73",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-e8a36550d00aa4e3",
+      "base_model": "jpacifico/Chocolatine-3B-Instruct-DPO-v1.2",
+      "repo": "bartowski/Chocolatine-3B-Instruct-DPO-v1.2-GGUF",
+      "revision": "7add663d60409ca2cec43a36f14aac97a11e4f26",
+      "license": "mit"
+    },
+    {
+      "id": "hf-4e6ada809db2374c",
+      "base_model": "rombodawg/Rombos-LLM-V2.5-Qwen-32b",
+      "repo": "bartowski/Replete-LLM-V2.5-Qwen-32b-GGUF",
+      "revision": "98f2e0176a42623de898973e19d8284e0dfebfbc",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-97ca3222e1059167",
+      "base_model": "Qwen/Qwen2.5-7B-Instruct-1M",
+      "repo": "bartowski/Qwen2.5-7B-Instruct-1M-GGUF",
+      "revision": "381ac2097f05bff2f77e7e3864239c11e521c3d3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-173e9b1b65b0b8f7",
+      "base_model": "arcee-ai/Trinity-Large-Preview",
+      "repo": "bartowski/arcee-ai_Trinity-Large-Preview-GGUF",
+      "revision": "84c2fdf3c073f4040d0aa5fd49f94a8b8485ee24",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-73d8cc966aa61abe",
+      "base_model": "THUDM/GLM-4-9B-0414",
+      "repo": "bartowski/THUDM_GLM-4-9B-0414-GGUF",
+      "revision": "211924cd949e153b1017ed635e5b127d0b594e6f",
+      "license": "mit"
+    },
+    {
+      "id": "hf-97591fbb52aa8b10",
+      "base_model": "EVA-UNIT-01/EVA-Qwen2.5-14B-v0.0",
+      "repo": "bartowski/EVA-Qwen2.5-14B-v0.0-GGUF",
+      "revision": "346362a9a3f9415a359eb0ca1d410b22aa536a2f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-f945b60186363b57",
+      "base_model": "EVA-UNIT-01/EVA-Yi-1.5-9B-32K-V1",
+      "repo": "bartowski/EVA-Yi-1.5-9B-32K-V1-GGUF",
+      "revision": "61a39f9e83831d48953b994a1e16a4812990fee4",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-c290d67083da3d23",
+      "base_model": "RWKV/v6-Finch-3B-HF",
+      "repo": "bartowski/v6-Finch-3B-HF-GGUF",
+      "revision": "fe634cc776e04e8ff0e4d2c2ad9e88d160ac9ee9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-24468821ec4006b9",
+      "base_model": "mistralai/Devstral-Small-2505",
+      "repo": "bartowski/mistralai_Devstral-Small-2505-GGUF",
+      "revision": "80bbcce0bd66019a0a01bb5ba786d5a7ce36743a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-091308d5798ed316",
+      "base_model": "zai-org/GLM-4.7",
+      "repo": "bartowski/zai-org_GLM-4.7-GGUF",
+      "revision": "c47ba4573051e4a5146879669a8a95743b5302a4",
+      "license": "mit"
+    },
+    {
+      "id": "hf-08163a3844c95cd0",
+      "base_model": "01-ai/Yi-Coder-9B-Chat",
+      "repo": "bartowski/Yi-Coder-9B-Chat-GGUF",
+      "revision": "2f28bfc370a5457310f3880202b2ed577e2bcbd8",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-2ba7a6fee4789e88",
+      "base_model": "anthracite-org/magnum-v4-72b",
+      "repo": "bartowski/magnum-v4-72b-GGUF",
+      "revision": "ca33bb8535824d076d24e96b9ec1a98e8c73f7a4",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-659b8bde0a30eaef",
+      "base_model": "poolside/Laguna-S-2.1",
+      "repo": "bartowski/Laguna-S-2.1-GGUF",
+      "revision": "66e90acc3ff8d007a084c0360ae6ffcd3ede66e7",
+      "license": "openmdw-1.1"
+    },
+    {
+      "id": "hf-bc4cfefb5d5d1fda",
+      "base_model": "anthracite-org/magnum-12b-v2.5-kto",
+      "repo": "bartowski/magnum-12b-v2.5-kto-GGUF",
+      "revision": "257981239785936710a670e874698994230d1a4f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-52952cfe8de71da7",
+      "base_model": "VibeStudio/MiniMax-M2-THRIFT",
+      "repo": "bartowski/VibeStudio_MiniMax-M2-THRIFT-GGUF",
+      "revision": "7327091f2e078b24e31befaca97a6104c12809fc",
+      "license": "mit"
+    },
+    {
+      "id": "hf-b273204611b6eaa7",
+      "base_model": "WhiteRabbitNeo/WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B",
+      "repo": "bartowski/WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B-GGUF",
+      "revision": "4874da7ad5fa4da4f2584ae64ddc21f5a8e7dfce",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-7512ff6e2d544830",
+      "base_model": "rombodawg/Rombos-LLM-V2.5-Qwen-7b",
+      "repo": "bartowski/Replete-LLM-V2.5-Qwen-7b-GGUF",
+      "revision": "aeb63e506a399e9aa9f67bcf72a8e4a534a621c6",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-94c9b7d3310be6d4",
+      "base_model": "PocketDoc/Dans-PersonalityEngine-V1.2.0-24b",
+      "repo": "bartowski/PocketDoc_Dans-PersonalityEngine-V1.2.0-24b-GGUF",
+      "revision": "fadbf535d1e9d2d6be631710588e65017440bb31",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-6f7e47c62c70c1f8",
+      "base_model": "utter-project/EuroLLM-9B-Instruct",
+      "repo": "bartowski/EuroLLM-9B-Instruct-GGUF",
+      "revision": "55e5590cc457e42ed197c34c5b10403472b05d54",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-ecee43a3717d9155",
+      "base_model": "Gryphe/Pantheon-RP-1.6-12b-Nemo",
+      "repo": "bartowski/Pantheon-RP-1.6-12b-Nemo-GGUF",
+      "revision": "93e39f765735dc35e0038768e0d2064ad596e2ee",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-7cbd0e3a8851a393",
+      "base_model": "ZeroXClem/Stheno-Hercules-3.1-8B",
+      "repo": "bartowski/Stheno-Hercules-3.1-8B-GGUF",
+      "revision": "ca1932dd8055509a6990885b559d21f521608542",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-d4bdffb8daaafb07",
+      "base_model": "nbeerbower/Qwen3-Gutenberg-Encore-14B",
+      "repo": "bartowski/nbeerbower_Qwen3-Gutenberg-Encore-14B-GGUF",
+      "revision": "65ec68f1c8824d5b7774603033cc40a492974fc8",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-66b6feec0b851849",
+      "base_model": "THUDM/GLM-Z1-Rumination-32B-0414",
+      "repo": "bartowski/THUDM_GLM-Z1-Rumination-32B-0414-GGUF",
+      "revision": "a9866d8e8acdb6f55cebce95d850cb99c32306b5",
+      "license": "mit"
+    },
+    {
+      "id": "hf-3c39b6d34c01bf22",
+      "base_model": "THUDM/GLM-Z1-9B-0414",
+      "repo": "bartowski/THUDM_GLM-Z1-9B-0414-GGUF",
+      "revision": "01173fe01f49347f098c9dc4454dc3fd7bd15e2e",
+      "license": "mit"
+    },
+    {
+      "id": "hf-136ec94130f251bf",
+      "base_model": "empero-ai/Qwythos-9B-v2",
+      "repo": "bartowski/empero-ai_Qwythos-9B-v2-GGUF",
+      "revision": "3f233570b07f7a3bc2570b975cbb210fec72efb4",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-09edaacd2efc4a21",
+      "base_model": "mistral-community/Mixtral-8x22B-v0.1",
+      "repo": "bartowski/zephyr-orpo-141b-A35b-v0.1-GGUF",
+      "revision": "304d0311e1a2764d3ab1689e2dd4911b9e20f132",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-cde294012dc64822",
+      "base_model": "RekaAI/reka-flash-3",
+      "repo": "bartowski/RekaAI_reka-flash-3-GGUF",
+      "revision": "02951df8711b30e85faaa672a4ec4c3c3c6c0e37",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-9e1004ee42ce2ac0",
+      "base_model": "PrimeIntellect/INTELLECT-3",
+      "repo": "bartowski/PrimeIntellect_INTELLECT-3-GGUF",
+      "revision": "1827cd1b39b3f3ced9319c94079d71bad75ee8c3",
+      "license": "mit"
+    },
+    {
+      "id": "hf-713c58296ba3b206",
+      "base_model": "Qwen/QwQ-32B",
+      "repo": "bartowski/Qwen_QwQ-32B-GGUF",
+      "revision": "390cc7b31baedc55a4d094802995e75f40b4a86d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-24b8ababc3c0134c",
+      "base_model": "NaniDAO/deepseek-r1-qwen-2.5-32B-ablated",
+      "repo": "bartowski/deepseek-r1-qwen-2.5-32B-ablated-GGUF",
+      "revision": "afde0eea2076ec0be023c2bdc046f3c35be3449a",
+      "license": "mit"
+    },
+    {
+      "id": "hf-6900798214b51db4",
+      "base_model": "rombodawg/Rombos-LLM-V2.5-Qwen-3b",
+      "repo": "bartowski/Replete-LLM-V2.5-Qwen-3b-GGUF",
+      "revision": "3a62c65f56ac3446f323f5faa772fa41a3b96ee1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-af35441a9ab1643b",
+      "base_model": "soob3123/GrayLine-Qwen3-14B",
+      "repo": "bartowski/soob3123_GrayLine-Qwen3-14B-GGUF",
+      "revision": "1ff1c0f5f3ccb785b9f0329a8980e88a80e53e27",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-101bb8ec211ec14c",
+      "base_model": "uncensoredai/UncensoredLM-DeepSeek-R1-Distill-Qwen-14B",
+      "repo": "bartowski/uncensoredai_UncensoredLM-DeepSeek-R1-Distill-Qwen-14B-GGUF",
+      "revision": "d00f6b074564c188e3c2022e381d909df7220b4a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-85c26d64b36686a6",
+      "base_model": "Replete-AI/Replete-LLM-Mist-Nemo-12b-test-merged-250k",
+      "repo": "bartowski/Replete-LLM-Mist-Nemo-12b-test-merged-250k-GGUF",
+      "revision": "0dcd904580ca3a2e6f13ef3aef12ac5875ac7b28",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-ad41e014c1acef97",
+      "base_model": "nothingiisreal/MN-12B-Celeste-V1.9",
+      "repo": "bartowski/MN-12B-Celeste-V1.9-GGUF",
+      "revision": "7033b26627026d034a1ad0ca0ecf27df824d9f67",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-2db4b6583ae30e2e",
+      "base_model": "Gryphe/Pantheon-Proto-RP-1.8-30B-A3B",
+      "repo": "bartowski/Gryphe_Pantheon-Proto-RP-1.8-30B-A3B-GGUF",
+      "revision": "bce24e9f1fa6b44b89d02f610e1bca55fb77f3d3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-36e8d2621f0d7575",
+      "base_model": "KOOWEEYUS/BlackSheep-RP-12B",
+      "repo": "bartowski/BlackSheep-RP-12B-GGUF",
+      "revision": "b46e317e2e95347a66c86567bbbaf0a8c41a86cf",
+      "license": "artistic-2.0"
+    },
+    {
+      "id": "hf-5ac74e06d030c712",
+      "base_model": "mistralai/mathstral-7B-v0.1",
+      "repo": "bartowski/mathstral-7B-v0.1-GGUF",
+      "revision": "37c8ee4527abbcc564fddddd6d21484f2852bf19",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-e9b93e2c46dfdd42",
+      "base_model": "arcee-ai/Trinity-Large-Base",
+      "repo": "bartowski/arcee-ai_Trinity-Large-Base-GGUF",
+      "revision": "8fec8d21d49cd193d7c0cff76e8cfad902867a2d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-46c2f69604a75bb1",
+      "base_model": "agentica-org/DeepCoder-14B-Preview",
+      "repo": "bartowski/agentica-org_DeepCoder-14B-Preview-GGUF",
+      "revision": "f8698074b914519e6f922e1b78df6b7c41871157",
+      "license": "mit"
+    },
+    {
+      "id": "hf-5064af83eefe4e97",
+      "base_model": "sophosympatheia/Magistry-24B-v1.1",
+      "repo": "bartowski/sophosympatheia_Magistry-24B-v1.1-GGUF",
+      "revision": "0374d789228b4f59aa83f04fdb0b76e1c91d8bc0",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-347de631849dc051",
+      "base_model": "OpenBuddy/OpenBuddy-R1-0528-Distill-Qwen3-32B-Preview0-QAT",
+      "repo": "bartowski/OpenBuddy_OpenBuddy-R1-0528-Distill-Qwen3-32B-Preview0-QAT-GGUF",
+      "revision": "b21b3c6eed7a0ff19781c7d3237836200509670e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-49bdf2d1a16efc31",
+      "base_model": "EVA-UNIT-01/EVA-Qwen2.5-7B-v0.1",
+      "repo": "bartowski/EVA-Qwen2.5-7B-v0.1-GGUF",
+      "revision": "33487f3377864da5eb23c4270f23ef7115492806",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-ec110f108c9d0927",
+      "base_model": "PrimeIntellect/INTELLECT-1-Instruct",
+      "repo": "bartowski/INTELLECT-1-Instruct-GGUF",
+      "revision": "7293422e6c759528ad110db71fc0b8c60623d12e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-b6cad7fdffa011f6",
+      "base_model": "Qwen/Qwen2.5-14B-Instruct-1M",
+      "repo": "bartowski/Qwen2.5-14B-Instruct-1M-GGUF",
+      "revision": "f9f82825ed669910c9083619190a2931eec1c980",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-bfdf0749c1906f6d",
+      "base_model": "p-e-w/Qwen3-4B-Instruct-2507-heretic",
+      "repo": "bartowski/p-e-w_Qwen3-4B-Instruct-2507-heretic-GGUF",
+      "revision": "374467f099f99156987afeeea6df5bc1f090ff4b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-92750368cfb09383",
+      "base_model": "Replete-AI/Replete-Coder-V2-Llama-3.1-8b",
+      "repo": "bartowski/Replete-Coder-V2-Llama-3.1-8b-GGUF",
+      "revision": "e80817f13320284b984a914a2d483946b218f9d7",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-c5f1c54796659ca0",
+      "base_model": "Replete-AI/Replete-Coder-Instruct-8b-Merged",
+      "repo": "bartowski/Replete-Coder-Instruct-8b-Merged-GGUF",
+      "revision": "9270656ebf28eada1c9c2c99939f53f955c555ac",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-51881d3a2d6c7c23",
+      "base_model": "p-e-w/gpt-oss-20b-heretic",
+      "repo": "bartowski/p-e-w_gpt-oss-20b-heretic-GGUF",
+      "revision": "7d1cdd0b512682dae86ea5e6064dad760ca76815",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-387387c151589697",
+      "base_model": "ibm-granite/granite-3.1-2b-instruct",
+      "repo": "bartowski/granite-3.1-2b-instruct-GGUF",
+      "revision": "e47b8b46c04cede00f9e19d5a846551b14b2efce",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-4c8e55618f8fcf13",
+      "base_model": "rombodawg/Rombos-LLM-V2.5-Qwen-72b",
+      "repo": "bartowski/Replete-LLM-V2.5-Qwen-72b-GGUF",
+      "revision": "afa772f9303ef20d4f637f0081554a637cca3069",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-c982b1451cef270b",
+      "base_model": "kai-os/Grug-35B-A3B",
+      "repo": "bartowski/kai-os_Grug-35B-A3B-GGUF",
+      "revision": "fbf57bd449595c612bd274a18064f9895312616d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-27b3deb54d31ba9b",
+      "base_model": "mlabonne/TwinLlama-3.1-8B-DPO3",
+      "repo": "bartowski/TwinLlama-3.1-8B-DPO3-GGUF",
+      "revision": "6ccd2e9df2a525394e8f80fbe990e85809f03341",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-3bd3d82ad7f5a173",
+      "base_model": "OuteAI/Lite-Mistral-150M-v2-Instruct",
+      "repo": "bartowski/Lite-Mistral-150M-v2-Instruct-GGUF",
+      "revision": "d567b686ecb900bad15fa0d9a999f010f5ba9925",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-2bed94385b36bf9e",
+      "base_model": "mistralai/Mistral-Small-24B-Base-2501",
+      "repo": "bartowski/mistralai_Mistral-Small-24B-Base-2501-GGUF",
+      "revision": "9c27a3049cd742cc8bb4cdaa4001a930c5a0431e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-6f4e14db70f3b625",
+      "base_model": "aion-labs/Aion-RP-Llama-3.1-8B",
+      "repo": "bartowski/Aion-RP-Llama-3.1-8B-GGUF",
+      "revision": "3fcccafd5550b18e36c47a59cc847e621ef4700d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-6c031974f5148105",
+      "base_model": "Replete-AI/Replete-LLM-Qwen2-7b",
+      "repo": "bartowski/Replete-LLM-Qwen2-7b-GGUF",
+      "revision": "bdbe5a08789d3324a1a1379a76053a62c8c48c86",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-bb7fb05e34361987",
+      "base_model": "Gryphe/Pantheon-RP-1.6.1-12b-Nemo",
+      "repo": "bartowski/Pantheon-RP-1.6.1-12b-Nemo-GGUF",
+      "revision": "4be7dcd5084b60cb65fb9403adfe73055b46bffe",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-e0bc175316c55c32",
+      "base_model": "h2oai/h2o-danube3-4b-chat",
+      "repo": "bartowski/h2o-danube3-4b-chat-GGUF",
+      "revision": "65b8be0e2c24d695559177db2cfdcc0da98b55fd",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-5dfdf751e7761bfb",
+      "base_model": "FreedomIntelligence/HuatuoGPT-o1-7B",
+      "repo": "bartowski/HuatuoGPT-o1-7B-GGUF",
+      "revision": "5b481e71fa41e2ccffdd863dc01f27be48075bd1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-8a7c2d012596dcb0",
+      "base_model": "agentica-org/DeepCoder-1.5B-Preview",
+      "repo": "bartowski/agentica-org_DeepCoder-1.5B-Preview-GGUF",
+      "revision": "ea501cd265c00ceba066ed21a08228090a676e51",
+      "license": "mit"
+    },
+    {
+      "id": "hf-d8d513f1b00c28e6",
+      "base_model": "agentica-org/DeepSWE-Preview",
+      "repo": "bartowski/agentica-org_DeepSWE-Preview-GGUF",
+      "revision": "1a8015681b46c4767c27a588a253a5a225d01b69",
+      "license": "mit"
+    },
+    {
+      "id": "hf-ff567165703e44e2",
+      "base_model": "speakleash/Bielik-11B-v2.2-Instruct",
+      "repo": "bartowski/Bielik-11B-v2.2-Instruct-GGUF",
+      "revision": "2e1957da95367a0ca8bb72ad29c7bd71b843f064",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-785ddb51c01b5333",
+      "base_model": "Tesslate/OmniCoder-9B",
+      "repo": "bartowski/Tesslate_OmniCoder-9B-GGUF",
+      "revision": "f0fbc2243f49ab2dbdf91fe5930dd73e6bce767c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-090597fc76b7cc64",
+      "base_model": "Qwen/Qwen2.5-Coder-32B",
+      "repo": "bartowski/Qwen2.5-Coder-32B-GGUF",
+      "revision": "37d0a0274ae3f00a8788d15dfd1a6de9bbc84c0b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-841d6211c5f3fb6d",
+      "base_model": "soob3123/amoral-gemma3-4B",
+      "repo": "bartowski/soob3123_amoral-gemma3-4B-GGUF",
+      "revision": "74e80676eebd3def4d42f5f6d9998e6590dcfe87",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-36d31a93ca2ba4e0",
+      "base_model": "nomic-ai/nomic-embed-code",
+      "repo": "bartowski/nomic-ai_nomic-embed-code-GGUF",
+      "revision": "e237621d1dfbaa357592ed8641a50c3db03d2dc7",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-51a7ff6b5aabc88a",
+      "base_model": "NousResearch/Hermes-4.3-36B",
+      "repo": "bartowski/NousResearch_Hermes-4.3-36B-GGUF",
+      "revision": "56b57c47136327060928c009c5164be185e4d4e9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-c90a28dea144a886",
+      "base_model": "ArliAI/Mistral-Nemo-12B-ArliAI-RPMax-v1.1",
+      "repo": "bartowski/Mistral-Nemo-12B-ArliAI-RPMax-v1.1-GGUF",
+      "revision": "03b69d4267651ec59a2604e777b8930f694811c5",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-c64e791eef58e991",
+      "base_model": "NousResearch/DeepHermes-3-Mistral-24B-Preview",
+      "repo": "bartowski/NousResearch_DeepHermes-3-Mistral-24B-Preview-GGUF",
+      "revision": "dab8d56bb3a768b3a7794307c07f5e5a25d4f720",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-6f761c22f62c4f31",
+      "base_model": "ArliAI/Qwen2.5-32B-ArliAI-RPMax-v1.3",
+      "repo": "bartowski/Qwen2.5-32B-ArliAI-RPMax-v1.3-GGUF",
+      "revision": "dbdacf702472630074b3006e641f954116451fa6",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-1c5ef1af3a1d2057",
+      "base_model": "miromind-ai/MiroThinker-v1.0-8B",
+      "repo": "bartowski/miromind-ai_MiroThinker-v1.0-8B-GGUF",
+      "revision": "6120f85ddfdabe25c8e9557030aab12b30308f5e",
+      "license": "mit"
+    },
+    {
+      "id": "hf-8b42e2832aaab62b",
+      "base_model": "EVA-UNIT-01/EVA-Qwen2.5-32B-v0.1",
+      "repo": "bartowski/EVA-Qwen2.5-32B-v0.1-GGUF",
+      "revision": "a1be6e3ff66c4b3ff1410f8891c553ee343ee7a5",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-de251dca5f9ae226",
+      "base_model": "EVA-UNIT-01/EVA-Qwen2.5-32B-v0.2",
+      "repo": "bartowski/EVA-Qwen2.5-32B-v0.2-GGUF",
+      "revision": "95b74243c8579142d7f9f828a618ab31933de079",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-440fa8c4b9da0354",
+      "base_model": "FINAL-Bench/Darwin-36B-Opus",
+      "repo": "bartowski/FINAL-Bench_Darwin-36B-Opus-GGUF",
+      "revision": "5c3de7cbc3d33d68d37aa98489490b5e26acc75e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-45c7f3f19b95b79c",
+      "base_model": "utter-project/EuroLLM-22B-Instruct-2512",
+      "repo": "bartowski/utter-project_EuroLLM-22B-Instruct-2512-GGUF",
+      "revision": "1dbd312ffa10e83e5faa855e3727cbf4abc45f08",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-3c5f986712477ac9",
+      "base_model": "allenai/Olmo-3-7B-Instruct",
+      "repo": "bartowski/allenai_Olmo-3-7B-Instruct-GGUF",
+      "revision": "0d00999146ae9606a15cf049858a2ccf46fe0706",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-5f1fb2ee647d2025",
+      "base_model": "allura-org/remnant-qwen3-8b",
+      "repo": "bartowski/allura-org_remnant-qwen3-8b-GGUF",
+      "revision": "b88bf2a071340da9f599a1f5d9e1efa1a7b8f8a9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-660b00615c9fdf55",
+      "base_model": "MaziyarPanahi/calme-2.1-phi3.5-4b",
+      "repo": "bartowski/calme-2.1-phi3.5-4b-GGUF",
+      "revision": "250bd653bb3440481d645b5f1e124b461b03871e",
+      "license": "mit"
+    },
+    {
+      "id": "hf-50f8b3e6866a5d47",
+      "base_model": "huihui-ai/Qwen2.5-Coder-0.5B-Instruct-abliterated",
+      "repo": "bartowski/Qwen2.5-Coder-0.5B-Instruct-abliterated-GGUF",
+      "revision": "876ebfffa80d443367f647bb6e6b2aa2d33a4001",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-1de10b544b91bcbe",
+      "base_model": "FuseAI/FuseO1-DeepSeekR1-Qwen2.5-Coder-32B-Preview",
+      "repo": "bartowski/FuseO1-DeepSeekR1-Qwen2.5-Coder-32B-Preview-v0.1-GGUF",
+      "revision": "25634f876571a0d2bcb5e9a3a5f4a27264cd4043",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-9b5b9fc4bdb1205e",
+      "base_model": "Merlin-Research/Merlin-Agent",
+      "repo": "bartowski/Merlin-Research_Merlin-Agent-GGUF",
+      "revision": "5cc1de11a4641704c73d79720127e2d6cd13c0c2",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-04f4686175390d5a",
+      "base_model": "Qwen/Qwen2.5-Coder-0.5B",
+      "repo": "bartowski/Qwen2.5-Coder-0.5B-GGUF",
+      "revision": "01c1b8072277dfbfd0d051ec95b7a43bb23d2f6a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-a82f1c76a99a5c0f",
+      "base_model": "microsoft/Phi-4-reasoning",
+      "repo": "bartowski/microsoft_Phi-4-reasoning-GGUF",
+      "revision": "31acd2bdedae7114e095a73bd3d14a026f85bd71",
+      "license": "mit"
+    },
+    {
+      "id": "hf-72cd6e77fe4b383d",
+      "base_model": "allura-org/Qwen2.5-32b-RP-Ink",
+      "repo": "bartowski/Qwen2.5-32b-RP-Ink-GGUF",
+      "revision": "ada803e9c8c64feae7685ebef73a0d6f789b7f5c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-a6e878e6c801c605",
+      "base_model": "meetkai/functionary-small-v3.2",
+      "repo": "bartowski/functionary-small-v3.2-GGUF",
+      "revision": "388ea44bed3d1c7d5cc6b5a52e8b188386cbadb7",
+      "license": "mit"
+    },
+    {
+      "id": "hf-22322151e76df585",
+      "base_model": "nbeerbower/Mistral-Nemo-Prism-12B",
+      "repo": "bartowski/Mistral-Nemo-Prism-12B-GGUF",
+      "revision": "057f3a8966f32061f234a3c4d787e30e28982c69",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-9b12ccbfeb3a2011",
+      "base_model": "sail/Sailor2-8B-Chat",
+      "repo": "bartowski/Sailor2-8B-Chat-GGUF",
+      "revision": "10972d4314c4f4f332b07c327103b85e9027234a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-1e8916cfea2794af",
+      "base_model": "Vikhrmodels/Vikhr-Gemma-2B-instruct",
+      "repo": "bartowski/Vikhr-Gemma-2B-instruct-GGUF",
+      "revision": "bce63f33c930f13063f025547e95b150f5962b9d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-ae115d285f5cdd3e",
+      "base_model": "prism-ml/Bonsai-8B-unpacked",
+      "repo": "bartowski/prism-ml_Bonsai-8B-unpacked-GGUF",
+      "revision": "f10ef5f1756beeeacd7508a0e4c0990e547ab589",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-246789185475fd7e",
+      "base_model": "huihui-ai/QwQ-32B-Preview-abliterated",
+      "repo": "bartowski/QwQ-32B-Preview-abliterated-GGUF",
+      "revision": "cfbe7737202100a692da2bca17216ab64b208ec5",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-5091be6970dacd15",
+      "base_model": "Replete-AI/Replete-LLM-V2-Llama-3.1-8b",
+      "repo": "bartowski/Replete-LLM-V2-Llama-3.1-8b-GGUF",
+      "revision": "149a2910b8ff40a6ef21039b682b1e8959961187",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-19678f9332c0d34a",
+      "base_model": "rombodawg/Rombos-LLM-V2.5-Qwen-1.5b",
+      "repo": "bartowski/Replete-LLM-V2.5-Qwen-1.5b-GGUF",
+      "revision": "4f13dc4d26cedbd5688b0cdb76668776e9f3f49e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-91122dc850218a4a",
+      "base_model": "allura-org/Qwen3.6-35B-A3B-Anko",
+      "repo": "bartowski/allura-org_Qwen3.6-35B-A3B-Anko-GGUF",
+      "revision": "13f18e6d67716b2702480449bd8b4b55f6677c38",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-5f746365306357aa",
+      "base_model": "arcee-ai/Homunculus",
+      "repo": "bartowski/arcee-ai_Homunculus-GGUF",
+      "revision": "f2d40529a92b0b088648e26c6b219e04c89dbdf5",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-375a728f05a9e777",
+      "base_model": "ibm-granite/granite-3.0-2b-instruct",
+      "repo": "bartowski/granite-3.0-2b-instruct-GGUF",
+      "revision": "ca090672129c29718cb397fbf50ee5949442fb84",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-65287c5dbb8f7596",
+      "base_model": "JetBrains/Mellum2-12B-A2.5B-Instruct",
+      "repo": "bartowski/Mellum2-12B-A2.5B-Instruct-GGUF",
+      "revision": "978d3b633817824470ef48a53141e3dccf1863f0",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-dcb843d9b927c0f9",
+      "base_model": "Steelskull/MSM-MS-Cydrion-22B",
+      "repo": "bartowski/MSM-MS-Cydrion-22B-GGUF",
+      "revision": "1f79b3faf1565762a95650964b7bb7c1cbecdb0e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-8c0467bb17b5c03d",
+      "base_model": "allenai/OLMo-2-1124-13B-Instruct",
+      "repo": "bartowski/OLMo-2-1124-13B-Instruct-GGUF",
+      "revision": "00f2e4aed2fdcac064c1b9613ce2d520f54369e2",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-81cbbbc621dee01d",
+      "base_model": "jtl11/GLM-4.7-Flash-heretic",
+      "repo": "bartowski/jtl11_GLM-4.7-Flash-heretic-GGUF",
+      "revision": "57ff23f6018db26c0056ebba18cfb16dafb79cf5",
+      "license": "mit"
+    },
+    {
+      "id": "hf-860ac5b93a89d0f4",
+      "base_model": "ibm-granite/granite-3.3-8b-instruct",
+      "repo": "bartowski/ibm-granite_granite-3.3-8b-instruct-GGUF",
+      "revision": "000bcc0448c24671ca97c24b2daa6dd693abc625",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-563c4421c4d82033",
+      "base_model": "BeaverAI/MN-2407-DSK-QwQify-v0.1-12B",
+      "repo": "bartowski/BeaverAI_MN-2407-DSK-QwQify-v0.1-12B-GGUF",
+      "revision": "9b07ea0f6f6a3c487fb2121b26a3cf60a4c9487f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-da7f3071feae354f",
+      "base_model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+      "repo": "bartowski/Qwen2.5-Coder-0.5B-Instruct-GGUF",
+      "revision": "69a2c192eed24297fb09a34d8ba948b8624cc3e2",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-9515afe45c34cc75",
+      "base_model": "anthracite-org/magnum-v2-4b",
+      "repo": "bartowski/magnum-v2-4b-GGUF",
+      "revision": "552104ce36ce0a1e2937ca1e559cc2236ffb0db5",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-c835dc936f58fe58",
+      "base_model": "Akhil-Theerthala/Kuvera-8B-v0.1.0",
+      "repo": "bartowski/Akhil-Theerthala_Kuvera-8B-v0.1.0-GGUF",
+      "revision": "edb8d5d16e755f77aa75d718f9c00dfa5adaadd0",
+      "license": "mit"
+    },
+    {
+      "id": "hf-7231008228195e73",
+      "base_model": "microsoft/Phi-4-mini-reasoning",
+      "repo": "bartowski/microsoft_Phi-4-mini-reasoning-GGUF",
+      "revision": "519790c46093945c24bed49875702ad9126c721c",
+      "license": "mit"
+    },
+    {
+      "id": "hf-235a0a0dda181682",
+      "base_model": "EVA-UNIT-01/EVA-Qwen2.5-32B-v0.0",
+      "repo": "bartowski/EVA-Qwen2.5-32B-v0.0-GGUF",
+      "revision": "8e01d326511a7d52c1692c995d487ae987cc2e03",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "hf-34eb345bd0de1af1",
+      "base_model": "dfurman/CalmeRys-78B-Orpo-v0.1",
+      "repo": "bartowski/CalmeRys-78B-Orpo-v0.1-GGUF",
+      "revision": "5630b376d04d1cf099227405307fe0d667d874c3",
+      "license": "mit"
+    },
+    {
+      "id": "hf-9938f59731a321cf",
+      "base_model": "cognitivecomputations/Dolphin3.0-Qwen2.5-0.5B",
+      "repo": "bartowski/Dolphin3.0-Qwen2.5-0.5B-GGUF",
+      "revision": "2a4428efa5a7377c4404d0b9ff16ce41e52047b8",
+      "license": "apache-2.0"
+    }
+  ]
+}

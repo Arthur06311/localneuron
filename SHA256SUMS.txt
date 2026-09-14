@@ -1,0 +1,4 @@
+6fa74c9dbe4333cbc20c60cbf08e364bc1c4188bd2fb0642d37ca78b488fab22  LocalNeuron-macOS-arm64.dmg
+f2da0d8dd191c9276e0ea93f23b2358d7531316668ba88d0c59c76cc54204a5a  LocalNeuron-Windows-x64.zip
+51547df78d5a12c1a90ed390b490679e2e27d50962b6b92de07cee2681e18a41  LocalNeuron-Linux-x64.tar.gz
+13a395795934453e0da4cb8adfbac964f789168f23fccdf1768cb620d66dbf85  LocalNeuron-macOS-arm64.zip

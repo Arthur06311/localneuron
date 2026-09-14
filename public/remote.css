@@ -1,0 +1,92 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #101218;
+  color: #edf0f5;
+  font: 16px/1.6 system-ui;
+}
+header {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 20px 6%;
+  border-bottom: 1px solid #2b303b;
+}
+header small {
+  display: block;
+  color: #a4adbc;
+  font-size: 12px;
+}
+header button {
+  margin-left: auto;
+}
+.mark {
+  border: 1px solid #a6b9a8;
+  border-radius: 10px;
+  font: 28px Georgia;
+  padding: 0 9px;
+}
+main {
+  max-width: 850px;
+  margin: auto;
+  padding: 32px 20px;
+}
+h1 {
+  font-size: 36px;
+  letter-spacing: -1.5px;
+}
+p {
+  color: #a4adbc;
+}
+label {
+  display: block;
+}
+input,
+textarea {
+  width: 100%;
+  padding: 14px;
+  background: #191d26;
+  color: inherit;
+  border: 1px solid #343c4b;
+  border-radius: 12px;
+  font: inherit;
+  margin: 8px 0 14px;
+}
+button {
+  padding: 10px 20px;
+  background: #c6d6ff;
+  color: #172442;
+  border: 0;
+  border-radius: 9px;
+  font: 600 14px system-ui;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.4;
+}
+article {
+  padding: 18px 20px;
+  margin: 18px 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-radius: 14px;
+}
+.user {
+  background: #222d42;
+  margin-left: 12%;
+}
+.assistant {
+  background: #181d27;
+  margin-right: 5%;
+}
+#composer {
+  position: sticky;
+  bottom: 0;
+  background: #101218;
+  padding-top: 16px;
+}
+[hidden] {
+  display: none !important;
+}

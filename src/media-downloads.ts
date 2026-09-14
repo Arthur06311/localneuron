@@ -1,0 +1,18 @@
+import {existsSync,mkdirSync,readFileSync,writeFileSync,renameSync,statSync,statfsSync} from 'node:fs';
+import {join,dirname} from 'node:path';
+import {MEDIA_CATALOG} from './media-catalog.js';
+import {downloadVerified} from './model-library.js';
+import {hfJSON} from './huggingface.js';
+type MediaJob={revision:string;sha256:string;model:string;file:number;state:'downloading'|'paused'|'downloaded'|'failed';downloaded:number;total:number;error?:string};
+export class MediaDownloads {
+ readonly directory:string;private jobs:Record<string,MediaJob>={};private controller:AbortController|null=null;private pending:Promise<void>|null=null;
+ constructor(directory:string,private token:()=>string|undefined=()=>undefined){this.directory=join(directory,'media-models');mkdirSync(this.directory,{recursive:true,mode:0o700});try{const saved=JSON.parse(readFileSync(join(this.directory,'downloads.json'),'utf8'));for(const j of Object.values(saved).slice(0,10000) as MediaJob[]){const m=MEDIA_CATALOG.find(m=>m.id===j.model),f=m?.files?.[j.file];if(!f||j.revision!==m?.revision||j.sha256!==f.sha256||!['downloading','paused','downloaded','failed'].includes(j.state)||!Number.isInteger(j.file)||!Number.isFinite(j.downloaded)||j.downloaded<0||j.downloaded>f.bytes)continue;this.jobs[j.model+':'+j.file]={...j,total:f.bytes,state:j.state==='downloading'?'paused':j.state};}}catch{/* First use. */}}
+ get busy(){return Boolean(this.pending);}
+ private save(){const f=join(this.directory,'downloads.json');writeFileSync(f+'.tmp',JSON.stringify(this.jobs),{mode:0o600});renameSync(f+'.tmp',f);}
+ snapshot(){return {directory:this.directory,busy:this.busy,jobs:Object.values(this.jobs)};}
+ async download(id:string,index:number){const model=MEDIA_CATALOG.find(m=>m.id===id),file=model?.files?.[index];if(!model||!file||!Number.isInteger(index)||index<0)throw Error('Arquivo fora do catálogo visual.');if(this.pending)throw Error('Pause o download visual atual antes de iniciar outro.');const folder=join(this.directory,id),target=join(folder,file.path),partial=target+'.part';mkdirSync(dirname(target),{recursive:true,mode:0o700});const retained=existsSync(partial)?Math.min(file.bytes,statSync(partial).size):0,disk=statfsSync(this.directory);if(disk.bavail*disk.bsize<file.bytes-retained+1024**3)throw Error('Espaço insuficiente para este arquivo e a margem de 1 GiB.');const prior=this.jobs[id+':'+index];if(prior?.state==='downloaded'&&existsSync(target)&&statSync(target).size===file.bytes)return prior;
+ const job:MediaJob={revision:model.revision,sha256:file.sha256,model:id,file:index,state:'downloading',downloaded:retained,total:file.bytes};this.jobs[id+':'+index]=job;const controller=new AbortController();this.controller=controller;this.save();
+ this.pending=Promise.resolve().then(async()=>{try{const token=this.token();const {data:m}=await hfJSON('/'+model.repo+'/revision/'+model.revision+'?blobs=true',token);controller.signal.throwIfAborted();const actual=m.siblings?.find((f:any)=>f.rfilename===file.path);if(m.sha!==model.revision||actual?.size!==file.bytes||actual?.lfs?.sha256!==file.sha256)throw Error('O arquivo mudou na origem. Atualize a ficha antes de baixar.');await downloadVerified({...model,...file,file:file.path,parts:undefined} as any,partial,controller.signal,n=>{job.downloaded=n;},fetch,{resume:true,token});renameSync(partial,target);job.state='downloaded';job.downloaded=file.bytes;delete job.error;}catch(e){job.state=controller.signal.aborted?'paused':'failed';job.error=controller.signal.aborted?'Pausado. Continue para aproveitar os dados recebidos.':(e as Error).message;}finally{this.save();this.pending=null;this.controller=null;}});return job;
+ }
+ async pause(){this.controller?.abort();await this.pending;return {ok:true};}
+}

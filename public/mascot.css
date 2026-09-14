@@ -1,0 +1,19 @@
+/* Original LocalNeuron mascot. Local asset; no network or animation runtime. */
+.neuron-mascot{display:block;object-fit:contain;flex:none;user-select:none;pointer-events:none}
+body.chat-page .chat-welcome .neuron-mascot-chat{width:128px;height:128px;margin:0 auto 14px;animation:neuron-welcome .6s ease-out both}
+.setup .neuron-mascot-welcome{width:112px;height:112px;float:right;margin:-12px -8px 8px 14px}
+.setup form{clear:both}
+.pro-center-hero .neuron-mascot-pro{width:96px;height:96px;margin:-12px auto 12px}
+@keyframes neuron-welcome{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:720px){body.chat-page .chat-welcome .neuron-mascot-chat{width:92px;height:92px;margin-bottom:10px}.setup .neuron-mascot-welcome{width:82px;height:82px;margin:-5px -6px 8px 8px}}
+@media(max-height:720px){body.chat-page .chat-welcome .neuron-mascot-chat{width:80px;height:80px;margin-bottom:8px}}
+@media(prefers-reduced-motion:reduce){body.chat-page .chat-welcome .neuron-mascot-chat{animation:none}}
+.neuron-mascot-reply{width:56px;height:56px;float:right;margin:0 0 8px 12px}
+.chat-message:has(.neuron-mascot-reply){display:flow-root}
+.mascot-faces{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:24px}
+.mascot-faces figure{margin:0;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--paper);text-align:center}
+.mascot-faces .neuron-mascot{margin:0 auto 16px;width:120px;height:120px;max-width:100%}
+.mascot-faces figcaption strong,.mascot-faces figcaption span{display:block}
+.mascot-faces figcaption span{font-size:12px;color:var(--muted);line-height:1.6;margin-top:8px}
+@media(max-width:1000px){.mascot-faces{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.mascot-faces{gap:8px}.mascot-faces figure{padding:12px}.mascot-faces .neuron-mascot{width:96px;height:96px}.neuron-mascot-reply{width:44px;height:44px}}

@@ -1,0 +1,2935 @@
+{
+  "checked_at": "2026-09-13T15:04:48.360Z",
+  "method": "Pinned metadata for every listed weight; unauthenticated HEAD for each listed file. No model weights downloaded except bounded safetensors headers.",
+  "models": [
+    {
+      "id": "media-flux.1-schnell",
+      "repo": "black-forest-labs/FLUX.1-schnell",
+      "revision": "741f7c3ce8b383c54771c7003378a50191e9efe9",
+      "files": 9,
+      "access": "restricted",
+      "profile": null
+    },
+    {
+      "id": "media-qwen-image",
+      "repo": "Qwen/Qwen-Image",
+      "revision": "75e0b4be04f60ec59a75f475837eced720f823b6",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "media-stable-diffusion-xl-base-1.0",
+      "repo": "stabilityai/stable-diffusion-xl-base-1.0",
+      "revision": "462165984030d82259a11f4367a4eed129e94a7b",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "media-wan2.1-t2v-1.3b",
+      "repo": "Wan-AI/Wan2.1-T2V-1.3B",
+      "revision": "37ec512624d61f7aa208f7ea8140a131f93afc9a",
+      "files": 1,
+      "access": "public",
+      "profile": "wan21"
+    },
+    {
+      "id": "media-wan2.2-ti2v-5b",
+      "repo": "Wan-AI/Wan2.2-TI2V-5B",
+      "revision": "921dbaf3f1674a56f47e83fb80a34bac8a8f203e",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "media-cogvideox-2b",
+      "repo": "zai-org/CogVideoX-2b",
+      "revision": "1137dacfc2c9c012bed6a0793f4ecf2ca8e7ba01",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-cf276aadcf6d104801cd",
+      "repo": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "revision": "451f4fe16113bff5a5d2269ed5ad43b0592e9a14",
+      "files": 11,
+      "access": "public",
+      "profile": "sd15"
+    },
+    {
+      "id": "visual-8260d623cad96cde0268",
+      "repo": "Lykon/dreamshaper-7",
+      "revision": "9b481047f77996efa025e75e03941dbf51f506ad",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-17750af8ce37cf94f8f3",
+      "repo": "RunDiffusion/Juggernaut-XL-v9",
+      "revision": "cf419233522daa0b9ea36c3aff98fa2cab1fb0fb",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5b4198f6208eca4b02af",
+      "repo": "Tongyi-MAI/Z-Image-Turbo",
+      "revision": "f332072aa78be7aecdf3ee76d5c247082da564a6",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-acae94ca55464753ecc7",
+      "repo": "stabilityai/sdxl-turbo",
+      "revision": "71153311d3dbb46851df1931d3ca6e939de83304",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-551fc4c1ce8f0660cd23",
+      "repo": "CompVis/stable-diffusion-v1-4",
+      "revision": "133a221b8aa7292a167afc5127cb63fb5005638b",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-de63e2d3f0ade1b53d66",
+      "repo": "black-forest-labs/FLUX.2-klein-4B",
+      "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-33d1ceeb33e0e45118ee",
+      "repo": "Qwen/Qwen-Image-Edit-2509",
+      "revision": "d3968ef930e841f4c73640fb8afa3b306a78167e",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d8947d8fe26159006cf9",
+      "repo": "lightx2v/Qwen-Image-Lightning",
+      "revision": "e74da8d4e71a54b341de86aa9f8d2509165aa513",
+      "files": 21,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-9f303ad73f4b6c499316",
+      "repo": "wikeeyang/Flux2-Klein-9B-True-V2",
+      "revision": "9c9fe9880029a4e0c4af5ca7d86e83cdb83eea83",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-415ff5516407c31e1e1a",
+      "repo": "lightx2v/Qwen-Image-Edit-2511-Lightning",
+      "revision": "d74eba145674fd7e31b949324e148e21e7118abd",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b651db71a406649f9e37",
+      "repo": "stabilityai/sd-turbo",
+      "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-70ff32b896771e2c6741",
+      "repo": "cagliostrolab/animagine-xl-4.0",
+      "revision": "2b7c1b397761bf5bd3cc42e5b39ec99314a75a96",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a38be1029c5ee1219079",
+      "repo": "unsloth/Qwen-Image-Edit-2511-GGUF",
+      "revision": "0d33d9692b4b26212297240d87b0d4719aa4fd06",
+      "files": 16,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-cf1c7d1a9acb36719fb9",
+      "repo": "Qwen/Qwen-Image-Edit-2511",
+      "revision": "6f3ccc0b56e431dc6a0c2b2039706d7d26f22cb9",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-4900ea75a961053d6ae5",
+      "repo": "black-forest-labs/FLUX.2-klein-base-4B",
+      "revision": "a3b4f4849157f664bdbc776fd7453c2783562f4d",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-df7ed1a5c1c430f15d08",
+      "repo": "playgroundai/playground-v2.5-1024px-aesthetic",
+      "revision": "1e032f13f2fe6db2dc49947dbdbd196e753de573",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3cd408758c9a7c685783",
+      "repo": "unsloth/FLUX.2-klein-4B-GGUF",
+      "revision": "0084d1df98e2e2137fe776d55170bc4792ec1d66",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-dab9e61d12c551f60cf1",
+      "repo": "LyliaEngine/Pony_Diffusion_V6_XL",
+      "revision": "14885f1c01d7723bcbf676773def286c1fd733bc",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-585beeaa05571ebb974f",
+      "repo": "city96/FLUX.1-dev-gguf",
+      "revision": "3c60ac659f4b1f2ab3ca8bd4488272069b36a148",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-dca0649c4a29026c629a",
+      "repo": "city96/FLUX.1-schnell-gguf",
+      "revision": "f495746ed9c5efcf4661f53ef05401dceadc17d2",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a79868508ad790e1bbd5",
+      "repo": "black-forest-labs/FLUX.2-small-decoder",
+      "revision": "a3efc24f613ef42d9428af62fdbd6f5fd8856c4a",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c51c04129c0e5c6c00dc",
+      "repo": "unsloth/Z-Image-Turbo-GGUF",
+      "revision": "6c80814333b7b6a70a2e5b469a7c6437ce65de0f",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-eb83d47533482a676d8e",
+      "repo": "city96/FLUX.2-dev-gguf",
+      "revision": "ade5d688ddab0d9cf4a5b01bf4321e01c115020d",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-282c792e3bb264754eb3",
+      "repo": "cagliostrolab/animagine-xl-3.1",
+      "revision": "483f0c322568ed13697ed01dd0be07204746d12b",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8bdf276cab597d72fdc1",
+      "repo": "unsloth/FLUX.2-klein-9B-GGUF",
+      "revision": "fde8634245fe6b749a221c25b34672b5b8fbd079",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-16829e7e6a9ee36c4a4b",
+      "repo": "h94/IP-Adapter-FaceID",
+      "revision": "43907e6f44d079bf1a9102d9a6e56aef7a219bae",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-dacaee60c3b08944e834",
+      "repo": "QuantStack/Qwen-Image-Edit-2509-GGUF",
+      "revision": "84a3006979126011422eeeefe0c9485ddf431ef5",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-85a438cb685ecf59f880",
+      "repo": "Lykon/DreamShaper",
+      "revision": "228d79cb20811466f5c5710aa91f05dabd0b8a14",
+      "files": 37,
+      "access": "public",
+      "profile": "sd15"
+    },
+    {
+      "id": "visual-9a8b292725e9239e63cb",
+      "repo": "John6666/nova-furry-xl-il-v120-sdxl",
+      "revision": "77fecf8948ec410b915a6d74bbfefb1ba1cc6ef3",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b12fb2e64a24525a96a7",
+      "repo": "black-forest-labs/FLUX.2-klein-4b-fp8",
+      "revision": "5b4408e59397a4a37ccb46afe426d8ed86379441",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-fc7f5fccb2caaa99de5c",
+      "repo": "lrzjason/Anything2Real",
+      "revision": "b547e090d255ac10b190204c7868b03a61faf15e",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-395fb8a2984bb1253672",
+      "repo": "unsloth/Qwen-Image-2512-GGUF",
+      "revision": "1626d7531f84b4d2ea1cd6d2e69f41ec027dd354",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-df818157fe98ea5fe7ef",
+      "repo": "Qwen/Qwen-Image-Edit",
+      "revision": "ac7f9318f633fc4b5778c59367c8128225f1e3de",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-7250e49456cbf8368bbd",
+      "repo": "stabilityai/stable-diffusion-xl-refiner-1.0",
+      "revision": "5d4cfe854c9a9a87939ff3653551c2b3c99a4356",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-dac199be50aa58beea34",
+      "repo": "duongve/NetaYume-Lumina-Image-2.0",
+      "revision": "69c29c441119d43405d8373c654b16827d3cf46e",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-359a114396158f658cc4",
+      "repo": "stable-diffusion-v1-5/stable-diffusion-inpainting",
+      "revision": "8a4288a76071f7280aedbdb3253bdb9e9d5d84bb",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8b9b4c2e7bb40f17eb50",
+      "repo": "SimianLuo/LCM_Dreamshaper_v7",
+      "revision": "a85df6a8bd976cdd08b4fd8f3b73f229c9e54df5",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-1b54b63f899d6a9ef2e7",
+      "repo": "Alissonerdx/BFS-Best-Face-Swap",
+      "revision": "c758d55502463bc5eb281326c107d0850d7a8b4a",
+      "files": 17,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ffc7e1a3442eb8144d7c",
+      "repo": "lightx2v/Qwen-Image-2512-Lightning",
+      "revision": "a52649c9d0f6e1a248bff13f0df33bb8a2abdb52",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-9c3457e95e3d90019287",
+      "repo": "xinsir/controlnet-union-sdxl-1.0",
+      "revision": "801a4a3fa3d4c936f4feea95b98607bc6726f80c",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-44aad902f1ea728fbb22",
+      "repo": "Lykon/dreamshaper-8",
+      "revision": "a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5dcf8f59d6c5f66406dc",
+      "repo": "xinsir/controlnet-openpose-sdxl-1.0",
+      "revision": "23f966cd5cfdd3f7729c903e243d87152162d2b7",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6e83130dcc0d1d60cd3b",
+      "repo": "black-forest-labs/FLUX.2-klein-base-4b-fp8",
+      "revision": "103db268c10d4d3921101b46057671f9ac460da6",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-2b115e49ecc19b48dfd4",
+      "repo": "John6666/one-obsession-17-red-sdxl",
+      "revision": "429abbf05b3de71183b1480a0e746873d1c23bf6",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-bb6fdf3e06580ca2da0c",
+      "repo": "Laxhar/noobai-XL-1.1",
+      "revision": "814a274af2b8097c0828819d561ec74c7d0c6cea",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-723536df62f13a5c8ae2",
+      "repo": "John6666/amanatsu-illustrious-v11-sdxl",
+      "revision": "09211779841a342277cf2e377f2ed4460d17749a",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-95d7cfc353f1565c6083",
+      "repo": "latent-consistency/lcm-lora-sdv1-5",
+      "revision": "cf2fced511dbe7e26c8d1d397e728fbab875db4b",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d95ecd871be289413868",
+      "repo": "John6666/diving-illustrious-real-asian-v50-sdxl",
+      "revision": "370b4f6d9495a9d8a0471e0f4ee548488fae2abd",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-9c41a5e7c93abeebb9a3",
+      "repo": "T5B/Z-Image-Turbo-FP8",
+      "revision": "e523072dbf1bcc797fcd1908d331a4905e278ab8",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b9ec16c08f73b106965d",
+      "repo": "diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
+      "revision": "115134f363124c53c7d878647567d04daf26e41e",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-dbed8442f41f887da328",
+      "repo": "ByteDance/SDXL-Lightning",
+      "revision": "c9a24f48e1c025556787b0c58dd67a091ece2e44",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-1e57b030954886ed5153",
+      "repo": "jdopensource/JoyAI-Image-Edit-Diffusers",
+      "revision": "4b41fb25d961f37668750178ccbb380da326201c",
+      "files": 12,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-58d628bd158c3b18c7d1",
+      "repo": "autoweeb/Qwen-Image-Edit-2509-Photo-to-Anime",
+      "revision": "2fdebf4e0c1ea04ef3037ff531bc5a4a3a842396",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5e5b863c6b327b20d00b",
+      "repo": "HiDream-ai/HiDream-I1-Fast",
+      "revision": "4856a5d8cd6fbd194780ed9f289bdf696d3afc10",
+      "files": 12,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-fe73bce4ff341b91a354",
+      "repo": "drbaph/HiDream-O1-Image-FP8",
+      "revision": "f554d59dba6bc536309f95ae152ca92321e14702",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-aefd0788b2f8b990673b",
+      "repo": "nunchaku-ai/nunchaku-qwen-image-edit",
+      "revision": "1e4b8c0dfe2309e67672cfc696fe0ebd3d0280d3",
+      "files": 12,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-7ed3669a87b8c5567f14",
+      "repo": "Omnico/Krea2_turbo_diff_loras",
+      "revision": "63c733f9cc3737e3c5458d85bbb50057652227ea",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ea7b0d26d85ca241ade2",
+      "repo": "thibaud/controlnet-openpose-sdxl-1.0",
+      "revision": "1db673ed3dad75181fcf2e24f827597fe34e97b7",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-87a20676586c53891563",
+      "repo": "OnomaAIResearch/Illustrious-xl-early-release-v0",
+      "revision": "dca0dac303e6dc4b0c31d8001bc685b89b5d0204",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-e652e9005cd3a740d675",
+      "repo": "Runpod/FLUX.2-klein-4B-mflux-4bit",
+      "revision": "7ee1b3aa8178a1240050490072196a57da2bf2a9",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a92354bf4a79af9c3636",
+      "repo": "lodestones/Chroma1-HD",
+      "revision": "0e0c60ece1e82b17cb7f77342d765ba5024c40c0",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5db4266b8e63324843c9",
+      "repo": "AlperKTS/Krea2_FP8",
+      "revision": "19c1c7da8760da12f338f7c4472575ab7dceb445",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-749e1e62c25c49ce3ba9",
+      "repo": "LyliaEngine/waiIllustriousSDXL_v170",
+      "revision": "5ef4e2da7173a160ad04aebcaa2fdcd6d20ed792",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b7a19b20f5f55e7c6073",
+      "repo": "Laxhar/noobai-XL-Vpred-1.0",
+      "revision": "66aa55e3469c27c29a89813cd35dd95fb7485fa1",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b03c2466022a1ef6f968",
+      "repo": "cagliostrolab/animagine-xl-3.0",
+      "revision": "d02fc0b0b01a6fbbe9bfca4db176c1f065663b2a",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-21899bba9968d6cc1877",
+      "repo": "John6666/obsession-illustriousxl-v10-sdxl",
+      "revision": "4c65fa5cf4bd0975ff5fd05b0048fbaa6dbb5fbe",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-699b8212534168f3dd71",
+      "repo": "ifmylove2011/girlslike-krea2",
+      "revision": "02cb01c45586c9e18cf6c318666ceaf811eb7acd",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-71fad61b2baf7a78928a",
+      "repo": "fal/Qwen-Image-Edit-2511-Multiple-Angles-LoRA",
+      "revision": "e3066224ab74263f4a5b6179cd1a3b0a15577e44",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a44c5352fcc469b7a2e0",
+      "repo": "InstantX/InstantID",
+      "revision": "57b32dfee076092ad2930c71fd6d439c2c3b1820",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-29936ecaec3734174038",
+      "repo": "Qwen/Qwen-Image-2512",
+      "revision": "25468b98e3276ca6700de15c6628e51b7de54a26",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ece05985431b762bd278",
+      "repo": "Tongyi-MAI/Z-Image",
+      "revision": "04cc4abb7c5069926f75c9bfde9ef43d49423021",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-16a9e2349ae33980c482",
+      "repo": "XLabs-AI/flux-ip-adapter",
+      "revision": "18f6940238ab5dc3744df7a8e30315892279d5f9",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-9a6e3768982bd0f4bbc2",
+      "repo": "ByteDance/Hyper-SD",
+      "revision": "bc08d970a87c74c71209491d64e3525845698863",
+      "files": 19,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-bb4970f6371a5655b7a9",
+      "repo": "vantagewithai/Krea-2-Turbo-GGUF",
+      "revision": "390847e2835c16bdf82303731e3d35b874760d89",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6fcad2d5d3928658f28a",
+      "repo": "latent-consistency/lcm-lora-sdxl",
+      "revision": "a18548dd4956b174ec5b0d78d340c8dae0a129cd",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f8a0663be18e1e216a07",
+      "repo": "tlennon-ie/qwen-edit-skin",
+      "revision": "60fb653d46045074449f45068d91ce27f11eb1ca",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-be6d0debf3d84b1e427b",
+      "repo": "leejet/Z-Image-Turbo-GGUF",
+      "revision": "c61c0e422dc8b541b7548cf33a4ef8302b0f8085",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-986e7b0e4ef897e2e939",
+      "repo": "John6666/hassaku-xl-illustrious-v31-sdxl",
+      "revision": "e661d319656bbdc143deec522cdfcb9100764434",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-675a51dc96fbb8f5600e",
+      "repo": "city96/Qwen-Image-gguf",
+      "revision": "e77babc55af111419e1714a7a0a848b9cac25db7",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-92b5997d2351d93e0c98",
+      "repo": "John6666/prefect-illustrious-xl-v3-sdxl",
+      "revision": "7b28f7f082e338a107ee8a91f09ae8d132a6a11f",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c9e39800bd1accb73402",
+      "repo": "LoliRimuru/moeFussion",
+      "revision": "dc6ff2298aeeb56ac7318eb3fde126b7e72428c8",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-9cbfadc57e61369ed89b",
+      "repo": "unsloth/Z-Image-GGUF",
+      "revision": "c9913e69743c5d9dfa7fdac58a0cc5709a17aa08",
+      "files": 16,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-490eafaa73f56940dc29",
+      "repo": "cyberdelia/CyberRealistic",
+      "revision": "99827f96edd717dacb28c68560680c201c55df05",
+      "files": 28,
+      "access": "public",
+      "profile": "sd15"
+    },
+    {
+      "id": "visual-4a466561b2119543aa7c",
+      "repo": "Gazingstars123/Anima-2.9B",
+      "revision": "9f9cb502dbae7a616c3cc5a530633427fe735665",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-95bca38b9aa13a5c1b15",
+      "repo": "silveroxides/Chroma-GGUF",
+      "revision": "2f8f007ec4d125941b263a52cea3a81d853b53d6",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3e2dd018e05e23d219d4",
+      "repo": "dx8152/Flux2-Klein-9B-Consistency",
+      "revision": "8df0c7338cf68cfcd89ca7e461fe679905634607",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-cbb82b8f1dbc1dba8a50",
+      "repo": "black-forest-labs/FLUX.2-klein-9b-kv-fp8",
+      "revision": "8430c03ee457ea86907ed31a009cd56280df003d",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3acb0e22a72c20ffad4a",
+      "repo": "Kokosha01/Wan2.2_StrangeNames",
+      "revision": "e275ddcae47fec83efa5c166d5217c3641e9003f",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-4ec3839f5090adae1870",
+      "repo": "xinsir/controlnet-scribble-sdxl-1.0",
+      "revision": "0bed4973b80c2329f76e0abf4196c51dfbf9108c",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b78f34797fecb5115aaa",
+      "repo": "RunDiffusion/Juggernaut-XI-v11",
+      "revision": "f836518c7a75f47a9e26bc661ff9509ef2ceb7c0",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-85c3dbfff4f34651f4e0",
+      "repo": "cyberdelia/CyberRealisticPony",
+      "revision": "bf85880a58614199d0391c93151211be2832bb8c",
+      "files": 33,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-73e3f215f6c7b6fbdf63",
+      "repo": "unsloth/FLUX.2-dev-GGUF",
+      "revision": "d9105cfeb7c59853ba7b1857c7f53d1371e38ade",
+      "files": 16,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-dd7deb941a26485cd0a0",
+      "repo": "wikeeyang/Flux2-Klein-9B-True-V3",
+      "revision": "997e0977d4ba7d3103d2cfb6c7029724603b73a8",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-804336e157d6d5ec507f",
+      "repo": "ifmylove2011/girlslike-zimage",
+      "revision": "7a21521e84d13235e80aa0abf6ebd1887de18d34",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-263f3249a767a1309216",
+      "repo": "MeiGen-AI/PosterOmni_v1",
+      "revision": "7bc740e5e0f7227bd4cda25ad68d48236aa356d2",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ed1a04672265e1d209b5",
+      "repo": "QuantStack/FLUX.1-Kontext-dev-GGUF",
+      "revision": "2d083027732f81e5548620b57ac47da22d30aa5a",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-7735a44e93a2c1bd33a2",
+      "repo": "Manojb/stable-diffusion-2-1-base",
+      "revision": "0094d483a120f3f33dafbd187ea4aa60d10de75c",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ee1efa29b5d35aefc79c",
+      "repo": "lodestones/Chroma1-Base",
+      "revision": "50ebe125b67794f4ed8e4985d26a4414ca62aed3",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-23887d0f5c8e285486b2",
+      "repo": "RudySen/Krea2-realism-V2",
+      "revision": "ad6f07e426303e7087d215362dbc057b0073dca3",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-854b4df9098a1f1cae52",
+      "repo": "Sudanl/stable-diffusion-2-1-base-custom",
+      "revision": "744f91666b26ed1088ea2497ce4139b1f5ff4bbe",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d038f66ac01510077411",
+      "repo": "ostris/zimage_turbo_training_adapter",
+      "revision": "654cd1bf8b3589d9442cb1c5e35221879e1af4f3",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8d44dbbf4a14b2292df2",
+      "repo": "timbrooks/instruct-pix2pix",
+      "revision": "31519b5cb02a7fd89b906d88731cd4d6a7bbf88d",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-29e11beb1d8eb1959abc",
+      "repo": "jayn7/Z-Image-Turbo-GGUF",
+      "revision": "6e2dff8e3abd78051c1211fb5833a03818a2f3cc",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f8a6a25d6a6ecb7d5857",
+      "repo": "John6666/autismmix-sdxl-autismmix-pony-sdxl",
+      "revision": "9b71ab83b380711fdeda6fd8eef6119a55e31fbd",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c65d978d114ea177570a",
+      "repo": "Qwen/Qwen-Image-Bench",
+      "revision": "1b77ff83564ac4e4e8140769eacff7ff73f35f3c",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c23d51c6af7bfff7a3fe",
+      "repo": "prithivMLmods/Qwen-Image-Edit-2511-Ultra-Realistic-Portrait",
+      "revision": "78ae4115a70bd234799747675f096be3c58f0c87",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a514e056cfd155d0048f",
+      "repo": "monadical-labs/minecraft-skin-generator-sdxl",
+      "revision": "225d8146a3b69fca526438de510a59a410601616",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-e95aea3e3d0b23646d9e",
+      "repo": "cyberdelia/CyberRealisticXL",
+      "revision": "c04ae13b465d19763561a834d625a3d504a4f315",
+      "files": 26,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-aa80e8eb0775a3e9319a",
+      "repo": "mayocream/RORem-mixed-GGUF",
+      "revision": "62c75b3e6f078a19e2698b0f677e8a4aa4c9ea56",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-702cc4594ce3eec46ed7",
+      "repo": "argmaxinc/mlx-FLUX.1-schnell-4bit-quantized",
+      "revision": "fc7110baf7c72eec7261346e2c3a0a3fec9b8e95",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-0fda9d255e6329d6814d",
+      "repo": "Phil2Sat/Qwen-Image-Edit-Rapid-AIO-GGUF",
+      "revision": "02a3fc559cbb2231a052bd743138db86fa4f2dcb",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-09dd7719e0532e659962",
+      "repo": "wikeeyang/Krea2-Turbo-HD-V1",
+      "revision": "4ebaa9abc4145ad1176099e5d7f8d491fc016e34",
+      "files": 12,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-4efa86e579acbee520a7",
+      "repo": "stabilityai/stable-diffusion-3.5-large-controlnet-depth",
+      "revision": "6bcad403a0aca0d000b3624f751d0c391303e12f",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5228c079c47359586200",
+      "repo": "offgrid-ai/pony-diffusion-v6-xl-GGUF",
+      "revision": "b952fe9fad7fe6f6973c6f74a9d179a6fe4f77eb",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-454a85eeb918163f031a",
+      "repo": "nunchaku-ai/nunchaku-flux.1-schnell",
+      "revision": "b18e8e6333da55835f6ce16c04b13c543c0954b1",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-0c4cfadad6f246aa5b2f",
+      "repo": "stabilityai/stable-diffusion-3.5-large-controlnet-canny",
+      "revision": "71511b9db86ecc71b307cf122dc4f8029ef212ec",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-01dca199f45627d75af6",
+      "repo": "leejet/FLUX.2-klein-9B-GGUF",
+      "revision": "cc588497a95ffc2937ebbd6b9b3916a11ada6e5b",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d094037586db90430a0d",
+      "repo": "second-state/stable-diffusion-v1-5-GGUF",
+      "revision": "031b5f5df991f511b3f5fa8fed6d99048ababb69",
+      "files": 8,
+      "access": "public",
+      "profile": "sd15"
+    },
+    {
+      "id": "visual-6256ffa5477627c8e3e2",
+      "repo": "silveroxides/FLUX.2-dev-fp8_scaled",
+      "revision": "a8e566fd208b5b6735c1611622fa3999fdfe9b9d",
+      "files": 24,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5b788bb92309f12916eb",
+      "repo": "lllyasviel/sd-controlnet-canny",
+      "revision": "7f2f69197050967007f6bbd23ab5e52f0384162a",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-e70d944930e747ed049c",
+      "repo": "XLabs-AI/flux-ip-adapter-v2",
+      "revision": "d1507fa7314df9f7dbe30a1e9659e5e634a58464",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-456d23a90656b25a7dd9",
+      "repo": "Lykon/dreamshaper-xl-v2-turbo",
+      "revision": "f70ad5bce436c640d23fc02cd0a6ccc787280b6e",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6bb5edc67a445991a588",
+      "repo": "caidas/swin2SR-classical-sr-x2-64",
+      "revision": "cee1c923c6a37361c6e5650b65dcf4be821e5d52",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-e40baeb86700068613cb",
+      "repo": "lvladikov/Krea2-Turbo-Distill-4step-LoRA",
+      "revision": "8176f44e54f14bf91938741ebb12f907770a5909",
+      "files": 22,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-894ecda83ebd5964631f",
+      "repo": "QuantStack/Qwen-Image-Edit-GGUF",
+      "revision": "acab6f9f09973bc8a128a1e04e809acb65784e1c",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-60edd92b0f0d6f415ec5",
+      "repo": "deepseek-community/Janus-Pro-1B",
+      "revision": "1655280bb75959cc1cb85529a2a8b26e7016072e",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-52c715dcde2c71f06895",
+      "repo": "lllyasviel/sd-controlnet-openpose",
+      "revision": "df796456519d1ac5dbe674caa0653fcc9673bca8",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-618f470312711b7a338b",
+      "repo": "leejet/FLUX.2-klein-4B-GGUF",
+      "revision": "3b1f5a9dc3abb32238b053aeb3d823c30afdacbd",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-57144b943cf697689422",
+      "repo": "diffusers/controlnet-depth-sdxl-1.0",
+      "revision": "17bb97973f29801224cd66f192c5ffacf82648b4",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-388d325e69344d50d735",
+      "repo": "nunchaku-ai/nunchaku-flux.1-dev",
+      "revision": "1a3d3f78b545e33a0897da2101150292ebbd158a",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-295ec954181b752a79b9",
+      "repo": "xinsir/controlnet-canny-sdxl-1.0",
+      "revision": "1271357eda52d54b857c650cacb5b51144643ccb",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d0ffd1ab3014d7f16af7",
+      "repo": "unsloth/FLUX.1-dev-GGUF",
+      "revision": "9b8240b0ca0ce2001b373191d3324f09194c7061",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3482847556e5325d64b7",
+      "repo": "John6666/true-pencil-xl-v100-sdxl",
+      "revision": "e6786b97876da98437178121a67c8006a8e30b37",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d4c786ef06baec7a20b1",
+      "repo": "diffusers/controlnet-canny-sdxl-1.0",
+      "revision": "eb115a19a10d14909256db740ed109532ab1483c",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5dbb9cd0de322d44716c",
+      "repo": "nunchaku-ai/nunchaku-flux.1-krea-dev",
+      "revision": "28fffcbf3980bf2927e813ca026d139399d5ffb6",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-de5d2be2c9c5e4959448",
+      "repo": "lovis93/testllm",
+      "revision": "1caa18804996cd97c6635b0ff854bba798152b2c",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-08b211e112825854edd5",
+      "repo": "meituan-longcat/LongCat-Image-Edit-Turbo",
+      "revision": "6a7262de5549f0bf0ec54c08ef7d283ef41f3214",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-24a9b405e2ce571eafb9",
+      "repo": "Wuli-art/Qwen-Image-2512-Turbo-LoRA-2-Steps",
+      "revision": "85afdc701a730b8866d9aa7c7a2eb5bf019b8c00",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-2e78896c9eeea2b63e12",
+      "repo": "black-forest-labs/FLUX.2-dev-NVFP4",
+      "revision": "142b87e70bc3006937b7093d89ff287b5f59f071",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-84701cc79bb54deae7d0",
+      "repo": "diffusers/FLUX.2-dev-bnb-4bit",
+      "revision": "c30ad107542e63f222f864a8de510204394fb18a",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-69b25a2fb5f189ec5ddb",
+      "repo": "ostris/z_image_turbo_childrens_drawings",
+      "revision": "7fcd66a99149c58741990fca28562a4a581af7a9",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-34c92edd6d6246a025cd",
+      "repo": "duyntnet/Chroma-GGUF-All-Versions",
+      "revision": "a114427c69b78e8d675560cbf1abbcd1d0c92e56",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-07eec459bd843a9e5af7",
+      "repo": "prithivMLmods/Qwen-Image-Edit-2511-Hyper-Realistic-Portrait",
+      "revision": "bdac42896d98c846751e8f8df018154318790fee",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-caad54af55f91ed6086a",
+      "repo": "unsloth/FLUX.2-klein-base-9B-GGUF",
+      "revision": "069a5df5ba8b7fe9f3355c8d4800486983ee8eb6",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-52284501fd0c62e29572",
+      "repo": "realrebelai/LLaDa-Image-Turbo_ComfyUI",
+      "revision": "abfa94e506b4901198e8cda42aa6370165cfebea",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8bb5f65ec8714636a5aa",
+      "repo": "unsloth/Qwen-Image-GGUF",
+      "revision": "8aa13c32cf6dda8ad5cb5e3a1beb93150faa246b",
+      "files": 16,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-cdaf75532bbf0f22e654",
+      "repo": "deepseek-community/deepseek-vl-1.3b-chat",
+      "revision": "aa84ba9a033b7201d3a0a2e871291f0bb9c27329",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6c669b7ecb8eb034e3fc",
+      "repo": "InstantX/Qwen-Image-ControlNet-Union",
+      "revision": "b13036f066d6dee7c20513e263d3d673055e9de8",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ae207a6cb710f4d2342c",
+      "repo": "meituan-longcat/LongCat-Image-Edit",
+      "revision": "7b54ef423aa7854be7861600024be5c56ab7875a",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-1a0f653fb0236e9855b9",
+      "repo": "deepseek-community/deepseek-vl-7b-chat",
+      "revision": "4d6f7f4aad464b5426a5321d176a11da6191ba60",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b7211900e3aa7885fc13",
+      "repo": "JujoHotaru/lora",
+      "revision": "43dc6309b7d79357b80f72c37a38f7be6d557415",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-37de1436b78944ddc53a",
+      "repo": "lilylilith/AnyPose",
+      "revision": "27c4b1f7688940d39767e652fe8d87faf44a0881",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5c0459e654a4412a7afb",
+      "repo": "TheImposterImposters/LUSTIFY-v2.0",
+      "revision": "368374c797ebe7366781ce57c0ad92102ad69dd3",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-4d483cfda83f2b2f9a66",
+      "repo": "joyfox/Qwen-Image-Edit-2509-Upscale2K",
+      "revision": "4d06fc9d3b41d8133b96d20ad721fa39039782d6",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-25d963a75fda4271d720",
+      "repo": "QuantStack/FLUX.1-Krea-dev-GGUF",
+      "revision": "b17b5df266ee23dcdea70e027173002aac36a1c8",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-288d876cdab8602d6cf3",
+      "repo": "starsfriday/Qwen-Image-Edit-2511-Upscale2K",
+      "revision": "129c6cc77643fd55e59902f2e9363912b638ad26",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b45076d938e268486091",
+      "repo": "tencent/HunyuanImage-3.0-Instruct",
+      "revision": "2ec2c78bee7d4b94157341fba86c4c2c7b1858b2",
+      "files": 32,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c3923d0160655de6f613",
+      "repo": "RunDiffusion/Juggernaut-X-v10",
+      "revision": "35e4f3ccbe745c3e1221715d04a452aaa1ee5761",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-45053159d5d00e4376d6",
+      "repo": "lllyasviel/control_v11p_sd15_openpose",
+      "revision": "9ae9f970358db89e211b87c915f9535c6686d5ba",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-68c2795ed4a914aa5ac5",
+      "repo": "molbal/krea2-gguf",
+      "revision": "6eaa93726f42426793653d322189e5d6df400c2e",
+      "files": 12,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-87424e613d262107a470",
+      "repo": "xinsir/controlnet-depth-sdxl-1.0",
+      "revision": "961552fa2913e3aa82cdfb32cb51bf182d95207c",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ab059079713bc69ead44",
+      "repo": "second-state/stable-diffusion-3.5-large-GGUF",
+      "revision": "dff185441d61601155591a46f691d7f73151acdd",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f4013dedbafc62a69888",
+      "repo": "dataautogpt3/ProteusV0.3",
+      "revision": "915e423763ae349867d2f5b74a0ee750535e3fd2",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-048fd2122af3c284117c",
+      "repo": "tianweiy/DMD2",
+      "revision": "be22767697a1f3ca656b73c776e15fa335c86c6c",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ff8d088aa646f52b487a",
+      "repo": "realrebelai/SenseNova-U1.5-8B_GGUFs",
+      "revision": "bc2e8f83688489e6b465daa833e9b318ea45c9d9",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c1f47e587c304dc6718c",
+      "repo": "lilylilith/QIE-2511-MP-AnyLight",
+      "revision": "ad3ce5f3602542cc2cfae8db9616f8712e0d025c",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a7b985f69ba0c08c3175",
+      "repo": "lovis93/next-scene-qwen-image-lora-2509",
+      "revision": "9b9da698b8a5370efd875f18b1727cc1119f3863",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-bc1ba4813ffefde3cd04",
+      "repo": "vafipas663/Qwen-Edit-2509-Upscale-LoRA",
+      "revision": "d3a3442e0418cb5bfe5c0e2d8b5ad4f7a1b8f117",
+      "files": 24,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-e7d793cdeca9228e9692",
+      "repo": "QuantStack/Qwen-Image-GGUF",
+      "revision": "257f261fa92593bed760aa6fa3f7921a49fea00f",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8cbb7f302231f48e5731",
+      "repo": "sensenova/SenseNova-U1-8B-MoT",
+      "revision": "bfa9b436503cb8aed4f2bc60e3236710cc77468d",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-75dcd6711363aebd004b",
+      "repo": "Lykon/dreamshaper-xl-lightning",
+      "revision": "561086c22aba3925b1e8803a73857f061635c7c3",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c0c647c7c1925cf3957b",
+      "repo": "digiplay/Photon_v1",
+      "revision": "2a69e441dec59606d4e092a6791d78399c555451",
+      "files": 7,
+      "access": "public",
+      "profile": "sd15"
+    },
+    {
+      "id": "visual-f40001bfe0956b98b2b0",
+      "repo": "dataautogpt3/ProteusV0.2",
+      "revision": "4437fb7de964a3b4f323aaa73d1c4c73d064b0cb",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-42ddd342fe9b45743ecf",
+      "repo": "unsloth/FLUX.2-klein-9B",
+      "revision": "455f1273c2f08f1fc93d725c2e6f1d7fc681cd94",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-145ccfefebacc2be26c6",
+      "repo": "second-state/stable-diffusion-3.5-medium-GGUF",
+      "revision": "58b78c305a43ddfcffe1ab54d7022995f61667ac",
+      "files": 26,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-37511d0ec3164fce293a",
+      "repo": "nerijs/pixel-art-xl",
+      "revision": "8bf4a4d9ea283e00a51fafda8e0539f8248ea037",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-881357270774eb0b3e06",
+      "repo": "RunDiffusion/Juggernaut-XL-Lightning",
+      "revision": "9c35e7ca1112b7e567ae7b24400b83935909916d",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-503c164f5c40f2a1e50c",
+      "repo": "botp/stable-diffusion-v1-5",
+      "revision": "3deadd3e68b8422c339f30d1bef5456dc8498d4e",
+      "files": 6,
+      "access": "public",
+      "profile": "sd15"
+    },
+    {
+      "id": "visual-0ff7b0d0be92813e0155",
+      "repo": "lllyasviel/control_v11f1p_sd15_depth",
+      "revision": "539f99181d33db39cf1af2e517cd8056785f0a87",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-0d33cb4dbec82e3d2565",
+      "repo": "xinsir/controlnet-tile-sdxl-1.0",
+      "revision": "1ae8d9529efe58f7362a987363ff86a7904dc84f",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c13e309dee98c5153778",
+      "repo": "ifmylove2011/girlslike",
+      "revision": "f05c894399d5a5768a5aef86fa6036bc8b363d88",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-66f3656efd1d9155385a",
+      "repo": "Granddyser/flux-klein-9b-Biglove-Collection",
+      "revision": "6f20a399ba143d389eb3a84621294d1a1253d18f",
+      "files": 18,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-78b137c3fa29459ec007",
+      "repo": "meituan-longcat/LongCat-Image",
+      "revision": "d2ea50b79a930074c37b9b97ce45e3b2ea8cf4d8",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-346f7d83b20ec8be6cd4",
+      "repo": "XLabs-AI/flux-RealismLora",
+      "revision": "1965e17d2e745fcbf8f4004bdbdf603421ef37a8",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d3d20cced2c5c4da3805",
+      "repo": "prithivMLmods/Qwen-Image-Edit-2511-Unblur-Upscale",
+      "revision": "365faf9244e381bf5ac1a6d124eb2a1d1ed857ff",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-95cd1d8f32d03681d661",
+      "repo": "ModelsLab/FLUX.2-klein-9B",
+      "revision": "04fb1c9d319931d1891a3fa3342c0da4970599e9",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6e6ef3058a1c68319903",
+      "repo": "ostris/krea2_turbo_training_adapter",
+      "revision": "64ba06d2354120be472d26380247c971b2fb6af3",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-144b6cc62e4db9056fe2",
+      "repo": "unsloth/Qwen-Image-Edit-2509-GGUF",
+      "revision": "a349e7937e24465cf9181f3bdd5183364a0e4236",
+      "files": 16,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-11ee7511ff54d0724ac1",
+      "repo": "huanzi05/stable-diffusion-2-1-base",
+      "revision": "f71d7867a2745c420aa93441638b119c85995963",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-32a59a4ff232ac31b3f0",
+      "repo": "unsloth/FLUX.1-schnell-GGUF",
+      "revision": "65b3e21589c5dc66402b02a079208201ae9fcfc3",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-92f6b3c94ac5f289613b",
+      "repo": "lllyasviel/control_v11p_sd15_inpaint",
+      "revision": "c96e03a807e64135568ba8aecb66b3a306ec73bd",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f6a979a28d087819cb2a",
+      "repo": "Laxhar/noobai-XL-1.0",
+      "revision": "70dee4d903b83cc6d1e8d12e65051cfdbcf54ab3",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-89c5e505eee8daf1deb2",
+      "repo": "FireRedTeam/FireRed-Image-Edit-1.1",
+      "revision": "3bc3f2a12722fd9883eb6357500de191d56baaf5",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-deb777259b2e172cbd2e",
+      "repo": "jiaowobaba02/stable-diffusion-v2-1-GGUF",
+      "revision": "fc40e9a64024b7760e69ae1b11439df98ab572b1",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8179a2ca68b24b021c7b",
+      "repo": "segmind/SSD-1B",
+      "revision": "60987f37e94cd59c36b1cba832b9f97b57395a10",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-0c926c48cc21b43d987c",
+      "repo": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+      "revision": "e102b3591cc82e97071b8b4cb90d834d0c487207",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6a09b94b79bcf82c427b",
+      "repo": "prithivMLmods/Qwen-Image-Edit-2511-Object-Adder",
+      "revision": "b9ea9186aaf04011270165be06c4c5b22bc2b009",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-61b87cd78b67c1f403d3",
+      "repo": "LeFeujitif/sandbox",
+      "revision": "04044c99475fc2a7cce88ceff0e1fd4defa4bcce",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-59180e401556155c9c25",
+      "repo": "DiffusionLight/TurboLoRA",
+      "revision": "43c888716ed96545536013698006eb45b36b7a33",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3ca35ab4a0f9afdccdb0",
+      "repo": "tarn59/pixel_art_style_lora_z_image_turbo",
+      "revision": "0a5092d1619664d94a5a36784f92db84b3ae62bd",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-10e0a6874b16b6ec9b38",
+      "repo": "sd2-community/stable-diffusion-2",
+      "revision": "2511124fabf8bf30c0ca9dccd9729e7f0f2fa669",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b0ee2406d7d894464e84",
+      "repo": "huanngzh/mv-adapter",
+      "revision": "6de4033df6b53366f3c009d22f5ec434bb55e59f",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f0555907f4a15557813f",
+      "repo": "lllyasviel/control_v11p_sd15_canny",
+      "revision": "115a470d547982438f70198e353a921996e2e819",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-2c006e858356d47045e6",
+      "repo": "digiplay/majicMIX_realistic_v7",
+      "revision": "94a3d523a255370830a323103953a2181af9347f",
+      "files": 9,
+      "access": "public",
+      "profile": "sd15"
+    },
+    {
+      "id": "visual-34c2cc83e38a06bf3ad0",
+      "repo": "alimama-creative/FLUX.1-Turbo-Alpha",
+      "revision": "7b29bf041b413949089d78b826a5c9726e3c8e50",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c9c2874778685172a145",
+      "repo": "thedeoxen/Krea-2-pose-controlnet",
+      "revision": "1da9762ca46e6c9e4014b309bf0147889f10982a",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-cc08953b9372e88abf05",
+      "repo": "sd2-community/stable-diffusion-2-1",
+      "revision": "bb2154823665391b4fb29b0b9cf82a198964ee05",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-14b91e1c2278d1d57160",
+      "repo": "Shilin-LU/VINE-R-Enc",
+      "revision": "0c255688e032e4318c700c485c0625367b70908c",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5d13e22d4f63e25c4bda",
+      "repo": "thedeoxen/refcontrol-FLUX.2-klein-9B-reference-pose-lora",
+      "revision": "e562c72fff89579fab70b05b03669dd51dbd2ff1",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-4aea8086346d31b7549f",
+      "repo": "stabilityai/stable-cascade",
+      "revision": "a89f66d459ae653e3b4d4f992a7c3789d0dc4d16",
+      "files": 25,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-bbdd9a042f3231e0201c",
+      "repo": "wcde/Z-Image-Turbo-DeJPEG-Lora",
+      "revision": "a963b554171a35895660af26fe9e931994fb9587",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b56118a13e4398dcf242",
+      "repo": "prithivMLmods/QIE-2511-Studio-DeLight",
+      "revision": "a5c2440989ba6a025ac99acac095369486e32774",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a49ed200ad798286e30e",
+      "repo": "xFutureTechx/BackMixes",
+      "revision": "80596338bf0e90818208bd63f5cb12bcf33eb2c7",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-12adbbe068c9c51dcd6f",
+      "repo": "calcuis/sd3.5-large-gguf",
+      "revision": "8ee01e325c280ae89852a234ca5949fb7f756cc6",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3ea7d558f48d4338ff4d",
+      "repo": "alibaba-pai/Z-Image-Fun-Lora-Distill",
+      "revision": "f9a4db417ab7d8c1c5ffa9c0f03bdd72ae4a070c",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-466ff3ceb2b417a3cdad",
+      "repo": "unsloth/ERNIE-Image-Turbo-GGUF",
+      "revision": "a38270280633a5d318a9f51c18ef95eefb07c423",
+      "files": 19,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8256fe47a7c2cf0528e9",
+      "repo": "lllyasviel/control_v11p_sd15_mlsd",
+      "revision": "f6d481b1e7346b5067de10288329e64cb4d39537",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b2e21a629f2510e70ae8",
+      "repo": "LyliaEngine/illustrijGEN_2",
+      "revision": "5e637d38630a2bc6b78527dce34e76daa83642ae",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8ab2f4b6c134c829a8e1",
+      "repo": "timdrnl/FLUX.2-klein-9B-SNOFS",
+      "revision": "e8dc41b7e1872e328e9d6cc0fa5d68ab808003a3",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-cb945fd30dd2931d96bf",
+      "repo": "city96/HiDream-I1-Fast-gguf",
+      "revision": "35b44ecb8a958abfa3f6b17f28d8a094f133eb57",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-2f76cb2522f354393e3f",
+      "repo": "DiffSynth-Studio/Qwen-Image-Edit-F2P",
+      "revision": "49a5c85ec6ec1bbed9e43ea17c0ee1a5c3936d7c",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8fd13a24ef94e633360c",
+      "repo": "mradermacher/PromptEnhancer-Img2img-Edit-i1-GGUF",
+      "revision": "7802914e8f220fb0c60e7b55f31021f848421835",
+      "files": 24,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-cf9d5241090088728ff6",
+      "repo": "1038lab/Qwen-Image-Edit-2511-FP8",
+      "revision": "f0487a2fd231fbf91b5267650cde228aeb4441b4",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3a80354593a5ee89a90b",
+      "repo": "unsloth/Z-Image-Turbo",
+      "revision": "dd538957de57d0ca305fbbb7c4de7f9d856be726",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f82a70128f5a922c2117",
+      "repo": "nunchaku-ai/nunchaku-qwen-image-edit-2509",
+      "revision": "e93a5fb77403d02a5a73c7cc8707b292c6ebc659",
+      "files": 20,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f8c901f182a3ad9443ca",
+      "repo": "artificialguybr/ColoringBookRedmond-V2",
+      "revision": "0e67e0de2b603db085e525e7f6194b24dc60033d",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d850c2ac58fb3580f7a8",
+      "repo": "RunDiffusion/Juggernaut-XL-v8",
+      "revision": "5c38059bf38387bed17f70e5c1e5c00544caf41e",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-fb52cf35c2b82367c23e",
+      "repo": "strangerzonehf/Flux-Ultimate-LoRA-Collection",
+      "revision": "e2583267514bab250c754df20dfc6f2f0af3db6e",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b144e457a9ce4067ed24",
+      "repo": "sd2-community/stable-diffusion-2-1-base",
+      "revision": "4e63672c03103b6c636b8fb4119ba982469b2955",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f389646dc25cc28e452e",
+      "repo": "xiaolxl/GuoFeng4_XL",
+      "revision": "cf6f0dc69d1a68a6a66fffb958af71ea3184c4b9",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f8464dc5ced2d845e8ab",
+      "repo": "gsdf/Counterfeit-V2.5",
+      "revision": "93c5412baf37cbfa23a3278f7b33b0328db581fb",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-53561aa80c182be7a5d1",
+      "repo": "unsloth/FLUX.2-klein-base-4B-GGUF",
+      "revision": "5fd6513800b1f13016fab83600b392a35f29d56d",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8c3b8f1ef9d006a64674",
+      "repo": "prithivMLmods/Qwen-Image-Edit-2511-Object-Remover",
+      "revision": "3d92218a37c01592db63ff95ea95bb07b4508ddb",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c1fe49c0692412d0cd49",
+      "repo": "calcuis/hunyuanimage-gguf",
+      "revision": "58e0ab0fde518f423953522842841347bc6e8686",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-929ce98fba5d95b4a2c8",
+      "repo": "zai-org/GLM-Image",
+      "revision": "2c433cc0cbc293bde2ac8ca9624f279b5d23fcf4",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-df79cf87c67e06097328",
+      "repo": "mlx-community/Qwen-Image-2512-4bit",
+      "revision": "d1f150ea87ea8a468cd962f81cf4c14c17cc5678",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-9ea232632d3ff600b662",
+      "repo": "calcuis/kontext-gguf",
+      "revision": "76b1b462e108f17db9571f40d2903e5e6ad14b04",
+      "files": 54,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b89415872c1864f2a6cc",
+      "repo": "Lykon/dreamshaper-xl-1-0",
+      "revision": "41e6644752a8c9aa63930e6043c4fd83c7708420",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a41c94505ce722aa6188",
+      "repo": "unsloth/FLUX.1-Kontext-dev-GGUF",
+      "revision": "3cd0dacb2f0b25df14be82287abc5e3c21a5928c",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-0d924d7e1484f2d545c9",
+      "repo": "unsloth/Z-Image-Turbo-unsloth-bnb-4bit",
+      "revision": "46c16987e6b5ede9c1108441f79c2823038b86a1",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-286c340bfed8386b0498",
+      "repo": "Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro-2.0",
+      "revision": "5d700aaad96c5ddcdf8a38ef9b22a82aac2c38e5",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c92c869eebe214f4c08a",
+      "repo": "Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro",
+      "revision": "b8f5aa82147723080efc9221f4fa5cc030dd38c4",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-70f922f366daefb583f2",
+      "repo": "gokaygokay/Krea-2-Realism-LoRA",
+      "revision": "32f0436ac10e985134364e7555898c9f121a46ce",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-35cea72652b6ee463fcb",
+      "repo": "calcuis/flux1-gguf",
+      "revision": "f9b480cf70458b2e35505a95439ccdca9278f97b",
+      "files": 29,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-1774fa46f6861560caa4",
+      "repo": "nunchaku-ai/nunchaku-qwen-image",
+      "revision": "4d9f4f667ea571ab172e0ee29ac2c27b82a41a6b",
+      "files": 12,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8a3f5610012cd7e50762",
+      "repo": "Quiho/best-from-civitai",
+      "revision": "b89bb9580cb0a7874b7999fc19d38efb5258fa7c",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-bfcd836bfb05619f1445",
+      "repo": "pmczip/Krea2Raw_Loras",
+      "revision": "0e73d35136ff876ab5a994a847a871d23c2a8a48",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3f5c3185cf6467a8e8a3",
+      "repo": "shootstuff/LUSTIFY-v2.0",
+      "revision": "d5c684aed488d3785cfce055335a11fb03e868f8",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-fbee0b0bf7f55e3c0d16",
+      "repo": "prithivMLmods/Qwen-Image-Edit-2511-Polaroid-Photo",
+      "revision": "6e9d2f4b9fc0b9a1484cccade8ffdcfed13bd2a1",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-bc6560523d540a0e461f",
+      "repo": "drbaph/Z-Image-Turbo-FP8",
+      "revision": "935d8c79249cdf6053daa13c37bf8246e0f7d8f6",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-41873d0808d5abfe60ed",
+      "repo": "sensenova/SenseNova-U1-8B-MoT-Infographic-V3",
+      "revision": "5489f9325e31a29793f8bac01400fb7f79b53b9e",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a6953120a0bcff36fa4b",
+      "repo": "lightx2v/Z-Image-Turbo-Quantized",
+      "revision": "89fd15f05700007717fbf68de80f483cd0b3ecdf",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a796ae86438e9c89da45",
+      "repo": "lllyasviel/control_v11p_sd15_lineart",
+      "revision": "8a158f547e031c5b8fbca19ead09a74767ff4db0",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-1475d1708c8fed7ae7db",
+      "repo": "fal/FLUX.2-dev-Turbo",
+      "revision": "9ee51cd87578162cf8d02355a870bc5f4570045c",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-1bab7c8fcf65160efc12",
+      "repo": "emilianJR/epiCRealism",
+      "revision": "6522cf856b8c8e14638a0aaa7bd89b1b098aed17",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c45031bac36b8c676dcd",
+      "repo": "rzgar/Bernini-R-LightX2V-4step-loras",
+      "revision": "c17ea315dcd83e3cd98f852f41be47deb58ad667",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-61eecb5fd49aae157566",
+      "repo": "thedeoxen/refcontrol-FLUX.2-klein-9B-reference-depth-lora",
+      "revision": "6a3cfaeac4125428486b10a2eabc103b0f119d40",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-55d43b225c1ca8576c1d",
+      "repo": "Raxephion/Krea2-Serendipity-V2",
+      "revision": "3f873a95e445e7fe1e3e3359438711168f43b626",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5ef7c05e79eab7ba48b0",
+      "repo": "city96/stable-diffusion-3.5-large-gguf",
+      "revision": "a2f64f3850d78119dbdae7fb81466fb1e2d8e8bd",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-360b57529719de7757e5",
+      "repo": "Comfy-Org/Wan_2.2_ComfyUI_Repackaged",
+      "revision": "c4f60d30c55a624e35427060fdd217579a6c1d77",
+      "files": 43,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-cd6293c0b0e9ed703226",
+      "repo": "MiniMaxAI/MiniMax-H3",
+      "revision": "42ed227ee7df40d41602854ae760620d6eb651fe",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c98d51759e34c8113a85",
+      "repo": "lightx2v/Minimax-h3-Turbo",
+      "revision": "3ec17a324ced54151364f24f8b5fb6bf7e26414f",
+      "files": 16,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-976f2399a062d2f269e8",
+      "repo": "Lightricks/LTX-2.3",
+      "revision": "5948be4ced3a4493d1f836df64378ff136ddb770",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-aebed3ff103061f58317",
+      "repo": "Abiray/MiniMax-H3-GGUF",
+      "revision": "9fc3454d3ebe1be1bade862cd4a5011f325a22cb",
+      "files": 25,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c708fa6f125f5d746595",
+      "repo": "unsloth/MiniMax-H3-GGUF",
+      "revision": "d629413c2e5b51b38c453668b75ca3b06ca92703",
+      "files": 18,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-af18f1f692c2cb4e076d",
+      "repo": "Lightricks/LTX-Video",
+      "revision": "8984fa25007f376c1a299016d0957a37a2f797bb",
+      "files": 27,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d74d8bdeaa867882d320",
+      "repo": "QuantStack/Wan2.2-T2V-A14B-GGUF",
+      "revision": "73eafba53a1a8f29254e4c77f92e74ea27d7cd6f",
+      "files": 27,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-97e5396a65a4e97af447",
+      "repo": "Lightricks/LTX-2.3-fp8",
+      "revision": "1d756cd27fa11c0896c4dfee093cd1bf36c7f7a1",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-de83deea55199cf46b1a",
+      "repo": "city96/Wan2.1-I2V-14B-480P-gguf",
+      "revision": "b4b6b3b3f0f64975fb33b1d5d1a46ca24e065f03",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6631ce5fdfbd8f171f73",
+      "repo": "city96/Wan2.1-FLF2V-14B-720P-gguf",
+      "revision": "0fef557a0a13cbe66000526d2161436e693de93a",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3b29baa18535ce7f4844",
+      "repo": "Lightricks/LTX-2",
+      "revision": "dfcc2108383fe1aaa0584bdf55d368a4bdadd90c",
+      "files": 44,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-150dc0c11427c2233a22",
+      "repo": "stabilityai/stable-video-diffusion-img2vid-xt",
+      "revision": "9e43909513c6714f1bc78bcb44d96e733cd242aa",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-525cf9c0549ec6032c16",
+      "repo": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
+      "revision": "0fad780a534b6463e45facd96134c9f345acfa5b",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-cd012b2a1154199ec2b0",
+      "repo": "FastVideo/FastVideo-FastH3-4-step-Preview-v1-VSA-DataFree",
+      "revision": "5ea076f35b84da4c3c82217112fa733d8eea2ae1",
+      "files": 32,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-11af16237cc168d2550d",
+      "repo": "joeygambino/MiniMax-H3-encoder-GGUF",
+      "revision": "faf0a82600ca485ee658b8c1d604da430d0293b0",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-7a91d871c3613310ece2",
+      "repo": "unsloth/LTX-2.3-GGUF",
+      "revision": "96e8ed4925ead3db9ff4d0084f165ef6a74f28d0",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-575a9ecf6fd3fd27221b",
+      "repo": "QuantStack/Wan2.2-I2V-A14B-GGUF",
+      "revision": "6c6717459277b9cd1f72579d78a0fd62a79e57dc",
+      "files": 25,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-48e148b10727a7a33e0a",
+      "repo": "larryvrh/MiniMax-H3-Turbo-Lora",
+      "revision": "43a74557ac3f6539db8e0f2a959d03feb7a81480",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-0a914184818ca58f2b6e",
+      "repo": "SulphurAI/Sulphur-2-base",
+      "revision": "65587bbb38c700622f9434a16e732c8b280c115e",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f443042bc83ac1c0d8db",
+      "repo": "Abiray/Minimax-H3-nvfp4-INT4-INT8-Convrot",
+      "revision": "908eccad7e68751190d04c171956f163bfeed741",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5760fffc81cb921f132e",
+      "repo": "drbaph/MiniMax-H3-Turbo-Lora-ComfyUI",
+      "revision": "633e6c48cd05f7800e2cb2c007b5c9023b92c576",
+      "files": 25,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ec6a01bf1271b47af478",
+      "repo": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "revision": "b8fff7315c768468a5333511427288870b2e9635",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a4555b564a9ddf0447d8",
+      "repo": "OpenMOSS-Team/MOVA-360p",
+      "revision": "eab4aa91d6d5eb515e259a0c8533c90062b117a5",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-78d4bf40b7989b704cac",
+      "repo": "Wan-AI/Wan2.2-T2V-A14B-Diffusers",
+      "revision": "5be7df9619b54f4e2667b2755bc6a756675b5cd7",
+      "files": 28,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-0a5e71f4b8c8f015ac01",
+      "repo": "Wan-AI/Wan2.2-I2V-A14B-Diffusers",
+      "revision": "596658fd9ca6b7b71d5057529bbf319ecbc61d74",
+      "files": 28,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-acdcd094694bfb053716",
+      "repo": "Abiray/MiniMax-H3-Pruned-GGUF",
+      "revision": "76061e7fe4866dbc68903bfdf852430f0f1b2487",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-e6cfc2a6e074c2f97f56",
+      "repo": "samuelchristlie/Wan2.1-VACE-1.3B-GGUF",
+      "revision": "839f67aa27bb81ce7f0dc6005132d32df64e14df",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-06d1c8a5ac2ea5768d38",
+      "repo": "samuelchristlie/Wan2.1-T2V-1.3B-GGUF",
+      "revision": "5a512b15fc35d1b67a074cfe55a591be9e9ef9b5",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-dabb04ae6de17bf34345",
+      "repo": "comfyicu/LTX-2.5",
+      "revision": "1026e00f808dbd9601911479b22d65b760737dc8",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c81c945c068eb82970f7",
+      "repo": "WarmBloodAban/Minimax-h3_Singularity",
+      "revision": "2a7ee743d7926811bfa87d174021b0119451133c",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ea96fbbf8cad54ba5d84",
+      "repo": "lightx2v/Wan2.2-Distill-Loras",
+      "revision": "570044187a5219776ef30a5c60c6f76428a3a10a",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3b12afdd680c7730fdf8",
+      "repo": "Abiray/Sulphur-2-base-GGUF",
+      "revision": "2f3c86a0099a35e2afe8b9f6e6f255900d4fd67b",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-582793f4d8c4fdf55390",
+      "repo": "Wan-AI/Wan2.1-I2V-14B-720P-Diffusers",
+      "revision": "eb849f76dfa246545b65774a9e25943ee69b3fa3",
+      "files": 21,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-fbdaa49ca5a40eccdae3",
+      "repo": "FastVideo/FastWan2.2-TI2V-5B-FullAttn-Diffusers",
+      "revision": "3e187042a324f6f5fb68fd22110a78725253de8f",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a5c1624d5378ca3c0669",
+      "repo": "bullerwins/Wan2.2-I2V-A14B-GGUF",
+      "revision": "c95ab6c210a60ff915aa3f7cb0fa07300b0b2f36",
+      "files": 20,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c907857be7819ba3b06b",
+      "repo": "Wan-AI/Wan2.1-T2V-14B-Diffusers",
+      "revision": "38ec498cb3208fb688890f8cc7e94ede2cbd7f68",
+      "files": 18,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-7b0130358f8bdf810525",
+      "repo": "stabilityai/stable-video-diffusion-img2vid",
+      "revision": "9cf024d5bfa8f56622af86c884f26a52f6676f2e",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-beafee45bc51f8df3ec2",
+      "repo": "Abiray/LTX-2.5-Distilled-GGUF",
+      "revision": "7b0c2025441f1bf12c18eac375ad21f5e3d3c9e0",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-3897b520df2349b96617",
+      "repo": "leejet/MiniMax-H3-GGUF",
+      "revision": "d9c4c6312b4728a68a15a35626d84775a6523783",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-55f3bd835ce303803a8d",
+      "repo": "Wan-AI/Wan2.1-I2V-14B-480P-Diffusers",
+      "revision": "b184e23a8a16b20f108f727c902e769e873ffc73",
+      "files": 21,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-29da5a1e177c28e2ed36",
+      "repo": "QuantStack/Wan2.2-TI2V-5B-GGUF",
+      "revision": "57437632ddd08bdcbd1508c866aa22e126ed51d2",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-ecb9a474d31295b046ca",
+      "repo": "alibaba-pai/MiniMax-H3-Acc-LoRAs",
+      "revision": "335001fb9e5455d68a0caa18ec2e319072150328",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-24a47fea2649c05600cc",
+      "repo": "molbal/MiniMax-H3-GGUF",
+      "revision": "b45874371c61c49bf04096602f5527aac71b360b",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c15a40bda0f87e53de7f",
+      "repo": "IPostYellow/TurboWan2.1-T2V-1.3B-Diffusers",
+      "revision": "0bb54233349212ddb9b020e8f1059aed75cabc88",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-7c3c77d459862ff1bd7f",
+      "repo": "fal/MiniMax-H3-Realism-People-LoRA",
+      "revision": "039cc8579d7aa357a882d7f4111b25da4f72dccc",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-0299dae2a7cbccdf0aa1",
+      "repo": "unsloth/Wan2.2-TI2V-5B-GGUF",
+      "revision": "b5c2a3816e7056e57e200f6be726fb36ce523b49",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-4137af1d08468dd71fcc",
+      "repo": "Wan-AI/Wan2.1-I2V-14B-480P",
+      "revision": "6b73f84e66371cdfe870c72acd6826e1d61cf279",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-4da350daa8073497b1fe",
+      "repo": "nvidia/Cosmos3-Super-Image2Video",
+      "revision": "4f847566f3d3388fbf0ac07b99dd1a6432db9ecd",
+      "files": 29,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-175b8d289ba5480432ce",
+      "repo": "TenStrip/LTX2.3-10Eros",
+      "revision": "84a05a13610d78dbe4340d1be23fd8185e10f697",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-61097db30bc738c82881",
+      "repo": "Wan-AI/Wan2.1-T2V-14B",
+      "revision": "a064a6c71f5be440641209c07bf2a5ce7a2ff5e4",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-65d1953b2175406bda49",
+      "repo": "ibyteohdear/Lightricks-LTX-2",
+      "revision": "f2e88667cec5368a2cd3064432e96294db20912e",
+      "files": 38,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a6ddccb5bde13a69ff3f",
+      "repo": "magespace/Wan2.2-I2V-A14B-Lightning-Diffusers",
+      "revision": "c50a3127042289c1de9703c9d8df365f24b3a59a",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c6618b62f98e7648f851",
+      "repo": "Hearmeman/minimax-h3-loras",
+      "revision": "931f7258f0f628eb481333b88e0b7407d1ff3493",
+      "files": 11,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-405104a649365f6d4ca3",
+      "repo": "aptech0081/MiniMax-H3-Acc-LoRAs-ComfyUI",
+      "revision": "acd4775bfc614a38c764729399632de2f423e1e7",
+      "files": 3,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c5e970034a3b5b47bd5d",
+      "repo": "joeygambino/MiniMax-H3-curve-GGUF",
+      "revision": "defd1c4e4e5617fae5ddff0f4668f9ac20ef5348",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-2d3b534da99373901a01",
+      "repo": "city96/Wan2.1-T2V-14B-gguf",
+      "revision": "511cbce9f475a6ca0269be901d23b125f44f5c0d",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c221e769b3a4b1ba9d40",
+      "repo": "joeygambino/MiniMax-H3-x-Z-Image-native",
+      "revision": "113de7b82dfb34a9a8958077c94cd3787c9b782e",
+      "files": 15,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-1af29fe6b7e57afea37c",
+      "repo": "realrebelai/LTX-2.5_GGUFs",
+      "revision": "112436f97aaf99ce13ecb7b7eca7e2f6c128d3ec",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-9cb97f08dd225543f0f6",
+      "repo": "Lightricks/LTX-Video-ICLoRA-detailer-13b-0.9.8",
+      "revision": "a7bf6cae72c97a9afd7d6d9078aaa7ed1f8ae710",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-9750fcb04be0875f2662",
+      "repo": "vantagewithai/SCAIL-2-GGUF-ComfyUI",
+      "revision": "8d99a4251592b5e834169bf9faeebeb36c553e07",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6de1b982b1448cd0424e",
+      "repo": "alibaba-pai/Wan2.2-Fun-Reward-LoRAs",
+      "revision": "98ccd8617f3101dc7ca388510dd7e65f5f42d91c",
+      "files": 4,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-caf78c0e1235c2701cf7",
+      "repo": "realrebelai/SCAIL-2_GGUF",
+      "revision": "16e572157fbc2ffa76782dd5134a9262dc1a40cf",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-721e46c79acc7a89926e",
+      "repo": "calcuis/wan-gguf",
+      "revision": "a06b67e9de7a93117b8734c24bcae740dfd2cdad",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-73dfccbadd0a3a35172f",
+      "repo": "Jojocodex/minimax-h3-spatial-physics-lora",
+      "revision": "476b24df28b9b7cc5481b750469698f5cc4b0558",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-171e87b61dc88c90cd06",
+      "repo": "QuantStack/LTX-2.3-GGUF",
+      "revision": "4b420da2a92451eaeec5cd44e769007198acff88",
+      "files": 27,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5cca06ace41a5dd637b5",
+      "repo": "nyxia/H3-Loras",
+      "revision": "e150dab8c69aa34245d19c75a1afbe7f371946a0",
+      "files": 37,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5a9f22d425d1b88ca0f3",
+      "repo": "QuantStack/Wan2.1_14B_VACE-GGUF",
+      "revision": "18432c8dcafd3170bc92ba933510b3bad440f3fe",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-790826d14f610e9fc03e",
+      "repo": "city96/Wan2.1-I2V-14B-720P-gguf",
+      "revision": "ea36d5421cc5f5c57e50067a432a8b2c16dd0dae",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-dfe4b2f080d716968dd1",
+      "repo": "Rabinovich/LongLive-2.0-5B-Diffusers",
+      "revision": "37664a64cfc38cdc5fabe88576961ef10646e4f1",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-0ff5318f4df47f1c19e6",
+      "repo": "jayn7/WAN2.2-I2V_A14B-DISTILL-LIGHTX2V-4STEP-GGUF",
+      "revision": "338fb8eedd8f485c9188cf1b1de541721fc81d66",
+      "files": 57,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-77195ea138d21b3b77e5",
+      "repo": "rzgar/minimax_h3_fl2v_lightx2v_4step_int8-convrot_comfy",
+      "revision": "bb1efe7dd3dcf68d0b754d7faaa3852439d0e6fe",
+      "files": 12,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f9f8af0b329711fe8d16",
+      "repo": "Wan-AI/Wan2.1-I2V-14B-720P",
+      "revision": "8823af45fcc58a8aa999a54b04be9abc7d2aac98",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-7ae04ecde791917b72aa",
+      "repo": "ali-vilab/i2vgen-xl",
+      "revision": "39e1979ea27be737b0278c06755e321f2b4360d5",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-532f319230a9393b6c3e",
+      "repo": "ibyteohdear/Lightricks-LTX-2-DISTILLED-10-Eros",
+      "revision": "096f1dde31f51eb1b99bcf882643e6c49ebc8360",
+      "files": 48,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-32995b420dd704cb4fdb",
+      "repo": "Lightricks/LTX-Video-0.9.5",
+      "revision": "e58e28c39631af4d1468ee57a853764e11c1d37e",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-c96d9a5241391435b183",
+      "repo": "joyfox/LTX-2.3-Transition-LORA",
+      "revision": "685118b10fdc2aea63b47bbc6c395fe8c602db53",
+      "files": 1,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b2f53b0e8fb08a930433",
+      "repo": "robbyant/lingbot-world-fast",
+      "revision": "b7a1db2da9bd3ba675ee01c228f41db0309b981e",
+      "files": 16,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6b8bdc528fca0b63e57c",
+      "repo": "brurpo/DaSiWa-MiniMax-H3-Hybrid",
+      "revision": "f831fe1439fae8fcdacfb4047a20753541727ba0",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-5f450e30771cd16cd32a",
+      "repo": "calcuis/wan-1.3b-gguf",
+      "revision": "0652f175f44055eb60cca26dd7cd89c14abe22ce",
+      "files": 48,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-bb0eb80988372fd8f8df",
+      "repo": "realrebelai/Wan-Animate-2_GGUFs",
+      "revision": "46b287218ffe4223cfedba0c06e36db356d34ff9",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-b9d136d9bd9f6320baa8",
+      "repo": "zai-org/CogVideoX-5b",
+      "revision": "8fc5b281006c82b82d34fd2543d2f0ebb4e7e321",
+      "files": 5,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-a06af34bf003476462c5",
+      "repo": "t8star/Vdn-Minimax-H3-Comfy",
+      "revision": "d6aa5dfc669a749dc9364a36f3b6d4d1545a53e8",
+      "files": 9,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-831b5e0837488ecf9258",
+      "repo": "ByteDance/AnimateDiff-Lightning",
+      "revision": "027c893eec01df7330f5d4b733bc9485ee02e8b2",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-24256fe52d98682ae03c",
+      "repo": "zai-org/CogVideoX-5b-I2V",
+      "revision": "a6f0f4858a8395e7429d82493864ce92bf73af11",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-4ebec1da5c23c7faccf9",
+      "repo": "Wan-AI/Wan2.1-VACE-14B",
+      "revision": "539c162b1387eac9dc4c20bd3f74671309e76a4c",
+      "files": 7,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-1e9dcf9421e3f2c1d9e1",
+      "repo": "abakanai/Minimax_h3_hybrid",
+      "revision": "045e37e36fb6e83cf433d1c9a8f90c2cba6560b7",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-d8b06cc354fe36b3780d",
+      "repo": "Patarapoom/h3-vbvr",
+      "revision": "ed6401b83e33e7adf8909fdd2188490cd6cce28f",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-6812ede5dfe7a4faa68a",
+      "repo": "Jojocodex/minimax-h3-Camera-Motion-lora",
+      "revision": "fac88d6196ca84f3cee014ec79c71dc73572ab0a",
+      "files": 2,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8420c0c8394a4276d854",
+      "repo": "lxxxy6/LTX-2.5",
+      "revision": "3506f52caf688795fc35edbf0d1b197bc30f3df1",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-bb0e8d47ac67a8b775f4",
+      "repo": "calcuis/ltxv-gguf",
+      "revision": "0990265881485e3419312141f6a1974ab2f7a4c6",
+      "files": 64,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-fcf204ec592339b5be67",
+      "repo": "NullpoLab/AnimeGen-I2V-GGUF",
+      "revision": "fa6e65aa71021f96cba36eda1979114b7495e562",
+      "files": 8,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-e949525b29f32c4804cb",
+      "repo": "Wan-AI/Wan2.1-VACE-1.3B-diffusers",
+      "revision": "ec4d2cb062b548996b179d493fdd05340de702a1",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-27b5b4c08821ff9d688e",
+      "repo": "bullerwins/Wan2.2-T2V-A14B-GGUF",
+      "revision": "f021e94acfde37bc70bf7b27295b0fa5c1f8e270",
+      "files": 20,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-8ac4b3c2f0ba33aaaa84",
+      "repo": "CornLogic/10EROS-INT8",
+      "revision": "7edf88254ff91728deb121873751a5fc28581e38",
+      "files": 6,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-02699fad53e9ff4ad31b",
+      "repo": "rockerBOO/minimax-h3-nvfp4-convrot",
+      "revision": "d06455b58c5f84bb7831536a672245d6b2b0d014",
+      "files": 10,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-fc7588d6d1f28eb7ec77",
+      "repo": "vantagewithai/LTX2.3-10Eros-GGUF",
+      "revision": "177b526189aedc6710cc5c270bd744ae16a655bd",
+      "files": 12,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-27117c10ee557137a5f7",
+      "repo": "ChrisColeTech/minimax-h3-turbo-GGUF",
+      "revision": "c3c4457cb96205dceee51af66a0b6673ece22f83",
+      "files": 13,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-f5819edbb72e9cd0ea30",
+      "repo": "city96/Wan2.1-Fun-14B-InP-gguf",
+      "revision": "94fde0756da7443cff5902a610d59645144eaaf6",
+      "files": 14,
+      "access": "public",
+      "profile": null
+    },
+    {
+      "id": "visual-76b60e16f60037e52cb1",
+      "repo": "tolgacangoz/Wan2.2-S2V-14B-Diffusers",
+      "revision": "f1e2c12a7647d82bc34734a173cd3cbfd51da7a0",
+      "files": 12,
+      "access": "public",
+      "profile": null
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,57 @@
+{
+  "engines": {
+    "whisper": {
+      "release": "b4938",
+      "source": "https://github.com/ggml-org/whisper.cpp/releases/tag/b4938",
+      "assets": {
+        "win32-x64": {
+          "url": "https://github.com/ggml-org/whisper.cpp/releases/download/b4938/whisper-bin-x64.zip",
+          "bytes": 8361840,
+          "sha256": "c2a4b60edb11f7e11a9191ffb50929535527d4d91c9903dbe3e554583bbbc63d",
+          "binary": "tools-win32-x64/whisper/Release/whisper-cli.exe"
+        },
+        "linux-x64": {
+          "url": "https://github.com/ggml-org/whisper.cpp/releases/download/b4938/whisper-bin-ubuntu-x64.tar.gz",
+          "bytes": 9503425,
+          "sha256": "f4cfc1f969a13805908fb72043ce7cc896eb42e0b8afbe841dc8e7298923b061",
+          "binary": "tools-linux-x64/whisper/whisper-bin-ubuntu-x64/whisper-cli"
+        },
+        "darwin-arm64": {
+          "build_from_source": true,
+          "binary": "tools-darwin-arm64/whisper/whisper-cli"
+        }
+      },
+      "source_archive": {
+        "url": "https://api.github.com/repos/ggml-org/whisper.cpp/tarball/371b5a7561823ab2bb32142d2751e35e7534727b",
+        "sha256": "59f16e008b0fe4f283b5bede96952aed5a8f2e16c2f2f721f263218982a153e7",
+        "bytes": 9131069,
+        "commit": "371b5a7561823ab2bb32142d2751e35e7534727b"
+      }
+    },
+    "diffusion": {
+      "release": "master-853-b68d586",
+      "source": "https://github.com/leejet/stable-diffusion.cpp/releases/tag/master-853-b68d586",
+      "assets": {
+        "darwin-arm64": {
+          "url": "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-853-b68d586/sd-master-b68d586-bin-Darwin-macOS-26.6.2-arm64.zip",
+          "bytes": 50205119,
+          "sha256": "21e5486b9f8ae1a2d898d958e9a060b7a2d979c3b536d57095085ea88b9636f4",
+          "binary": "tools-darwin-arm64/diffusion/sd-cli",
+          "min_darwin_kernel": 25
+        },
+        "win32-x64": {
+          "url": "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-853-b68d586/sd-master-b68d586-bin-win-cpu-x64.zip",
+          "bytes": 24182816,
+          "sha256": "824733ffc58e29a40f61c75ce7fb7e15a2fb05ab2031027b1d80a9e4430f29be",
+          "binary": "tools-win32-x64/diffusion/sd-cli.exe"
+        },
+        "linux-x64": {
+          "url": "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-853-b68d586/sd-master-b68d586-bin-Linux-Ubuntu-24.04-x86_64.zip",
+          "bytes": 33188284,
+          "sha256": "fcdd33158b241cb6ea1931dd83d2650512e98c9d806c589038be801d3a056928",
+          "binary": "tools-linux-x64/diffusion/sd-cli"
+        }
+      }
+    }
+  }
+}

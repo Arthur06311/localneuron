@@ -1,0 +1,203 @@
+.exo-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel, var(--paper));
+  margin: 28px 0 14px;
+}
+.exo-overview > div {
+  padding: 23px 26px;
+  display: grid;
+  gap: 13px;
+}
+.exo-overview > div + div {
+  border-left: 1px solid var(--line);
+}
+.exo-overview span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.exo-overview strong {
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -1px;
+}
+.exo-explanation {
+  color: var(--muted);
+  max-width: 800px;
+}
+.exo-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.exo-columns .panel {
+  margin-top: 15px;
+}
+.exo-connect p,
+.exo-machines p,
+.exo-models > p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.exo-connect details {
+  border-top: 1px solid var(--line);
+  padding-top: 17px;
+  margin-top: 20px;
+}
+.exo-copy {
+  margin-top: 11px;
+}
+.exo-connect progress {
+  width: 100%;
+  height: 8px;
+  accent-color: var(--accent, var(--green));
+  margin-bottom: 15px;
+}
+#exo-message {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  margin-top: 14px;
+}
+.exo-node {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.exo-node-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--accent, var(--ink));
+  flex-shrink: 0;
+}
+.exo-node strong {
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.exo-node p {
+  margin: 5px 0;
+  font-size: 12px;
+}
+.exo-node span:not(.exo-node-icon) {
+  font-size: 12px;
+  color: var(--muted);
+}
+.exo-node-number {
+  margin-left: auto;
+}
+.exo-empty {
+  padding: 35px 8px;
+  line-height: 1.8;
+  font-size: 13px;
+  color: var(--muted);
+}
+.exo-help {
+  margin-top: 22px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.exo-help li {
+  padding: 4px 0;
+}
+.exo-help ol {
+  padding-left: 20px;
+}
+.exo-model-controls {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr 0.8fr 1fr;
+  gap: 15px;
+  align-items: end;
+}
+.exo-model-controls label {
+  font-size: 12px;
+}
+.exo-model-controls input,
+.exo-model-controls select {
+  font-size: 12px;
+  min-width: 0;
+  width: 100%;
+}
+.exo-model-controls > label {
+  min-width: 0;
+}
+.exo-model-info {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 18px 0;
+  overflow-wrap: anywhere;
+}
+.exo-instance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding: 20px 0;
+  gap: 20px;
+}
+.exo-instance:first-child {
+  margin-top: 27px;
+}
+.exo-instance strong {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.exo-instance p {
+  font-size: 12px;
+  color: var(--muted);
+}
+.exo-instance .actions {
+  margin: 0;
+  flex-shrink: 0;
+}
+@media (max-width: 1100px) {
+  .exo-columns {
+    grid-template-columns: 1fr;
+  }
+  .exo-model-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 720px) {
+  .exo-overview > div {
+    padding: 17px 12px;
+  }
+  .exo-overview strong {
+    font-size: 22px;
+  }
+  .exo-overview span {
+    font-size: 11px;
+  }
+  .exo-model-controls {
+    grid-template-columns: 1fr;
+  }
+  .exo-instance {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.exo-error {
+  overflow-wrap: anywhere;
+  max-width: 720px;
+}
+
+.exo-selection { display: flex; flex-wrap: wrap; align-items: end; gap: 14px; margin: 22px 0; }
+.exo-selection label { flex: 1; min-width: 220px; }
+.exo-selection p { flex-basis: 100%; color: var(--muted); font-size: 13px; margin: 0; }
+.exo-address-list { padding: 16px; border: 1px solid var(--line); border-radius: 10px; }
+.exo-address-list button { max-width: 100%; overflow-wrap: anywhere; margin: 5px 0; }
+.exo-node > input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--accent); }
+#exo-local-settings, #exo-remote-settings { margin-top: 18px; }
+#exo-local-settings[hidden], #exo-remote-settings[hidden], #exo-install[hidden], [data-exo="start"][hidden] { display: none; }

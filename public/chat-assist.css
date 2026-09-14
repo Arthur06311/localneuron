@@ -1,0 +1,233 @@
+.chat-assist-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 0 0 5px;
+}
+.chat-assist-bar .quiet {
+  font-size: 12px;
+  padding: 6px 9px;
+  white-space: nowrap;
+}
+.chat-profile {
+  margin-left: auto;
+  min-width: 0;
+}
+.chat-profile select {
+  font: 12px system-ui;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 6px;
+  max-width: 210px;
+}
+.chat-tool-hint {
+  font-size: 10px;
+  color: var(--muted);
+  margin: 0 0 7px;
+  line-height: 1.5;
+}
+.chat-attachment-drafts {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
+  font-size: 12px;
+}
+.chat-attachment-drafts[hidden] {
+  display: none;
+}
+.chat-attachment-chip,
+.message-attachments span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 5px 9px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  background: var(--surface);
+}
+.chat-attachment-chip button {
+  padding: 0 4px;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+}
+.message-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+.chat-sources {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 14px 0;
+  font-size: 12px;
+}
+.chat-sources summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+.chat-sources small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.chat-sources blockquote {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-left: 2px solid var(--border);
+  max-height: 230px;
+  overflow: auto;
+}
+.chat-sources > div {
+  margin-top: 18px;
+}
+.chat-assist-dialog {
+  width: min(850px, 92vw);
+  max-height: 88dvh;
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.chat-assist-dialog::backdrop {
+  background: #05080dbb;
+}
+.chat-assist-dialog > p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.chat-assist-dialog input,
+.chat-assist-dialog textarea {
+  width: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 10px;
+  font: 13px/1.6 system-ui;
+  box-sizing: border-box;
+}
+.chat-assist-dialog label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0;
+}
+.chat-assist-dialog .actions {
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.prompt-workspace {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 24px;
+}
+.prompt-workspace aside {
+  border-right: 1px solid var(--border);
+  padding-right: 16px;
+}
+.prompt-workspace aside > div {
+  max-height: 350px;
+  overflow: auto;
+  margin-top: 10px;
+}
+.prompt-workspace aside button {
+  display: block;
+  text-align: left;
+  width: 100%;
+  padding: 9px 8px;
+  font-size: 12px;
+}
+.chat-search-result {
+  display: block;
+  text-align: left;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.chat-search-result span {
+  display: block;
+  font-size: 12px;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+.chat-message.search-target {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+.assist-error {
+  color: var(--danger);
+  font-size: 12px;
+}
+@media (max-width: 720px) {
+  .chat-assist-bar {
+    gap: 2px;
+  }
+  .chat-assist-bar .quiet {
+    padding: 5px 6px;
+    font-size: 11px;
+  }
+  .chat-profile {
+    width: 100%;
+    margin: 2px 0;
+  }
+  .chat-profile select {
+    width: 100%;
+    max-width: none;
+  }
+  .chat-tool-hint {
+    font-size: 9px;
+  }
+  .chat-assist-dialog {
+    padding: 18px;
+  }
+  .prompt-workspace {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .prompt-workspace aside {
+    border: 0;
+    padding: 0;
+  }
+  .prompt-workspace aside > div {
+    max-height: 130px;
+  }
+  .chat-assist-dialog input,
+  .chat-assist-dialog textarea {
+    font-size: 16px;
+  }
+  .chat-message .answer-actions {
+    flex-wrap: wrap;
+  }
+}
+#chat-attachment-files[hidden] {
+  display: none !important;
+}
+
+#toast {
+  top: 76px;
+  bottom: auto;
+  pointer-events: none;
+  max-width: min(380px, calc(100vw - 32px));
+}

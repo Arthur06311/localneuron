@@ -1,0 +1,2419 @@
+{
+  "checked_at": "2026-09-13T15:04:50.103Z",
+  "models": 1027,
+  "with_publisher_avatar": 915,
+  "with_monogram": 112,
+  "sources": [
+    {
+      "owner": "Qwen",
+      "name": "Qwen",
+      "source": "https://huggingface.co/Qwen",
+      "file": "0c74f4f564ec24d5fd552b63.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6215ca5692c0ecfba9186921/hrRM50-6XcdWgg2AKpENG.jpeg"
+    },
+    {
+      "owner": "mistralai",
+      "name": "Mistral AI_",
+      "source": "https://huggingface.co/mistralai",
+      "file": "a3c07c1b431ee7e2038ab8a6.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/634c17653d11eaedd88b314d/9OgyfKstSZtbmsmuG8MbU.png"
+    },
+    {
+      "owner": "google",
+      "name": "Google",
+      "source": "https://huggingface.co/google",
+      "file": "edc0c5c2cfc7c55342343b5d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/WtA3YYitedOr9n02eHfJe.png"
+    },
+    {
+      "owner": "HuggingFaceTB",
+      "name": "Hugging Face Smol Models Research",
+      "source": "https://huggingface.co/HuggingFaceTB",
+      "file": "911349a57721ca8b3921cd5c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/651e96991b97c9f33d26bde6/e4VK7uW5sTeCYupD0s_ob.png"
+    },
+    {
+      "owner": "deepseek-ai",
+      "name": "DeepSeek",
+      "source": "https://huggingface.co/deepseek-ai",
+      "file": "4cd5dd62104f4bfa1caa6bfa.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6538815d1bdb3c40db94fbfa/xMBly9PUMphrFVMxLX4kq.png"
+    },
+    {
+      "owner": "openai",
+      "name": "OpenAI",
+      "source": "https://huggingface.co/openai",
+      "file": "51767fd618f19941f3f2ae5a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/68783facef79a05727260de3/UPX5RQxiPGA-ZbBmArIKq.png"
+    },
+    {
+      "owner": "microsoft",
+      "name": "Microsoft",
+      "source": "https://huggingface.co/microsoft",
+      "file": "0013ee76ef5510baab75c1c1.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1583646260758-5e64858c87403103f9f1055d.png"
+    },
+    {
+      "owner": "meta-llama",
+      "name": "Meta Llama",
+      "source": "https://huggingface.co/meta-llama",
+      "file": "b202ff7373a9f14706f9cd4a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/646cf8084eefb026fb8fd8bc/oCTqufkdTkjyGodsx1vo1.png"
+    },
+    {
+      "owner": "inclusionAI",
+      "name": "inclusionAI",
+      "source": "https://huggingface.co/inclusionAI",
+      "file": "db77bc249eeb77362c57ddeb.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/662e1f9da266499277937d33/fyKuazRifqiaIO34xrhhm.jpeg"
+    },
+    {
+      "owner": "Kwaipilot",
+      "name": "Kwaipilot",
+      "source": "https://huggingface.co/Kwaipilot",
+      "file": "e99ff70487ed2cc2e7fabb7c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6438cc09c04b3b996ea73196/izeqDmgIB27KPxPkisPSF.png"
+    },
+    {
+      "owner": "allenai",
+      "name": "Ai2",
+      "source": "https://huggingface.co/allenai",
+      "file": "044ff8965799a955a4586cb8.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png"
+    },
+    {
+      "owner": "SicariusSicariiStuff",
+      "name": "Sica Rius",
+      "source": "https://huggingface.co/SicariusSicariiStuff",
+      "file": "c94ae0c240ecf55e98c9beaf.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6569216f9c96f1a47bf45788/mCLqmAs4dOjKdxNQVAp1w.png"
+    },
+    {
+      "owner": "huihui-ai",
+      "name": "huihui.ai",
+      "source": "https://huggingface.co/huihui-ai",
+      "file": "3215abfd760c1f0be4191277.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/66228dc4c8920ec3513dc81a/9stczijVqp6TgQduzT8kN.png"
+    },
+    {
+      "owner": "moonshotai",
+      "name": "Moonshot AI",
+      "source": "https://huggingface.co/moonshotai",
+      "file": "6c9ba98efd7d603b5476db93.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/641c1e77c3983aa9490f8121/X1yT2rsaIbR9cdYGEVu0X.jpeg"
+    },
+    {
+      "owner": "cognitivecomputations",
+      "name": "cognitivecomputations",
+      "source": "https://huggingface.co/cognitivecomputations"
+    },
+    {
+      "owner": "Nanbeige",
+      "name": "Nanbeige LLM Lab",
+      "source": "https://huggingface.co/Nanbeige",
+      "file": "5d925a7a92e65dcc2866b38c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/646f0d118ff94af23bc44aab/GXHCollpMRgvYqUXQ2BQ7.png"
+    },
+    {
+      "owner": "ibm-granite",
+      "name": "IBM Granite",
+      "source": "https://huggingface.co/ibm-granite",
+      "file": "b4c42cc14b9475ef087b9f6b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png"
+    },
+    {
+      "owner": "zai-org",
+      "name": "Z.ai",
+      "source": "https://huggingface.co/zai-org",
+      "file": "4e99514652b98edf65295a07.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62dc173789b4cf157d36ebee/i_pxzM2ZDo3Ub-BEgIkE9.png"
+    },
+    {
+      "owner": "mlabonne",
+      "name": "Maxime Labonne",
+      "source": "https://huggingface.co/mlabonne",
+      "file": "0b41eed57ab7548eaec2dc0e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg"
+    },
+    {
+      "owner": "01-ai",
+      "name": "01-ai",
+      "source": "https://huggingface.co/01-ai",
+      "file": "f9af49de1134c350c9e1e535.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6536187279f1de44b5e02d0f/-T8Xw0mX67_R73b7Re1y-.png"
+    },
+    {
+      "owner": "WhiteRabbitNeo",
+      "name": "WhiteRabbitNeo",
+      "source": "https://huggingface.co/WhiteRabbitNeo",
+      "file": "4f276b46a8e19c1baf5b0689.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/636c73fa8cb710cbc992348a/gZR36AC_iNcRgIS-9CFLK.png"
+    },
+    {
+      "owner": "aws-prototyping",
+      "name": "Amazon Web Services - Prototyping",
+      "source": "https://huggingface.co/aws-prototyping",
+      "file": "e6aa5f231b8a6daeeea6b702.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/652f210ba0f516a99dedf4db/TukjCZizzSVdko8EomEun.png"
+    },
+    {
+      "owner": "CohereLabs",
+      "name": "Cohere Labs",
+      "source": "https://huggingface.co/CohereLabs",
+      "file": "254d48df339ba25e3e499a79.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1678549441248-5e70f6048ce3c604d78fe133.png"
+    },
+    {
+      "owner": "Ateron",
+      "name": "Ateron",
+      "source": "https://huggingface.co/Ateron",
+      "file": "2f7a0815344e4ca71b9cf3b6.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6390f888de25f9eda571b0f2/Z9iKcAf4Qs5NgxnqWLzsi.jpeg"
+    },
+    {
+      "owner": "sophosympatheia",
+      "name": "Sophosympatheia",
+      "source": "https://huggingface.co/sophosympatheia",
+      "file": "6240fe66742834c856909861.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63b4b108103617b0a5b0f6f5/A5P1pKfMv5KhGvnpfo21G.png"
+    },
+    {
+      "owner": "AiCloser",
+      "name": "Ai Closer",
+      "source": "https://huggingface.co/AiCloser",
+      "file": "5b6d2bdbc4e0c8e92610d099.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/658e832dbec7ad26470df91e/XlZK3YFb5Bz-XHPvKg7Yt.jpeg"
+    },
+    {
+      "owner": "ai9stars",
+      "name": "AI9Stars",
+      "source": "https://huggingface.co/ai9stars"
+    },
+    {
+      "owner": "RWKV",
+      "name": "RWKV",
+      "source": "https://huggingface.co/RWKV",
+      "file": "78a25b4a260e1a74328d629b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62b3d8d651b07307bd12b7f0/NLw3Ub60wJmaI-gkF3JXd.png"
+    },
+    {
+      "owner": "poolside",
+      "name": "Poolside",
+      "source": "https://huggingface.co/poolside",
+      "file": "cb088b990ae779875b7b9fdd.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/699484cbe85a4b61cbc5ee0f/GpYWuz-CovEFgbPOW21dZ.png"
+    },
+    {
+      "owner": "rombodawg",
+      "name": "rombo dawg",
+      "source": "https://huggingface.co/rombodawg",
+      "file": "44a5f00ae1c9584321695abf.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/642cc1c253e76b4c2286c58e/fGtQ_QeTjUgBhIT89dpUt.jpeg"
+    },
+    {
+      "owner": "ClosedCharacter",
+      "name": "Closed-character",
+      "source": "https://huggingface.co/ClosedCharacter"
+    },
+    {
+      "owner": "Gryphe",
+      "name": "Gryphe Padar",
+      "source": "https://huggingface.co/Gryphe",
+      "file": "46eaab8fb9e95bbb09ce52fd.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64ae4107ad6218d51a2a7d0c/3dcor68aYBKEcTlOUHJpK.png"
+    },
+    {
+      "owner": "nbeerbower",
+      "name": "Nina Beerbower",
+      "source": "https://huggingface.co/nbeerbower",
+      "file": "cf1bf3a7cfec24228993c791.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/630bbbe786b8b9904c338d2b/DyquonZo3zyEzq_KS_K1T.png"
+    },
+    {
+      "owner": "tencent",
+      "name": "Tencent",
+      "source": "https://huggingface.co/tencent",
+      "file": "496ceb5200e49bc342db1dbd.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/Lp3m-XLpjQGwBItlvn69q.png"
+    },
+    {
+      "owner": "TheDrummer",
+      "name": "Drummer",
+      "source": "https://huggingface.co/TheDrummer",
+      "file": "297984cf389f2d9d12676cfa.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65f2fd1c25b848bd061b5c2e/9KR0rcumxWqnaXq3hPNKb.webp"
+    },
+    {
+      "owner": "agentica-org",
+      "name": "Agentica",
+      "source": "https://huggingface.co/agentica-org",
+      "file": "e54a9022e9abae3cdfcbdfca.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/652867b09903f7a1c9f7cbf1/s5AyAWwXFutyA_GY0Ct1e.jpeg"
+    },
+    {
+      "owner": "arcee-ai",
+      "name": "Arcee AI",
+      "source": "https://huggingface.co/arcee-ai",
+      "file": "3e6e7c56eb57663a801504a5.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6435718aaaef013d1aec3b8b/GZPnGkfMn8Ino6JbkL4fJ.png"
+    },
+    {
+      "owner": "ArliAI",
+      "name": "Arli AI",
+      "source": "https://huggingface.co/ArliAI",
+      "file": "81132fbe20ecaa64131a2e72.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6625f4a8a8d1362ebcc3851a/47WrP6UrAJPBboYMnA36j.png"
+    },
+    {
+      "owner": "THUDM",
+      "name": "THUDM",
+      "source": "https://huggingface.co/THUDM",
+      "file": "16bf657fd9a3ee43892c3459.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63033dc4e1e7f0e03a5e1a31/0BibmRdezvN6v6d2CEtd5.png"
+    },
+    {
+      "owner": "anthracite-org",
+      "name": "Anthracite",
+      "source": "https://huggingface.co/anthracite-org",
+      "file": "d3150c773c822a63a79880b1.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/658a46cbfb9c2bdfae75b3a6/HDYkduzAwQRNHuRl5eYdP.png"
+    },
+    {
+      "owner": "PocketDoc",
+      "name": "PocketDoc",
+      "source": "https://huggingface.co/PocketDoc"
+    },
+    {
+      "owner": "EVA-UNIT-01",
+      "name": "EVA-UNIT-01",
+      "source": "https://huggingface.co/EVA-UNIT-01",
+      "file": "4a37609b0a0207a6eb858c39.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/655dc641accde1bbc8b41aec/oK4_jrOVYxLN4cPa8a5g4.png"
+    },
+    {
+      "owner": "h2oai",
+      "name": "H2O.ai",
+      "source": "https://huggingface.co/h2oai",
+      "file": "3207f727f5a377a39f346fdf.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1673570796144-63c0a91f7f52541dfc7c831b.png"
+    },
+    {
+      "owner": "EpistemeAI",
+      "name": "EpisteLabs",
+      "source": "https://huggingface.co/EpistemeAI",
+      "file": "0ae8da83c771eef000713596.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/651def66d0656f67a5f431b4/vzM_hW2zVoSQIUtLv81-h.png"
+    },
+    {
+      "owner": "jpacifico",
+      "name": "Jonathan Pacifico",
+      "source": "https://huggingface.co/jpacifico",
+      "file": "e113596598035f090e82bfc6.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6335495752c3d599b857c79c/ytDE0hTleeaVKW7mEsksK.jpeg"
+    },
+    {
+      "owner": "utter-project",
+      "name": "UTTER - Unified Transcription and Translation for Extended Reality",
+      "source": "https://huggingface.co/utter-project",
+      "file": "28d8ff4b9ca4278cb3c82732.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62262e19d36494a6f743a28d/1RJ1KWnGHD4h987dVzACV.png"
+    },
+    {
+      "owner": "VibeStudio",
+      "name": "VibeStudio",
+      "source": "https://huggingface.co/VibeStudio"
+    },
+    {
+      "owner": "ZeroXClem",
+      "name": "Darrel Bryan",
+      "source": "https://huggingface.co/ZeroXClem",
+      "file": "76d6cf986f1767827ee6c7d2.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64408cd43e0374802e19f454/nOnDGGBF0p-AwkCGw0IZh.png"
+    },
+    {
+      "owner": "empero-ai",
+      "name": "Empero",
+      "source": "https://huggingface.co/empero-ai",
+      "file": "2f8555cbd09365d43c66bb1a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/69987d75170a75bffd51a19a/halrHWh2hZXJ823MW4VRB.png"
+    },
+    {
+      "owner": "mistral-community",
+      "name": "Unofficial Mistral Community [deprecated]",
+      "source": "https://huggingface.co/mistral-community",
+      "file": "8dcbf7c679064915f18e5a56.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/HAdAzcs1CDB9OxgxT2W9K.png"
+    },
+    {
+      "owner": "RekaAI",
+      "name": "Reka AI",
+      "source": "https://huggingface.co/RekaAI",
+      "file": "4be527bf018cd83ca552d4a4.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/67cfd5c7a9e354203d6904ec/ArJ3mrKcYxCEV23zbk7E8.jpeg"
+    },
+    {
+      "owner": "NaniDAO",
+      "name": "Nani DAO",
+      "source": "https://huggingface.co/NaniDAO",
+      "file": "d8d11f3a5773889d72b51758.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/636183dfeee0d27f043a4fd7/4vjm39wJlGdtq4-9eeule.png"
+    },
+    {
+      "owner": "PrimeIntellect",
+      "name": "Prime Intellect",
+      "source": "https://huggingface.co/PrimeIntellect",
+      "file": "931c6c2498e4e058225985df.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/61e020e4a343274bb132e138/H2mcdPRWtl4iKLd-OYYBc.jpeg"
+    },
+    {
+      "owner": "soob3123",
+      "name": "Soob",
+      "source": "https://huggingface.co/soob3123"
+    },
+    {
+      "owner": "uncensoredai",
+      "name": "Uncensored AI",
+      "source": "https://huggingface.co/uncensoredai",
+      "file": "8a61618416773a2b40356547.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6410b7ab250b14f28b676124/xn7a5Or71Luhox7hLsbZ3.png"
+    },
+    {
+      "owner": "Replete-AI",
+      "name": "Replete-AI",
+      "source": "https://huggingface.co/Replete-AI"
+    },
+    {
+      "owner": "nothingiisreal",
+      "name": "Nothing is Real",
+      "source": "https://huggingface.co/nothingiisreal",
+      "file": "12f058d967f25d633c7c6bfc.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/630cf5d14ca0a22768bbe10c/g4CqtGeBjcYO4UI9CF9-3.png"
+    },
+    {
+      "owner": "KOOWEEYUS",
+      "name": "KOO WEE YUS",
+      "source": "https://huggingface.co/KOOWEEYUS"
+    },
+    {
+      "owner": "p-e-w",
+      "name": "Philipp Emanuel Weidmann",
+      "source": "https://huggingface.co/p-e-w",
+      "file": "222e82b4dad97059ae571cee.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/68ce0ae4ce1399b97e364af4/0sUhuSJaFvxPNSR8APc3V.png"
+    },
+    {
+      "owner": "OpenBuddy",
+      "name": "OpenBuddy",
+      "source": "https://huggingface.co/OpenBuddy",
+      "file": "85e88db8bd77b85f51009e16.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63010c7359ab5d9dc09d2378/bXSw2s7QxlaNVcUD19sae.png"
+    },
+    {
+      "owner": "kai-os",
+      "name": "Kai Stephens",
+      "source": "https://huggingface.co/kai-os",
+      "file": "fbededa86fddd6a6f66bac0c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/670feb730134e0e42e311b1e/ZBoKcCE4CqBT2ZRNcFVer.png"
+    },
+    {
+      "owner": "OuteAI",
+      "name": "OuteAI",
+      "source": "https://huggingface.co/OuteAI",
+      "file": "447a4655b3c1123fc79f5912.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/661faec40d6d77fb4baf494c/KC0m7aU6f7FEBuQjTH9UK.jpeg"
+    },
+    {
+      "owner": "aion-labs",
+      "name": "Aion Labs",
+      "source": "https://huggingface.co/aion-labs",
+      "file": "9e2abeb27ec27a5ff354eb5f.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6162fe6070554df7422ef77a/Kg29B09itIWEN8o6YfvW4.png"
+    },
+    {
+      "owner": "FreedomIntelligence",
+      "name": "FreedomAI",
+      "source": "https://huggingface.co/FreedomIntelligence"
+    },
+    {
+      "owner": "speakleash",
+      "name": "SpeakLeash | Spichlerz",
+      "source": "https://huggingface.co/speakleash",
+      "file": "1db97402f45e3a69f664a82b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/628e3a115ec2eb796f94c1ed/5AbxAg0YRjMpCmv8Q4ehE.jpeg"
+    },
+    {
+      "owner": "Tesslate",
+      "name": "Tesslate",
+      "source": "https://huggingface.co/Tesslate",
+      "file": "ae9f446240b967fecceff09d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64d1129297ca59bcf7458d07/sNnx2j6-7UAbF16OV_9s5.png"
+    },
+    {
+      "owner": "NousResearch",
+      "name": "NousResearch",
+      "source": "https://huggingface.co/NousResearch",
+      "file": "98bb08823857eca43c08089d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6317aade83d8d2fd903192d9/tPLjYEeP6q1w0j_G2TJG_.png"
+    },
+    {
+      "owner": "nomic-ai",
+      "name": "Nomic AI",
+      "source": "https://huggingface.co/nomic-ai",
+      "file": "27ca7351653280ba5f8f9df2.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/641f01fe6d51620635e118e9/wy0ax27ok1-uHWoUAHSEs.png"
+    },
+    {
+      "owner": "miromind-ai",
+      "name": "MiroMind AI",
+      "source": "https://huggingface.co/miromind-ai",
+      "file": "a698d40c3e604e918e5aad4c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/682c41fb2f8a52030ec93ce0/Cna52_IapEXuNBsyI3lvR.png"
+    },
+    {
+      "owner": "FINAL-Bench",
+      "name": "FINAL_Bench",
+      "source": "https://huggingface.co/FINAL-Bench",
+      "file": "6391526f337139f81185e052.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6905bc786cb49b1f11d32728/VZmuKH-liifeL2GCXlwka.jpeg"
+    },
+    {
+      "owner": "allura-org",
+      "name": "Allura",
+      "source": "https://huggingface.co/allura-org",
+      "file": "9b9c5f75856ab1fc2be04b5e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/634262af8d8089ebaefd410e/6zT9gVQI_9HKiW-6T6uXS.jpeg"
+    },
+    {
+      "owner": "MaziyarPanahi",
+      "name": "Maziyar Panahi",
+      "source": "https://huggingface.co/MaziyarPanahi",
+      "file": "281007ad0247dbf7e83fa2c2.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/5fd5e18a90b6dc4633f6d292/gZXHW5dd9R86AV9LMZ--y.png"
+    },
+    {
+      "owner": "Merlin-Research",
+      "name": "Merlin Research",
+      "source": "https://huggingface.co/Merlin-Research",
+      "file": "f3681d5ae3910c30b51ff46f.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/67329d3f69fded92d56ab41a/Qbu75pOAogq0lIFN13ham.jpeg"
+    },
+    {
+      "owner": "FuseAI",
+      "name": "FuseAI",
+      "source": "https://huggingface.co/FuseAI",
+      "file": "e22b25f23c57bb099baf4519.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62ecbffd99112e99c5f7fded/u5-Y9vqFeXWAQag4qWtbA.png"
+    },
+    {
+      "owner": "sail",
+      "name": "Sea AI Lab",
+      "source": "https://huggingface.co/sail",
+      "file": "cbacf38fb31f3367be66c76a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1643440185801-5df833bdda6d0311fd3d5403.png"
+    },
+    {
+      "owner": "meetkai",
+      "name": "MeetKai",
+      "source": "https://huggingface.co/meetkai"
+    },
+    {
+      "owner": "Vikhrmodels",
+      "name": "Vikhr models",
+      "source": "https://huggingface.co/Vikhrmodels",
+      "file": "c0c72ae7217b808557042fb5.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/60b23b069c978cce68723b25/A7ebeC8LY1gXhbHWSF8vp.jpeg"
+    },
+    {
+      "owner": "prism-ml",
+      "name": "Prism ML",
+      "source": "https://huggingface.co/prism-ml",
+      "file": "43fa7f1cbe97d795ab83b07a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6920b71747acb07530915d41/mEaEo0tgAYZn-NB6S-nuP.png"
+    },
+    {
+      "owner": "JetBrains",
+      "name": "JetBrains",
+      "source": "https://huggingface.co/JetBrains",
+      "file": "7b6b90c19f45bc7c628a3628.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6645d54b780d46f274dd4145/8RHS3MzGGBFWtH1-bynJ0.png"
+    },
+    {
+      "owner": "Steelskull",
+      "name": "Steel",
+      "source": "https://huggingface.co/Steelskull",
+      "file": "2dbf0c39dcaac61797468b5a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64545af5ec40bbbd01242ca6/xRbPO8262bQ030329Kn7R.png"
+    },
+    {
+      "owner": "jtl11",
+      "name": "James",
+      "source": "https://huggingface.co/jtl11"
+    },
+    {
+      "owner": "BeaverAI",
+      "name": "BeaverAI",
+      "source": "https://huggingface.co/BeaverAI",
+      "file": "e0cace07ab1c7fb050d508a4.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65f2fd1c25b848bd061b5c2e/o9RKb4zPwnGo6_GG1k1IA.png"
+    },
+    {
+      "owner": "Akhil-Theerthala",
+      "name": "Akhil Theerthala",
+      "source": "https://huggingface.co/Akhil-Theerthala",
+      "file": "211cd6d0c153adf41106155b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/676c67da7bad1587f2d046e2/RAqRxiaEHpB6qFCQ-11RL.jpeg"
+    },
+    {
+      "owner": "dfurman",
+      "name": "Daniel Furman",
+      "source": "https://huggingface.co/dfurman",
+      "file": "07dbd9e787978ac0c9e23eb3.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62afc20ca5bd7cef3e1ab3f4/QGauKfo42NgWGni1I4Mw9.jpeg"
+    },
+    {
+      "owner": "thinkingmachines",
+      "name": "Thinking Machines Lab",
+      "source": "https://huggingface.co/thinkingmachines",
+      "file": "a60b21837c5096db666cdd09.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/680a76de1b8d08640089fab0/r60-JyW_pv4llgjEyDYj9.png"
+    },
+    {
+      "owner": "endless-frontier",
+      "name": "The Endless Frontier",
+      "source": "https://huggingface.co/endless-frontier",
+      "file": "329bc022f017ee25d1fa5bd2.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65efa7d32b869bab1fc7f2e0/nXt6uhAeXsp9UWWHnrNwe.png"
+    },
+    {
+      "owner": "XYZAILab",
+      "name": "XYZ AI Lab",
+      "source": "https://huggingface.co/XYZAILab",
+      "file": "ab87acaa3992a4018d45e207.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6a4f70f265119da9cf5ca2ad/-VRmpUaADM26uIY_vpYEP.png"
+    },
+    {
+      "owner": "meta-models",
+      "name": "Meta Inc.",
+      "source": "https://huggingface.co/meta-models",
+      "file": "aa8d978925d2d225adb79370.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64c115d1f661ace7c4022432/EbzfQisFJBEcKWDWLyV5O.png"
+    },
+    {
+      "owner": "deepreinforce-ai",
+      "name": "deepreinforce-ai",
+      "source": "https://huggingface.co/deepreinforce-ai"
+    },
+    {
+      "owner": "BAAI",
+      "name": "Beijing Academy of Artificial Intelligence",
+      "source": "https://huggingface.co/BAAI",
+      "file": "d2d367e981a7db51a4ae0576.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1664511063789-632c234f42c386ebd2710434.png"
+    },
+    {
+      "owner": "stepfun-ai",
+      "name": "StepFun",
+      "source": "https://huggingface.co/stepfun-ai",
+      "file": "dd2ecdb5a555858f5dc81cdd.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/644f7e6233ac8f46fa0b9e26/CmF2ocXhkr2UtHXgmwq7-.png"
+    },
+    {
+      "owner": "ornith-ai",
+      "name": "Ornith",
+      "source": "https://huggingface.co/ornith-ai",
+      "file": "303cb660456c2874b40bb262.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/68661bce022667cf9c7534fb/dwzGCqj9B7NGaJRO-NjjP.png"
+    },
+    {
+      "owner": "cerebras",
+      "name": "Cerebras",
+      "source": "https://huggingface.co/cerebras",
+      "file": "7ee87877fc721b62193c5d60.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1678752782877-640fbb91bd54b1efde3678b2.png"
+    },
+    {
+      "owner": "kawaimasa",
+      "name": "kawai",
+      "source": "https://huggingface.co/kawaimasa"
+    },
+    {
+      "owner": "darkc0de",
+      "name": "Sonny DeSorbo",
+      "source": "https://huggingface.co/darkc0de",
+      "file": "ea60cc2e88bb8398f427d025.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6540a02d1389943fef4d2640/v9bXR0zJo6Cp7_H-RVPXh.png"
+    },
+    {
+      "owner": "aifeifei798",
+      "name": "aifeifei",
+      "source": "https://huggingface.co/aifeifei798",
+      "file": "74712e2fd41cec7f2d05b9a5.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6640d92825d363a5c3c8cfb5/sFxeglnqrWls5Dv0sVuQx.jpeg"
+    },
+    {
+      "owner": "OpenGVLab",
+      "name": "OpenGVLab",
+      "source": "https://huggingface.co/OpenGVLab",
+      "file": "da853c687dbb8076f51435f4.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64006c09330a45b03605bba3/FvdxiTkTqH8rKDOzGZGUE.jpeg"
+    },
+    {
+      "owner": "sainikhiljuluri2015",
+      "name": "Sainikhil Juluri",
+      "source": "https://huggingface.co/sainikhiljuluri2015"
+    },
+    {
+      "owner": "apodex",
+      "name": "Apodex",
+      "source": "https://huggingface.co/apodex",
+      "file": "0320d094f1c5a3b1e199efd2.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/68bf96f0ca298a370d66adbb/T4Bt5ELjozQxgkKsHM_gg.jpeg"
+    },
+    {
+      "owner": "vectionlabs",
+      "name": "VectionLabs",
+      "source": "https://huggingface.co/vectionlabs",
+      "file": "ba2b865059c0d0040c67277c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/692584353b966a2655a8d968/O8XkhzJhqmMW9n5qLqjgH.png"
+    },
+    {
+      "owner": "ValiantLabs",
+      "name": "Valiant Labs",
+      "source": "https://huggingface.co/ValiantLabs",
+      "file": "471226f54e658b850c5d5f8c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63444f2687964b331809eb55/sQl9O5qStzAing24c1xdI.jpeg"
+    },
+    {
+      "owner": "nightmedia",
+      "name": "Gheorghe Chesler",
+      "source": "https://huggingface.co/nightmedia",
+      "file": "9ef32bc5348a20cc0b482cfa.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/AiTL7ds0r5S7A-qgsON5y.jpeg"
+    },
+    {
+      "owner": "ReySajju742",
+      "name": "Muhammad Sajjad Rasool",
+      "source": "https://huggingface.co/ReySajju742",
+      "file": "1ddfe238d89153c2dc22617a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/2H0bUbG8rtpTE4X5_W-Lr.jpeg"
+    },
+    {
+      "owner": "smshahbaj",
+      "name": "SM Shahbaj",
+      "source": "https://huggingface.co/smshahbaj",
+      "file": "eba9282be0ddc71179e35782.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/I9xb5SeWCkbBZeeXaP9au.png"
+    },
+    {
+      "owner": "NovaCorp",
+      "name": "Nova Corporation AI",
+      "source": "https://huggingface.co/NovaCorp",
+      "file": "d17294e26d069ed27fa7114b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/650ab060c2d4c8fc37c31423/oqe9ZRCgiwKzYRxWlxDu1.jpeg"
+    },
+    {
+      "owner": "OrionLLM",
+      "name": "Orion LLM Labs",
+      "source": "https://huggingface.co/OrionLLM",
+      "file": "4d1da7bf189ea28dc0ceaab8.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/685ea8ff7b4139b6845ce395/WDRcHfV5War3OgSPmXFve.png"
+    },
+    {
+      "owner": "nex-agi",
+      "name": "Nex AGI",
+      "source": "https://huggingface.co/nex-agi",
+      "file": "e663c3c20d8d0dcdcc6ae290.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65435cad429b80b14922ab8d/a_O9jT_daz_NXTfxtcw6S.png"
+    },
+    {
+      "owner": "Sao10K",
+      "name": "Sao",
+      "source": "https://huggingface.co/Sao10K",
+      "file": "a333344975a7ab74a5e7a0ba.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64be6a5376a6e2efccc638c1/gvRRLHsicTCxpURJeQDv3.jpeg"
+    },
+    {
+      "owner": "gjtgjt",
+      "name": "gjtgjt",
+      "source": "https://huggingface.co/gjtgjt"
+    },
+    {
+      "owner": "lordx64",
+      "name": "Taha K.",
+      "source": "https://huggingface.co/lordx64",
+      "file": "80f0739bed119f439888d9f7.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65510e83a12178dd75d63d5e/v3RXY9GzaU8w-NBfm7dS_.jpeg"
+    },
+    {
+      "owner": "XiaomiMiMo",
+      "name": "Xiaomi MiMo",
+      "source": "https://huggingface.co/XiaomiMiMo",
+      "file": "ddb16be9e3cee4bb0c0af07e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/680cb7d1233834890a64acee/5w_4aLfF-7MAyaIPOV498.jpeg"
+    },
+    {
+      "owner": "beyoru",
+      "name": "Hert4",
+      "source": "https://huggingface.co/beyoru",
+      "file": "f78f67fe640d7629ef36e2ba.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65905af887944e494e37e09a/hcZGtLNkG53Rky2kCSydv.jpeg"
+    },
+    {
+      "owner": "baidu",
+      "name": "BAIDU",
+      "source": "https://huggingface.co/baidu",
+      "file": "5c257f64573362b5ee6d5f38.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64f187a2cc1c03340ac30498/TYYUxK8xD1AxExFMWqbZD.png"
+    },
+    {
+      "owner": "swiss-ai",
+      "name": "Swiss AI Initiative",
+      "source": "https://huggingface.co/swiss-ai",
+      "file": "724626dc85a3a913aa88c8c1.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png"
+    },
+    {
+      "owner": "MaLA-LM",
+      "name": "MaLA-LM",
+      "source": "https://huggingface.co/MaLA-LM",
+      "file": "467499048095ff148f1cd338.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/617a92e16f37340367d5d791/ZTrhLcWPyiDTdELAMs13j.jpeg"
+    },
+    {
+      "owner": "AALF",
+      "name": "ZiYi Yang",
+      "source": "https://huggingface.co/AALF",
+      "file": "2e927a5c648d2cfe087a0ad1.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1CPnAaB3gsupdpiNWaoDc.png"
+    },
+    {
+      "owner": "OBLITERATUS",
+      "name": "OBLITERATUS",
+      "source": "https://huggingface.co/OBLITERATUS",
+      "file": "5bf09c3bdf6d5b18a506d2c2.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6627d1c8e4e2a6be8260a9a5/tj_T6OksjKdMdCUEhGaK4.png"
+    },
+    {
+      "owner": "KingNish",
+      "name": "Nishith Jain",
+      "source": "https://huggingface.co/KingNish",
+      "file": "644ed78b0b082541cc4b5e83.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6612aedf09f16e7347dfa7e1/bPYjBXCedY_1fSIPjoBTY.jpeg"
+    },
+    {
+      "owner": "Menlo",
+      "name": "Menlo Research",
+      "source": "https://huggingface.co/Menlo",
+      "file": "dc831ea23242de3842bdec70.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/643b63fea856622f978fdc35/c8ZIKZbg-Y4ZxkUgMLV8q.png"
+    },
+    {
+      "owner": "migtissera",
+      "name": "Migel Tissera",
+      "source": "https://huggingface.co/migtissera",
+      "file": "0caae155b8142d050d86fb1d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/647a6317555b5e199cffd5a2/PZJmfzzuM_Vo-8jFGkN_H.jpeg"
+    },
+    {
+      "owner": "Devopsopraiz",
+      "name": "Opraiz Technology",
+      "source": "https://huggingface.co/Devopsopraiz",
+      "file": "62b3932175833bae43a9421c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/_zNQKQqO98_Qa4sc3gxGH.png"
+    },
+    {
+      "owner": "badtheorylabs",
+      "name": "Bad Theory Labs",
+      "source": "https://huggingface.co/badtheorylabs",
+      "file": "25613d0b079efaab41663465.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64806ab5de559d48dbb0527f/B5j5Pde18klgeFj4bZqTn.png"
+    },
+    {
+      "owner": "ByteDance-Seed",
+      "name": "ByteDance Seed",
+      "source": "https://huggingface.co/ByteDance-Seed",
+      "file": "d1fd70df3066517b9de623d4.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6535c9e88bde2fae19b6fb25/flkDUqd_YEuFsjeNET3r-.png"
+    },
+    {
+      "owner": "nvidia",
+      "name": "NVIDIA",
+      "source": "https://huggingface.co/nvidia",
+      "file": "75f85aa1b5c95694f9199ae1.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png"
+    },
+    {
+      "owner": "VAGOsolutions",
+      "name": "VAGO solutions",
+      "source": "https://huggingface.co/VAGOsolutions",
+      "file": "e394b591576d40e6b4ee53a5.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64b999a40b24527e9c25583a/zt3VKGhWZzgAA7PeZyy0m.jpeg"
+    },
+    {
+      "owner": "bottlecapai",
+      "name": "BottleCapAI",
+      "source": "https://huggingface.co/bottlecapai",
+      "file": "c75a946dc077c7e92ac13e63.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6410186e06c3b5ca88451747/suQ_-Q9WpitObx-oBv0i_.png"
+    },
+    {
+      "owner": "Dampfinchen",
+      "name": "Dämpfchen",
+      "source": "https://huggingface.co/Dampfinchen"
+    },
+    {
+      "owner": "Trendyol",
+      "name": "Trendyol",
+      "source": "https://huggingface.co/Trendyol",
+      "file": "46cff9ea9e3b0b04556680ca.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/61f3e7560d42e7d665ceead4/xkpBpAVeNIXSLevPQ67mk.png"
+    },
+    {
+      "owner": "InternScience",
+      "name": "Intern Science",
+      "source": "https://huggingface.co/InternScience",
+      "file": "d9566bbfe9e9738f6f851e10.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65f2a4198404ac0e4c0f175f/XIPU4aCPBogXSrj6NrfLk.png"
+    },
+    {
+      "owner": "Davd-b01",
+      "name": "DavidB",
+      "source": "https://huggingface.co/Davd-b01",
+      "file": "48587c6c3356ce2c427346fe.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/2n3QjhnH49J0U8Y0_PAC8.png"
+    },
+    {
+      "owner": "Doctor-Shotgun",
+      "name": "Doctor Shotgun",
+      "source": "https://huggingface.co/Doctor-Shotgun",
+      "file": "bff3418d42fd591b22ca8889.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1670736706483-632b9f9866f28bf34ae85487.jpeg"
+    },
+    {
+      "owner": "Groq",
+      "name": "Groq",
+      "source": "https://huggingface.co/Groq",
+      "file": "b56f0926a4f36b547d6167b1.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1673913216963-63115d7864939fabc00f0b45.png"
+    },
+    {
+      "owner": "rpDungeon",
+      "name": "AutumnlightsRpDungeon",
+      "source": "https://huggingface.co/rpDungeon"
+    },
+    {
+      "owner": "silma-ai",
+      "name": "SILMA AI",
+      "source": "https://huggingface.co/silma-ai",
+      "file": "2fff143d232c6557fd2321be.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63d7acf73130cadcaf827e84/nUnkzwVfdf1MrN5JG_lm5.png"
+    },
+    {
+      "owner": "allura-forge",
+      "name": "Allura (Forge)",
+      "source": "https://huggingface.co/allura-forge",
+      "file": "8a95f54c6118b5104aab6b57.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/661659172851ba108048ff25/bxzxQDju-N_wkk8wXs76z.png"
+    },
+    {
+      "owner": "Skywork",
+      "name": "Skywork",
+      "source": "https://huggingface.co/Skywork",
+      "file": "9b62df17dbec8699ad8c701e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64535b71bcbd25618f7655da/AvtJ4GuPAyhLxl2-leVt6.jpeg"
+    },
+    {
+      "owner": "HumanLLMs",
+      "name": "Human-Like LLMs",
+      "source": "https://huggingface.co/HumanLLMs",
+      "file": "d144dce7f3109c2b01d660a8.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63da3d7ae697e5898cb86854/H-vpXOX6KZu01HnV87Jk5.jpeg"
+    },
+    {
+      "owner": "OraRL",
+      "name": "OraRL",
+      "source": "https://huggingface.co/OraRL",
+      "file": "b5b40f12476068ccd0812f08.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/67485bfd768f8d6a509d5cd7/htACzxXT5jgW1oJgISBG_.png"
+    },
+    {
+      "owner": "agentscope-ai",
+      "name": "agentscope-ai",
+      "source": "https://huggingface.co/agentscope-ai",
+      "file": "110102fef8b4f3c1ffd21310.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/68f20aea4806540fd1afc2a1/9J8m-7IZibhw3Cc2Jfwgo.png"
+    },
+    {
+      "owner": "t-tech",
+      "name": "T-Tech",
+      "source": "https://huggingface.co/t-tech",
+      "file": "63467cfeff25e58ff41c2ffa.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/674ea07d320a043daeb2d98b/IwSCMolFY4Otk7sFXzWhi.jpeg"
+    },
+    {
+      "owner": "MiniMaxAI",
+      "name": "MiniMax",
+      "source": "https://huggingface.co/MiniMaxAI",
+      "file": "4620fb75bcb082cf052911e3.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/676e38ad04af5bec20bc9faf/dUd-LsZEX0H_d4qefO_g6.jpeg"
+    },
+    {
+      "owner": "zerofata",
+      "name": "ZeroFata",
+      "source": "https://huggingface.co/zerofata",
+      "file": "592793734612fdecb475777f.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65b19c6c638328850e12d38c/jQtnPYhgJFF62V-ch1wil.png"
+    },
+    {
+      "owner": "OS-Copilot",
+      "name": "OS-Copilot",
+      "source": "https://huggingface.co/OS-Copilot",
+      "file": "d39b9a8b29b6d0d2882eaca4.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6280e830e99dccaac4bbfde5/SpDHebsUH88Eo03JCjvch.jpeg"
+    },
+    {
+      "owner": "CogEvol",
+      "name": "元知进化（北京）科技有限公司",
+      "source": "https://huggingface.co/CogEvol",
+      "file": "09b764b5124e608924933737.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/648c48d8c0ddeee6df5b6d22/z95C6e3gbYmdwNxinzUbC.png"
+    },
+    {
+      "owner": "akjindal53244",
+      "name": "Ashvini Kumar Jindal",
+      "source": "https://huggingface.co/akjindal53244",
+      "file": "3acb9871b0d95fe74338e01b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64c75c1237333ccfef30a602/oEmowh93V8ZRm54OWssrZ.jpeg"
+    },
+    {
+      "owner": "e-n-v-y",
+      "name": "_Envy_",
+      "source": "https://huggingface.co/e-n-v-y",
+      "file": "b5a7be7d1ee2ddaff30c62f9.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6303c4880907b9a115c36ce4/2dAYt5dDeKYuJwdY2CYF5.png"
+    },
+    {
+      "owner": "RLHFlow",
+      "name": "RLHFlow",
+      "source": "https://huggingface.co/RLHFlow",
+      "file": "f96b72ca8383733596678207.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/638fb8cf2380ffd99caf8c2a/xTHSf1YDQDriY5eZ7cn_1.jpeg"
+    },
+    {
+      "owner": "Altworld",
+      "name": "Altworld",
+      "source": "https://huggingface.co/Altworld"
+    },
+    {
+      "owner": "Trappu",
+      "name": "Trappu",
+      "source": "https://huggingface.co/Trappu",
+      "file": "d5fcd70e7a69b9b172f95a71.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/636a8850c0be1b0cfbe40cc1/6rQEjyfAp8hIXQuto893J.jpeg"
+    },
+    {
+      "owner": "bytedance-research",
+      "name": "bytedance-research",
+      "source": "https://huggingface.co/bytedance-research",
+      "file": "fdeb36fff3e5db25de99d36b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6535c9e88bde2fae19b6fb25/7a1zq0juEwFJVCIShnLI-.png"
+    },
+    {
+      "owner": "janhq",
+      "name": "Jan",
+      "source": "https://huggingface.co/janhq",
+      "file": "9843656bf82d216c201714ae.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65713d70f56f9538679e5a56/wsLEmcf8jbeNe7DO-SLv4.png"
+    },
+    {
+      "owner": "AlexBefest",
+      "name": "AlexBefest",
+      "source": "https://huggingface.co/AlexBefest"
+    },
+    {
+      "owner": "Jackrong",
+      "name": "Jackrong",
+      "source": "https://huggingface.co/Jackrong",
+      "file": "7936ccf5d10d582f629b0ffe.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/66309bd090589b7c65950665/RcOk7ysh7nEt5YlHHzauj.jpeg"
+    },
+    {
+      "owner": "Perciqa",
+      "name": "Perciqa",
+      "source": "https://huggingface.co/Perciqa",
+      "file": "ad79f057ace067bb6cbf9acd.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6a4eb80770294c9667b4abf0/id3RhGSH3O9AvtzPkPiu6.png"
+    },
+    {
+      "owner": "perplexity-ai",
+      "name": "Perplexity",
+      "source": "https://huggingface.co/perplexity-ai",
+      "file": "9e95ce3e22f895b71045c5bb.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64b89bf66b5ee8c38859cbd6/l_27fD52uFMZUXdFdY9fR.png"
+    },
+    {
+      "owner": "prithivMLmods",
+      "name": "Prithiv Sakthi",
+      "source": "https://huggingface.co/prithivMLmods",
+      "file": "f93253ac06d3bd2865547994.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65bb837dbfb878f46c77de4c/23gZ_lBEwyoqjexFy9QLD.jpeg"
+    },
+    {
+      "owner": "Ilya626",
+      "name": "Ilya",
+      "source": "https://huggingface.co/Ilya626"
+    },
+    {
+      "owner": "Locutusque",
+      "name": "Sebastian Gabarain",
+      "source": "https://huggingface.co/Locutusque",
+      "file": "69bac37ebf743f70d21661a0.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/YeFyz1AZVcCRsyNHHtwJG.jpeg"
+    },
+    {
+      "owner": "MathGenie",
+      "name": "MathGenie",
+      "source": "https://huggingface.co/MathGenie",
+      "file": "a0afc78ef130352f7f6f7e4f.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65dd9e7b4a4fce1ec96dc6b7/SlR9-WETpYGy7Wq2nO1V_.png"
+    },
+    {
+      "owner": "Delta-Vector",
+      "name": "DV",
+      "source": "https://huggingface.co/Delta-Vector",
+      "file": "987c1a689c90551bbe4c2846.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/66c26b6fb01b19d8c3c2467b/Nv2lZ4BCnE8xcN9fXAPF1.jpeg"
+    },
+    {
+      "owner": "ai21labs",
+      "name": "AI21",
+      "source": "https://huggingface.co/ai21labs",
+      "file": "de699b68fda670fd4bba946b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/67baf6e5489cb4dc98a4bff4/9Rkvk1VGhK1woxWvhqDyb.png"
+    },
+    {
+      "owner": "a-m-team",
+      "name": "am team",
+      "source": "https://huggingface.co/a-m-team",
+      "file": "bc5c33c1047bce500fddb535.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62da53284398e21bf7f0d539/y6wX4K-P9O8B9frsxxQ6W.jpeg"
+    },
+    {
+      "owner": "lemon07r",
+      "name": "Lamim",
+      "source": "https://huggingface.co/lemon07r"
+    },
+    {
+      "owner": "deepcogito",
+      "name": "Deep Cogito",
+      "source": "https://huggingface.co/deepcogito",
+      "file": "630f60b8d6d81a9bbb591621.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/5fe16a29e69f7b521398f73b/qKx7SKgZrs0y5YbbQZcdQ.png"
+    },
+    {
+      "owner": "ai-sage",
+      "name": "ai-sage",
+      "source": "https://huggingface.co/ai-sage"
+    },
+    {
+      "owner": "lolzinventor",
+      "name": "Lolz Inventor",
+      "source": "https://huggingface.co/lolzinventor"
+    },
+    {
+      "owner": "mrm8488",
+      "name": "Manuel Romero",
+      "source": "https://huggingface.co/mrm8488",
+      "file": "785cfc5bd2f5394a770f3585.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/5e4318d616b09a31220980d6/24rMJ_vPh3gW9ZEmj64xr.png"
+    },
+    {
+      "owner": "TroyDoesAI",
+      "name": "Troy Schultz",
+      "source": "https://huggingface.co/TroyDoesAI",
+      "file": "a7cb574824c737e28c422f9d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/vmgOmPub0s216gaFgWlCN.png"
+    },
+    {
+      "owner": "darkps",
+      "name": "DarkPs",
+      "source": "https://huggingface.co/darkps",
+      "file": "f1dd851b94fc4495db2ffda9.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6a5335fdb8b28f08e6cabd4c/wiKnVgwQT8g4jTSVgXL-0.webp"
+    },
+    {
+      "owner": "AuriAetherwiing",
+      "name": "Rae",
+      "source": "https://huggingface.co/AuriAetherwiing",
+      "file": "6ea3b1858a5479635137f9b1.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/661659172851ba108048ff25/cWyss3fJqIYDZqEoE0Txy.jpeg"
+    },
+    {
+      "owner": "suayptalha",
+      "name": "Şuayp Talha Kocabay",
+      "source": "https://huggingface.co/suayptalha",
+      "file": "80242f0c37d566add632edfc.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/nMuuypcbWFQcDD5xNo4Zt.jpeg"
+    },
+    {
+      "owner": "jondurbin",
+      "name": "Jon Durbin",
+      "source": "https://huggingface.co/jondurbin",
+      "file": "e536a8fada9df0edebf77e6e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6453dafca647b92069ac541a/QkUleoJtHHdTkqtW54QIG.jpeg"
+    },
+    {
+      "owner": "LatitudeGames",
+      "name": "Latitude",
+      "source": "https://huggingface.co/LatitudeGames",
+      "file": "7e79c0ebf93741eb3215f85e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/611494b423b498d2f9c7da2f/Nbz9s0FshIRmI6yl5Bi7B.jpeg"
+    },
+    {
+      "owner": "ReadyArt",
+      "name": "Ready.Art",
+      "source": "https://huggingface.co/ReadyArt",
+      "file": "af9a58e06afb3a5cdc3dfbec.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6759e155bc947d6070775cb9/uA_aXyXpBtK9M77jSv0aP.png"
+    },
+    {
+      "owner": "ServiceNow-AI",
+      "name": "ServiceNow-AI",
+      "source": "https://huggingface.co/ServiceNow-AI",
+      "file": "e1bfd1ab1df883d44bc569b7.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63d3095c2727d7888cbb54e2/Uv-Lx8PVGviqokfOyYlCN.png"
+    },
+    {
+      "owner": "dicta-il",
+      "name": "DICTA: The Israel Center for Text Analysis",
+      "source": "https://huggingface.co/dicta-il",
+      "file": "8dbafe1da8dbe7bad9146687.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/641c500c21964f8f6d456bb5/8Ue0UMUF7yHs3KsEc7Ybm.png"
+    },
+    {
+      "owner": "iselabvn",
+      "name": "ISeLab Ltd.",
+      "source": "https://huggingface.co/iselabvn",
+      "file": "a99f1b05aa810747aed18a0a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/67e279a862795b0296aeaf6a/PBuN0vZ9IUmVb7GDaVby1.png"
+    },
+    {
+      "owner": "kalomaze",
+      "name": "Kalomaze",
+      "source": "https://huggingface.co/kalomaze",
+      "file": "2aad3b64c5edbf62fb0b8be3.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6491e00e057b0928b3e07b75/j31tFTZuAqfE5gYfZqSdI.jpeg"
+    },
+    {
+      "owner": "ALLaM-AI",
+      "name": "ALLaM-AI",
+      "source": "https://huggingface.co/ALLaM-AI"
+    },
+    {
+      "owner": "simplescaling",
+      "name": "simplescaling",
+      "source": "https://huggingface.co/simplescaling",
+      "file": "a8474e9d135ebebc15b912cc.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/5f1eb362eec0ad2a071ad6e2/fcUEcJLhksh39ZFHbLvga.png"
+    },
+    {
+      "owner": "UCLA-AGI",
+      "name": "UCLA Artificial General Intelligence Lab",
+      "source": "https://huggingface.co/UCLA-AGI"
+    },
+    {
+      "owner": "Epiculous",
+      "name": "Epiculous",
+      "source": "https://huggingface.co/Epiculous",
+      "file": "ef2d08842018bef40f54e607.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64adfd277b5ff762771e4571/HVmAmGOtBPYd72492XGar.png"
+    },
+    {
+      "owner": "Rombo-Org",
+      "name": "Rombo-Org",
+      "source": "https://huggingface.co/Rombo-Org",
+      "file": "fbfb7afca82a8ea2a2bdbaa8.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/642cc1c253e76b4c2286c58e/4W0o8BO4Q7VaJhndo33E9.jpeg"
+    },
+    {
+      "owner": "PinkPixel",
+      "name": "Pink Pixel",
+      "source": "https://huggingface.co/PinkPixel",
+      "file": "62da802f94cfa815880920bd.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/676e70906fac625e3421834d/eb1xizotvzCJ-qqKVUAN8.png"
+    },
+    {
+      "owner": "ruliad",
+      "name": "Ruliad",
+      "source": "https://huggingface.co/ruliad",
+      "file": "54be7b6020342e2d86dc3c2c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64b7e345f92b20f7a38bf47a/_RHIIvXiY7jRiOkzdqo5P.png"
+    },
+    {
+      "owner": "Zyphra",
+      "name": "Zyphra",
+      "source": "https://huggingface.co/Zyphra",
+      "file": "718cd79841c1dfd282062648.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/jxR_DdbmmulkyLubYqfMv.png"
+    },
+    {
+      "owner": "Isotonic",
+      "name": "Isotonic",
+      "source": "https://huggingface.co/Isotonic",
+      "file": "fb477008295426be3212f7c4.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1657272186747-610c24310a0fe5d9414b39da.png"
+    },
+    {
+      "owner": "shuttleai",
+      "name": "ShuttleAI",
+      "source": "https://huggingface.co/shuttleai",
+      "file": "a6e172aa2952159d8b12ae8b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64a045c2fab664ac3188f630/mDbgYifirIoO9ER5Jjk80.png"
+    },
+    {
+      "owner": "neurolattice",
+      "name": "NeuroLattice",
+      "source": "https://huggingface.co/neurolattice",
+      "file": "1414cf894203bc246207680d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/647a6317555b5e199cffd5a2/zArLnDtyuDqe0CZwfGvfb.png"
+    },
+    {
+      "owner": "OwenArli",
+      "name": "Owen Arliawan",
+      "source": "https://huggingface.co/OwenArli",
+      "file": "7c7baffbfefaae24df4767a6.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6625f4a8a8d1362ebcc3851a/2-HuXi7OjDLh5AImXk6dA.png"
+    },
+    {
+      "owner": "AGI-0",
+      "name": "AGI-0 Labs",
+      "source": "https://huggingface.co/AGI-0",
+      "file": "07fc79e6f8784a3960b6d8d7.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/66dc31158b119f5e89df1a6a/ueRBGLu-K5m-06tixYvPj.png"
+    },
+    {
+      "owner": "Black-Ink-Guild",
+      "name": "Black Ink Guild",
+      "source": "https://huggingface.co/Black-Ink-Guild",
+      "file": "6432e587836c7ea5be408d1a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6569216f9c96f1a47bf45788/Q1Q4YsxkxjhNDTb2DSgFZ.png"
+    },
+    {
+      "owner": "abacusai",
+      "name": "Abacus.AI, Inc.",
+      "source": "https://huggingface.co/abacusai",
+      "file": "1b25e5c167c4d0b0a496ea7d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63128dd099791aa61d180c72/dJ6uR23m09M-YEafBpmea.png"
+    },
+    {
+      "owner": "HelpingAI",
+      "name": "HelpingAI",
+      "source": "https://huggingface.co/HelpingAI",
+      "file": "488d10455ae8b9fcfcd015aa.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6612aedf09f16e7347dfa7e1/jHRLPBTlyykFwrd6-Mak_.png"
+    },
+    {
+      "owner": "gbueno86",
+      "name": "Guilherme Bueno",
+      "source": "https://huggingface.co/gbueno86"
+    },
+    {
+      "owner": "open-thoughts",
+      "name": "OpenThoughts",
+      "source": "https://huggingface.co/open-thoughts",
+      "file": "b58d7ad01d2fbae90316b13a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/626c182a030a6e7363b6fe0a/_CQTLKi_k51wq7UXAEwIo.png"
+    },
+    {
+      "owner": "expertai",
+      "name": "expert.ai",
+      "source": "https://huggingface.co/expertai",
+      "file": "36653fd4db5a4990279a5c5b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/644e65c1f2ada99b2eb5bc5d/nKiV0zw_YQ0LeNXzBeRpB.png"
+    },
+    {
+      "owner": "zed-industries",
+      "name": "Zed Industries",
+      "source": "https://huggingface.co/zed-industries",
+      "file": "a70633d08431c7d6c80bbdf0.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/639ea15572706670112a18d4/bNqJ2nnIUymlNjeUJCj--.png"
+    },
+    {
+      "owner": "PKU-DS-LAB",
+      "name": "PKU-DS-LAB",
+      "source": "https://huggingface.co/PKU-DS-LAB",
+      "file": "51e8de3edbeae90337245441.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6826ada9d86f53ff982dab2e/0Hcn0sPtBnjvqvx7zsxpz.jpeg"
+    },
+    {
+      "owner": "AtlaAI",
+      "name": "Atla",
+      "source": "https://huggingface.co/AtlaAI",
+      "file": "bd86fc175950e4baed929dee.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/659fc8832cb13cede03047bb/rN1cwZNEyJqGQyBwwtLN-.jpeg"
+    },
+    {
+      "owner": "mobiuslabsgmbh",
+      "name": "Mobius Labs GmbH",
+      "source": "https://huggingface.co/mobiuslabsgmbh",
+      "file": "0454f4fa7eb427de827840fe.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64d3793b508a6313e31d2dc0/uUBBp80u9X1sZBktRijM8.png"
+    },
+    {
+      "owner": "watt-ai",
+      "name": "Dadao, Inc",
+      "source": "https://huggingface.co/watt-ai",
+      "file": "34e22c1e7490940058ec22c1.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/630cb7d6b66f088d547757b3/a2Dc0daRKFqBxVbfy3brt.png"
+    },
+    {
+      "owner": "AIDC-AI",
+      "name": "AIDC-AI",
+      "source": "https://huggingface.co/AIDC-AI"
+    },
+    {
+      "owner": "LiquidAI",
+      "name": "Liquid AI",
+      "source": "https://huggingface.co/LiquidAI",
+      "file": "47560632f45a20a45c6fcc6d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png"
+    },
+    {
+      "owner": "Salesforce",
+      "name": "Salesforce AI Research",
+      "source": "https://huggingface.co/Salesforce",
+      "file": "f76374fe7955efd3c3d1a459.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1602756670970-noauth.jpeg"
+    },
+    {
+      "owner": "Alibaba-NLP",
+      "name": "Alibaba-NLP",
+      "source": "https://huggingface.co/Alibaba-NLP",
+      "file": "38da3343b1b10f639a94db58.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63fc4c00a3c067e62899d32b/dfd_EcIfylvu3sdc2WMqX.png"
+    },
+    {
+      "owner": "tiiuae",
+      "name": "Technology Innovation Institute",
+      "source": "https://huggingface.co/tiiuae",
+      "file": "1362487922f958c2e4c4eaad.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg"
+    },
+    {
+      "owner": "stable-diffusion-v1-5",
+      "name": "SD v1.5",
+      "source": "https://huggingface.co/stable-diffusion-v1-5",
+      "file": "50decf2b862804844a949c19.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/66db4d94946bce6c947cc419/zqqXzfzBGEEIaguJUEC3z.png"
+    },
+    {
+      "owner": "Lykon",
+      "name": "-",
+      "source": "https://huggingface.co/Lykon",
+      "file": "59de0ab4e217e57349e0f31e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63b4b97558f367a212c4763c/lysGnwvZPfKxzMyPBeZf1.jpeg"
+    },
+    {
+      "owner": "RunDiffusion",
+      "name": "RunDiffusion",
+      "source": "https://huggingface.co/RunDiffusion",
+      "file": "298d15ffd7791d3327193092.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63cc944df488db9bb3cc2231/khd95dYFWi7AQxxp0LhC9.png"
+    },
+    {
+      "owner": "Tongyi-MAI",
+      "name": "Tongyi-MAI",
+      "source": "https://huggingface.co/Tongyi-MAI",
+      "file": "b33921fceef45fab79daa26a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64379d79fac5ea753f1c10f3/fxHO6QoYjdv9_LTyiUD3g.jpeg"
+    },
+    {
+      "owner": "CompVis",
+      "name": "CompVis",
+      "source": "https://huggingface.co/CompVis",
+      "file": "f18801fbd82fe5f29e9ba341.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1657794102363-5e3aec01f55e2b62848a5217.png"
+    },
+    {
+      "owner": "stabilityai",
+      "name": "Stability AI",
+      "source": "https://huggingface.co/stabilityai",
+      "file": "8875595cb538fa6e4b094d4e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/643feeb67bc3fbde1385cc25/7vmYr2XwVcPtkLzac_jxQ.png"
+    },
+    {
+      "owner": "black-forest-labs",
+      "name": "Black Forest Labs",
+      "source": "https://huggingface.co/black-forest-labs",
+      "file": "e801e13ded60e19fcebb71e9.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/633f7a8f4be90e06da248e0f/m5YoF33abJ09vcwFxt1Mj.png"
+    },
+    {
+      "owner": "lightx2v",
+      "name": "Lightx2v",
+      "source": "https://huggingface.co/lightx2v",
+      "file": "db46691ddaefe0679cb67bd5.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/680de13385293771bc57400b/qnjz3avU_cKzRZA2aGjuZ.png"
+    },
+    {
+      "owner": "wikeeyang",
+      "name": "Wikee Yang",
+      "source": "https://huggingface.co/wikeeyang",
+      "file": "22cd35b853701bd9c2aa9111.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64572eba95082f722d1a103a/Q4BuycjA0zi2zWKtirgj8.jpeg"
+    },
+    {
+      "owner": "cagliostrolab",
+      "name": "Cagliostro Labs",
+      "source": "https://huggingface.co/cagliostrolab",
+      "file": "80a37e643c75cbab1a86ac07.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6365c8dbf31ef76df4042821/C00yQdO1dGQKnSxcw1pf8.png"
+    },
+    {
+      "owner": "unsloth",
+      "name": "Unsloth AI",
+      "source": "https://huggingface.co/unsloth",
+      "file": "0be5633f7569b145fadd6488.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62ecdc18b72a69615d6bd857/E4lkPz1TZNLzIFr_dR273.png"
+    },
+    {
+      "owner": "LyliaEngine",
+      "name": "Narontaka",
+      "source": "https://huggingface.co/LyliaEngine",
+      "file": "34bc29b68c11fb19eb72a21e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ztfXe_SwckILKvTfLQ98M.png"
+    },
+    {
+      "owner": "playgroundai",
+      "name": "Playground",
+      "source": "https://huggingface.co/playgroundai",
+      "file": "d71712af11bd63bfababa0f3.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62c627c4644269e788cfee34/mV0Cwic2o92LNKiFBbraJ.png"
+    },
+    {
+      "owner": "city96",
+      "name": "City",
+      "source": "https://huggingface.co/city96",
+      "file": "8bc87c06b1f718d881acbe6c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64ab1219a347b95719b96c10/h_tsH2ZsrWGCCYDb7aZyp.png"
+    },
+    {
+      "owner": "h94",
+      "name": "xiaohu",
+      "source": "https://huggingface.co/h94",
+      "file": "a8569a43cccd828ac39e5694.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6319b24609baf858241f026c/nBucmn2eT498BLq0MNcqo.png"
+    },
+    {
+      "owner": "QuantStack",
+      "name": "QuantStack",
+      "source": "https://huggingface.co/QuantStack"
+    },
+    {
+      "owner": "lrzjason",
+      "name": "Jason LI",
+      "source": "https://huggingface.co/lrzjason"
+    },
+    {
+      "owner": "duongve",
+      "name": "Nguyễn Vũ Dương",
+      "source": "https://huggingface.co/duongve",
+      "file": "9b32705be41986d23ae7ed23.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/646aa91e1556443f24b87332/72MRy5D09qQEwyPuFMLNw.webp"
+    },
+    {
+      "owner": "SimianLuo",
+      "name": "Simian Luo",
+      "source": "https://huggingface.co/SimianLuo",
+      "file": "065630b5d3d3555e58afe6ec.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ofYN04WWtD60oeDP45pQN.jpeg"
+    },
+    {
+      "owner": "Alissonerdx",
+      "name": "Alisson",
+      "source": "https://huggingface.co/Alissonerdx",
+      "file": "b1d5fded795439a67f4501c5.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/zYUGNDVFyLncD1OHov1pB.jpeg"
+    },
+    {
+      "owner": "xinsir",
+      "name": "qi",
+      "source": "https://huggingface.co/xinsir"
+    },
+    {
+      "owner": "Laxhar",
+      "name": "Laxhar Dream Lab",
+      "source": "https://huggingface.co/Laxhar",
+      "file": "3a8ee1dcb03e3aaea3ec59c0.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63d3a01ae149f591b950f5e8/eJH8QnKlOsJEl7I1B9gat.png"
+    },
+    {
+      "owner": "latent-consistency",
+      "name": "Latent Consistency",
+      "source": "https://huggingface.co/latent-consistency",
+      "file": "82cddcd83b2cda7b42cd8dfe.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/5dfcb1aada6d0311fd3d5448/uoglawGgkgjSg730Z-p5Y.png"
+    },
+    {
+      "owner": "T5B",
+      "name": "T5",
+      "source": "https://huggingface.co/T5B"
+    },
+    {
+      "owner": "diffusers",
+      "name": "🧨Diffusers",
+      "source": "https://huggingface.co/diffusers",
+      "file": "6e3b2187b95ab23af98b4d17.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1668178606778-602e6dee60e3dd96631c906e.jpeg"
+    },
+    {
+      "owner": "ByteDance",
+      "name": "ByteDance",
+      "source": "https://huggingface.co/ByteDance",
+      "file": "673abccc9eaa0ece67840747.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6535c9e88bde2fae19b6fb25/0clr54wj5Ly-RkYU9OXPp.png"
+    },
+    {
+      "owner": "jdopensource",
+      "name": "JD.com Open Source",
+      "source": "https://huggingface.co/jdopensource",
+      "file": "c2a02d5c5708f4f7766b16fc.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/68c0e2ab44ea28a974e3074b/g-4gTubd16qUtwmGZ0n4h.png"
+    },
+    {
+      "owner": "autoweeb",
+      "name": "AutoWeeb",
+      "source": "https://huggingface.co/autoweeb",
+      "file": "04394866752f98ad787b993f.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/68fa3fd2ebe4408b2ce60751/9tPM409Jv44jnEZewEfx8.png"
+    },
+    {
+      "owner": "John6666",
+      "name": "John Smith",
+      "source": "https://huggingface.co/John6666",
+      "file": "3ee883dddc63fd6e6f2f09b4.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png"
+    },
+    {
+      "owner": "HiDream-ai",
+      "name": "HiDream.ai",
+      "source": "https://huggingface.co/HiDream-ai",
+      "file": "c6f60a3c8ebaaae287504462.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63743880e75ef9e965353987/Mmc0LXiTjBQEpw85ZIYoQ.png"
+    },
+    {
+      "owner": "drbaph",
+      "name": "DRBAPH",
+      "source": "https://huggingface.co/drbaph",
+      "file": "d63faac4b32f2b4a3aaf6766.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63473b59e5c0717e6737b872/e0rwJa886MD1hmdeFr9Wh.jpeg"
+    },
+    {
+      "owner": "nunchaku-ai",
+      "name": "nunchaku",
+      "source": "https://huggingface.co/nunchaku-ai",
+      "file": "8a505e279c763901cab1f636.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63129589bbaa385279d1826e/XjlRr_mtrPPFGMftIwBEa.png"
+    },
+    {
+      "owner": "Omnico",
+      "name": "Constantinez",
+      "source": "https://huggingface.co/Omnico",
+      "file": "ce361a25309618acd272ec29.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/655b7d0931c4978366a89a0e/vCYGhiHBZnUjCWnaH72Cm.jpeg"
+    },
+    {
+      "owner": "thibaud",
+      "name": "Thib aud",
+      "source": "https://huggingface.co/thibaud",
+      "file": "d08cc148b547508d20c049c7.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1678215193597-62fd34613724b86da927a53c.png"
+    },
+    {
+      "owner": "OnomaAIResearch",
+      "name": "OnomaAI",
+      "source": "https://huggingface.co/OnomaAIResearch",
+      "file": "9c328f1f62ac0b8a79f36c2e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65eea2d62cc24ebc6dbe16c0/SkukAZia2lK1KCenIjbtf.png"
+    },
+    {
+      "owner": "Runpod",
+      "name": "Runpod",
+      "source": "https://huggingface.co/Runpod",
+      "file": "74453b2789ee5608beeba67a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/685b1e0bb386e281a3ebac08/4kbaRSO97106sadl_KhAO.png"
+    },
+    {
+      "owner": "lodestones",
+      "name": "rock",
+      "source": "https://huggingface.co/lodestones",
+      "file": "0fd29ef12e091c9ab309287b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63b25a957804d5cadce4e08b/mPwuVn7KBjkLofkxkdamE.png"
+    },
+    {
+      "owner": "AlperKTS",
+      "name": "Alper",
+      "source": "https://huggingface.co/AlperKTS",
+      "file": "9d691607123bf243db5b1715.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6353fd1b6fd9f0793023c4cc/Q3gxq7HDqfHRDZI5G5ulr.png"
+    },
+    {
+      "owner": "ifmylove2011",
+      "name": "ifmylove2011",
+      "source": "https://huggingface.co/ifmylove2011",
+      "file": "e9de1a6a4244c4689289a264.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/IAA6SNvpcAIoDHLjrtXzz.jpeg"
+    },
+    {
+      "owner": "InstantX",
+      "name": "InstantX",
+      "source": "https://huggingface.co/InstantX",
+      "file": "aef337f08bae13bad538ea78.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/637745113a63a2983ffbde13/wZKoPSWQKpe2JpFsX3nLa.jpeg"
+    },
+    {
+      "owner": "fal",
+      "name": "fal",
+      "source": "https://huggingface.co/fal",
+      "file": "262138301e2db1f26bbad73a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6380ebb8471a4550ff255c62/JLWd_lQkzQN81FVIva1w1.png"
+    },
+    {
+      "owner": "XLabs-AI",
+      "name": "XLabs AI",
+      "source": "https://huggingface.co/XLabs-AI",
+      "file": "f3585f6f0c8af09bd41776f1.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/66b2388e94905612afd63d53/7DV7oEYkTbkEmURnkMQfW.png"
+    },
+    {
+      "owner": "vantagewithai",
+      "name": "Vantage with AI",
+      "source": "https://huggingface.co/vantagewithai",
+      "file": "6893408d0834f50871f7a2c3.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/67b808c770117114270d902e/dLdwkNZowSMsqTZ3Znfg2.png"
+    },
+    {
+      "owner": "tlennon-ie",
+      "name": "Thomas Lennon",
+      "source": "https://huggingface.co/tlennon-ie",
+      "file": "d9750300e4a3562afa8135cc.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Y2DbC1i9DpOV3sr4a-cc_.png"
+    },
+    {
+      "owner": "leejet",
+      "name": "leejet",
+      "source": "https://huggingface.co/leejet"
+    },
+    {
+      "owner": "cyberdelia",
+      "name": "CyberDelia",
+      "source": "https://huggingface.co/cyberdelia",
+      "file": "50ee85931eedbd81debda234.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/647339c9d9e9598973c847aa/cJwSPkMKocq3bJkBYI4ht.png"
+    },
+    {
+      "owner": "LoliRimuru",
+      "name": "Loli Rimuru",
+      "source": "https://huggingface.co/LoliRimuru"
+    },
+    {
+      "owner": "Gazingstars123",
+      "name": "Thang Vo",
+      "source": "https://huggingface.co/Gazingstars123"
+    },
+    {
+      "owner": "silveroxides",
+      "name": "Silver",
+      "source": "https://huggingface.co/silveroxides"
+    },
+    {
+      "owner": "dx8152",
+      "name": "wuli-DX",
+      "source": "https://huggingface.co/dx8152",
+      "file": "ef6a614a8c1e37c2c27e6dc3.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64461e86ab86b035add67e41/eDoTkuWIHd4kXplY0ZfiM.jpeg"
+    },
+    {
+      "owner": "Kokosha01",
+      "name": "Kokosha Pippin",
+      "source": "https://huggingface.co/Kokosha01"
+    },
+    {
+      "owner": "Manojb",
+      "name": "Manoj bhat",
+      "source": "https://huggingface.co/Manojb",
+      "file": "296914c1f626754f61b5703d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/618fd970ec759925a87f9190/HpsYSixuBbFDLPRSrNlD4.png"
+    },
+    {
+      "owner": "MeiGen-AI",
+      "name": "MeiGen-AI",
+      "source": "https://huggingface.co/MeiGen-AI",
+      "file": "a7cc87ff8fb0e27456ded516.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6311b3f3fdb55de45d1fd2bd/jUSW33kUJ8eglDTgC8qiT.webp"
+    },
+    {
+      "owner": "RudySen",
+      "name": "Rudy Sen",
+      "source": "https://huggingface.co/RudySen"
+    },
+    {
+      "owner": "jayn7",
+      "name": "jay",
+      "source": "https://huggingface.co/jayn7"
+    },
+    {
+      "owner": "ostris",
+      "name": "Ostris",
+      "source": "https://huggingface.co/ostris",
+      "file": "8b11ee4d70b84b48489d1e69.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/643cb43e6eeb746f5ad81c26/_DUtzHpNtpTeDw7u0oYyX.png"
+    },
+    {
+      "owner": "timbrooks",
+      "name": "Tim Brooks",
+      "source": "https://huggingface.co/timbrooks",
+      "file": "ccb6a002cf128e35d9e0cbf3.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62f68cdb04e5e02f82ae4ab1/kIl7meNMXLJ0DSGg0_WoE.jpeg"
+    },
+    {
+      "owner": "monadical-labs",
+      "name": "Monadical Labs",
+      "source": "https://huggingface.co/monadical-labs",
+      "file": "93516b9ad1d0841f557e9a31.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63233460d444e1d908849707/cQ-OdQ_Jof5dkQLIGMUcB.png"
+    },
+    {
+      "owner": "Sudanl",
+      "name": "Shudong Liu",
+      "source": "https://huggingface.co/Sudanl"
+    },
+    {
+      "owner": "mayocream",
+      "name": "Mayo",
+      "source": "https://huggingface.co/mayocream",
+      "file": "dbf6621cb3b8be7ac04389c2.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/651c47f2f7bc8e56a4644c68/65jjE_87hU8oAIGKyPRH2.png"
+    },
+    {
+      "owner": "Phil2Sat",
+      "name": "Phil2Sat",
+      "source": "https://huggingface.co/Phil2Sat"
+    },
+    {
+      "owner": "offgrid-ai",
+      "name": "Off Grid AI",
+      "source": "https://huggingface.co/offgrid-ai",
+      "file": "b2adc5c9e9fdea97044a73b6.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6a3ba58ae09c3c22cdcf64f2/4_zUWUQ3FKlyQMa2_hzTj.png"
+    },
+    {
+      "owner": "argmaxinc",
+      "name": "Argmax",
+      "source": "https://huggingface.co/argmaxinc",
+      "file": "3cac8871d4b10f84f9be8e50.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64c612d618bc1b4e81023e7b/Ga9AJAiQrVDBGlmt9lMmO.png"
+    },
+    {
+      "owner": "second-state",
+      "name": "Second State",
+      "source": "https://huggingface.co/second-state",
+      "file": "2df9ce9ef64ba15fe781c962.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6536a1b2ac570e90963f979f/qPN3zegu0H6e_83tmLIr_.png"
+    },
+    {
+      "owner": "lllyasviel",
+      "name": "Lvmin Zhang",
+      "source": "https://huggingface.co/lllyasviel",
+      "file": "095de27c1b536ff60d7e096c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1671173450971-noauth.jpeg"
+    },
+    {
+      "owner": "caidas",
+      "name": "Computer Vision Lab, CAIDAS, University of Würzburg",
+      "source": "https://huggingface.co/caidas",
+      "file": "7aece3c755cec53ef4a54132.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/634169d1a7582111c3f46bae/c3HXJiD6PgZwUCRF5maf7.png"
+    },
+    {
+      "owner": "deepseek-community",
+      "name": "DeepSeek-community",
+      "source": "https://huggingface.co/deepseek-community",
+      "file": "1c72f136d9a0c747a95e1277.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/637ced166231c36c63707cba/ID37chRhBZ5vyljtMVTGn.png"
+    },
+    {
+      "owner": "lvladikov",
+      "name": "Lachezar Vladikov",
+      "source": "https://huggingface.co/lvladikov"
+    },
+    {
+      "owner": "lovis93",
+      "name": "Lovis Odin",
+      "source": "https://huggingface.co/lovis93",
+      "file": "209f05f26641d3f6c574988b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6310ccbdda0aaad2f705fd56/ninj7ghinp5K5XPzYAypY.jpeg"
+    },
+    {
+      "owner": "meituan-longcat",
+      "name": "LongCat",
+      "source": "https://huggingface.co/meituan-longcat",
+      "file": "728046f62c4e42568b289ca3.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/68a2a29ab9d4c5698e02c747/CDCAx7X7rXDt7xjI-DoxG.png"
+    },
+    {
+      "owner": "Wuli-art",
+      "name": "Wuli-Art",
+      "source": "https://huggingface.co/Wuli-art",
+      "file": "3133766dab9648862a515ee4.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64ffd07112c1442d9927eb66/yZhne3ppG41DD6cHht9zh.jpeg"
+    },
+    {
+      "owner": "duyntnet",
+      "name": "duynt",
+      "source": "https://huggingface.co/duyntnet"
+    },
+    {
+      "owner": "realrebelai",
+      "name": "Rebel AI",
+      "source": "https://huggingface.co/realrebelai",
+      "file": "37797a03e10d17ab6548415c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/68761990332d15464ccc8dee/knboX14lw1MWRXHKrpGyJ.png"
+    },
+    {
+      "owner": "lilylilith",
+      "name": "Lilith",
+      "source": "https://huggingface.co/lilylilith",
+      "file": "1803019d1555710b9e5031ac.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/638aeb590f10aa3064f42a80/wxaHV6Acm0xNwGK5Wlhgy.png"
+    },
+    {
+      "owner": "TheImposterImposters",
+      "name": "The Imposter Imposters",
+      "source": "https://huggingface.co/TheImposterImposters"
+    },
+    {
+      "owner": "joyfox",
+      "name": "joyfox",
+      "source": "https://huggingface.co/joyfox",
+      "file": "f33e2a2e98764c9d2c5d0547.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6864d1f250596cb028f66be3/TOr9t2xU3PJFjSXGQvTYK.png"
+    },
+    {
+      "owner": "starsfriday",
+      "name": "YESHEN",
+      "source": "https://huggingface.co/starsfriday",
+      "file": "2f266439b73d0efb0dfdd110.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/657a7585e0cb28fb470fcb08/ATTC2tVpn01Md7AS3fREg.png"
+    },
+    {
+      "owner": "molbal",
+      "name": "Bálint Molnár-Kaló",
+      "source": "https://huggingface.co/molbal",
+      "file": "b385ba1e9e8d453da8bda34c.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/638a3f5a8d7cce863e70a91b/Z_KI0kdABbpRkXV51JpOG.jpeg"
+    },
+    {
+      "owner": "dataautogpt3",
+      "name": "Alexander Izquierdo",
+      "source": "https://huggingface.co/dataautogpt3",
+      "file": "d591e98887d90a7d00c7c506.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64430e32e255a338677fe9a7/qPn5pCkKOdpmyTHWFve_U.png"
+    },
+    {
+      "owner": "tianweiy",
+      "name": "Tianwei Yin",
+      "source": "https://huggingface.co/tianweiy"
+    },
+    {
+      "owner": "JujoHotaru",
+      "name": "Hotaru Jujo / 十条 蛍",
+      "source": "https://huggingface.co/JujoHotaru",
+      "file": "3d4696948c6747e153e97b3d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/64a95ec5e368492ab8d98f1b/oI1GQNS6LkwDNjihmSdQs.png"
+    },
+    {
+      "owner": "vafipas663",
+      "name": "N",
+      "source": "https://huggingface.co/vafipas663"
+    },
+    {
+      "owner": "digiplay",
+      "name": "digiplay",
+      "source": "https://huggingface.co/digiplay",
+      "file": "43613a67ae14747404c98cae.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/646c83c871d0c8a6e4455854/b5Act86SZ7zuUXmLOIqYj.png"
+    },
+    {
+      "owner": "sensenova",
+      "name": "SenseNova",
+      "source": "https://huggingface.co/sensenova",
+      "file": "1fca1074e710bb1a9bbe6570.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/652d06833b5997ed71ce5c46/k66xcOMf4NVbMSFulUjHY.png"
+    },
+    {
+      "owner": "nerijs",
+      "name": "Brandon G. Neri",
+      "source": "https://huggingface.co/nerijs",
+      "file": "b99797108e42e5287833b691.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1669957883411-6303f37c3926de1f7ec42d3e.jpeg"
+    },
+    {
+      "owner": "botp",
+      "name": "ab10",
+      "source": "https://huggingface.co/botp"
+    },
+    {
+      "owner": "Granddyser",
+      "name": "Noah F.",
+      "source": "https://huggingface.co/Granddyser",
+      "file": "863d2750a56254950127ea1b.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6760b9d4ed52bb1fa45066b4/i20i80xS8WroVdzQvvCYg.jpeg"
+    },
+    {
+      "owner": "ModelsLab",
+      "name": "ModelsLab",
+      "source": "https://huggingface.co/ModelsLab",
+      "file": "bbf4707a5affc9aa301176a7.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6130bd108723d78dd6abe72a/7exsCZ2uIJY-F0E1kA0Kg.png"
+    },
+    {
+      "owner": "huanzi05",
+      "name": "Huan Wang",
+      "source": "https://huggingface.co/huanzi05"
+    },
+    {
+      "owner": "FireRedTeam",
+      "name": "FireRed Team",
+      "source": "https://huggingface.co/FireRedTeam",
+      "file": "89d2d86f7c11f7105b4ccf5f.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/66ec07ef12bd743cfe91004e/PK3bgl6aF2RzW1QFKkq8R.png"
+    },
+    {
+      "owner": "segmind",
+      "name": "Segmind",
+      "source": "https://huggingface.co/segmind",
+      "file": "fe7c897b3121a2f52fb59cfb.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6335d72738e33ddc26527332/dMCE82gVz832ew-un3pqa.png"
+    },
+    {
+      "owner": "jiaowobaba02",
+      "name": "yue weikai",
+      "source": "https://huggingface.co/jiaowobaba02"
+    },
+    {
+      "owner": "LeFeujitif",
+      "name": "Mx Cln",
+      "source": "https://huggingface.co/LeFeujitif"
+    },
+    {
+      "owner": "PixArt-alpha",
+      "name": "PixArt",
+      "source": "https://huggingface.co/PixArt-alpha",
+      "file": "43bc293a5cc842656e18219a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/650c74e5d439bbbbadfcfbbe/A4HUNyWJSblicluNFTptt.jpeg"
+    },
+    {
+      "owner": "tarn59",
+      "name": "tarn59",
+      "source": "https://huggingface.co/tarn59",
+      "file": "bb9aea3a3b34c3311ed42c3f.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/680075cd9c4da89b98bb6f9f/hgkcOqFhOrQT3EJK3sDXA.png"
+    },
+    {
+      "owner": "DiffusionLight",
+      "name": "DiffusionLight",
+      "source": "https://huggingface.co/DiffusionLight",
+      "file": "c92b279f9694999736e39610.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/634aa40e29bfb40824507975/rLEl7G34V7F0TEDk4id7q.png"
+    },
+    {
+      "owner": "huanngzh",
+      "name": "zehuan-huang",
+      "source": "https://huggingface.co/huanngzh",
+      "file": "58eb7a065941a47e930dea5a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6375d136dee28348a9c63cbf/gK465HBrQWIOZ-qtHb-Vh.jpeg"
+    },
+    {
+      "owner": "sd2-community",
+      "name": "stable-diffusion-2",
+      "source": "https://huggingface.co/sd2-community"
+    },
+    {
+      "owner": "alimama-creative",
+      "name": "alimama-creative",
+      "source": "https://huggingface.co/alimama-creative",
+      "file": "83ea8d656f62a90f28835be0.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6322bc68a97afe3c4c6dd8a7/kpKBHzXGAAVbe0hsGFfsx.png"
+    },
+    {
+      "owner": "thedeoxen",
+      "name": "Pavel Bakhvalov",
+      "source": "https://huggingface.co/thedeoxen",
+      "file": "fa26865a420cffcba8840b7a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/658c388e9a1397992a23a314/16qPyOx4YvWBBeZRNonfI.jpeg"
+    },
+    {
+      "owner": "Shilin-LU",
+      "name": "Shilin Lu",
+      "source": "https://huggingface.co/Shilin-LU"
+    },
+    {
+      "owner": "wcde",
+      "name": "wcde",
+      "source": "https://huggingface.co/wcde"
+    },
+    {
+      "owner": "xFutureTechx",
+      "name": "Future Tech",
+      "source": "https://huggingface.co/xFutureTechx"
+    },
+    {
+      "owner": "alibaba-pai",
+      "name": "Alibaba-PAI",
+      "source": "https://huggingface.co/alibaba-pai",
+      "file": "a5e9eaaad9a8b33cab35dd49.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1650342890988-623c6253389748c9f72ca287.png"
+    },
+    {
+      "owner": "calcuis",
+      "name": "cαlcμ",
+      "source": "https://huggingface.co/calcuis",
+      "file": "51fb3ab10baf88e75045b601.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65a468ca6e52f83340105b1a/kMmTIKYe0IG8h9y0FqrGX.png"
+    },
+    {
+      "owner": "timdrnl",
+      "name": "Timothée De Raynal",
+      "source": "https://huggingface.co/timdrnl"
+    },
+    {
+      "owner": "mradermacher",
+      "name": "team mradermacher",
+      "source": "https://huggingface.co/mradermacher"
+    },
+    {
+      "owner": "DiffSynth-Studio",
+      "name": "DiffSynth-Studio",
+      "source": "https://huggingface.co/DiffSynth-Studio",
+      "file": "b4218b0b3c73dc28b6cde584.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/672c8f0070734f59f146b73c/5lGMq-_Patlincxq97jf5.png"
+    },
+    {
+      "owner": "1038lab",
+      "name": "ailab",
+      "source": "https://huggingface.co/1038lab",
+      "file": "e7c5f2a7ee1fb3db0c949244.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/66b0e19f3ba05fa63fe9030f/hKbEaebfriiuItpgadRyz.jpeg"
+    },
+    {
+      "owner": "artificialguybr",
+      "name": "ArtificialGuy/JV.K",
+      "source": "https://huggingface.co/artificialguybr",
+      "file": "6854ca1d8abcecd6835403c6.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6304037b7373aacccd882e1e/8eVftwfLkqWVk6g9Z1U-c.png"
+    },
+    {
+      "owner": "strangerzonehf",
+      "name": "Stranger Zone",
+      "source": "https://huggingface.co/strangerzonehf",
+      "file": "186576d305c23661aa6f43ab.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65bb837dbfb878f46c77de4c/9VOmpLjgrZNZ6bOEPLyoU.png"
+    },
+    {
+      "owner": "xiaolxl",
+      "name": "xiaolxl",
+      "source": "https://huggingface.co/xiaolxl",
+      "file": "b664815d3b8a7729c9c79423.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1674454747234-63493aae667da7e67380fa78.png"
+    },
+    {
+      "owner": "gsdf",
+      "name": "gdgsfsfs",
+      "source": "https://huggingface.co/gsdf",
+      "file": "2e8aaf57ec67071c33be3bbd.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/1671032537903-634522ba5ba732a320ad8066.jpeg"
+    },
+    {
+      "owner": "mlx-community",
+      "name": "MLX Community",
+      "source": "https://huggingface.co/mlx-community",
+      "file": "6b2571cb8ea1593ffee59ed7.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/623c830997ddced06d78699b/3qTjC7d3YFCJTwpxd2noq.png"
+    },
+    {
+      "owner": "gokaygokay",
+      "name": "gokay aydogan",
+      "source": "https://huggingface.co/gokaygokay"
+    },
+    {
+      "owner": "Quiho",
+      "name": "Karol",
+      "source": "https://huggingface.co/Quiho",
+      "file": "58d855bff115e0c46f6945b8.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/WqlvhPKnlNvrsG9Za-p28.png"
+    },
+    {
+      "owner": "Shakker-Labs",
+      "name": "Shakker Labs",
+      "source": "https://huggingface.co/Shakker-Labs",
+      "file": "8c0e703455bb28c1254ed33e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/637745113a63a2983ffbde13/7xAiWo1UplT25dyzWR3tv.png"
+    },
+    {
+      "owner": "pmczip",
+      "name": "LimitationsUndone",
+      "source": "https://huggingface.co/pmczip",
+      "file": "6c7d330bf714fe5179fec4a8.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6949ab3168e7b8cf61208898/zVuRV4iOmSE5v6kcoD9aT.webp"
+    },
+    {
+      "owner": "shootstuff",
+      "name": "Stephen Moore",
+      "source": "https://huggingface.co/shootstuff",
+      "file": "ce529fb0e8d441c4bc2a28e2.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/rz9KC4VJ47VR9q0yVagBx.png"
+    },
+    {
+      "owner": "emilianJR",
+      "name": "emilian jr. stevenson",
+      "source": "https://huggingface.co/emilianJR",
+      "file": "d403fd69eae589114f792728.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6409bde7f3dabf9382481513/ozpgrowdwggqFjW4cHwop.jpeg"
+    },
+    {
+      "owner": "rzgar",
+      "name": "Rzgar",
+      "source": "https://huggingface.co/rzgar",
+      "file": "63f5fe274eeaad64ee76772a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/644717ea27a3e9e0b7c7207a/aNn8akdZfegf46fkZ4R9h.jpeg"
+    },
+    {
+      "owner": "Raxephion",
+      "name": "Raxephion",
+      "source": "https://huggingface.co/Raxephion",
+      "file": "6b9aafb330482aca1bba0148.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/645cc23dce72244df7affb94/r8AX7891zVGTcTEWOmT2Y.jpeg"
+    },
+    {
+      "owner": "Abiray",
+      "name": "Jay",
+      "source": "https://huggingface.co/Abiray",
+      "file": "fa1daf599f9069e8026e06c4.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/672622efdf9cce918fdc713f/2wilqSZUrc1H5aGXV54Pp.png"
+    },
+    {
+      "owner": "Comfy-Org",
+      "name": "Comfy Org",
+      "source": "https://huggingface.co/Comfy-Org",
+      "file": "c4001737373f6736026def28.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/630433fea362e7e8b51f5e2b/bsDc8lR72KhKvm-wXxYsv.png"
+    },
+    {
+      "owner": "Lightricks",
+      "name": "LTX.io",
+      "source": "https://huggingface.co/Lightricks",
+      "file": "8d613bf3cad655fa9a4b583a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/669524bcbcd81f395e8f60f6/0ynfqKEWMh_dn3h4ff1K5.png"
+    },
+    {
+      "owner": "Wan-AI",
+      "name": "Wan-AI",
+      "source": "https://huggingface.co/Wan-AI",
+      "file": "38da3343b1b10f639a94db58.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/67b610677ea7952def8b29c6/N6jQbbeaa_FcUY-wI1dgG.png"
+    },
+    {
+      "owner": "FastVideo",
+      "name": "FastVideo",
+      "source": "https://huggingface.co/FastVideo",
+      "file": "8eb4c3a3d620bd5b76deb8fe.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63565cc56d7fcf1bedb7d347/g6wWXLryVUwXcaKTuRerh.png"
+    },
+    {
+      "owner": "joeygambino",
+      "name": "Joey",
+      "source": "https://huggingface.co/joeygambino",
+      "file": "a9b4218f10b40f8a7db7a54f.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65167486c1ec63624f5e45dd/zJlq2UH7TzeLv77AsbFUn.png"
+    },
+    {
+      "owner": "SulphurAI",
+      "name": "Sulphur",
+      "source": "https://huggingface.co/SulphurAI",
+      "file": "618e8ece8de5cc81d6963f84.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/644b31f7a49c03b1b68b2b6d/lmkp2mpS-5eoz-ItU5uyq.png"
+    },
+    {
+      "owner": "larryvrh",
+      "name": "larryvrh",
+      "source": "https://huggingface.co/larryvrh",
+      "file": "1788b09a5b4f614c9d387f03.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63783918d925e7dad20748a3/SIMpPx2nIKyEF7Mx9E3hC.png"
+    },
+    {
+      "owner": "samuelchristlie",
+      "name": "Sam",
+      "source": "https://huggingface.co/samuelchristlie",
+      "file": "252bba9eb5df775112cde098.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/95DCKrOSjsGc-cgMSXm49.png"
+    },
+    {
+      "owner": "OpenMOSS-Team",
+      "name": "OpenMOSS",
+      "source": "https://huggingface.co/OpenMOSS-Team",
+      "file": "e2f548796275380e800f1d45.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/61457b8deff2c9fdb4de4988/N5b9663zQ4uq5_OTNlnmw.png"
+    },
+    {
+      "owner": "comfyicu",
+      "name": "comfyicu",
+      "source": "https://huggingface.co/comfyicu"
+    },
+    {
+      "owner": "WarmBloodAban",
+      "name": "AIGC Singularity",
+      "source": "https://huggingface.co/WarmBloodAban",
+      "file": "d1c5a0f652d5f6038a4ccb03.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/n2bexa-LzvGqmxyOGaonu.png"
+    },
+    {
+      "owner": "bullerwins",
+      "name": "Rodri Mora",
+      "source": "https://huggingface.co/bullerwins",
+      "file": "9aaf0d1210e2b264968e629d.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/65cccccefb8ab7fcc2c6424c/0dlk5hmzNhTWr8j9E1DXP.jpeg"
+    },
+    {
+      "owner": "IPostYellow",
+      "name": "PostYellow",
+      "source": "https://huggingface.co/IPostYellow"
+    },
+    {
+      "owner": "TenStrip",
+      "name": "TenStrip",
+      "source": "https://huggingface.co/TenStrip",
+      "file": "23db7524d46828d61168d062.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/642b468deb31218a5f1e69f7/LiWWJtzMlvRNKIHT9sfsY.png"
+    },
+    {
+      "owner": "ibyteohdear",
+      "name": "daniel",
+      "source": "https://huggingface.co/ibyteohdear"
+    },
+    {
+      "owner": "Hearmeman",
+      "name": "HearmemanAI",
+      "source": "https://huggingface.co/Hearmeman",
+      "file": "8ae5a97c7a0c2777b2ee9c8a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6758844924d9ce266466aec0/Hr9wkYP3KUWtBfgPL1dea.png"
+    },
+    {
+      "owner": "magespace",
+      "name": "Mage.Space",
+      "source": "https://huggingface.co/magespace",
+      "file": "6cfcaaf0c0212f55ff1984bb.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/62fbe33bc776fd8821ae77d8/WQkFHiIhizZxTpleyYHDC.png"
+    },
+    {
+      "owner": "Jojocodex",
+      "name": "Hpmg",
+      "source": "https://huggingface.co/Jojocodex",
+      "file": "74ed36cf13c4a2efd853eaf6.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6a6748afef317ed5adb30050/Ca36mpBOmdmrgVPxtMafQ.png"
+    },
+    {
+      "owner": "aptech0081",
+      "name": "AP",
+      "source": "https://huggingface.co/aptech0081"
+    },
+    {
+      "owner": "nyxia",
+      "name": "Fyx",
+      "source": "https://huggingface.co/nyxia",
+      "file": "3ccc90db2b9aeb816667550e.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/645d4f035ebf379fd6da64b1/9draFf0bofCr7ToFwsHDX.png"
+    },
+    {
+      "owner": "Rabinovich",
+      "name": "Yixiao Zeng",
+      "source": "https://huggingface.co/Rabinovich"
+    },
+    {
+      "owner": "ali-vilab",
+      "name": "ali-vilab",
+      "source": "https://huggingface.co/ali-vilab",
+      "file": "5ed5e42021c8c8d8817c19aa.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/623c6253389748c9f72ca287/Dxs373r3Ii6hEMfbFzqxI.png"
+    },
+    {
+      "owner": "robbyant",
+      "name": "Robbyant",
+      "source": "https://huggingface.co/robbyant",
+      "file": "65c2fb4f3ac143300fdb0740.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/67aeffda7330db26f93cd62f/ZTuImney4XzRmBHyUL47F.png"
+    },
+    {
+      "owner": "brurpo",
+      "name": "bruno po",
+      "source": "https://huggingface.co/brurpo"
+    },
+    {
+      "owner": "t8star",
+      "name": "T8star-Aix",
+      "source": "https://huggingface.co/t8star",
+      "file": "04a4efd4be848d595c1c710a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/657872063a56e4034e3cb5e2/MLAv_Dm8jiXY5f0apfUVP.png"
+    },
+    {
+      "owner": "abakanai",
+      "name": "stas",
+      "source": "https://huggingface.co/abakanai"
+    },
+    {
+      "owner": "lxxxy6",
+      "name": "newPeak",
+      "source": "https://huggingface.co/lxxxy6",
+      "file": "5d869d6a25d7e7444f1259f5.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/rNsWhtcrLC18nJxhZ-m1p.png"
+    },
+    {
+      "owner": "Patarapoom",
+      "name": "Tungchanta",
+      "source": "https://huggingface.co/Patarapoom"
+    },
+    {
+      "owner": "NullpoLab",
+      "name": "NullpoLab",
+      "source": "https://huggingface.co/NullpoLab",
+      "file": "69a1d2aa5c78e1731acb8cf2.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/P5ZSN0PMWEzn_LW67vZsZ.png"
+    },
+    {
+      "owner": "CornLogic",
+      "name": "Paul",
+      "source": "https://huggingface.co/CornLogic"
+    },
+    {
+      "owner": "ChrisColeTech",
+      "name": "Chris Cole",
+      "source": "https://huggingface.co/ChrisColeTech",
+      "file": "06ab5ab6598c5da2fee783f8.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/6a550d1dc84594e3ada10828/BLGmI3tqOxQmO1ti1rxUH.png"
+    },
+    {
+      "owner": "rockerBOO",
+      "name": "rockerBOO",
+      "source": "https://huggingface.co/rockerBOO",
+      "file": "502f7fc29645e4735c6eea6a.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/63150d9f8be84e1ab412890e/slVOxsRI070drG6kICymD.png"
+    },
+    {
+      "owner": "tolgacangoz",
+      "name": "Tolga Cangöz",
+      "source": "https://huggingface.co/tolgacangoz",
+      "file": "d061a4a63e8c6cee5f630d61.webp",
+      "avatar_source": "https://cdn-avatars.huggingface.co/v1/production/uploads/603bdba23249b99991dbcbc4/cxCnN1H-RXOhojHY3Wcxo.jpeg"
+    }
+  ]
+}

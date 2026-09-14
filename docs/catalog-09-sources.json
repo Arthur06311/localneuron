@@ -1,0 +1,2457 @@
+{
+  "verified_at": "2026-09-10",
+  "added": 350,
+  "selection": "Publicadores conhecidos; tarefa de texto; licença declarada; popularidade; conjunto GGUF único; hashes fixados. Não é benchmark.",
+  "models": [
+    {
+      "id": "n09-43903f0b3992e32a",
+      "base_model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "repo": "unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF",
+      "revision": "b17cb02dd882d5b6ab62fc777ad2995f19668350",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-98f7df365df4d496",
+      "base_model": "thinkingmachines/Inkling-Small",
+      "repo": "unsloth/Inkling-Small-GGUF",
+      "revision": "1a19ef82883cb7b9c581b93c30ea252dabbf658d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-1bd979b4cf8080d7",
+      "base_model": "Qwen/Qwen3.6-35B-A3B",
+      "repo": "unsloth/Qwen3.6-35B-A3B-GGUF",
+      "revision": "a483e9e6cbd595906af30beda3187c2663a1118c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e892d232548bf15d",
+      "base_model": "Qwen/Qwen3.6-27B",
+      "repo": "unsloth/Qwen3.6-27B-GGUF",
+      "revision": "82d411acf4a06cfb8d9b073a5211bf410bfc29bf",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-77f4a18e62b2c2a9",
+      "base_model": "endless-frontier/BigBang-v1",
+      "repo": "bartowski/endless-frontier_BigBang-v1-GGUF",
+      "revision": "3ecf951aa564e7ef610ddb25f8196d03a80b80d3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-c058d832ec2b5d19",
+      "base_model": "XYZAILab/XYZ-Aquila-mini",
+      "repo": "bartowski/XYZAILab_XYZ-Aquila-mini-GGUF",
+      "revision": "c1359d500cd53588fdb5a7f35b6e61e9ad3e5fab",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-53fe9dac5b456954",
+      "base_model": "meta-models/Muse-Glimmer-30B",
+      "repo": "unsloth/Muse-Glimmer-30B-GGUF",
+      "revision": "faa5b025c584459c13febfa5c59883516710ae39",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-f516950937672b0b",
+      "base_model": "google/gemma-4-26B-A4B-it",
+      "repo": "unsloth/gemma-4-26B-A4B-it-GGUF",
+      "revision": "c099eb48e663fd284577b04978a94ffccb261841",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-98c4c10547d57c6d",
+      "base_model": "thinkingmachines/Inkling",
+      "repo": "unsloth/inkling-GGUF",
+      "revision": "d3e9ffca48751dbe8b59dab5cfa364621257c682",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-1a008db117d2a698",
+      "base_model": "google/gemma-4-E2B-it",
+      "repo": "unsloth/gemma-4-E2B-it-GGUF",
+      "revision": "0314792d7f1f7e229411f620751375812bb9faf2",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-9db0bae8f829ff07",
+      "base_model": "google/gemma-4-E4B-it",
+      "repo": "unsloth/gemma-4-E4B-it-GGUF",
+      "revision": "bfc15c382204943c3a8fff0c750b94ae2364d7a3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-f481557315ceb881",
+      "base_model": "Qwen/Qwen3.5-122B-A10B",
+      "repo": "unsloth/Qwen3.5-122B-A10B-GGUF",
+      "revision": "51eab4d59d53f573fb9206cb3ce613f1d0aa392b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b631317df3c94164",
+      "base_model": "deepreinforce-ai/Ornith-1.0-9B",
+      "repo": "unsloth/Ornith-1.0-9B-GGUF",
+      "revision": "a674c5a128bb74049b1bb3619f1355073db5b48c",
+      "license": "mit"
+    },
+    {
+      "id": "n09-9c37d7121c8c3795",
+      "base_model": "google/gemma-4-31B-it",
+      "repo": "unsloth/gemma-4-31B-it-GGUF",
+      "revision": "c1ac76e99d5513b141e8adde7288b85c3f9c32ec",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-cd680c8d5b395e74",
+      "base_model": "Qwen/Qwen3.8-27B",
+      "repo": "bartowski/Qwen3.8-27B-GGUF",
+      "revision": "f0eec4a4bb4975114a030d048952d83c0a53c034",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-18b377bc6c6284e7",
+      "base_model": "Qwen/Qwen-AgentWorld-35B-A3B",
+      "repo": "unsloth/Qwen-AgentWorld-35B-A3B-GGUF",
+      "revision": "3a305abf5cfd119ee999dfe929c433746edd8d63",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-dfcb945c83d86c06",
+      "base_model": "google/gemma-4-12B-it",
+      "repo": "unsloth/gemma-4-12b-it-GGUF",
+      "revision": "fc034cfff751157913579611efad8462ac1be606",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-a6105c9fef7e1468",
+      "base_model": "Qwen/Qwen3.5-35B-A3B",
+      "repo": "bartowski/Qwen_Qwen3.5-35B-A3B-GGUF",
+      "revision": "3d2a22d4eb631b9c8fd2be94599dc2fd84b4a595",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-f0f3c5d55c4fa69e",
+      "base_model": "zai-org/GLM-5.2",
+      "repo": "unsloth/GLM-5.2-GGUF",
+      "revision": "abc55e72527792c6e77069c99b4cb7de16fa9f23",
+      "license": "mit"
+    },
+    {
+      "id": "n09-a95e2ec558f5c24a",
+      "base_model": "Qwen/Qwen3.5-0.8B",
+      "repo": "bartowski/Qwen_Qwen3.5-0.8B-GGUF",
+      "revision": "f36b1ea49a332ede8fe5f389bbf5b3575ef71f48",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-ecfb9af116250984",
+      "base_model": "stepfun-ai/Step-3.7-Flash",
+      "repo": "unsloth/Step-3.7-Flash-GGUF",
+      "revision": "8dd62fe8a98f3c8994160d0c521542560b558f37",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-927e788d29be466c",
+      "base_model": "Qwen/Qwen3-VL-4B-Instruct",
+      "repo": "unsloth/Qwen3-VL-4B-Instruct-GGUF",
+      "revision": "00c00da0690c4b14b5539b02c4ea5d7c9102b35e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-9006742cb17f1c2d",
+      "base_model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+      "repo": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+      "revision": "bf5b95e96dac0462e2a09145ec66cae9a3f12067",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-bc20d93473855844",
+      "base_model": "zai-org/GLM-5.3-Flash",
+      "repo": "unsloth/GLM-5.3-Flash-GGUF",
+      "revision": "621d456e93e926e4b52f85cff5f634358c1828f9",
+      "license": "mit"
+    },
+    {
+      "id": "n09-cc9626d450f75bbd",
+      "base_model": "microsoft/Fara1.5-27B",
+      "repo": "bartowski/Fara1.5-27B-GGUF",
+      "revision": "dd7cba968d1a9c8feab0c2b85d93b117e6cc16fe",
+      "license": "mit"
+    },
+    {
+      "id": "n09-3024bb781841439a",
+      "base_model": "microsoft/Fara1.5-9B",
+      "repo": "bartowski/Fara1.5-9B-GGUF",
+      "revision": "153cb27ac91d4a2b9391ecf278542e610d040178",
+      "license": "mit"
+    },
+    {
+      "id": "n09-aa6a9622349cbcab",
+      "base_model": "microsoft/Fara1.5-4B",
+      "repo": "bartowski/Fara1.5-4B-GGUF",
+      "revision": "b97f335231e01efbbad37bb89b5310340fc10735",
+      "license": "mit"
+    },
+    {
+      "id": "n09-32d655c3b7ec45ad",
+      "base_model": "BAAI/AREX-Turbo",
+      "repo": "bartowski/BAAI_AREX-Turbo-GGUF",
+      "revision": "f04553d1e4867ebffcf290af5d02740e2afe5d6e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-af59262ca6188171",
+      "base_model": "tencent/UI-Mate-9B",
+      "repo": "bartowski/tencent_UI-Mate-9B-GGUF",
+      "revision": "695da95fcfcb1fed85e9b4dd6d698e3575f09288",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e8b0975d41a12a10",
+      "base_model": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
+      "repo": "unsloth/DeepSeek-R1-Distill-Llama-70B-GGUF",
+      "revision": "732dd974083ea5877d7b6d788b36fe7c2e5eab36",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-924e7d4de636ed42",
+      "base_model": "tencent/UI-Mate-27B",
+      "repo": "bartowski/tencent_UI-Mate-27B-GGUF",
+      "revision": "20289b9453bf936f74d0cdeeaa733cdc156aa4e2",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e71d72a4282a498b",
+      "base_model": "Qwen/Qwen2.5-VL-7B-Instruct",
+      "repo": "unsloth/Qwen2.5-VL-7B-Instruct-GGUF",
+      "revision": "68bb8bc4b7df5289c143aaec0ab477a7d4051aab",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-8206482cfa947925",
+      "base_model": "NousResearch/Hermes-3-Llama-3.1-70B",
+      "repo": "bartowski/Hermes-3-Llama-3.1-70B-GGUF",
+      "revision": "214ad508626d709e521cdcb538af7d826449c933",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-5b85196557c5c6af",
+      "base_model": "meta-llama/Llama-3.2-1B-Instruct",
+      "repo": "bartowski/Llama-3.2-1B-Instruct-GGUF",
+      "revision": "067b946cf014b7c697f3654f621d577a3e3afd1c",
+      "license": "llama3.2"
+    },
+    {
+      "id": "n09-6ad818a39a1fa755",
+      "base_model": "ornith-ai/Ornith-1.5-35B-A3B",
+      "repo": "bartowski/Ornith-1.5-35B-A3B-GGUF",
+      "revision": "64b0493d34a5ca4c1b4ad67bb99b41d74b4f07d6",
+      "license": "mit"
+    },
+    {
+      "id": "n09-9806f0c862fdd920",
+      "base_model": "microsoft/Phi-4-mini-instruct",
+      "repo": "unsloth/Phi-4-mini-instruct-GGUF",
+      "revision": "78eb92a46fc37e6b524df991ed9aca9bc6aa7b80",
+      "license": "mit"
+    },
+    {
+      "id": "n09-bae3815d60682a67",
+      "base_model": "Qwen/Qwen3-VL-2B-Instruct",
+      "repo": "unsloth/Qwen3-VL-2B-Instruct-GGUF",
+      "revision": "8dcb98e52a1d1d02dce9249e5ab15bae8121c666",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-f99c773197555df9",
+      "base_model": "meta-llama/Meta-Llama-3.1-70B-Instruct",
+      "repo": "bartowski/Meta-Llama-3.1-70B-Instruct-GGUF",
+      "revision": "83fb6e83d0a8aada42d499259bc929d922e9a558",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-0ecc889a54264d6b",
+      "base_model": "Qwen/Qwen3-VL-8B-Instruct",
+      "repo": "unsloth/Qwen3-VL-8B-Instruct-GGUF",
+      "revision": "b93a7ee713758252c555be4210c00540df954dc2",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-28910bff891c2c57",
+      "base_model": "google/gemma-3-4b-it",
+      "repo": "unsloth/gemma-3-4b-it-GGUF",
+      "revision": "5a3566e716d80f709ed7b79817eaf7733d2a1fce",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-6cf0990246161982",
+      "base_model": "google/gemma-3-270m-it",
+      "repo": "unsloth/gemma-3-270m-it-GGUF",
+      "revision": "c90975dbd40c0c7b275fefaae758c3415c906238",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-87e059e18defb942",
+      "base_model": "google/gemma-2-2b-it",
+      "repo": "bartowski/gemma-2-2b-it-GGUF",
+      "revision": "855f67caed130e1befc571b52bd181be2e858883",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-7969ab7f647cf2fd",
+      "base_model": "Qwen/Qwen3-VL-32B-Instruct",
+      "repo": "unsloth/Qwen3-VL-32B-Instruct-GGUF",
+      "revision": "b9262a359f54dead8e2609f6146e2fc3398fd0d9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-4abc260aaf582439",
+      "base_model": "google/gemma-3-12b-it",
+      "repo": "unsloth/gemma-3-12b-it-GGUF",
+      "revision": "d15e4c7dc21dc55d56bf8549db57a71ad8a2a35d",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-99668f5da82711e6",
+      "base_model": "meta-llama/Llama-3.3-70B-Instruct",
+      "repo": "bartowski/Llama-3.3-70B-Instruct-GGUF",
+      "revision": "b6c5c9f176f3279204034e1d16d393105e95cb88",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-59b23b2e43febea6",
+      "base_model": "deepreinforce-ai/Ornith-1.0-35B",
+      "repo": "unsloth/Ornith-1.0-35B-GGUF",
+      "revision": "78e1321ef86b69126dc991f481bb0cdc37614ed0",
+      "license": "mit"
+    },
+    {
+      "id": "n09-12c8cdfa9f2fe3dd",
+      "base_model": "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+      "repo": "unsloth/Mistral-Small-3.2-24B-Instruct-2506-GGUF",
+      "revision": "b750ec2299225e492f1bd27cab88a0a595fa848f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-5edecf6a21feed54",
+      "base_model": "google/gemma-3-12b-it-qat-q4_0-unquantized",
+      "repo": "unsloth/gemma-3-12b-it-qat-GGUF",
+      "revision": "858acec7ec0541a46c39985c95d3b52d8f3ab183",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-a82923ee872d3ffe",
+      "base_model": "google/gemma-3-1b-it",
+      "repo": "unsloth/gemma-3-1b-it-GGUF",
+      "revision": "f0b45be0aac41bd6a100a4b5734cad5f67255bfb",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-ff873c19a002c687",
+      "base_model": "google/gemma-3-27b-it",
+      "repo": "unsloth/gemma-3-27b-it-GGUF",
+      "revision": "7cd0121f2530b00e42c4df952d4cad4418c0b3c1",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-ed879cf821a00117",
+      "base_model": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+      "repo": "unsloth/Qwen3-VL-30B-A3B-Instruct-GGUF",
+      "revision": "0af19e7479857aa7f3246466a4ad16c7e7299639",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-4ecad6d3194b8d45",
+      "base_model": "deepseek-ai/DeepSeek-R1",
+      "repo": "unsloth/DeepSeek-R1-GGUF",
+      "revision": "4dab99fdb3fea560e5a402b49c6ef11e025321a8",
+      "license": "mit"
+    },
+    {
+      "id": "n09-1f9bfb32cf6ad758",
+      "base_model": "google/gemma-2-9b-it",
+      "repo": "bartowski/gemma-2-9b-it-GGUF",
+      "revision": "d731033f3dc4018261fd39896e50984d398b4ac5",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-f6067a5179392df2",
+      "base_model": "cerebras/GLM-4.7-Flash-REAP-23B-A3B",
+      "repo": "unsloth/GLM-4.7-Flash-REAP-23B-A3B-GGUF",
+      "revision": "983a65c63bc7bd37353e5246abc8005b3f72d5ec",
+      "license": "mit"
+    },
+    {
+      "id": "n09-692ce73545671a2c",
+      "base_model": "darkc0de/Muse-Glimmer-30B-heretic",
+      "repo": "bartowski/darkc0de_Muse-Glimmer-30B-heretic-GGUF",
+      "revision": "49f757ea312905be72d0e7dc331caec1f656f764",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-727d79b621cba232",
+      "base_model": "Qwen/Qwen3-235B-A22B",
+      "repo": "unsloth/Qwen3-235B-A22B-GGUF",
+      "revision": "09e11417ffdc30c1c63d0296a40fd8fde0abb180",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-981e0267e77ea913",
+      "base_model": "ornith-ai/Ornith-1.5-9B",
+      "repo": "bartowski/Ornith-1.5-9B-GGUF",
+      "revision": "1fc60d6805eaa18bbed4088391db9336eb9581c4",
+      "license": "mit"
+    },
+    {
+      "id": "n09-9deaa1f1168e2ece",
+      "base_model": "mistralai/Ministral-3-3B-Instruct-2512-BF16",
+      "repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",
+      "revision": "0a9035302dea19872c96076896304552890a73c2",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-db2e47528232e036",
+      "base_model": "NousResearch/Hermes-3-Llama-3.2-3B",
+      "repo": "bartowski/Hermes-3-Llama-3.2-3B-GGUF",
+      "revision": "aa0b91e1dd59f2fb0d9bf8cda7e167b86b8655a2",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-808f8787f883e898",
+      "base_model": "google/gemma-3n-E2B-it",
+      "repo": "unsloth/gemma-3n-E2B-it-GGUF",
+      "revision": "d7bd20d510eff26f3f95260c50f032fee8931a35",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-6bfe793aa65ebfbb",
+      "base_model": "google/diffusiongemma-26B-A4B-it",
+      "repo": "unsloth/diffusiongemma-26B-A4B-it-GGUF",
+      "revision": "f4183a2c7a354128d02545752303c4354d165bf0",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-a6d31ae92de53d83",
+      "base_model": "Qwen/Qwen3-VL-30B-A3B-Thinking",
+      "repo": "unsloth/Qwen3-VL-30B-A3B-Thinking-GGUF",
+      "revision": "b74cad680eae891408c586ee8ac64d3cd87f0d78",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-a0b9fb9980f4aa26",
+      "base_model": "google/gemma-3n-E4B-it",
+      "repo": "unsloth/gemma-3n-E4B-it-GGUF",
+      "revision": "90fa8b0e431faeae50c305828bc260d6f71720e1",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-80e34b3389b2b88a",
+      "base_model": "Qwen/Qwen2-VL-2B-Instruct",
+      "repo": "bartowski/Qwen2-VL-2B-Instruct-GGUF",
+      "revision": "2160e265f926e84e84dbb1c73e623b5324b23707",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-96dd820f8840343f",
+      "base_model": "kawaimasa/Wanabi-Novelist-24B",
+      "repo": "mradermacher/Wanabi-Novelist-24B-GGUF",
+      "revision": "cd6583dc4599cab24fbb5be9c87e00a494082190",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-f82427a294640f25",
+      "base_model": "cognitivecomputations/Dolphin3.0-Llama3.1-8B",
+      "repo": "bartowski/Dolphin3.0-Llama3.1-8B-GGUF",
+      "revision": "a6274707ba8c5f12d4521eabbce1b318bb2f27f5",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-8a719ea39c257cf2",
+      "base_model": "Qwen/Qwen3-VL-2B-Thinking",
+      "repo": "unsloth/Qwen3-VL-2B-Thinking-GGUF",
+      "revision": "1718fd9de24f2a91e72a5eaa87ea31b9dca69ac9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-feddcfd6d171c7ac",
+      "base_model": "Qwen/Qwen3-VL-8B-Thinking",
+      "repo": "unsloth/Qwen3-VL-8B-Thinking-GGUF",
+      "revision": "894774171339940a7a7f162a39d8143fb5154cdd",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-4a1d376dd640b42c",
+      "base_model": "zai-org/GLM-4.5-Air",
+      "repo": "unsloth/GLM-4.5-Air-GGUF",
+      "revision": "506d64aa8c5cfe9dbbf00bc7a15739438f83204d",
+      "license": "mit"
+    },
+    {
+      "id": "n09-24d798fef659c5da",
+      "base_model": "zai-org/GLM-4.6V-Flash",
+      "repo": "unsloth/GLM-4.6V-Flash-GGUF",
+      "revision": "c78a0727cb5ee489db2f218a212f613943023ee8",
+      "license": "mit"
+    },
+    {
+      "id": "n09-ab6a5d510413eb07",
+      "base_model": "NousResearch/Hermes-3-Llama-3.1-8B",
+      "repo": "bartowski/Hermes-3-Llama-3.1-8B-GGUF",
+      "revision": "223c8e24dec0f863b6abe4c89bf20f6941b805e2",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-401bbd95a5d1f7ae",
+      "base_model": "aifeifei798/Qwen3.8-Queen-27B",
+      "repo": "mradermacher/Qwen3.8-Queen-27B-i1-GGUF",
+      "revision": "f5a8d6508010ba471370c5b7a3f5244e3f39bff6",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-0334b2c0d7fae159",
+      "base_model": "cognitivecomputations/Dolphin3.0-Llama3.2-3B",
+      "repo": "bartowski/Dolphin3.0-Llama3.2-3B-GGUF",
+      "revision": "ac6b1ee98e3864ebd5998216f800a07d74b166b5",
+      "license": "llama3.2"
+    },
+    {
+      "id": "n09-fde16481b87717e3",
+      "base_model": "OpenGVLab/InternVL3-14B-Instruct",
+      "repo": "unsloth/InternVL3-14B-Instruct-GGUF",
+      "revision": "a1d2011c6313d656493b21a0480027993520f29c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e000c708885996c2",
+      "base_model": "google/functiongemma-270m-it",
+      "repo": "unsloth/functiongemma-270m-it-GGUF",
+      "revision": "1de0f7fc7cae0062012c2e91ef02e642c161aa57",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-c83bd5639d39e2f6",
+      "base_model": "Qwen/Qwen2-VL-7B-Instruct",
+      "repo": "bartowski/Qwen2-VL-7B-Instruct-GGUF",
+      "revision": "3088669af444bb2b86da6272694edd905f9c5a5b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-440a47ac42c75396",
+      "base_model": "google/gemma-3-4b-it-qat-q4_0-unquantized",
+      "repo": "unsloth/gemma-3-4b-it-qat-GGUF",
+      "revision": "165f274ab15d1c7c8fa8ba7336e64666f4d4151c",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-386be71afd4fbbf5",
+      "base_model": "apodex/Apodex-1.1-mini",
+      "repo": "bartowski/apodex_Apodex-1.1-mini-GGUF",
+      "revision": "0942a4675189a49c065ddd2c4bc067eb7046c0f1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-c4ebdefe458fea4b",
+      "base_model": "zai-org/GLM-4.6V",
+      "repo": "unsloth/GLM-4.6V-GGUF",
+      "revision": "7bea17af309193ebd3dd31edbc40a7ddc301cf35",
+      "license": "mit"
+    },
+    {
+      "id": "n09-6b6f07f1465eaacf",
+      "base_model": "ornith-ai/Ornith-1.5-397B",
+      "repo": "bartowski/Ornith-1.5-397B-GGUF",
+      "revision": "217875e8f6cf3989807cfe0313b43309874c4e90",
+      "license": "mit"
+    },
+    {
+      "id": "n09-55343f1bca535164",
+      "base_model": "sainikhiljuluri2015/GPT-OSS-Cybersecurity-20B-Merged",
+      "repo": "mradermacher/GPT-OSS-Cybersecurity-20B-Merged-i1-GGUF",
+      "revision": "d921d781a3510252667902f409072b69133c13a9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b79cd0ba83dbae65",
+      "base_model": "mistralai/Mistral-Small-3.1-24B-Instruct-2503",
+      "repo": "bartowski/mistralai_Mistral-Small-3.1-24B-Instruct-2503-GGUF",
+      "revision": "f73dfd9e812922fb503a993e3fa5671424f486d3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-51d9e8e44d4f61c6",
+      "base_model": "nothingiisreal/L3.1-70B-Celeste-V0.1-BF16",
+      "repo": "bartowski/L3.1-70B-Celeste-V0.1-BF16-GGUF",
+      "revision": "2de5e779fc7c783b7b79b769ba845385eabfd5ad",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-7e1037539dc0ceef",
+      "base_model": "google/gemma-2-27b-it",
+      "repo": "bartowski/gemma-2-27b-it-GGUF",
+      "revision": "a8874ad70a9d2ce99d6d41c25920b11bb330aecd",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-5accc01ad81415ed",
+      "base_model": "ValiantLabs/Muse-Glimmer-30B-Esper4",
+      "repo": "bartowski/ValiantLabs_Muse-Glimmer-30B-Esper4-GGUF",
+      "revision": "5e3faf47c4ca462d35d351c53d0f7e8731e1b829",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-4cd9babafc724af2",
+      "base_model": "vectionlabs/Salience-27B-R5",
+      "repo": "bartowski/vectionlabs_Salience-27B-R5-GGUF",
+      "revision": "826d5944c26f1705b91f9228e7fef8dd3b093fc6",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d06cee16376fcceb",
+      "base_model": "nightmedia/Qwen3.6-27B-Jormungandr",
+      "repo": "mradermacher/Qwen3.6-27B-Jormungandr-i1-GGUF",
+      "revision": "7282e1ef07fef39a14b639e54513beef702906c1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-6e0d999f8b3e9b80",
+      "base_model": "ReySajju742/Shaista-pro",
+      "repo": "mradermacher/Shaista-pro-i1-GGUF",
+      "revision": "7e85071e2b940e3fd6edb5471e74f29a5e1620d9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-81f40f948f320a26",
+      "base_model": "NovaCorp/Gemma3.Novaciano-1B",
+      "repo": "mradermacher/Gemma3.Novaciano-1B-i1-GGUF",
+      "revision": "1d1d2a1ae4d113bd7219f6804c557b29bccbeb89",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-fd4a4facc62f3f18",
+      "base_model": "google/gemma-3-27b-it-qat-q4_0-unquantized",
+      "repo": "unsloth/gemma-3-27b-it-qat-GGUF",
+      "revision": "4b6575bdc9244e8c618f3687a06619b63afcbb5c",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-e675f7f9a53bc70f",
+      "base_model": "cognitivecomputations/dolphin-2.9.4-llama3.1-8b",
+      "repo": "bartowski/dolphin-2.9.4-llama3.1-8b-GGUF",
+      "revision": "5b87172485ce9959013f79b1243b8f62e2f81b0e",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-158570a84e5a6910",
+      "base_model": "smshahbaj/RIFA-Edge-0.6B",
+      "repo": "mradermacher/RIFA-Edge-0.6B-i1-GGUF",
+      "revision": "3c99ccb9a10812b81864998866b2582ebeef55f6",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-3c86a673ba906c22",
+      "base_model": "OrionLLM/LRM-3.2",
+      "repo": "bartowski/OrionLLM_LRM-3.2-GGUF",
+      "revision": "7631120056d13fd95f77b085ac224794d63411df",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b14ef510f3b8a678",
+      "base_model": "smshahbaj/RIFA-PRO-3B",
+      "repo": "mradermacher/RIFA-PRO-3B-i1-GGUF",
+      "revision": "26ffdd0e8ee0b87cbae8914abda0c57e9b93a623",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-85d2429309e07126",
+      "base_model": "nbeerbower/Gemma4-Gutenberg-31B",
+      "repo": "bartowski/nbeerbower_Gemma4-Gutenberg-31B-GGUF",
+      "revision": "eb7e81eaa84c6653bc0f6b212f66809c87a52f69",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-de131bd3666f9a5c",
+      "base_model": "cognitivecomputations/Dolphin3.0-Llama3.2-1B",
+      "repo": "bartowski/Dolphin3.0-Llama3.2-1B-GGUF",
+      "revision": "617f94be9dfb802a3fa0ec64b12d7d085482a308",
+      "license": "llama3.2"
+    },
+    {
+      "id": "n09-ee40d9895995b364",
+      "base_model": "nex-agi/Nex-N2-mini",
+      "repo": "bartowski/nex-agi_Nex-N2-mini-GGUF",
+      "revision": "dd97f3699eb8774503bb2d3661d54fc1c20d44d2",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-4a52cd925ddb913e",
+      "base_model": "Sao10K/L3.3-70B-Euryale-v2.3",
+      "repo": "bartowski/L3.3-70B-Euryale-v2.3-GGUF",
+      "revision": "a31759006dd20fb49e8fd654d0c0d0d02fd73070",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-53fb834aae3abd13",
+      "base_model": "nightmedia/Qwen3.8-27B-Brainwaves-WFH-BF16",
+      "repo": "mradermacher/Qwen3.8-27B-Brainwaves-WFH-BF16-i1-GGUF",
+      "revision": "e4f3c37960efe5a6556d1b27ad79b07d9d71fd6d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-43a70df72cd97db7",
+      "base_model": "zai-org/GLM-4.6",
+      "repo": "unsloth/GLM-4.6-GGUF",
+      "revision": "c4c3a96aa300f9c363994c1613aa590912fa0f77",
+      "license": "mit"
+    },
+    {
+      "id": "n09-3f8a9a539821fa51",
+      "base_model": "smshahbaj/RIFA-FLASH-1.7B",
+      "repo": "mradermacher/RIFA-FLASH-1.7B-i1-GGUF",
+      "revision": "0330407945e5c2f0a56cc6deee4e12188de153b1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-44ef05a8fc6d3a76",
+      "base_model": "gjtgjt/Muse-Glimmer-30B-heretic-plus",
+      "repo": "mradermacher/Muse-Glimmer-30B-heretic-plus-i1-GGUF",
+      "revision": "348811e64a358ac41005121012c94b2daee8b5b0",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-94deff14e216524d",
+      "base_model": "nbeerbower/Gemma2-Gutenberg-Doppel-9B",
+      "repo": "bartowski/Gemma2-Gutenberg-Doppel-9B-GGUF",
+      "revision": "fd5548d49e3e85d1d6e14088d5f0af9572843ebd",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-34b58e225e01bcfe",
+      "base_model": "ArliAI/Qwen3.5-122B-RpRMax-v1",
+      "repo": "bartowski/ArliAI_Qwen3.5-122B-RpRMax-v1-GGUF",
+      "revision": "5e00e59afad79794ee01247302eaaeec159aa8bb",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-33c42eeb91816ec2",
+      "base_model": "Qwen/Qwen3-Coder-480B-A35B-Instruct",
+      "repo": "unsloth/Qwen3-Coder-480B-A35B-Instruct-GGUF",
+      "revision": "b86deeefd82f1a3374c5536dfc1dd0ce27ac092d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-4865dd731ccec2ca",
+      "base_model": "Qwen/Qwen3.5-397B-A17B",
+      "repo": "bartowski/Qwen_Qwen3.5-397B-A17B-GGUF",
+      "revision": "69ed2f05fdcea0e9a880dd4c518be64c01663157",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-519bea907aca00a0",
+      "base_model": "XiaomiMiMo/MiMo-VL-7B-RL",
+      "repo": "unsloth/MiMo-VL-7B-RL-GGUF",
+      "revision": "9a1d60e80d877e6ee044d2c3b92e95c1c35b04ab",
+      "license": "mit"
+    },
+    {
+      "id": "n09-d0fd4fd39ba11b53",
+      "base_model": "lordx64/Qwen3.6-35B-A3B-Claude-4.7-Opus-Reasoning-Distilled",
+      "repo": "mradermacher/Qwen3.6-35B-A3B-Claude-4.7-Opus-Reasoning-Distilled-i1-GGUF",
+      "revision": "b855382da19924c414afbeacda0c7672458c2c48",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-f6d6a617afda834a",
+      "base_model": "baidu/ERNIE-4.5-21B-A3B-Thinking",
+      "repo": "unsloth/ERNIE-4.5-21B-A3B-Thinking-GGUF",
+      "revision": "b1fa62d9e5864da596c78a0fb5cc02e5ffba336c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-3faa67e6ca2b8d72",
+      "base_model": "ValiantLabs/Llama3.1-8B-ShiningValiant2",
+      "repo": "bartowski/Llama3.1-8B-ShiningValiant2-GGUF",
+      "revision": "a9636655e6b4294624faec832bed72745d5d3fa7",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-5d14dd6ac5d70175",
+      "base_model": "beyoru/Kiwen1.1-27B",
+      "repo": "bartowski/beyoru_Kiwen1.1-27B-GGUF",
+      "revision": "e77534b3f957bb6a9d370e194f2b58064290f7ac",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-70ce169e49057d74",
+      "base_model": "swiss-ai/Apertus-8B-Instruct-2509",
+      "repo": "unsloth/Apertus-8B-Instruct-2509-GGUF",
+      "revision": "61c32783830424ac7a6d0fd80d4166e29dbaee06",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d5b0d90ec415a9dd",
+      "base_model": "arcee-ai/Llama-3.1-SuperNova-Lite",
+      "repo": "bartowski/Llama-3.1-SuperNova-Lite-GGUF",
+      "revision": "834c24e5dd55065dc8b42ebcead9aded02f52481",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-d6dff05e1470b58b",
+      "base_model": "MaLA-LM/emma-500-llama2-7b",
+      "repo": "bartowski/emma-500-llama2-7b-GGUF",
+      "revision": "9566c81ad3efee991b84deb2e4df0056c8a0c502",
+      "license": "llama2"
+    },
+    {
+      "id": "n09-72e3ffb7c615ab9b",
+      "base_model": "inclusionAI/UI-Venus-2-9B",
+      "repo": "bartowski/UI-Venus-2-9B-GGUF",
+      "revision": "3d2022e8bbe1fb95f12ca530a9d6ef063807d593",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-a36471a0041f610b",
+      "base_model": "AALF/gemma-2-27b-it-SimPO-37K-100steps",
+      "repo": "bartowski/gemma-2-27b-it-SimPO-37K-100steps-GGUF",
+      "revision": "f915dffecb00958acdd472923d5ba98f00afa9af",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-1220418a35cb9a2a",
+      "base_model": "OBLITERATUS/gemma-4-E4B-it-OBLITERATED",
+      "repo": "mradermacher/gemma-4-E4B-it-OBLITERATED-i1-GGUF",
+      "revision": "d009747b2476ba840d58c9d4557bfeac2b8880ff",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-23132c49e4d347e2",
+      "base_model": "KingNish/Reasoning-Llama-1b-v0.1",
+      "repo": "bartowski/Reasoning-Llama-1b-v0.1-GGUF",
+      "revision": "831a3ea2cab22e4230fb40158f3a83feda8190c0",
+      "license": "llama3.2"
+    },
+    {
+      "id": "n09-6adf9c6f72ff6a6e",
+      "base_model": "Menlo/Jan-nano",
+      "repo": "unsloth/Jan-nano-GGUF",
+      "revision": "58c721d228389c5256c8c18d562153fb177b8789",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-0ba67ae123191bf9",
+      "base_model": "BAAI/Infinity-Instruct-7M-Gen-Llama3_1-8B",
+      "repo": "bartowski/Infinity-Instruct-7M-Gen-Llama3_1-8B-GGUF",
+      "revision": "0ee2aa620b176c63c04eb594fdda27ff3aeded96",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-04261cf4b9d81665",
+      "base_model": "migtissera/Tess-4-27B",
+      "repo": "bartowski/migtissera_Tess-4-27B-GGUF",
+      "revision": "2280da37c39b764fb41ec4c188b16ba1f017468a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-0b4148b0f16e7ff6",
+      "base_model": "WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-8B",
+      "repo": "bartowski/Llama-3.1-WhiteRabbitNeo-2-8B-GGUF",
+      "revision": "c53f829bf8ae55f96a967c3cb9dbc3a41f15305e",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-25dc422dfbfd1969",
+      "base_model": "badtheorylabs/BTL-4",
+      "repo": "bartowski/badtheorylabs_BTL-4-GGUF",
+      "revision": "799d011b498e3287f514eb463ea04d6624ec945f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-33c5ca5b3a52f97c",
+      "base_model": "smshahbaj/Rifa-Nano-0.5B",
+      "repo": "mradermacher/Rifa-Nano-0.5B-i1-GGUF",
+      "revision": "b75f202ee34cee3e1aaeb6b01b716cde7598474c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-a22f439f8997a525",
+      "base_model": "kai-os/Carnice-V3",
+      "repo": "bartowski/kai-os_Carnice-V3-GGUF",
+      "revision": "f156cc233631c7e9c88a20e737cce7f6851110e7",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-245f287aacb83174",
+      "base_model": "Devopsopraiz/Baanzon-Chenni-1.5-9B",
+      "repo": "mradermacher/Baanzon-Chenni-1.5-9B-i1-GGUF",
+      "revision": "5d34f2a256ceaaabb0d1e768e9c19aab1f5e3fc6",
+      "license": "mit"
+    },
+    {
+      "id": "n09-f0a84113dc985c50",
+      "base_model": "ByteDance-Seed/Seed-Coder-8B-Reasoning",
+      "repo": "unsloth/Seed-Coder-8B-Reasoning-GGUF",
+      "revision": "4ad86f66a5d15a9f681ce1bc7bbddd933a6609c3",
+      "license": "mit"
+    },
+    {
+      "id": "n09-6ede388497c6ed53",
+      "base_model": "OBLITERATUS/Gemma-4-12B-OBLITERATED",
+      "repo": "mradermacher/Gemma-4-12B-OBLITERATED-i1-GGUF",
+      "revision": "1bb49d2489ad2aba9c1682e0dea8aac03b0d1b3b",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-a9084c24de748744",
+      "base_model": "nvidia/Llama-3.1-Nemotron-70B-Instruct-HF",
+      "repo": "bartowski/Llama-3.1-Nemotron-70B-Instruct-HF-GGUF",
+      "revision": "2d12cdfa1d7b4d834915aaa2416bea96797888dc",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-a17b3ca789332b1c",
+      "base_model": "deepseek-ai/DeepSeek-V3-0324",
+      "repo": "unsloth/DeepSeek-V3-0324-GGUF",
+      "revision": "522a005de381512eeb3e22aff4232335431f7303",
+      "license": "mit"
+    },
+    {
+      "id": "n09-b0a83215ad1bf28c",
+      "base_model": "VAGOsolutions/Llama-3.1-SauerkrautLM-8b-Instruct",
+      "repo": "bartowski/Llama-3.1-SauerkrautLM-8b-Instruct-GGUF",
+      "revision": "e22acf1bb3716f927ff73ada6be747922cd75c06",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-4fcd69eac610c040",
+      "base_model": "ArliAI/Gemma-2-9B-ArliAI-RPMax-v1.1",
+      "repo": "bartowski/Gemma-2-9B-ArliAI-RPMax-v1.1-GGUF",
+      "revision": "eb009d83fc7c3951039c62e464d657679dc6ddce",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-99c187e5889409b9",
+      "base_model": "mistralai/Mistral-Small-4-119B-2603",
+      "repo": "bartowski/mistralai_Mistral-Small-4-119B-2603-GGUF",
+      "revision": "f569d04efea9546de10ec040819908fa4e8f1c92",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d48b7f9e90f6a1e8",
+      "base_model": "nbeerbower/llama3.1-airoboros3.2-QDT-8B",
+      "repo": "bartowski/llama3.1-airoboros3.2-QDT-8B-GGUF",
+      "revision": "5840048024c38f19ef3ddd06a784e752953dce42",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-ae1edec4f93b34a4",
+      "base_model": "bottlecapai/ThinkingCap-Qwen3.6-27B",
+      "repo": "bartowski/bottlecapai_ThinkingCap-Qwen3.6-27B-GGUF",
+      "revision": "1f0aa39d55cd92785460dba813e71198070ac26b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b3e878b02b441f1c",
+      "base_model": "Dampfinchen/Llama-3.1-8B-Ultra-Instruct",
+      "repo": "bartowski/Llama-3.1-8B-Ultra-Instruct-GGUF",
+      "revision": "f004a240af32cfdb3aad476ef0d4b457c7447364",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-d2a9d07272b19242",
+      "base_model": "Trendyol/Trendyol-LLM-8b-chat-v2.0",
+      "repo": "bartowski/Trendyol-LLM-8b-chat-v2.0-GGUF",
+      "revision": "85ee31f59d916fe46062b62d655d31b3a157147e",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-1bbbea4ccf4733b0",
+      "base_model": "InternScience/Agents-A1-4B",
+      "repo": "bartowski/InternScience_Agents-A1-4B-GGUF",
+      "revision": "41e8e3a6b8406cfbffb7d11165c6e49057abf79d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-7454db9bae0021d8",
+      "base_model": "mistral-community/pixtral-12b",
+      "repo": "bartowski/mistral-community_pixtral-12b-GGUF",
+      "revision": "8d1280fc1922c44d2065f060be7f5a783078171d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-f73187f7f2219ed9",
+      "base_model": "nbeerbower/Gemma4-Gutenberg-31B-Heretic",
+      "repo": "bartowski/nbeerbower_Gemma4-Gutenberg-31B-Heretic-GGUF",
+      "revision": "c8efa3278f9c63f102367d8f3f3a38943733f43b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-9966ca175e6cf787",
+      "base_model": "THUDM/LongWriter-llama3.1-8b",
+      "repo": "bartowski/LongWriter-llama3.1-8b-GGUF",
+      "revision": "cabd3dc5f7f099edf69e2681fbc314a802e2caab",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-2cb2ffa1ac7a9829",
+      "base_model": "Davd-b01/BigBang-Aquila-35B-Merged",
+      "repo": "mradermacher/BigBang-Aquila-35B-Merged-i1-GGUF",
+      "revision": "52dbb40a3d6b232e3386b4a60a60001e7a094d0e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-ca350ad90bf450ab",
+      "base_model": "THUDM/GLM-4.1V-9B-Thinking",
+      "repo": "unsloth/GLM-4.1V-9B-Thinking-GGUF",
+      "revision": "9bc8e3b4f651e6f4846a8d9680d9525a445596e9",
+      "license": "mit"
+    },
+    {
+      "id": "n09-fb1eb03b194fdf56",
+      "base_model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "repo": "unsloth/ERNIE-4.5-21B-A3B-PT-GGUF",
+      "revision": "de45a831ceac3c876bb63f39bc60406a7d07e3bb",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-f81340aa1cd3c06c",
+      "base_model": "Qwen/Qwen3-VL-32B-Thinking",
+      "repo": "unsloth/Qwen3-VL-32B-Thinking-GGUF",
+      "revision": "9ec869824c4414c9bdefc7f8436e1a5f4d1fb079",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-0713518eb5dbf3db",
+      "base_model": "cerebras/Qwen3-Coder-REAP-363B-A35B",
+      "repo": "unsloth/Qwen3-Coder-REAP-363B-A35B-GGUF",
+      "revision": "b63426f7a76ab7d862d679b9463e7f6b174f98aa",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-ae81ad00573fc021",
+      "base_model": "Doctor-Shotgun/L3.3-70B-Magnum-v4-SE",
+      "repo": "bartowski/L3.3-70B-Magnum-v4-SE-GGUF",
+      "revision": "6821c537a95ed3d4e290044a8cda55003db4a292",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-487c6a8f0222080b",
+      "base_model": "Groq/Llama-3-Groq-70B-Tool-Use",
+      "repo": "bartowski/Llama-3-Groq-70B-Tool-Use-GGUF",
+      "revision": "305720ecc9edeb412486d8180dd834ac5949d27c",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-5901e5ae7412d30f",
+      "base_model": "WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-70B",
+      "repo": "bartowski/Llama-3.1-WhiteRabbitNeo-2-70B-GGUF",
+      "revision": "7827fb79e9e036d1ddc33fd36208bad56409adf6",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-e57e5aa54646146c",
+      "base_model": "anthracite-org/magnum-v4-9b",
+      "repo": "bartowski/magnum-v4-9b-GGUF",
+      "revision": "09b011a6e165980283ccb9628b6e077fd6a3c340",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-4866483f14d03c4f",
+      "base_model": "mlabonne/Llama-3.1-70B-Instruct-lorablated",
+      "repo": "bartowski/Llama-3.1-70B-Instruct-lorablated-GGUF",
+      "revision": "607719dbe3a3abed9590169d9428e1c0fe1012ed",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-a11ce97bd78af25f",
+      "base_model": "ByteDance-Seed/Seed-Coder-8B-Instruct",
+      "repo": "unsloth/Seed-Coder-8B-Instruct-GGUF",
+      "revision": "d94c768a507fc138c3b792b7a65a4db8938a0f15",
+      "license": "mit"
+    },
+    {
+      "id": "n09-ae70df466111505d",
+      "base_model": "vectionlabs/Salience-1.5-Pro",
+      "repo": "bartowski/vectionlabs_Salience-1.5-Pro-GGUF",
+      "revision": "5cfe2a8d44e35178e83052fadc6a1591815127dc",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-747fa4733791cda8",
+      "base_model": "vectionlabs/Salience-1.5-Flash",
+      "repo": "bartowski/vectionlabs_Salience-1.5-Flash-GGUF",
+      "revision": "97714dda410dc7fd57be7528dce710d610cf7d22",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-20d996a9562aa6c4",
+      "base_model": "swiss-ai/Apertus-70B-Instruct-2509",
+      "repo": "unsloth/Apertus-70B-Instruct-2509-GGUF",
+      "revision": "aff98136df0e7c01a23a2e706deb489895b86879",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-5cb8b76d8e48a6b1",
+      "base_model": "google/gemma-3-270m-it-qat-q4_0-unquantized",
+      "repo": "unsloth/gemma-3-270m-it-qat-GGUF",
+      "revision": "0bf934fbcd99f483e16763156bb3d75699b4fc76",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-a7a20f0cfc6c315a",
+      "base_model": "OpenGVLab/InternVL3-2B",
+      "repo": "unsloth/InternVL3-2B-GGUF",
+      "revision": "fd83c9cec6d269df2443afce51549549352d967c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-24a23f419f717f6c",
+      "base_model": "deepreinforce-ai/Ornith-1.0-397B",
+      "repo": "unsloth/Ornith-1.0-397B-GGUF",
+      "revision": "152bd8c2ecb682ea5a90b400a6c21d39b551e42a",
+      "license": "mit"
+    },
+    {
+      "id": "n09-31da5a284972ae2e",
+      "base_model": "nbeerbower/gemma2-gutenberg-27B",
+      "repo": "bartowski/gemma2-gutenberg-27B-GGUF",
+      "revision": "4fbcf68f529af85fc3bda2265aeee5bbca322116",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-b50d13268433613d",
+      "base_model": "anthracite-org/magnum-v4-27b",
+      "repo": "bartowski/magnum-v4-27b-GGUF",
+      "revision": "7a96c2aca3f9bdb7a729999dbdd095046c012093",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-6617a37ca925e140",
+      "base_model": "Groq/Llama-3-Groq-8B-Tool-Use",
+      "repo": "bartowski/Llama-3-Groq-8B-Tool-Use-GGUF",
+      "revision": "2d49903869805faad16daab2450fcda3487685b8",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-1e6ebf04d576fced",
+      "base_model": "rpDungeon/Gemma-4-E4B-Luchador",
+      "repo": "bartowski/rpDungeon_Gemma-4-E4B-Luchador-GGUF",
+      "revision": "b9b69babc09989221470e016e66f6cd817836459",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-5f7c601254ae3641",
+      "base_model": "ArliAI/Gemma-2-2B-ArliAI-RPMax-v1.1",
+      "repo": "bartowski/Gemma-2-2B-ArliAI-RPMax-v1.1-GGUF",
+      "revision": "00dcc28b2da9b292c388ac7ef4eb0cecb100f6f8",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-665be8c65c3d99ad",
+      "base_model": "BAAI/AREX-Base",
+      "repo": "bartowski/BAAI_AREX-Base-GGUF",
+      "revision": "c43211fc4e44e0839216ca57553694210350ef94",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-ed76023633133667",
+      "base_model": "google/datagemma-rig-27b-it",
+      "repo": "bartowski/datagemma-rig-27b-it-GGUF",
+      "revision": "e25edc33fa516c8a6dae88649de7899cf0ef7e08",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-4a449affeae83700",
+      "base_model": "silma-ai/SILMA-9B-Instruct-v1.0",
+      "repo": "bartowski/SILMA-9B-Instruct-v1.0-GGUF",
+      "revision": "5e2825b6d83604d4d7e712ab4c5b94f91ea57c22",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-b7946ff68ecb80b0",
+      "base_model": "OrionLLM/GRM-3.2-Cliff",
+      "repo": "bartowski/OrionLLM_GRM-3.2-Cliff-GGUF",
+      "revision": "1cc070d438e1ad1d91f647f92ffcc81631f764b7",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-33f3f8b4bfb402a8",
+      "base_model": "google/gemma-3-12b-it-qat-int4-unquantized",
+      "repo": "unsloth/gemma-3-12b-it-qat-int4-GGUF",
+      "revision": "51e127482ba2d204ff4eaad5ec1a95f852d8f5d4",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-2c9131bdfc4df41c",
+      "base_model": "allura-forge/Llama-3.3-8B-Instruct",
+      "repo": "bartowski/allura-forge_Llama-3.3-8B-Instruct-GGUF",
+      "revision": "e125b13ebf6ac3603b409c611f0a06cd899ab663",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-4cb1d6665266630c",
+      "base_model": "Skywork/Skywork-R1V3-38B",
+      "repo": "bartowski/Skywork_Skywork-R1V3-38B-GGUF",
+      "revision": "9a2c7e7ee7e914739a68e6cd404a5ffd7aed3f9a",
+      "license": "mit"
+    },
+    {
+      "id": "n09-116e6e98df64ddef",
+      "base_model": "HumanLLMs/Humanish-Mistral-Nemo-Instruct-2407",
+      "repo": "bartowski/Human-Like-Mistral-Nemo-Instruct-2407-GGUF",
+      "revision": "9f3ae7e74a909de5cb63ba81ca1a3f18877d6751",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-34cfaece3048361a",
+      "base_model": "PocketDoc/Dans-PersonalityEngine-V1.3.0-12b",
+      "repo": "bartowski/PocketDoc_Dans-PersonalityEngine-V1.3.0-12b-GGUF",
+      "revision": "e7ecd1a5d158d4e919e8c5365b1772838eda6332",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-9bc9ae284259014e",
+      "base_model": "THUDM/GLM-Z1-32B-0414",
+      "repo": "bartowski/THUDM_GLM-Z1-32B-0414-GGUF",
+      "revision": "90b92cf34fcc79d39a73cc394d9c78d3c0280c7d",
+      "license": "mit"
+    },
+    {
+      "id": "n09-29922af8c85c6a62",
+      "base_model": "FINAL-Bench/Darwin-4B-Chimera",
+      "repo": "bartowski/FINAL-Bench_Darwin-4B-Chimera-GGUF",
+      "revision": "2b2687621ad43da8d0b5ae90731801841d7ac0dd",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-22eda346a13f0b8a",
+      "base_model": "zai-org/GLM-5",
+      "repo": "unsloth/GLM-5-GGUF",
+      "revision": "ff5c55c3470d73e038cc33301d66f197b679660e",
+      "license": "mit"
+    },
+    {
+      "id": "n09-40e5b4d9827e11a9",
+      "base_model": "zai-org/GLM-4.5",
+      "repo": "unsloth/GLM-4.5-GGUF",
+      "revision": "d4573659be99a9eb1ada9abd5d0df6d8afc5a3a4",
+      "license": "mit"
+    },
+    {
+      "id": "n09-d424538b617c702f",
+      "base_model": "OraRL/Video-ORA-9B",
+      "repo": "bartowski/OraRL_Video-ORA-9B-GGUF",
+      "revision": "86693c9fdab09e8c30f7555c90dc65cd80283fb2",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-1b3df2a145ac5929",
+      "base_model": "Gryphe/WorldSim-Opus-3.6-35B-A3B",
+      "repo": "bartowski/Gryphe_WorldSim-Opus-3.6-35B-A3B-GGUF",
+      "revision": "640842eefae1d5415c2786e94f4e2f80ac0168ce",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d9919dc1c0cf05fd",
+      "base_model": "FINAL-Bench/Darwin-35B-A3B-Opus",
+      "repo": "bartowski/FINAL-Bench_Darwin-35B-A3B-Opus-GGUF",
+      "revision": "17c44f2964c67b8680e42824418c57aa893dfd67",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-2d7bb78b49dc793c",
+      "base_model": "openai/gpt-oss-safeguard-20b",
+      "repo": "unsloth/gpt-oss-safeguard-20b-GGUF",
+      "revision": "8663c2039e7dab29d93bdf6d1827c9ce882721da",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-34e31781a348c339",
+      "base_model": "agentscope-ai/CoPaw-Flash-9B",
+      "repo": "bartowski/agentscope-ai_CoPaw-Flash-9B-GGUF",
+      "revision": "347aa7b9575ddcb8773381c9604d7b5327e42121",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-2b4bc7361f6d937b",
+      "base_model": "mistralai/Ministral-3-14B-Instruct-2512-BF16",
+      "repo": "bartowski/mistralai_Ministral-3-14B-Instruct-2512-GGUF",
+      "revision": "9289ba93995b2a15fd72b1a9fe4f85697199ed1f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-36f75a6c3f3a7675",
+      "base_model": "Qwen/Qwen3-VL-4B-Thinking",
+      "repo": "unsloth/Qwen3-VL-4B-Thinking-1M-GGUF",
+      "revision": "6b10c2abc1572f5b4eb0e680f86972fcfff3fb55",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-bda55da12ffcdf47",
+      "base_model": "XiaomiMiMo/MiMo-V2.5-Pro",
+      "repo": "unsloth/MiMo-V2.5-Pro-GGUF",
+      "revision": "21b4976b4d93da48e4d026db23adf26d7e606101",
+      "license": "mit"
+    },
+    {
+      "id": "n09-5c155b85c1272915",
+      "base_model": "zai-org/GLM-5.1",
+      "repo": "unsloth/GLM-5.1-GGUF",
+      "revision": "3238253553497e969f3144fda297dac98b99dbbe",
+      "license": "mit"
+    },
+    {
+      "id": "n09-b2ec2e8e7cb2c16b",
+      "base_model": "t-tech/T-Search",
+      "repo": "bartowski/t-tech_T-Search-GGUF",
+      "revision": "c9b3588081973d33635efbc2b14931551a8e5216",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b9878e635a4cfcbc",
+      "base_model": "ByteDance-Seed/Seed-OSS-36B-Instruct",
+      "repo": "unsloth/Seed-OSS-36B-Instruct-GGUF",
+      "revision": "6403aa019fffb2d698433e3aed271d8962e28a58",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-18a1530627f2376c",
+      "base_model": "mistralai/Ministral-3-8B-Instruct-2512-BF16",
+      "repo": "bartowski/mistralai_Ministral-3-8B-Instruct-2512-GGUF",
+      "revision": "ad82bf81321f4b22de70014ecd5135730115f6a8",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-154c162bb0a16079",
+      "base_model": "MiniMaxAI/MiniMax-M2",
+      "repo": "unsloth/MiniMax-M2-GGUF",
+      "revision": "06e952eab9e8e136847e9df067a0032582696778",
+      "license": "mit"
+    },
+    {
+      "id": "n09-01c2defda426437d",
+      "base_model": "zerofata/L3.3-GeneticLemonade-Opus-70B",
+      "repo": "bartowski/zerofata_L3.3-GeneticLemonade-Opus-70B-GGUF",
+      "revision": "171e084e5ab930a4d4c0addf860b1472592e39e0",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-7ba738146cf8a764",
+      "base_model": "OS-Copilot/OS-Shepherd-9B",
+      "repo": "bartowski/OS-Copilot_OS-Shepherd-9B-GGUF",
+      "revision": "d15ecea1cff60b335b2028532b9eab9b2aef32ab",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-50fd3718bf564b64",
+      "base_model": "NaniDAO/Llama-3.3-70B-Instruct-ablated",
+      "repo": "bartowski/Llama-3.3-70B-Instruct-ablated-GGUF",
+      "revision": "4d8a12291b652d8a4ce6e4498da9392aa2006e36",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-d872aa3b1f6540ea",
+      "base_model": "CogEvol/CogEvol-4B",
+      "repo": "bartowski/CogEvol_CogEvol-4B-GGUF",
+      "revision": "644fbb74eb68333046fbe8ddc1a86810699959b8",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-06b1cb92f542ce59",
+      "base_model": "cerebras/GLM-4.7-REAP-218B-A32B",
+      "repo": "unsloth/GLM-4.7-REAP-218B-A32B-GGUF",
+      "revision": "0f78119a65691f14e086f9d80c0348a8490daf19",
+      "license": "mit"
+    },
+    {
+      "id": "n09-594237da3e9f3b02",
+      "base_model": "akjindal53244/Llama-3.1-Storm-8B",
+      "repo": "bartowski/Llama-3.1-Storm-8B-GGUF",
+      "revision": "20b823eaf8b61a9a7bfd9edbef332253e0cbfba7",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-b0aaeaf676fd2c02",
+      "base_model": "NousResearch/Hermes-3-Llama-3.1-405B",
+      "repo": "bartowski/Hermes-3-Llama-3.1-405B-GGUF",
+      "revision": "69eba52b31f63bfd9b750b04778b847e22bc50bf",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-2da71980617ccb6b",
+      "base_model": "cognitivecomputations/dolphin-2.9.4-gemma2-2b",
+      "repo": "bartowski/dolphin-2.9.4-gemma2-2b-GGUF",
+      "revision": "7622bfe6f5b41acdc814144444ccccb89e8d65cb",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-8642f3734a17afc5",
+      "base_model": "e-n-v-y/Legion-V2.1-LLaMa-70B-Elarablated-v0.8-hf",
+      "repo": "bartowski/e-n-v-y_Legion-V2.1-LLaMa-70B-Elarablated-v0.8-hf-GGUF",
+      "revision": "cab4be767d5ab572520d26c6d7dc8389f4c837a3",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-f2504a55f17e2c82",
+      "base_model": "RLHFlow/LLaMA3-iterative-DPO-final",
+      "repo": "bartowski/LLaMA3-iterative-DPO-final-GGUF",
+      "revision": "458017a8c8442734225fd0770cdb7013628aea05",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-9e0d4285a4418f0f",
+      "base_model": "OrionLLM/GRM-2.6-Plus-0628",
+      "repo": "bartowski/OrionLLM_GRM-2.6-Plus-0628-GGUF",
+      "revision": "61ae44061bff534f7ce5924cd9b023e2baa2485e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-5f208ed86020f93f",
+      "base_model": "SicariusSicariiStuff/X-Ray_Alpha",
+      "repo": "bartowski/SicariusSicariiStuff_X-Ray_Alpha-GGUF",
+      "revision": "cdbf25e6d13683bfdca041dcafcd4d5bd0d3f08e",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-e01a694113b121aa",
+      "base_model": "Sao10K/Llama-3.3-70B-Vulpecula-r1",
+      "repo": "bartowski/Sao10K_Llama-3.3-70B-Vulpecula-r1-GGUF",
+      "revision": "d4362e47b07fc3b95cb98d1195478bdabe6da766",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-e7497d437de495ba",
+      "base_model": "Altworld/Astrea-R8-Chat-9B",
+      "repo": "bartowski/Altworld_Astrea-R8-Chat-9B-GGUF",
+      "revision": "072b13cfdafaf68399543931a240992e537f83a1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-8de13cee85fb0a4f",
+      "base_model": "Trappu/Magnum-Picaro-0.7-v2-12b",
+      "repo": "bartowski/Trappu_Magnum-Picaro-0.7-v2-12b-GGUF",
+      "revision": "75108e267685d5d087d6e33991e6c43c0ccd25c1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-98617d27caa9e117",
+      "base_model": "rombodawg/Rombos-LLM-70b-Llama-3.3",
+      "repo": "bartowski/Rombos-LLM-70b-Llama-3.3-GGUF",
+      "revision": "2731edfce40562d9f8ea2b65a79036a1de773772",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-63e0b202904d74b9",
+      "base_model": "bytedance-research/UI-TARS-7B-DPO",
+      "repo": "bartowski/UI-TARS-7B-DPO-GGUF",
+      "revision": "7a63f6fece4cb69305eb04ba534cf7befb0a4d11",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-7721d0964cd6388d",
+      "base_model": "janhq/Jan-code-4b",
+      "repo": "bartowski/janhq_Jan-code-4b-GGUF",
+      "revision": "2ab207e2ef1d20f27adabd4024f8fc9d50cd2727",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-1182faa2767320d7",
+      "base_model": "deepseek-ai/deepseek-coder-1.3b-base",
+      "repo": "bartowski/deepseek-coder-1.3B-kexer-GGUF",
+      "revision": "e0bca40a2d544000bc5033e061d655b5afe7cc0d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-744fa5cc0275e820",
+      "base_model": "arcee-ai/Arcee-Maestro-7B-Preview",
+      "repo": "bartowski/arcee-ai_Arcee-Maestro-7B-Preview-GGUF",
+      "revision": "8f5d3c57c42e43c54c04a95527eb6d1ab0f436a6",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-fae6aac2046212df",
+      "base_model": "AlexBefest/NightyGurps-14b-v1.1",
+      "repo": "bartowski/NightyGurps-14b-v1.1-GGUF",
+      "revision": "6ca67c47910eeb3348eb1bd87aa976dde351c778",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-c1edd8ba993502df",
+      "base_model": "mistralai/Mistral-7B-v0.3",
+      "repo": "bartowski/dolphin-2.9.3-mistral-7B-32k-GGUF",
+      "revision": "740ce4567b3392bd065637d2ac29127ca417cc45",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d1860883bf202ee4",
+      "base_model": "EpistemeAI/Athena-codegemma-2-9b-v1",
+      "repo": "bartowski/Athena-codegemma-2-9b-v1-GGUF",
+      "revision": "d4cd3f5127e460769ba3e7f07f02a6c349a63421",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-21a52e7083866e86",
+      "base_model": "stepfun-ai/GELab-Zero-4B-preview",
+      "repo": "bartowski/stepfun-ai_GELab-Zero-4B-preview-GGUF",
+      "revision": "2f8fd2dce2862aa49da8550dcb53b9f6f681aba8",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-819fa09a5b18a7ea",
+      "base_model": "Perciqa/Aurora-Code-1",
+      "repo": "bartowski/Perciqa_Aurora-Code-1-GGUF",
+      "revision": "95cb6f23a117574068fc7d006cc631b0d116b95a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-fdc96fce75547de9",
+      "base_model": "Gryphe/Codex-24B-Small-3.2",
+      "repo": "bartowski/Gryphe_Codex-24B-Small-3.2-GGUF",
+      "revision": "a9ee051af976943814476da7c5cbab096c37be82",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-cce36d9ed64f1529",
+      "base_model": "Jackrong/Qwen3.5-9B-Neo",
+      "repo": "bartowski/Jackrong_Qwen3.5-9B-Neo-GGUF",
+      "revision": "801f1b7819bf18f6a96c5acc85279b1dc490427d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-cf2a46fe77f597ef",
+      "base_model": "mistralai/Mistral-7B-v0.1",
+      "repo": "bartowski/Hermes-2-Pro-Mistral-7B-GGUF",
+      "revision": "9150f12f1715b7a01a5e642208c9694725943997",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-edb75e58473ff529",
+      "base_model": "allenai/OLMo-2-1124-7B-Instruct",
+      "repo": "bartowski/OLMo-2-1124-7B-Instruct-GGUF",
+      "revision": "01a56cca7da47f11851889af56ec36a9e75ceac8",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-8d2ea51cdbfb65ed",
+      "base_model": "ibm-granite/granite-3.3-2b-instruct",
+      "repo": "bartowski/ibm-granite_granite-3.3-2b-instruct-GGUF",
+      "revision": "4e06dce39d4c5fcf65ca1cc69b92962e411d38e1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-a578c88d0614c4f8",
+      "base_model": "prithivMLmods/Llama-Song-Stream-3B-Instruct",
+      "repo": "bartowski/Llama-Song-Stream-3B-Instruct-GGUF",
+      "revision": "7b0b2c8ffe7cd6a3a9e889bb3c73265899a6bfaa",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-6bd819d0c44169ef",
+      "base_model": "ArliAI/QwQ-32B-ArliAI-RpR-v4",
+      "repo": "bartowski/ArliAI_QwQ-32B-ArliAI-RpR-v4-GGUF",
+      "revision": "20fcacc2b9bbf96648b581be9ae6bf9fbe3e3776",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b6e50bc73330e672",
+      "base_model": "zerofata/MS3.2-PaintedFantasy-Visage-33B",
+      "repo": "bartowski/zerofata_MS3.2-PaintedFantasy-Visage-33B-GGUF",
+      "revision": "0aca7065f6b10478bbb0b014d5f6f43859114884",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-7ebf4e937c67b6d9",
+      "base_model": "perplexity-ai/r1-1776-distill-llama-70b",
+      "repo": "bartowski/perplexity-ai_r1-1776-distill-llama-70b-GGUF",
+      "revision": "dd4db4371cf9923b229019201773da3e8e59c9b1",
+      "license": "mit"
+    },
+    {
+      "id": "n09-2e5a8f4c48bf86de",
+      "base_model": "NousResearch/DeepHermes-3-Llama-3-8B-Preview",
+      "repo": "bartowski/NousResearch_DeepHermes-3-Llama-3-8B-Preview-GGUF",
+      "revision": "6c417a3de9a4293d076a9ac0bf11fcd4218b1559",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-79f5bacdabf49142",
+      "base_model": "Locutusque/Hercules-5.0-Qwen2-7B",
+      "repo": "bartowski/Hercules-5.0-Qwen2-7B-GGUF",
+      "revision": "dbfb2e402dcccebfb70e9974109734f5a49383ae",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d3c9735ca31919a4",
+      "base_model": "mistralai/Devstral-Small-2507",
+      "repo": "bartowski/mistralai_Devstral-Small-2507-GGUF",
+      "revision": "3aaee38f9345e582cca40a0d2a320dc23e21dc32",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-5a6b74759123d2d8",
+      "base_model": "nbeerbower/BigBubba-Qwen3.6-27B",
+      "repo": "bartowski/nbeerbower_BigBubba-Qwen3.6-27B-GGUF",
+      "revision": "a80030b2a0d9e1dd255a45205c67d505e9a42dd9",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-df4f0e29172fa6ae",
+      "base_model": "Ilya626/gemma-4-31B-it-SDFT-Heretic-RP",
+      "repo": "bartowski/Ilya626_gemma-4-31B-it-SDFT-Heretic-RP-GGUF",
+      "revision": "b640dc2edd797ba606aa37481e9e0a94d248234a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-7f6236d2b0c30216",
+      "base_model": "MathGenie/MathCoder2-DeepSeekMath-7B",
+      "repo": "bartowski/MathCoder2-DeepSeekMath-7B-GGUF",
+      "revision": "6166b9c72821c11de95fc87ab8199c62ffcdb265",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d40249f2107c9a3e",
+      "base_model": "Delta-Vector/Austral-24B-Winton",
+      "repo": "bartowski/Delta-Vector_Austral-24B-Winton-GGUF",
+      "revision": "19b11d91eb93d22ca9ec3b4e2992ea4167eecf85",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-a64078ebf6d2f78f",
+      "base_model": "ai21labs/AI21-Jamba2-Mini",
+      "repo": "bartowski/ai21labs_AI21-Jamba2-Mini-GGUF",
+      "revision": "867828fd45f0c97816d26b27ca14d9b40ee12f91",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-48cceb8e096315cb",
+      "base_model": "EVA-UNIT-01/EVA-Qwen2.5-7B-v0.0",
+      "repo": "bartowski/EVA-Qwen2.5-7B-v0.0-GGUF",
+      "revision": "8df5bc6cfbfe73f4a2af0a01a57a5e10acd5404d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b139f601013b8e42",
+      "base_model": "a-m-team/AM-Thinking-v1",
+      "repo": "bartowski/a-m-team_AM-Thinking-v1-GGUF",
+      "revision": "1eec33acc5a2f24bb90f99c5fb9d32ca42cfe63c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-71fa809c01fc8557",
+      "base_model": "deepcogito/cogito-v1-preview-llama-3B",
+      "repo": "bartowski/deepcogito_cogito-v1-preview-llama-3B-GGUF",
+      "revision": "ad2fa572b401b4590d8e6b7625c9298b1ff8a5da",
+      "license": "llama3.2"
+    },
+    {
+      "id": "n09-8c8d0acb16ed90b2",
+      "base_model": "lemon07r/Gemma-2-Ataraxy-9B",
+      "repo": "bartowski/Gemma-2-Ataraxy-9B-GGUF",
+      "revision": "befb5c81fb8324831aae6de28d7817f3368ca329",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-f602bd1471612e55",
+      "base_model": "stepfun-ai/Step-3.5-Flash",
+      "repo": "bartowski/stepfun-ai_Step-3.5-Flash-GGUF",
+      "revision": "a2943ef56a0a240bdfb9a2feee97a775f612476d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-ea0bd24b61898ec0",
+      "base_model": "ai-sage/GigaChat3-10B-A1.8B",
+      "repo": "bartowski/ai-sage_GigaChat3-10B-A1.8B-GGUF",
+      "revision": "5f329324103300ba9aff1e2fc68ddbb8a682a2c0",
+      "license": "mit"
+    },
+    {
+      "id": "n09-ac8502f5e9fe6844",
+      "base_model": "zerofata/MS3.2-PaintedFantasy-v4-24B",
+      "repo": "bartowski/zerofata_MS3.2-PaintedFantasy-v4-24B-GGUF",
+      "revision": "2eff5e67a39b5ddbf5550f05f154756821d805f7",
+      "license": "mit"
+    },
+    {
+      "id": "n09-c6db7cec6bc6ea21",
+      "base_model": "rombodawg/Rombos-Coder-V2.5-Qwen-14b",
+      "repo": "bartowski/Rombos-Coder-V2.5-Qwen-14b-GGUF",
+      "revision": "816f35215d4144e94690df09440b3c1e680bbef4",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-988c48a16972ed92",
+      "base_model": "lolzinventor/Meta-Llama-3.1-8B-SurviveV3",
+      "repo": "bartowski/lolzinventor_Meta-Llama-3.1-8B-SurviveV3-GGUF",
+      "revision": "a832f5c758c98bb48c9a71f474ff0545ba205bbe",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-e9b97c526c74a5de",
+      "base_model": "soob3123/amoral-gemma3-12B",
+      "repo": "bartowski/soob3123_amoral-gemma3-12B-GGUF",
+      "revision": "942dce3dba5ea28b72dcc9f1914219ace7e38147",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e5835d4e0a608f86",
+      "base_model": "mrm8488/Qwen3-14B-ft-limo",
+      "repo": "bartowski/mrm8488_Qwen3-14B-ft-limo-GGUF",
+      "revision": "1fe9c132ab8a1a8ff4f0c36e28ee0a975b423d5c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e1f71238be552921",
+      "base_model": "JetBrains/Mellum2-12B-A2.5B-Thinking",
+      "repo": "bartowski/Mellum2-12B-A2.5B-Thinking-GGUF",
+      "revision": "e10a3d18c7a65d9e06a1ef9c228082fbbc798182",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-cbccb587630af83d",
+      "base_model": "rombodawg/Rombos-Coder-V2.5-Qwen-32b",
+      "repo": "bartowski/Rombos-Coder-V2.5-Qwen-32b-GGUF",
+      "revision": "1878184d2b2c30e518d6f2ce447da9b1279a8476",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-47458404d84bc1c2",
+      "base_model": "TroyDoesAI/BlackSheep-Mistral-RP-7B",
+      "repo": "bartowski/BlackSheep-Mistral-RP-7B-GGUF",
+      "revision": "6c5e3ce52168cbcef9cdd594bfb6bf16e9b2c84d",
+      "license": "artistic-2.0"
+    },
+    {
+      "id": "n09-29c86cb09861bf49",
+      "base_model": "ibm-granite/granite-3.1-1b-a400m-instruct",
+      "repo": "bartowski/granite-3.1-1b-a400m-instruct-GGUF",
+      "revision": "940d2e1f9f65330615c7c8e980e6c5ac73d3360c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-5dfe3c13b4a7a84f",
+      "base_model": "Tesslate/Synthia-S1-27b",
+      "repo": "bartowski/Tesslate_Synthia-S1-27b-GGUF",
+      "revision": "d0358930964c51640fa0946abcf29229453efdd0",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-a64ddb33730a9b59",
+      "base_model": "darkps/ice-AI",
+      "repo": "bartowski/darkps_ice-AI-GGUF",
+      "revision": "c21bf9f7bc958032f78677124deeac1d9761b0bd",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-6700397ca24c5c05",
+      "base_model": "migtissera/Tess-4-9B",
+      "repo": "bartowski/migtissera_Tess-4-9B-GGUF",
+      "revision": "aaaab03a39c8487c458d4eb427ac9a7392ab4639",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-78bbe6f438439155",
+      "base_model": "ValiantLabs/Llama3.2-3B-ShiningValiant2",
+      "repo": "bartowski/Llama3.2-3B-ShiningValiant2-GGUF",
+      "revision": "8129a5618d9409e4e96a297f5a07e7f10c668310",
+      "license": "llama3.2"
+    },
+    {
+      "id": "n09-ff73ab1265cff063",
+      "base_model": "ArliAI/Llama-3.1-8B-ArliAI-RPMax-v1.3",
+      "repo": "bartowski/Llama-3.1-8B-ArliAI-RPMax-v1.3-GGUF",
+      "revision": "0b77a0d49657416a10491ba353cc720e5ca7a5a2",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-5e2f993660965bc7",
+      "base_model": "deepcogito/cogito-v2-preview-llama-70B",
+      "repo": "unsloth/cogito-v2-preview-llama-70B-GGUF",
+      "revision": "927138aebaf10964998ce9a90b026090866e3c52",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-7324445e19f74b81",
+      "base_model": "AuriAetherwiing/TQ3.5-27B-Musica-v1",
+      "repo": "bartowski/AuriAetherwiing_TQ3.5-27B-Musica-v1-GGUF",
+      "revision": "4704450a0739b2301bfa8db619c0e9af0457a64c",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-33a317b3e122971f",
+      "base_model": "Sao10K/70B-L3.3-Cirrus-x1",
+      "repo": "bartowski/70B-L3.3-Cirrus-x1-GGUF",
+      "revision": "6d41430c71f2f4345029fca5bd0075c959c92358",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-65849f2ca63199d4",
+      "base_model": "PocketDoc/Dans-PersonalityEngine-v1.0.0-8b",
+      "repo": "bartowski/Dans-PersonalityEngine-v1.0.0-8b-GGUF",
+      "revision": "bcc0896095a60f60961529108b60195da3068235",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-39158d948790a9ef",
+      "base_model": "Replete-AI/Replete-LLM-Qwen2-7b_Beta-Preview",
+      "repo": "bartowski/Replete-LLM-Qwen2-7b_Beta-Preview-GGUF",
+      "revision": "fed690dd3e60552179618cf384c814a620e2c081",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b1ffebb2923077b8",
+      "base_model": "soob3123/GrayLine-Qwen3-8B",
+      "repo": "bartowski/soob3123_GrayLine-Qwen3-8B-GGUF",
+      "revision": "34503922232194e56ed4734984bb35d1f83f8886",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-326937ef396c661b",
+      "base_model": "mistralai/Ministral-3-14B-Reasoning-2512",
+      "repo": "bartowski/mistralai_Ministral-3-14B-Reasoning-2512-GGUF",
+      "revision": "32bfb9dd2531f94153b7d65f05c956381f1b64e3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e426eae3ca5e217d",
+      "base_model": "nbeerbower/Qwen2.5-Gutenberg-Doppel-32B",
+      "repo": "bartowski/Qwen2.5-Gutenberg-Doppel-32B-GGUF",
+      "revision": "a56f6a5925d876b1ace0e361c1f491a8a0fba059",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-af3309b5aefcfbdc",
+      "base_model": "suayptalha/FastLlama-3.2-1B-Instruct",
+      "repo": "bartowski/FastLlama-3.2-1B-Instruct-GGUF",
+      "revision": "2f41fc421db6a7ded7b5a7b4d01c39f69870efff",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-87e20da2eb749b9a",
+      "base_model": "PocketDoc/Dans-PersonalityEngine-V1.1.0-12b",
+      "repo": "bartowski/Dans-PersonalityEngine-V1.1.0-12b-GGUF",
+      "revision": "6aa673c9524f807210c39fd8b9ada9e1e707eed5",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-40fd80f8fa386362",
+      "base_model": "Gryphe/Pantheon-RP-1.8-24b-Small-3.1",
+      "repo": "bartowski/Gryphe_Pantheon-RP-1.8-24b-Small-3.1-GGUF",
+      "revision": "8b785e12329442513223a3b3dbc94f870152a2c3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-91c6f465b7c8b8bb",
+      "base_model": "soob3123/amoral-gemma3-12B-v2",
+      "repo": "bartowski/soob3123_amoral-gemma3-12B-v2-GGUF",
+      "revision": "e9b2635a24a814f47392d3d1842a53d5923f9b03",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-525ecc520fe4f05d",
+      "base_model": "LatitudeGames/Wayfarer-Large-70B-Llama-3.3",
+      "repo": "bartowski/LatitudeGames_Wayfarer-Large-70B-Llama-3.3-GGUF",
+      "revision": "83c2e02a2b032fa6a4d857acaf76c8cdd8b7af33",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-24b913d92fa71a4d",
+      "base_model": "inclusionAI/Ling-lite",
+      "repo": "bartowski/inclusionAI_Ling-lite-GGUF",
+      "revision": "53abe7ae91822fb76b92fc8d5a7c2488964bd0ae",
+      "license": "mit"
+    },
+    {
+      "id": "n09-83b4157d9004e955",
+      "base_model": "Menlo/Jan-nano-128k",
+      "repo": "unsloth/Jan-nano-128k-GGUF",
+      "revision": "f9b6ebb8dfec211cc06789c2718c1623fd82eaab",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e1a61466dee24e7e",
+      "base_model": "ArliAI/Llama-3.3-70B-ArliAI-RPMax-v1.4",
+      "repo": "bartowski/ArliAI_Llama-3.3-70B-ArliAI-RPMax-v1.4-GGUF",
+      "revision": "58dc3236a237b17c368aa6c7fac1ffe7ba136a15",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-ac076ee8e81f8f51",
+      "base_model": "jondurbin/bagel-dpo-8x7b-v0.2",
+      "repo": "bartowski/bagel-dpo-8x7b-v0.2-GGUF",
+      "revision": "4a2c5c68b08a962b01fc0133f7a5854a2790014d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-11ffb5f362c18d01",
+      "base_model": "ReadyArt/Amoral-Fallen-Omega-Gemma3-12B",
+      "repo": "bartowski/ReadyArt_Amoral-Fallen-Omega-Gemma3-12B-GGUF",
+      "revision": "ab72e8f5f10f48f7fb618d0596f45eb80d492ba0",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-85e934d8bffa26fd",
+      "base_model": "ArliAI/GLM-4.5-Air-Derestricted",
+      "repo": "bartowski/ArliAI_GLM-4.5-Air-Derestricted-GGUF",
+      "revision": "d2389ece342a800229f7e8625a52360afea9a9ba",
+      "license": "mit"
+    },
+    {
+      "id": "n09-32f99ab348239d88",
+      "base_model": "ServiceNow-AI/Apriel-1.6-15b-Thinker",
+      "repo": "bartowski/ServiceNow-AI_Apriel-1.6-15b-Thinker-GGUF",
+      "revision": "e77d133d1b8be41576511b5497d12868107f31a8",
+      "license": "mit"
+    },
+    {
+      "id": "n09-2c3d047bbea08166",
+      "base_model": "Gryphe/Pantheon-Reasoning-26B-A4B-1.1",
+      "repo": "bartowski/Gryphe_Pantheon-Reasoning-26B-A4B-1.1-GGUF",
+      "revision": "37d8f07408dcf3d5b1d5526ea8efb42cf53661c3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-1d0498ead312dc70",
+      "base_model": "dicta-il/DictaLM-3.0-24B-Thinking",
+      "repo": "unsloth/DictaLM-3.0-24B-Thinking-GGUF",
+      "revision": "9d87d2b08be34549a578f9d491478abefe5df1e5",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-c988d8a4961b69c6",
+      "base_model": "Gryphe/Pantheon-Reasoning-27B",
+      "repo": "bartowski/Gryphe_Pantheon-Reasoning-27B-GGUF",
+      "revision": "978f88c082d728b3e0b72e73f3d1ce41a06cb0d0",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d55519b7175e82c3",
+      "base_model": "deepseek-ai/deepseek-coder-6.7b-base",
+      "repo": "bartowski/deepseek-coder-6.7B-kexer-GGUF",
+      "revision": "6ac3788b2da7b134e0e7a1bb31969e579d90939a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-3e67d85144a6eb17",
+      "base_model": "NousResearch/NousCoder-14B",
+      "repo": "bartowski/NousResearch_NousCoder-14B-GGUF",
+      "revision": "d65069f866af4df2b81ad979c846b409c72ebb2a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b061d96bfdb5e0c2",
+      "base_model": "iselabvn/Tini-Cybersec-8B-A1B",
+      "repo": "bartowski/iselabvn_Tini-Cybersec-8B-A1B-GGUF",
+      "revision": "697813ef87a3a237539769d54baada27cfb3643f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-abbcda9ce732fee4",
+      "base_model": "ALLaM-AI/ALLaM-7B-Instruct-preview",
+      "repo": "bartowski/ALLaM-AI_ALLaM-7B-Instruct-preview-GGUF",
+      "revision": "45e76a03c7eaab4ef74d9f4e8a2d77cadab55d1d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-34ed5732dfb1ba28",
+      "base_model": "kalomaze/Qwen3-16B-A3B",
+      "repo": "bartowski/kalomaze_Qwen3-16B-A3B-GGUF",
+      "revision": "a1d806b09fd28d383ea06b5dc6f7157bee9ff388",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-949a521da8712424",
+      "base_model": "simplescaling/s1-32B",
+      "repo": "bartowski/simplescaling_s1-32B-GGUF",
+      "revision": "7f57ba28c93fa15b7403dd6a0ad1133435510781",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-5effeb24ff05df78",
+      "base_model": "kai-os/Carnice-V2-27b",
+      "repo": "bartowski/kai-os_Carnice-V2-27b-GGUF",
+      "revision": "88621ecc8184c7837eacf91b149a4e7d360908c7",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-f146f2b9cf72dcee",
+      "base_model": "UCLA-AGI/Gemma-2-9B-It-SPPO-Iter3",
+      "repo": "bartowski/Gemma-2-9B-It-SPPO-Iter3-GGUF",
+      "revision": "08854df1d2c4b23a4534d6e8b353779150185216",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-9158f22d611b5905",
+      "base_model": "Epiculous/Crimson_Dawn-v0.2",
+      "repo": "bartowski/Crimson_Dawn-v0.2-GGUF",
+      "revision": "8ab187bca2126abb6435190c15c6f5241f07211a",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-79edb4b272cedac8",
+      "base_model": "ibm-granite/granite-3.2-8b-instruct",
+      "repo": "bartowski/ibm-granite_granite-3.2-8b-instruct-GGUF",
+      "revision": "cee2771c00c6d6fa0cee25faeb68e55fcca0b387",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-481f1f7e6b985ec9",
+      "base_model": "Rombo-Org/Rombo-LLM-V3.1-QWQ-32b",
+      "repo": "bartowski/Rombo-Org_Rombo-LLM-V3.1-QWQ-32b-GGUF",
+      "revision": "e5b43cbb0fedff86f5d55560aa38d67770fd7198",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-2f22e3314cb532f7",
+      "base_model": "ibm-granite/granite-3.2-2b-instruct",
+      "repo": "bartowski/ibm-granite_granite-3.2-2b-instruct-GGUF",
+      "revision": "9be2c106c8c073f5a140ec03c8c7a6a6e72d097b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e5fa66cc6f1f0339",
+      "base_model": "bytedance-research/UI-TARS-7B-SFT",
+      "repo": "bartowski/UI-TARS-7B-SFT-GGUF",
+      "revision": "943e37bc37450497ddd4b95b02de9bed6de45005",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-fc6a075c9fd12ae1",
+      "base_model": "migtissera/Tess-3-Mistral-Nemo",
+      "repo": "bartowski/Tess-3-Mistral-Nemo-GGUF",
+      "revision": "3d777443037674376fd6bfc28a94c9469ed00ef6",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-c55a0f6f11b6eeec",
+      "base_model": "nex-agi/Nex-N2-Pro",
+      "repo": "bartowski/nex-agi_Nex-N2-Pro-GGUF",
+      "revision": "f8b210fff0e6a75449a255a92ce88fc2fb170415",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-a914dee0f05a5769",
+      "base_model": "bytedance-research/UI-TARS-2B-SFT",
+      "repo": "bartowski/UI-TARS-2B-SFT-GGUF",
+      "revision": "5a0ef8290ddab04e691efca7fce30105bda2decb",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-c69bfcd6c491079d",
+      "base_model": "google/datagemma-rag-27b-it",
+      "repo": "bartowski/datagemma-rag-27b-it-GGUF",
+      "revision": "7dbf6375e08f7adc4f485b33d93ec1579d97ada7",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-47771183cd249d08",
+      "base_model": "sophosympatheia/Strawberrylemonade-70B-v1.1",
+      "repo": "bartowski/sophosympatheia_Strawberrylemonade-70B-v1.1-GGUF",
+      "revision": "42a9011c6af4fce3d50934a5e133a8803af644ce",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-1c929eba0c7c84b9",
+      "base_model": "PinkPixel/Crystal-Think-V2",
+      "repo": "bartowski/PinkPixel_Crystal-Think-V2-GGUF",
+      "revision": "c38c4add9018e2592841b1213effc437798837a8",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-9db6a2c13039ee92",
+      "base_model": "NousResearch/DeepHermes-3-Llama-3-3B-Preview",
+      "repo": "bartowski/NousResearch_DeepHermes-3-Llama-3-3B-Preview-GGUF",
+      "revision": "ff767d7602d37096a8593ce7e31d7a19cc9a7182",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-194773575533a732",
+      "base_model": "Jackrong/Qwen3.5-4B-Neo",
+      "repo": "bartowski/Jackrong_Qwen3.5-4B-Neo-GGUF",
+      "revision": "f4e97623ade9e56f8b2b2638c2ca6b3dac79d420",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-18d6051b28411172",
+      "base_model": "deepseek-ai/DeepSeek-Prover-V2-671B",
+      "repo": "unsloth/DeepSeek-Prover-V2-671B-GGUF",
+      "revision": "112021e6465fdaaf10a051ea79caefe82bb8eb31",
+      "license": "mit"
+    },
+    {
+      "id": "n09-f6994aec38a2d61a",
+      "base_model": "ruliad/deepthought-8b-llama-v0.01-alpha",
+      "repo": "bartowski/deepthought-8b-llama-v0.01-alpha-GGUF",
+      "revision": "c72cc1219544ba9e3ae26e417eff5b8c4cdae74e",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-28aabfec073b625f",
+      "base_model": "Zyphra/ZR1-1.5B",
+      "repo": "bartowski/Zyphra_ZR1-1.5B-GGUF",
+      "revision": "d4292edc83fcaa778600a24240970bf0933c9725",
+      "license": "mit"
+    },
+    {
+      "id": "n09-7f04636f808defc6",
+      "base_model": "Isotonic/OrcaAgent-llama3.2-8b",
+      "repo": "bartowski/OrcaAgent-llama3.2-8b-GGUF",
+      "revision": "e8aeb01053c3b15ac4a16adb7450cd05ff309e20",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d5290771d89fb6c7",
+      "base_model": "AALF/gemma-2-27b-it-SimPO-37K",
+      "repo": "bartowski/gemma-2-27b-it-SimPO-37K-GGUF",
+      "revision": "d613a28fbf0077d6fdeeed1c978260ea113f4d1f",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-ba4c72c6779e176b",
+      "base_model": "sail/Sailor2-1B-Chat",
+      "repo": "bartowski/Sailor2-1B-Chat-GGUF",
+      "revision": "9f8154a0ffdf04bb7f29e4f6c3cb938b9178dba3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-cf24fc87a5652f2e",
+      "base_model": "TheDrummer/Snowpiercer-15B-v1",
+      "repo": "bartowski/TheDrummer_Snowpiercer-15B-v1-GGUF",
+      "revision": "cf6a5f7fe78bc5f0c17da2a5a7e7e6be8cfa96be",
+      "license": "mit"
+    },
+    {
+      "id": "n09-080f03e9c3a41e06",
+      "base_model": "MathGenie/MathCoder2-CodeLlama-7B",
+      "repo": "bartowski/MathCoder2-CodeLlama-7B-GGUF",
+      "revision": "7724623fdab12dfb3f6962391db993392f1d8afd",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-e16d792cbf55ab0e",
+      "base_model": "shuttleai/shuttle-3.5",
+      "repo": "bartowski/shuttleai_shuttle-3.5-GGUF",
+      "revision": "822e6c02136126ba63408e5ab2e90d0514302eb1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-9fe6e626c8d766cb",
+      "base_model": "AuriAetherwiing/G4-31B-Musica-v1",
+      "repo": "bartowski/AuriAetherwiing_G4-31B-Musica-v1-GGUF",
+      "revision": "46690f405c6b78ec6a630073415687adfd21d788",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-cec712086f702d99",
+      "base_model": "neurolattice/Tess-R1-Limerick-Llama-3.1-70B",
+      "repo": "bartowski/Tess-R1-Limerick-Llama-3.1-70B-GGUF",
+      "revision": "bbde62c031481186ed5c3421a328f709b2c276cf",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-33460572f027ef3d",
+      "base_model": "allenai/Llama-3.1-Tulu-3.1-8B",
+      "repo": "bartowski/allenai_Llama-3.1-Tulu-3.1-8B-GGUF",
+      "revision": "ff76e96ffddff3c0eb12f973241f5cfbad3cc543",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-11731caa6f293ce0",
+      "base_model": "OwenArli/ArliAI-Llama-3-8B-Formax-v1.0",
+      "repo": "bartowski/ArliAI-Llama-3-8B-Formax-v1.0-GGUF",
+      "revision": "c66c336bcae6adfc30036ed066278df68dcc5366",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-dceadf1c801a53a1",
+      "base_model": "AGI-0/Art-Skynet-3B",
+      "repo": "bartowski/AGI-0_Art-Skynet-3B-GGUF",
+      "revision": "9f9234167a1a768b256db493fc2e2b0168f65320",
+      "license": "llama3.2"
+    },
+    {
+      "id": "n09-6a7e030c9b6bb28d",
+      "base_model": "Black-Ink-Guild/Pernicious_Prophecy_70B",
+      "repo": "bartowski/Black-Ink-Guild_Pernicious_Prophecy_70B-GGUF",
+      "revision": "9ad63ae3d6897c1976ab956efba9a89b02247e51",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-3efc02b786237295",
+      "base_model": "abacusai/Dracarys-Llama-3.1-70B-Instruct",
+      "repo": "bartowski/Dracarys-Llama-3.1-70B-Instruct-GGUF",
+      "revision": "faab06f7a7aa048bc0e66e1c8c9fd2d347838af1",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-8634c4825fca3dc7",
+      "base_model": "HelpingAI/Dhanishtha-2.0-preview",
+      "repo": "bartowski/HelpingAI_Dhanishtha-2.0-preview-GGUF",
+      "revision": "0ccfb433c8a078db6dc341319e66f16cab698356",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-6debc3192a88c581",
+      "base_model": "nbeerbower/Dumpling-Qwen2.5-72B",
+      "repo": "bartowski/nbeerbower_Dumpling-Qwen2.5-72B-GGUF",
+      "revision": "02211e98ce091022794419524b0ee6458be1b203",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-bb515fb13dfa531f",
+      "base_model": "Replete-AI/Llama-3-11.5B-Instruct-V2",
+      "repo": "bartowski/Llama-3-11.5B-Instruct-Coder-v2-GGUF",
+      "revision": "f032842a4cf6bd3dfc4cdb4bda5b39669689aa08",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-ddd3e3585e01d885",
+      "base_model": "Steelskull/L3.3-Mokume-Gane-R1-70b-v1.1",
+      "repo": "bartowski/Steelskull_L3.3-Mokume-Gane-R1-70b-v1.1-GGUF",
+      "revision": "460ea965ef1621de3a1d3c9650bee9b60aecbf22",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-88cf1bc872286ad3",
+      "base_model": "open-thoughts/OpenThinker2-32B",
+      "repo": "bartowski/open-thoughts_OpenThinker2-32B-GGUF",
+      "revision": "9c8fcd712b1f1e38d6076ea9fe3acdbdf93a975f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-70c127c81c82291b",
+      "base_model": "SicariusSicariiStuff/Impish_Mind_8B",
+      "repo": "bartowski/Impish_Mind_8B-GGUF",
+      "revision": "adf79a39eb6123b22e95a456896edf9b5fe3221f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-22202f5c08733b08",
+      "base_model": "ServiceNow-AI/Apriel-1.5-15b-Thinker",
+      "repo": "unsloth/Apriel-1.5-15b-Thinker-GGUF",
+      "revision": "616408016f617fbd862c22090218bb545e2c8d20",
+      "license": "mit"
+    },
+    {
+      "id": "n09-ac9416d00cdb6ee5",
+      "base_model": "gbueno86/Cathallama-70B",
+      "repo": "bartowski/Cathallama-70B-GGUF",
+      "revision": "f1d1b19a35aa164f02b9dd949989bc9055e08e5b",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-8c2dc186d523cbe1",
+      "base_model": "SicariusSicariiStuff/Assistant_Pepe_70B",
+      "repo": "bartowski/SicariusSicariiStuff_Assistant_Pepe_70B-GGUF",
+      "revision": "b16e5a435bce36c2467bb07386e25ff5c9452912",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-ed5011aa60e1b206",
+      "base_model": "MaziyarPanahi/calme-2.3-rys-78b",
+      "repo": "bartowski/calme-2.3-rys-78b-GGUF",
+      "revision": "3eaa285e7249b287d932afbf4828e8e6cff48a6b",
+      "license": "mit"
+    },
+    {
+      "id": "n09-e2d2ba8311c78781",
+      "base_model": "zed-industries/zeta-2",
+      "repo": "bartowski/zed-industries_zeta-2-GGUF",
+      "revision": "c11146400f88564904c7b7488542dc03bad36b2b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-a10db9faa5de58d3",
+      "base_model": "expertai/SLIMER-PARALLEL-LLaMA3",
+      "repo": "bartowski/SLIMER-PARALLEL-LLaMA3-GGUF",
+      "revision": "a4edc72de609ed2c0ab1d83177945a4a4095682b",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-14977f6f81e19d6b",
+      "base_model": "PKU-DS-LAB/FairyR1-32B",
+      "repo": "bartowski/PKU-DS-LAB_FairyR1-32B-GGUF",
+      "revision": "d6f499cfabf52a57854433d86f239ff8cc51be3b",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-c80bb5aea07f044e",
+      "base_model": "google/gemma-3-1b-it-qat-q4_0-unquantized",
+      "repo": "bartowski/google_gemma-3-1b-it-qat-GGUF",
+      "revision": "074329a7942d6a61a3748a80ed1bbc9e2d7d0e18",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-32dc73595ab21a9b",
+      "base_model": "allura-org/Bigger-Body-70b",
+      "repo": "bartowski/allura-org_Bigger-Body-70b-GGUF",
+      "revision": "9e2cd6a30ffed8fa3d0114a82d6a32455b524cee",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-f329d63c4f3895c7",
+      "base_model": "ibm-granite/granite-3.0-3b-a800m-instruct",
+      "repo": "bartowski/granite-3.0-3b-a800m-instruct-GGUF",
+      "revision": "4f4569b667018222ae70a979c5064afc69df675f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-5d6fe60631e84f13",
+      "base_model": "AtlaAI/Selene-1-Mini-Llama-3.1-8B",
+      "repo": "bartowski/Selene-1-Mini-Llama-3.1-8B-GGUF",
+      "revision": "d823de6517c8f02acfbe54e2323ae1d6f440f92e",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-8ee2e7e413ce75b0",
+      "base_model": "mobiuslabsgmbh/DeepSeek-R1-ReDistill-Qwen-1.5B-v1.0",
+      "repo": "bartowski/DeepSeek-R1-ReDistill-Qwen-1.5B-v1.0-GGUF",
+      "revision": "c277929b9e7ffbc54652dc85d2e23734871cfb2c",
+      "license": "mit"
+    },
+    {
+      "id": "n09-396efb01f1e9dc7f",
+      "base_model": "watt-ai/watt-tool-70B",
+      "repo": "bartowski/watt-ai_watt-tool-70B-GGUF",
+      "revision": "30ebe43d0c39c52f07741aa7aac564b5ceb2f182",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-7df5224b1a8167b3",
+      "base_model": "PrimeIntellect/INTELLECT-2",
+      "repo": "bartowski/PrimeIntellect_INTELLECT-2-GGUF",
+      "revision": "b984dc75fd0a9f628c3a7eed7c432f939004af3d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d11bb107683406ec",
+      "base_model": "rpDungeon/Gemma4-31b-Gembrain-Equinox",
+      "repo": "bartowski/rpDungeon_Gemma4-31b-Gembrain-Equinox-GGUF",
+      "revision": "36cc2b2402b0e37eb1013fec4711617d14b36131",
+      "license": "gemma"
+    },
+    {
+      "id": "n09-1df198466d1a1d35",
+      "base_model": "Steelskull/L3.3-Shakudo-70b",
+      "repo": "bartowski/Steelskull_L3.3-Shakudo-70b-GGUF",
+      "revision": "856c1140a29be78d57252a8963c1dacd1b980b78",
+      "license": "llama3.3"
+    },
+    {
+      "id": "n09-e60c5307902e9378",
+      "base_model": "PocketDoc/Dans-SakuraKaze-V1.0.0-12b",
+      "repo": "bartowski/PocketDoc_Dans-SakuraKaze-V1.0.0-12b-GGUF",
+      "revision": "c2222afbcfa7ed4f3504804e4400d20d7bfcbb90",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-84370f26402111d7",
+      "base_model": "allenai/Olmo-3-7B-Think",
+      "repo": "bartowski/allenai_Olmo-3-7B-Think-GGUF",
+      "revision": "d5a1bf052bdb80f09cd79eee4d2037c3f8ced190",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-bed8a8a776eddb9a",
+      "base_model": "sophosympatheia/StrawberryLemonade-L3-70B-v1.0",
+      "repo": "bartowski/sophosympatheia_StrawberryLemonade-L3-70B-v1.0-GGUF",
+      "revision": "100516b7cf62ce3120e0e10da6171a7a9ef3801c",
+      "license": "llama3"
+    },
+    {
+      "id": "n09-9ddf52b5ec170101",
+      "base_model": "Qwen/Qwen2-7B-Instruct",
+      "repo": "bartowski/Qwen2-7B-Instruct-GGUF",
+      "revision": "f1c7bba77b35fa3f9bc1d470646abdc0c8a9ceef",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-4b264a0baf337bc4",
+      "base_model": "CohereLabs/command-a-plus-05-2026-bf16",
+      "repo": "bartowski/command-a-plus-05-2026-GGUF",
+      "revision": "a26ba921242484b5e1a8ac8519169fe7421c3ab3",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-bfaef34cc58d360c",
+      "base_model": "ArliAI/Mistral-Small-24B-ArliAI-RPMax-v1.4",
+      "repo": "bartowski/ArliAI_Mistral-Small-24B-ArliAI-RPMax-v1.4-GGUF",
+      "revision": "a18fcb87e6b2e34b733fc8f27fb1fa175c1c69f6",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-6e65fe28ba043041",
+      "base_model": "ibm-granite/granite-3.0-1b-a400m-instruct",
+      "repo": "bartowski/granite-3.0-1b-a400m-instruct-GGUF",
+      "revision": "0e1c3cecaa6e49ac0721be91ef441ec72eae62d4",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-39cd6aa21dff7637",
+      "base_model": "RWKV/v6-Finch-14B-HF",
+      "repo": "bartowski/v6-Finch-14B-HF-GGUF",
+      "revision": "349fff530e7ad33d25c887e196ed7dcab8377df1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-3e2e580c1d8ff543",
+      "base_model": "nvidia/OpenCodeReasoning-Nemotron-14B",
+      "repo": "bartowski/nvidia_OpenCodeReasoning-Nemotron-14B-GGUF",
+      "revision": "427992c22165f9e4338217d1e9fe6d43ee518b29",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-b015cf053a3a58c1",
+      "base_model": "ValiantLabs/Llama3.1-70B-ShiningValiant2",
+      "repo": "bartowski/Llama3.1-70B-ShiningValiant2-GGUF",
+      "revision": "d6139060fbf7121d29bcf113100028e4d9f02694",
+      "license": "llama3.1"
+    },
+    {
+      "id": "n09-8f0b9379fc44d6ba",
+      "base_model": "nvidia/OpenCodeReasoning-Nemotron-7B",
+      "repo": "bartowski/nvidia_OpenCodeReasoning-Nemotron-7B-GGUF",
+      "revision": "aab08e1b70406072083242039ab093d685f8bd2d",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-16ec91034e3025c5",
+      "base_model": "mistralai/Magistral-Small-2506",
+      "repo": "bartowski/mistralai_Magistral-Small-2506-GGUF",
+      "revision": "dbf2f0bcf878662f61035a89542d10bc8fdca801",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-7143b6691b4dac9f",
+      "base_model": "Qwen/Qwen2-Math-1.5B-Instruct",
+      "repo": "bartowski/Qwen2-Math-1.5B-Instruct-GGUF",
+      "revision": "b6e03d06250efc16761508cc92d89a1c351fc5a1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-d0bb5047efb9467d",
+      "base_model": "HumanLLMs/Humanish-Qwen2.5-7B-Instruct",
+      "repo": "bartowski/Human-Like-Qwen2.5-7B-Instruct-GGUF",
+      "revision": "eab4f400a06a413d5a0bade2d6ca4d7ad8fd309e",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-8369b15282ed2875",
+      "base_model": "Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24",
+      "repo": "bartowski/Vikhr-Nemo-12B-Instruct-R-21-09-24-GGUF",
+      "revision": "dcc5f466261d7d69b5f3d92c65de3c9c58f368f1",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-5049a651f3b92510",
+      "base_model": "XYZAILab/XYZ-Aquila-pro",
+      "repo": "bartowski/XYZAILab_XYZ-Aquila-pro-GGUF",
+      "revision": "1565b5d9b92b41904577121ffd995461e6fbe36f",
+      "license": "apache-2.0"
+    },
+    {
+      "id": "n09-cba1639e5e203414",
+      "base_model": "AIDC-AI/Marco-o1",
+      "repo": "bartowski/Marco-o1-GGUF",
+      "revision": "35ba22588890f8310c2b3749874852b04c1a813e",
+      "license": "apache-2.0"
+    }
+  ]
+}

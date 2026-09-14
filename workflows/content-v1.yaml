@@ -1,0 +1,17 @@
+id: content
+version: 1
+title: Pacote de conteúdo
+policy: local
+budget_minor: 0
+allowed_tools:
+  - content.compose
+  - files.commit_version
+  - document.validate
+required_checks:
+  - requirements
+  - duration
+  - human_review
+steps:
+  - tool: content.compose
+  - tool: files.commit_version
+  - tool: document.validate

@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtemp,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {randomUUID} from 'node:crypto';
+import {createServer} from 'node:http';
+import {Music,musicEndpoint,musicRequest} from '../src/music.js';
+import {validateEditPlan,Editor,type ResolveSnapshot} from '../src/editor.js';
+import {personalityInstruction} from '../src/agent.js';
+import {Core} from '../src/core.js';
+import {Experience} from '../src/experience.js';
+import {createApp} from '../src/server.js';
+import {encodeWav} from '../public/creative.js';
+const snapshot:ResolveSnapshot={project:'Test',project_id:'p1',timeline_id:'t1',version:'20',clips:[{id:'c1',name:'Vídeo',frames:300,type:'Video'}]};
+test('Editor rejeita trechos fora da mídia, IDs inventados e operações extras',()=>{
+ const good={name:'Montagem',summary:'Abertura',segments:[{clip:'c1',start:0,end:100,reason:'Início'}]};assert.equal(validateEditPlan(good,snapshot).segments.length,1);
+ for(const segment of [{clip:'missing',start:0,end:10},{clip:'c1',start:100,end:10},{clip:'c1',start:0,end:301},{clip:'c1',start:0.1,end:30}])assert.throws(()=>validateEditPlan({...good,segments:[{...segment,reason:''}]},snapshot));
+ assert.throws(()=>validateEditPlan({...good,execute:'arbitrary Python'},snapshot));
+});
+test('Personalidade neutra é padrão, preferência persiste sem apagar bots',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'neuron-personality-'));const core=new Core(dir,process.cwd());try{await core.init();await core.setup('senha-ficticia-personality-2026');const e=new Experience(core);assert.equal(Boolean((await e.snapshot()).personality),false);await e.suggest({use:'work'},randomUUID());const count=(await e.snapshot()).bots.length;await e.personality({enabled:true},randomUUID());assert.equal((await e.snapshot()).personality,true);await e.personality({enabled:false},randomUUID());assert.equal((await e.snapshot()).bots.length,count);assert.match(personalityInstruction(false),/não adote a marca/);assert.match(personalityInstruction(true),/especialização.*prioridade/);}finally{await core.close();await rm(dir,{recursive:true,force:true});}
+});
+test('Música aceita apenas loopback e limita duração e parâmetros',()=>{assert.equal(musicEndpoint('http://127.0.0.1:8001'),'http://127.0.0.1:8001');for(const u of ['http://evil.com','http://127.0.0.1.evil.com','http://user:pass@localhost','http://localhost/a','http://192.168.1.2'])assert.throws(()=>musicEndpoint(u));assert.throws(()=>musicRequest.parse({prompt:'trilha',model:'turbo',duration:600}));});
+test('Geração ACE-Step salva WAV real retornado, persiste biblioteca e rejeita URL externa',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'neuron-music-'));let foreign=false;let submitted:any;
+ const wav=Buffer.from(await encodeWav({numberOfChannels:1,sampleRate:8000,getChannelData:()=>new Float32Array(800).fill(.4)},0,800,false).arrayBuffer());
+ const server=createServer(async(req,res)=>{let body='';for await(const b of req)body+=b;res.setHeader('Content-Type','application/json');const send=(data:unknown)=>res.end(JSON.stringify({data,code:200,error:null}));if(req.url==='/v1/model_inventory')return send({models:[{name:'acestep-v15-turbo',is_default:true,is_loaded:true}]});if(req.url==='/release_task'){submitted=JSON.parse(body);return send({task_id:'task-1'});}if(req.url==='/query_result')return send([{task_id:'task-1',status:1,result:JSON.stringify([{file:foreign?'http://example.com/v1/audio?path=secret':'/v1/audio?path=output.wav'}])}]);if(req.url?.startsWith('/v1/audio')){res.setHeader('Content-Type','audio/wav');res.end(wav);return;}res.statusCode=404;res.end();});
+ await new Promise<void>(r=>server.listen(0,'127.0.0.1',r));const address=server.address() as {port:number};const music=new Music(dir,process.cwd());music.configure({endpoint:'http://127.0.0.1:'+address.port});
+ try{await music.generate({prompt:'Piano suave',model:'acestep-v15-turbo',duration:10,instrumental:true});await assert.rejects(()=>music.generate({prompt:'Outra',model:'acestep-v15-turbo'}));while(music.busy)await new Promise(r=>setTimeout(r,40));assert.equal(music.job?.state,'complete');assert.equal(submitted.lyrics,'[Instrumental]');assert.equal(submitted.thinking,false);assert.equal(submitted.batch_size,1);assert.equal(music.gallery().length,1);assert.equal(new Music(dir,process.cwd()).gallery().length,1);assert.throws(()=>music.artifact('../private'));foreign=true;await music.generate({prompt:'Trilha',model:'acestep-v15-turbo'});while(music.busy)await new Promise(r=>setTimeout(r,40));assert.equal(music.job?.state,'error');assert.match(music.job?.error||'',/inesperado/);assert.equal(music.gallery().length,1);}finally{await music.stop();await new Promise<void>(r=>server.close(()=>r()));await rm(dir,{recursive:true,force:true});}
+});
+test('Recorte WAV preserva frequência e aplica fade nos dois extremos',async()=>{const data=new Float32Array(100).fill(1);const b=await encodeWav({numberOfChannels:1,sampleRate:100,getChannelData:()=>data},10,90,true).arrayBuffer();const view=new DataView(b);assert.equal(view.getUint32(24,true),100);assert.equal(view.getUint32(40,true),160);assert.equal(view.getInt16(44,true),0);assert.equal(view.getInt16(b.byteLength-2,true),0);assert.ok(view.getInt16(44+40*2,true)>30000);});
+test('Novas rotas mantêm autenticação, cofre e validação de entrada',async()=>{const dir=await mkdtemp(join(tmpdir(),'neuron-creative-api-')),core=new Core(dir,process.cwd());await core.init();await core.setup('senha-ficticia-editor-api-2026');const {app}=await createApp(core,'creative-fixture');const headers={host:'127.0.0.1:4317',authorization:'Bearer creative-fixture','idempotency-key':randomUUID()};try{for(const url of ['/v1/music','/v1/editor','/v1/personality'])assert.equal((await app.inject({url,headers:{host:headers.host}})).statusCode,401);assert.deepEqual((await app.inject({url:'/v1/personality',headers})).json(),{enabled:false});assert.equal((await app.inject({url:'/v1/personality',method:'POST',headers,payload:{enabled:true}})).statusCode,200);assert.deepEqual((await app.inject({url:'/v1/personality',headers})).json(),{enabled:true});assert.ok((await app.inject({url:'/v1/music/connection',method:'POST',headers,payload:{endpoint:'http://example.com'}})).statusCode>=400);assert.ok((await app.inject({url:'/v1/music/generate',method:'POST',headers,payload:{model:'turbo',prompt:'x',duration:9999}})).statusCode>=400);await core.vault.lock();for(const url of ['/v1/music','/v1/editor','/v1/personality'])assert.ok((await app.inject({url,headers})).statusCode>=400);}finally{await app.close();await core.close();await rm(dir,{recursive:true,force:true});}});

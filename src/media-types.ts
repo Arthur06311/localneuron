@@ -1,0 +1,2 @@
+export type MediaFile={path:string;bytes:number;sha256:string};
+export type MediaModel={id:string;name:string;author:string;family:string;repo:string;revision:string;source:string;card:string;license:string;categories:string[];description:string;external:true;tag:string;ram_note:string;files:MediaFile[];access:'public'|'restricted'|'unknown';checked_at:string;kind:'image'|'video';task:string;component:boolean;local_profile?:'sd15';profile_file?:number;profile_id?:string;};

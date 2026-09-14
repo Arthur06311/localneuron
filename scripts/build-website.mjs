@@ -1,0 +1,14 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {marked} from 'marked';
+const root=new URL('../',import.meta.url);
+const source=await readFile(new URL('docs/configuracao.md',root),'utf8');
+const slug=text=>text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const items=[];
+const renderer=new marked.Renderer();
+renderer.heading=function({tokens,depth,text}){const id=slug(text);if(depth===2)items.push({id,text});return `<h${depth} id="${id}">${this.parser.parseInline(tokens)}</h${depth}>\n`;};
+let content=marked.parse(source,{renderer});
+content=content.replace(/<table>/g,'<div class="table-wrap"><table>').replace(/<\/table>/g,'</table></div>');
+const chunks=content.split(/(?=<h2 )/).map((s,i)=>`<section${i===0?' aria-label="Introdução"':''}>${s}</section>`).join('\n');
+const nav=items.map(x=>`<a href="#${x.id}">${x.text}</a>`).join('');
+await writeFile(new URL('website/guide.html',root),`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b0e"><title>Guia e configurações — LocalNeuron</title><meta name="description" content="Configure o LocalNeuron: modelos locais, motores, bots, Photo, Video, Música, DaVinci, EXO, API, MCP e backup."><link rel="icon" href="./app-icon.png"><link rel="stylesheet" href="./style.css"></head><body><a class="skip" href="#main">Ir ao conteúdo</a><header class="guide-header"><a class="brand" href="./"><img src="./app-icon.png" width="34" height="34" alt="">LocalNeuron</a><nav aria-label="Navegação"><a href="./#download">Downloads</a><a href="https://github.com/Arthur06311/localneuron">GitHub ↗</a></nav></header><div class="guide-shell"><nav class="guide-nav" aria-label="Neste guia">${nav}</nav><main class="guide-main" id="main"><p class="eyebrow">CENTRAL DE INFORMAÇÕES / PORTUGUÊS</p>${chunks}<p class="guide-top-links"><a href="./#download">Baixar o LocalNeuron</a><a href="https://github.com/Arthur06311/localneuron/issues">Reportar um problema</a><a href="#main">Voltar ao início ↑</a></p></main></div><footer><a class="brand" href="./">LocalNeuron</a><p>Sua IA. Seu computador.</p><a href="./">Idioma e privacidade</a><span>0.26.0 · Alfa</span></footer></body></html>`);
+console.log('Generated website/guide.html from docs/configuracao.md');
