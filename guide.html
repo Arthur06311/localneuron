@@ -1,0 +1,175 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b0e"><title>Guia e configurações — LocalNeuron</title><meta name="description" content="Configure o LocalNeuron: modelos locais, motores, bots, Photo, Video, Música, DaVinci, EXO, API, MCP e backup."><link rel="icon" href="./app-icon.png"><link rel="stylesheet" href="./style.css"></head><body><a class="skip" href="#main">Ir ao conteúdo</a><header class="guide-header"><a class="brand" href="./"><img src="./app-icon.png" width="34" height="34" alt="">LocalNeuron</a><nav aria-label="Navegação"><a href="./#download">Downloads</a><a href="https://github.com/Arthur06311/localneuron">GitHub ↗</a></nav></header><div class="guide-shell"><nav class="guide-nav" aria-label="Neste guia"><a href="#comecar">Começar</a><a href="#requisitos">Requisitos</a><a href="#modelos-e-motores">Modelos e motores</a><a href="#chat-e-bots">Chat e bots</a><a href="#photo-e-video">Photo e Video</a><a href="#musica">Música</a><a href="#editor-davinci">Editor / DaVinci</a><a href="#minha-api">Minha API</a><a href="#rede-exo">Rede EXO</a><a href="#conexoes-mcp">Conexões MCP</a><a href="#pro">Pro</a><a href="#dados-e-backup">Dados e backup</a><a href="#solucao-de-problemas">Solução de problemas</a></nav><main class="guide-main" id="main"><p class="eyebrow">CENTRAL DE INFORMAÇÕES / PORTUGUÊS</p><section aria-label="Introdução"><h1 id="guia-de-configuracao-do-localneuron">Guia de configuração do LocalNeuron</h1>
+<p>LocalNeuron 0.26 · Alfa. Este guia explica o aplicativo instalado no seu computador. Nenhuma senha, chave ou configuração privada é enviada por esta página.</p>
+</section>
+<section><h2 id="comecar">Começar</h2>
+<ol>
+<li>Baixe o pacote do seu sistema em <strong>Downloads</strong>. No GitHub Releases, escolha um instalador em Assets; “Source code” é somente o código-fonte.</li>
+<li>No Mac, abra o DMG e arraste o app para Aplicativos. Windows/Linux: extraia tudo e abra o executável na pasta.</li>
+<li>Abra o app e configure a proteção do espaço. Se você já tinha senha, use <strong>entrar/desbloquear</strong>, preservando seus dados.</li>
+<li>No assistente inicial, confira o computador, escolha seu perfil e revise as recomendações. Você pode voltar ao assistente depois sem recriar os mesmos bots.</li>
+<li>Em <strong>Modelos</strong>, escolha uma IA de texto pequena marcada como compatível com o motor disponível. Confira RAM, disco, licença e tamanho antes de baixar.</li>
+<li>Quando o download terminar, abra o Chat e selecione o modelo. O carregamento na RAM pode demorar na primeira vez.</li>
+</ol>
+<p><strong>Já instalou antes?</strong> Feche o app antes de atualizar. Preserve a pasta de dados e substitua apenas o aplicativo. Não crie outra senha sobre uma instalação existente nem apague a pasta para “corrigir” o login.</p>
+</section>
+<section><h2 id="requisitos">Requisitos</h2>
+<p>O tamanho do aplicativo não inclui os modelos. Download é espaço no disco; RAM é memória usada durante a execução. Contexto maior, vídeo e várias ferramentas podem aumentar bastante o consumo.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Requisitos e disponibilidade</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Aplicativo</td>
+<td>macOS Apple Silicon, Windows x64 ou Linux x64 com ambiente gráfico. Windows/Linux ainda aguardam validação nativa.</td>
+</tr>
+<tr>
+<td>Texto GGUF</td>
+<td>Motor llama.cpp incluído. Escolha arquitetura e quantização suportadas; a estimativa da ficha não substitui um teste real.</td>
+</tr>
+<tr>
+<td>MLX</td>
+<td>Apple Silicon. Runtime exige macOS 14+; execução desta alfa verificada no macOS 26.6.2.</td>
+</tr>
+<tr>
+<td>Photo / Video</td>
+<td>Perfis visuais suportados pelo motor. O binário visual Mac exige macOS 26+.</td>
+</tr>
+<tr>
+<td>Música</td>
+<td>ACE-Step instalado separadamente, 25 GiB livres para preparar o ambiente; cerca de 6,32 GB de pesos mais dependências. RAM/GPU influenciam duração e velocidade.</td>
+</tr>
+<tr>
+<td>EXO gerenciado</td>
+<td>Mac Apple Silicon com macOS 26.2+; computadores na mesma rede confiável.</td>
+</tr>
+<tr>
+<td>Editor</td>
+<td>DaVinci Resolve Studio e SDK Python instalados. No Windows/Linux, Python 3 disponível no sistema.</td>
+</tr>
+<tr>
+<td>Voz</td>
+<td>Permissão do microfone e modelo Whisper instalado.</td>
+</tr>
+</tbody></table></div>
+<p>No Windows, os motores podem precisar do <a href="https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist">Microsoft Visual C++ Redistributable x64</a>. No Linux, use as dependências e a configuração de sandbox exigidas pela sua distribuição.</p>
+<p><strong>Distribuição Mac:</strong> o pacote atual tem assinatura ad hoc e ainda não possui notarização Apple. Confira a origem e o checksum do arquivo. Não desative o Gatekeeper globalmente. Veja as <a href="https://support.apple.com/102445">orientações oficiais da Apple</a> sobre alertas ao abrir aplicativos.</p>
+</section>
+<section><h2 id="modelos-e-motores">Modelos e motores</h2>
+<p>A biblioteca reúne mais de mil entradas, incluindo variantes de quantização. Isso não significa mil arquiteturas distintas nem que todos os modelos foram testados em inferência.</p>
+<ul>
+<li><strong>Conversa / escrita:</strong> responder perguntas, revisar, resumir e redigir. A categoria descreve o uso sugerido.</li>
+<li><strong>Código:</strong> programação, explicações e análise de código.</li>
+<li><strong>Raciocínio:</strong> problemas com mais etapas; o ajuste de esforço depende do suporte do modelo.</li>
+<li><strong>Imagem / vídeo / áudio:</strong> usam pipelines específicos. Estar no catálogo não significa que o Chat de texto pode executar o modelo.</li>
+</ul>
+<p>Use a ficha para conferir <strong>motor integrado</strong>, licença, origem, download e RAM estimada. Modelos marcados como referência ou download externo precisam de integração adicional. Modelos restritos no Hugging Face podem exigir aceitar sua licença e autorizar sua conta; o app não contorna essa exigência.</p>
+<p>Para começar, prefira uma quantização Q4 de um modelo pequeno que caiba com folga na memória disponível. Se faltar RAM, libere o modelo atual, reduza o contexto e escolha uma versão menor. <strong>Liberar memória</strong> descarrega a IA da RAM sem apagar os pesos do disco.</p>
+<p>Não é preciso ter LM Studio aberto para os motores integrados. Depois da instalação dos motores e pesos, desative Internet no chat para usar inferência local sem pesquisa web. Downloads, conexões MCP e consulta de sites continuam dependendo de rede quando acionados.</p>
+</section>
+<section><h2 id="chat-e-bots">Chat e bots</h2>
+<p>Converse em uma página ampla, com histórico, anexos, memória revisável e ajustes. As conversas podem ser organizadas pelo modelo ou bot. Ramificações permitem testar outra resposta preservando o contexto anterior.</p>
+<p>O assistente inicial ajuda a montar bots pessoais e profissionais. Edite nome, especialidade, modelo, instruções e permissões. A especialidade organiza o comportamento; não confere conhecimento profissional certificado ao modelo.</p>
+<p>A sala permite colaboração sequencial de até seis bots, até três rodadas e dez minutos, com cancelamento. Ferramentas da sala permanecem desativadas nesta alfa.</p>
+<p><strong>Internet</strong> habilita pesquisa/leitura web. <strong>Esforço</strong> ajusta o raciocínio quando suportado. <strong>Parar</strong> interrompe a geração. Em Preferências, <strong>Usar a personalidade LocalNeuron</strong> liga/desliga o estilo do aplicativo; começa desligado e preserva as instruções dos bots.</p>
+<p>Ferramentas de computador, arquivos e terminal têm controles próprios. Escolha a pasta de trabalho e revise ações que alterem arquivos ou executem comandos. Controle nativo não equivale a automação visual universal de qualquer aplicativo.</p>
+</section>
+<section><h2 id="photo-e-video">Photo e Video</h2>
+<p>Abra <strong>Photo</strong> para imagens e <strong>Video</strong> para cenas e montagem. O recomendador considera os perfis que o motor realmente integra; os demais modelos da biblioteca visual podem ser apenas downloads de pesos.</p>
+<ol>
+<li>Rode o recomendador e confira memória e espaço.</li>
+<li>Instale um perfil integrado e espere os arquivos terminarem.</li>
+<li>Descreva o que quer criar e comece com resolução/duração menores.</li>
+<li>Revise a mídia, organize cenas, cortes, textos e áudio.</li>
+<li>Salve o projeto e exporte conforme os formatos e codecs disponíveis.</li>
+</ol>
+<p>Vídeo pode consumir muita memória e levar bastante tempo. Não há promessa de geração instantânea nem de execução de qualquer modelo de vídeo do Hugging Face. Use o botão de parada quando necessário e preserve o projeto antes de operações grandes.</p>
+</section>
+<section><h2 id="musica">Música</h2>
+<p>A aba <strong>Música</strong> usa o motor aberto ACE-Step 1.5, instalado em uma pasta própria. O instalador prepara Python, dependências e pesos com revisão e SHA-256 fixados.</p>
+<ol>
+<li>Abra Música e consulte a recomendação para seu computador.</li>
+<li>Clique em <strong>Instalar motor</strong> com internet e pelo menos 25 GiB livres.</li>
+<li>Inicie o motor e aguarde aparecer pronto. Outros motores pesados podem precisar ser liberados da RAM.</li>
+<li>Descreva estilo e instrumentos. Escolha instrumental ou forneça uma letra, ajuste BPM e duração.</li>
+<li>Comece com <strong>10 segundos</strong>. A faixa gerada fica na biblioteca WAV; recorte e aplique fades para exportar uma nova cópia.</li>
+</ol>
+<p>O perfil gerenciado usa Turbo, uma faixa por vez, entre 10 e 120 segundos. Depois de instalado, funciona offline, em loopback com chave interna por sessão. A integração e o armazenamento foram testados por contrato. Uma faixa real de 10 segundos foi gerada e salva no Mac Apple Silicon; outros sistemas e durações ainda precisam de validação.</p>
+<p>Uma API ACE-Step já existente pode ser conectada em modo avançado, somente em loopback. Parar o acompanhamento dessa conexão não garante que o processo externo pare de gerar.</p>
+</section>
+<section><h2 id="editor-davinci">Editor / DaVinci</h2>
+<p>A aba <strong>Editor</strong> prepara uma montagem com IA dentro do DaVinci Resolve Studio por meio do SDK local. O Resolve e seu SDK não são distribuídos com o LocalNeuron.</p>
+<ol>
+<li>Abra um projeto no Resolve Studio e importe seus clipes no <strong>Media Pool</strong>.</li>
+<li>Em <strong>Preferences → System → General</strong>, habilite <strong>External scripting using: Local</strong>.</li>
+<li>Abra Editor no LocalNeuron, confira a conexão e selecione um modelo de texto instalado.</li>
+<li>Descreva a montagem. A IA recebe nomes, tipos e durações dos primeiros 40 itens, não o conteúdo visual/sonoro dos vídeos.</li>
+<li>Revise a proposta, os frames de início/fim e o nome da timeline.</li>
+<li>Aplique para criar uma <strong>nova timeline</strong>. Revise e salve o projeto no Resolve.</li>
+</ol>
+<p>O fim de cada trecho é exclusivo: início 0 e fim 24 representam 24 frames. Projetos alterados após a proposta invalidam o plano para evitar aplicar cortes no material errado. Se a aplicação falhar parcialmente, revise a timeline nova indicada no erro; a original é preservada.</p>
+<p>Nesta versão, o Editor faz montagem por metadados, sem colorização automática, reconhecimento de cenas ou mixagem avançada. A ponte foi validada com SDK simulado; a execução em um Resolve Studio instalado ainda está pendente.</p>
+</section>
+<section><h2 id="minha-api">Minha API</h2>
+<p>Use <strong>Minha API</strong> para outro aplicativo conversar com um modelo executado neste computador. A máquina anfitriã precisa ficar ligada e com o LocalNeuron desbloqueado.</p>
+<ol>
+<li>Escolha uma IA e gere uma chave própria para cada cliente.</li>
+<li>Selecione acesso somente local ou rede privada confiável/VPN.</li>
+<li>Copie a URL base e o nome do modelo mostrados no painel. Cole a chave somente no cliente autorizado.</li>
+<li>Configure o cliente para <strong>OpenAI-compatible / Chat Completions</strong>. Ajuste cotas e revogue chaves quando necessário.</li>
+</ol>
+<p>A API compartilhada oferece texto e streaming; não expõe o painel, conversas, terminal ou arquivos e não implementa toda a API OpenAI. Ela usa um servidor separado, porta padrão 4320. Ao bloquear ou fechar o app, o compartilhamento é desligado.</p>
+<p>O transporte é HTTP. Use uma rede privada confiável ou VPN. Não encaminhe a porta diretamente no roteador. Nunca coloque uma chave real em um issue, README ou formulário público.</p>
+</section>
+<section><h2 id="rede-exo">Rede EXO</h2>
+<p>EXO divide modelos de texto compatíveis entre computadores. Controlar um EXO existente é diferente de participar como nó: o controlador, sozinho, não acrescenta sua RAM à rede.</p>
+<ol>
+<li>Em dois Macs compatíveis, abra <strong>Rede EXO → Instalar motor EXO</strong>.</li>
+<li>Use a mesma versão e a mesma <strong>Identificação da rede</strong> nos dois.</li>
+<li>Clique em <strong>Iniciar neste Mac</strong> e autorize a rede local no sistema, se solicitado.</li>
+<li>Confira os nós descobertos e escolha os computadores ou a seleção automática.</li>
+<li>Escolha um modelo do catálogo EXO e clique em <strong>Preparar na rede</strong>. Aguarde a instância ficar pronta antes de conversar.</li>
+</ol>
+<p>Para apenas controlar, informe o endereço privado do EXO em <strong>Controlar um EXO existente</strong>. Windows pode usar esse modo; não há nó nativo Windows instalado pelo LocalNeuron. No Linux, instale o EXO conforme o projeto oficial.</p>
+<p>A identificação da rede é um namespace, <strong>não uma senha</strong>. A API upstream não usa a autenticação do LocalNeuron. Use somente rede privada confiável. Mais RAM não garante mais velocidade; a interconexão entre máquinas influencia muito.</p>
+<p><strong>Liberar modelo</strong> afeta a instância compartilhada. <strong>Desconectar</strong> encerra apenas o processo gerenciado pelo app. Fechar um nó pode interromper a geração distribuída. A validação com duas máquinas físicas ainda está pendente.</p>
+</section>
+<section><h2 id="conexoes-mcp">Conexões MCP</h2>
+<p>MCP permite que a IA use ferramentas expostas por um servidor compatível, como acesso autorizado a documentos ou serviços.</p>
+<p>Adicione o servidor HTTP/stdio em <strong>Conexões</strong>, configure a autenticação exigida, teste e selecione quais bots podem usá-lo. Tokens ficam no cofre. OAuth com PKCE depende do suporte do servidor, cadastro do cliente e sua autorização no provedor.</p>
+<p>Uma marca aparecer no catálogo não conecta automaticamente sua conta. Gmail, Drive, Supabase, Vercel e outros serviços precisam de servidor MCP compatível e credenciais/autorização válidas. Confira as permissões solicitadas e revogue conexões que não usa. Cada chamada mantém os controles de revisão aplicáveis.</p>
+</section>
+<section><h2 id="pro">Pro</h2>
+<p>O plano Pro organiza recursos avançados de projetos, entregas, fila, revisões e API. O aplicativo valida uma licença assinada e exibe status/validade.</p>
+<p>A <strong>cobrança pública ainda não está ativada</strong> nesta alfa. A instalação pública não contém a licença de teste do proprietário. Não há compra pelo GitHub Pages. O download e a execução básica dos modelos locais compatíveis não exigem uma assinatura de provedor de IA.</p>
+<p>Pro não muda os pesos do modelo nem torna qualquer IA automaticamente mais inteligente. Os ganhos vêm das ferramentas e da organização do trabalho. A disponibilidade comercial depende da configuração e homologação do serviço de assinatura.</p>
+</section>
+<section><h2 id="dados-e-backup">Dados e backup</h2>
+<p>A senha protege os segredos do cofre, mas <strong>as conversas não são todas cifradas por ela</strong>. Proteja também seu usuário do sistema e disco.</p>
+<p>Novas instalações usam as pastas de dados do sistema:</p>
+<ul>
+<li>macOS: <code>~/Library/Application Support/Colmeia/</code></li>
+<li>Windows: <code>%APPDATA%/Colmeia/</code></li>
+<li>Linux: <code>${XDG_CONFIG_HOME:-~/.config}/Colmeia/</code></li>
+</ul>
+<p>Instalações antigas podem manter a pasta irmã <code>Colmeia-data/</code>. O nome legado é preservado para compatibilidade. Em desenvolvimento, o serviço usa <code>.data/</code> e o desktop <code>.desktop/</code>.</p>
+<p>Para backup completo, feche o app e copie a pasta inteira. O backup somente do cofre não inclui conversas, projetos e modelos. Use a exportação de conversas e de projetos quando quiser compartilhar um trabalho específico. Não publique sua pasta de dados no GitHub.</p>
+</section>
+<section><h2 id="solucao-de-problemas">Solução de problemas</h2>
+<h3 id="o-app-so-oferece-criar-senha">O app só oferece criar senha</h3>
+<p>Confira se abriu a instalação correta e selecionou a pasta de dados existente. O primeiro uso de uma pasta vazia cria um novo espaço. Não apague o espaço antigo nem redefina a senha para tentar localizar seus dados.</p>
+<h3 id="o-modelo-nao-baixa-ou-exige-conta">O modelo não baixa ou exige conta</h3>
+<p>Confira a conexão, espaço livre e licença. Alguns repositórios exigem aceitar os termos e autenticar no Hugging Face. Repositórios removidos ou alterados podem precisar de uma atualização do catálogo. Um erro de hash deve impedir o uso do arquivo; tente baixar novamente.</p>
+<h3 id="falta-memoria-ou-a-geracao-esta-lenta">Falta memória ou a geração está lenta</h3>
+<p>Libere motores ociosos, feche outros aplicativos pesados e reduza contexto, tamanho do modelo, resolução ou duração. A estimativa de RAM não é um benchmark. CPU, GPU, largura de banda e processos em segundo plano influenciam.</p>
+<h3 id="exo-nao-encontra-a-outra-maquina">EXO não encontra a outra máquina</h3>
+<p>Confira versão, identificação da rede, IPs privados, rede local e permissões do sistema. Verifique a API do EXO e se o outro nó está ativo. Não exponha a API à internet para tentar resolver descoberta local.</p>
+<h3 id="o-editor-nao-conecta">O Editor não conecta</h3>
+<p>Confirme Resolve Studio aberto, projeto carregado, SDK instalado e scripting local habilitado. No Windows/Linux, confira Python 3. A versão gratuita ou configurações incompatíveis podem não oferecer a integração necessária.</p>
+<h3 id="o-microfone-nao-funciona">O microfone não funciona</h3>
+<p>Autorize o microfone no sistema, escolha a entrada correta e confira o modelo de transcrição. A gravação vira rascunho para revisão antes do envio.</p>
+<h3 id="preciso-reportar-um-erro">Preciso reportar um erro</h3>
+<p>Abra um issue com versão do app, sistema, modelo/motor, passos e mensagem de erro. Remova senhas, tokens, dados pessoais e prompts privados. Vulnerabilidades com conteúdo sensível não devem ser publicadas em issues abertos.</p>
+</section><p class="guide-top-links"><a href="./#download">Baixar o LocalNeuron</a><a href="https://github.com/Arthur06311/localneuron/issues">Reportar um problema</a><a href="#main">Voltar ao início ↑</a></p></main></div><footer><a class="brand" href="./">LocalNeuron</a><p>Sua IA. Seu computador.</p><a href="./">Idioma e privacidade</a><span>0.26.0 · Alfa</span></footer></body></html>
