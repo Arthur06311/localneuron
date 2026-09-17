@@ -5,7 +5,7 @@ import {join,resolve} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createHmac,generateKeyPairSync,randomUUID} from 'node:crypto';
 import {Subscription,requiredFeature,verifyLease,type Lease} from '../src/subscription.js';
-import {createBillingService,signLease,verifyWebhook} from '../src/billing-service.js';
+import {createBillingService,signLease,verifyWebhook,validateMonthlyPrice} from '../src/billing-service.js';
 import {optimizeContext} from '../src/optimization.js';
 import {optionsSchema} from '../src/inference.js';
 import {Core} from '../src/core.js';
@@ -65,7 +65,7 @@ test('Cobrança mensal: checkout único, confirmação, portal, renovação, fal
  const dir=temporary(),device=randomUUID(),now=Date.now();let paid=false,status='active',cancel=false,creates=0,period=now+30*day;const calls:any[]=[];
  const stripe=async(path:string,body?:Record<string,string>,key?:string)=>{
   calls.push({path,body,key});
-  if(path==='prices/price_month')return {active:true,type:'recurring',recurring:{interval:'month',interval_count:1}};
+  if(path==='prices/price_month')return {active:true,type:'recurring',currency:'brl',unit_amount:2990,billing_scheme:'per_unit',recurring:{interval:'month',interval_count:1,usage_type:'licensed'}};
   if(path==='checkout/sessions'){creates++;return {id:'cs_test',url:'https://checkout.stripe.com/c/test',expires_at:(now+day)/1000};}
   if(path==='checkout/sessions/cs_test')return {status:paid?'complete':'open',mode:'subscription',client_reference_id:device,customer:'cus_test',subscription:'sub_test'};
   if(path.startsWith('subscriptions/'))return {id:'sub_test',customer:'cus_test',metadata:{device},status,cancel_at_period_end:cancel,latest_invoice:{status:paid?'paid':'open'},items:{data:[{price:{id:'price_month'},current_period_end:period/1000}]}};
@@ -85,6 +85,12 @@ test('Cobrança mensal: checkout único, confirmação, portal, renovação, fal
  for(let i=0;i<2;i++)assert.equal((await app.inject({method:'POST',url:'/billing/webhook',headers:{'content-type':'application/json','stripe-signature':signature},payload:raw})).statusCode,200);
  assert.equal(verifyLease((await post('refresh')).json().token,testConfig.publicKey,device).status,'active');
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('Preço aprovado: aceita R$ 29,90 mensal e recusa moeda, valor, periodicidade e cobrança por uso incorretos',()=>{
+ const price={active:true,type:'recurring',currency:'brl',unit_amount:2990,billing_scheme:'per_unit',recurring:{interval:'month',interval_count:1,usage_type:'licensed'}};
+ assert.doesNotThrow(()=>validateMonthlyPrice(price));
+ for(const change of [{active:false},{type:'one_time'},{currency:'usd'},{unit_amount:29900},{unit_amount:null},{billing_scheme:'tiered'},{transform_quantity:{divide_by:5,round:'up'}},{recurring:{...price.recurring,interval:'year'}},{recurring:{...price.recurring,interval_count:3}},{recurring:{...price.recurring,usage_type:'metered'}}])
+  assert.throws(()=>validateMonthlyPrice({...price,...change}),/29,90/);
 });
 test('Falha de rede não destrói licença offline válida; checkout nunca instala licença',async()=>{
  const dir=temporary(),now=Date.now(),original=globalThis.fetch;

@@ -4,7 +4,7 @@ Esta configuração é feita pelo publicador. Os assinantes usam somente **Meu p
 
 ## Serviço do publicador
 
-1. Em uma conta Stripe própria, crie um produto LocalNeuron Pro e um preço recorrente mensal. Defina o valor aprovado e a moeda. Configure o portal para permitir atualização do meio de pagamento e cancelamento no fim do período, sem troca para preços não suportados.
+1. Na conta Stripe do publicador, use um produto LocalNeuron Pro e um preço recorrente de **R$ 29,90 por mês (BRL, 2990 centavos)**, aprovado pelo proprietário. Configure preço fixo por unidade, quantidade 1, sem medição de uso ou transformação de quantidade. O serviço recusa iniciar com outro valor, moeda ou intervalo. Configure o portal para permitir atualização do meio de pagamento e cancelamento no fim do período, sem alteração da quantidade ou troca para outros preços.
 2. Em um servidor Node 24 com armazenamento persistente, gere um par Ed25519. Guarde a chave privada fora do repositório e dos pacotes. Por exemplo: `openssl genpkey -algorithm ED25519 -out /caminho-privado/license-private.pem`, seguido de `openssl pkey -in /caminho-privado/license-private.pem -pubout -out /caminho-publico/license-public.pem`. A chave privada deve ter acesso restrito ao serviço.
 3. Configure no ambiente do servidor: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE`, `LOCALNEURON_BILLING_DB` e `LOCALNEURON_BILLING_PUBLIC_URL`. Esta última é uma origem HTTPS, sem caminho. Nunca coloque esses segredos no cliente ou em mensagens de chat.
 4. Compile com `npm run build` e execute `npm run billing`. O serviço escuta apenas `127.0.0.1:4330`; coloque um proxy HTTPS na frente. Use um único processo com disco persistente, supervisão, backups do SQLite e limites de tráfego no proxy. A porta pode ser definida por `LOCALNEURON_BILLING_PORT`. O serviço reconhece cabeçalhos de proxy somente de loopback.
@@ -19,7 +19,7 @@ Em modo de teste da Stripe, verifique: compra com autenticação adicional; jane
 
 Também defina termos comerciais, suporte para recuperação/transferência da instalação e política de reembolso. O reembolso isolado não encerra automaticamente a assinatura: o operador precisa cancelar/revogar a assinatura conforme a política adotada. Licenças já emitidas podem continuar offline até expirar.
 
-Não foi provisionado domínio, hospedagem, conta de pagamentos ou cobrança real nesta versão. O preço sugerido de R$ 29,90/mês não foi cadastrado. O aplicativo não solicita cartão enquanto a configuração está vazia.
+O site público está em `https://localneuron.ai`, com HTTPS ativo. O proprietário confirmou uma conta Stripe existente e aprovou **R$ 29,90/mês**. O cadastro do preço nessa conta, a hospedagem do serviço de cobrança e a homologação real no modo de teste ainda precisam ser concluídos. O site estático no GitHub Pages não executa o serviço de cobrança. Não publique um link de pagamento avulso sem o vínculo com a instalação: ele não libera o Pro neste protocolo. O aplicativo não solicita cartão enquanto a configuração está vazia.
 
 ## Referências de implementação
 

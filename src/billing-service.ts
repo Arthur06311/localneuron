@@ -17,6 +17,11 @@ export function verifyWebhook(raw:Buffer, header:string, secret:string, now=Date
 }
 export function signLease(lease:Lease,key:string) { const payload=Buffer.from(JSON.stringify(lease)).toString('base64url');return payload+'.'+sign(null,Buffer.from(payload),key).toString('base64url'); }
 export type BillingConfig={database:string;secretKey:string;webhookSecret:string;priceId:string;privateKey:string;publicUrl:string};
+export const approvedMonthlyPlan=Object.freeze({currency:'brl',unitAmount:2990,interval:'month',intervalCount:1});
+export function validateMonthlyPrice(price:any) {
+  if(!price?.active||price.type!=='recurring'||price.currency!==approvedMonthlyPlan.currency||price.unit_amount!==approvedMonthlyPlan.unitAmount||price.billing_scheme!=='per_unit'||price.recurring?.interval!==approvedMonthlyPlan.interval||price.recurring?.interval_count!==approvedMonthlyPlan.intervalCount||price.recurring?.usage_type!=='licensed'||price.transform_quantity)
+    throw Error('O preço do Pro precisa ser fixo: R$ 29,90 em BRL por mês, sem cobrança por uso.');
+}
 type StripeCall=(path:string,body?:Record<string,string>,idempotency?:string)=>Promise<any>;
 export function stripeClient(secret:string):StripeCall {
   return async(path,body,idempotency)=>{
@@ -28,7 +33,7 @@ export function stripeClient(secret:string):StripeCall {
 export async function createBillingService(config:BillingConfig, stripe:StripeCall=stripeClient(config.secretKey), now=Date.now) {
   const origin=new URL(config.publicUrl);if(origin.protocol!=='https:'||origin.username||origin.password||origin.pathname!=='/'||origin.search||origin.hash)throw Error('Configure uma origem HTTPS pública.');
   const price=await stripe('prices/'+encodeURIComponent(config.priceId));
-  if(!price.active||price.type!=='recurring'||price.recurring?.interval!=='month'||price.recurring?.interval_count!==1)throw Error('O preço precisa ser uma assinatura mensal ativa.');
+  validateMonthlyPrice(price);
   mkdirSync(dirname(config.database),{recursive:true,mode:0o700});const db=new DatabaseSync(config.database);db.exec(`PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS devices (id TEXT PRIMARY KEY, secret TEXT NOT NULL, checkout TEXT, checkout_url TEXT, checkout_expires INTEGER, checkout_attempt TEXT, customer TEXT, subscription TEXT); CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, processed INTEGER NOT NULL);`);
   if(!(db.prepare('PRAGMA table_info(devices)').all() as any[]).some(c=>c.name==='checkout_attempt'))db.exec('ALTER TABLE devices ADD COLUMN checkout_attempt TEXT');
   const app=Fastify({logger:false,bodyLimit:256*1024,trustProxy:'loopback'});
