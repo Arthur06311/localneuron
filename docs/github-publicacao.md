@@ -29,3 +29,7 @@ Os instaladores são grandes: publique-os como **Release assets**, nunca dentro 
 Os modelos de workflows em `.github/workflow-templates/` podem ser habilitados pelo mantenedor em `.github/workflows/`. O workflow **Desktop validation** pode ser executado manualmente para validar/empacotar nos runners de cada sistema. Gerar um pacote não substitui teste nativo de inferência, áudio, GPU ou periféricos. A distribuição Apple continua ad hoc até haver Developer ID e notarização reais.
 
 Referências: [GitHub Pages com Actions](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [arquivos de releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
+
+## Domínio na Name.com
+
+Veja o [passo a passo com os registros DNS](dominio-namecom.md). O endereço completo do domínio precisa ser confirmado antes de configurar o CNAME.
