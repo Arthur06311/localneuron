@@ -2,6 +2,8 @@
 
 O site do LocalNeuron está no GitHub Pages. Para usar seu próprio endereço, configure o domínio no GitHub e depois os registros DNS. É necessário saber o domínio completo, como `seu-dominio.com`; Name.com é o nome da empresa onde ele foi comprado.
 
+O domínio aprovado deste projeto é **`localneuron.ai`**, já registrado na configuração do GitHub Pages e em `website/CNAME`. `www.localneuron.ai` é o alias. Não use o exemplo `subdomain.localneuron.ai` como endereço do site.
+
 ## 1. Cadastrar no GitHub
 
 Abra [Settings → Pages do LocalNeuron](https://github.com/Arthur06311/localneuron/settings/pages). Em **Custom domain**, informe o domínio completo, sem `https://` e sem caminhos, e salve. Faça isso antes de apontar o DNS.

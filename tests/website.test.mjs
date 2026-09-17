@@ -24,7 +24,7 @@ test('Downloads have fixed release URLs, size and SHA-256',async()=>{
  for(const item of manifest.files){assert.match(item.sha256,/^[a-f0-9]{64}$/);assert(item.bytes>1000000&&item.bytes<2*1024**3);assert.equal(typeof item.available,'boolean');assert.equal(item.href,`https://github.com/Arthur06311/localneuron/releases/download/v${manifest.version}/${item.filename}`);}
 });
 test('Pages uses a static allowlist without local administrative APIs',async()=>{
- assert.deepEqual((await readdir(root)).sort(),['.nojekyll','app-icon.png','app.js','guide.html','index.html','locale.js','product.png','releases.json','style.css'].sort());
+ assert.deepEqual((await readdir(root)).sort(),['.nojekyll','CNAME','app-icon.png','app.js','guide.html','index.html','locale.js','product.png','releases.json','style.css'].sort());
  const js=await readFile(resolve(root,'app.js'),'utf8');
  assert(js.includes("fetch('./releases.json'"));assert(!js.includes('/api/locale'));assert(!js.includes('/api/releases'));assert(!/127\.0\.0\.1|localhost|\/v1\//.test(js));
 });
