@@ -13,6 +13,8 @@ Veja as [novidades da 0.27](docs/localneuron-0.27.md): acesso lembrado opcional,
 
 ## Download e primeiros passos
 
+**Distribuição da 0.27 em preparação:** o código desta versão já está publicado, mas o envio dos instaladores ainda não terminou. O site continua oferecendo a 0.26 até a confirmação dos novos arquivos.
+
 Baixe os instaladores na página de [versões](https://github.com/Arthur06311/localneuron/releases). Os arquivos ZIP/TAR de **Source code** do GitHub são código-fonte, não o aplicativo instalado.
 
 | Sistema | Arquivo | Estado da validação |
