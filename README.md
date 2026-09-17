@@ -123,7 +123,7 @@ tests/        Testes automatizados e fixtures sintéticas
 
 ## Validação e status
 
-Nesta entrega, **130 testes automatizados** e o contrato Python da ponte Resolve passaram. A interface foi conferida no Mac em tamanhos de desktop e compacto. Pacotes públicos não contêm conversas, chaves privadas ou a licença Pro de teste do proprietário.
+Na versão 0.27, **139 testes automatizados passaram: 136 do aplicativo e 3 do site**. A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Pacotes públicos não contêm conversas, chaves privadas ou a licença Pro de teste do proprietário.
 
 Ainda pendentes: notarização Apple, execução nativa Windows/Linux, EXO com duas máquinas físicas, integração com uma instalação real do Resolve Studio. O aplicativo continua **alfa**, sem promessa de suporte universal a modelos ou hardware. Guias antigos em `docs/localneuron-*` registram o estado de suas respectivas versões.
 
