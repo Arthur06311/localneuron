@@ -1,6 +1,6 @@
 {
   "name": "colmeia-local-alpha",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "private": true,
   "main": "desktop/main.cjs",
   "type": "module",

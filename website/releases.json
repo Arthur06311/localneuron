@@ -1,29 +1,30 @@
 {
-  "version": "0.26.0",
+  "version": "0.27.0",
   "files": [
     {
       "id": "mac",
       "filename": "LocalNeuron-macOS-arm64.dmg",
-      "bytes": 396865340,
-      "sha256": "6fa74c9dbe4333cbc20c60cbf08e364bc1c4188bd2fb0642d37ca78b488fab22",
-      "available": true,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.26.0/LocalNeuron-macOS-arm64.dmg"
+      "bytes": 396715179,
+      "sha256": "48e76767062b89c41447fa956763d61fee079135c6333109ad4f5cc5ec1511fb",
+      "available": false,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0/LocalNeuron-macOS-arm64.dmg"
     },
     {
       "id": "windows",
       "filename": "LocalNeuron-Windows-x64.zip",
-      "bytes": 314979101,
-      "sha256": "f2da0d8dd191c9276e0ea93f23b2358d7531316668ba88d0c59c76cc54204a5a",
-      "available": true,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.26.0/LocalNeuron-Windows-x64.zip"
+      "bytes": 314994433,
+      "sha256": "6c0c4ea491294208c055030a962e11dd5040539e8c013afb06e04762faefd556",
+      "available": false,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0/LocalNeuron-Windows-x64.zip"
     },
     {
       "id": "linux",
       "filename": "LocalNeuron-Linux-x64.tar.gz",
-      "bytes": 288569463,
-      "sha256": "51547df78d5a12c1a90ed390b490679e2e27d50962b6b92de07cee2681e18a41",
-      "available": true,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.26.0/LocalNeuron-Linux-x64.tar.gz"
+      "bytes": 288588474,
+      "sha256": "4dbeaf9dfe337416408efea306e816afc8e0a9b9351c9fe5346bd17e05624346",
+      "available": false,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0/LocalNeuron-Linux-x64.tar.gz"
     }
-  ]
+  ],
+  "notes": "Acesso lembrado opcional, wizard que preserva a conclusão, equipes em um clique, tarefas por especialista, melhor uso do contexto e avisos de novas versões. Veja Preferências e Minha equipe. A atualização preserva os dados quando você mantém a pasta de dados existente."
 }

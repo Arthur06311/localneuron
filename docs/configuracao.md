@@ -1,6 +1,6 @@
 # Guia de configuração do LocalNeuron
 
-LocalNeuron 0.26 · Alfa. Este guia explica o aplicativo instalado no seu computador. Nenhuma senha, chave ou configuração privada é enviada por esta página.
+LocalNeuron 0.27 · Alfa. Este guia explica o aplicativo instalado no seu computador. Nenhuma senha, chave ou configuração privada é enviada por esta página.
 
 ## Começar
 
@@ -12,6 +12,18 @@ LocalNeuron 0.26 · Alfa. Este guia explica o aplicativo instalado no seu comput
 6. Quando o download terminar, abra o Chat e selecione o modelo. O carregamento na RAM pode demorar na primeira vez.
 
 **Já instalou antes?** Feche o app antes de atualizar. Preserve a pasta de dados e substitua apenas o aplicativo. Não crie outra senha sobre uma instalação existente nem apague a pasta para “corrigir” o login.
+
+## Entrar sem digitar a senha toda vez
+
+No login do aplicativo desktop, marque **Lembrar meu acesso neste computador**. A credencial é cifrada pelo armazenamento seguro do sistema; não é guardada no navegador. Quem usa sua sessão do computador poderá abrir o espaço. A opção é voluntária e pode ser desligada em **Preferências → Acesso neste computador**. O botão **Bloquear aplicativo** continua bloqueando a sessão atual.
+
+O wizard salva a conclusão ao chegar ao último passo. Para refazê-lo, use **Minha equipe → Mais opções da equipe → Repetir configuração**. Isso preserva perfil, conversas e bots existentes, sem obrigar a refazer tudo na próxima abertura.
+
+## Avisos de novas versões
+
+A partir da 0.27, o aplicativo avisa quando encontra uma versão mais recente no manifesto público do GitHub (endereço independente do domínio do site). Consulte **Preferências → Atualizações** para verificar manualmente, ler novidades ou desativar a consulta automática. A consulta ocorre ao abrir e a cada seis horas, com cache, sem enviar conversas, arquivos ou identificadores do espaço. A hospedagem recebe a requisição de rede normal, incluindo IP. Falhas de conexão não bloqueiam o uso offline.
+
+**Agora não** dispensa o aviso daquela versão. Uma versão posterior volta a ser avisada. O instalador é baixado pelo link; não há instalação automática. Quem usa 0.26 ou anterior precisa instalar a 0.27 uma vez para receber os avisos futuros.
 
 ## Requisitos
 
@@ -51,7 +63,13 @@ Não é preciso ter LM Studio aberto para os motores integrados. Depois da insta
 
 Converse em uma página ampla, com histórico, anexos, memória revisável e ajustes. As conversas podem ser organizadas pelo modelo ou bot. Ramificações permitem testar outra resposta preservando o contexto anterior.
 
-O assistente inicial ajuda a montar bots pessoais e profissionais. Edite nome, especialidade, modelo, instruções e permissões. A especialidade organiza o comportamento; não confere conhecimento profissional certificado ao modelo.
+Em **Minha equipe**, escolha **Ativar equipe de trabalho**, **Ativar equipe pessoal** ou **Ativar todos os bots**. A ativação prepara seis especialistas profissionais e/ou quatro auxiliares pessoais com uma IA instalada compartilhada. Você pode escolher o modelo ou deixar o app selecionar entre os recomendados que já estão no computador. Se não houver um modelo elegível, a interface indica como instalar um; não começa um download oculto.
+
+Clique em **Dar uma tarefa**, escolha uma sugestão e acrescente seu contexto. A execução abre uma conversa daquele bot. Acompanhe o resultado, autorize ferramentas quando solicitado ou clique em Parar. A ativação dos bots não inicia ações externas nem trabalho contínuo por conta própria.
+
+Ativar novamente não duplica os bots. Métodos originais antigos podem ser atualizados, preservando instruções personalizadas e memórias. A qualidade depende do modelo; para tarefas complexas, um modelo minúsculo pode ser insuficiente.
+
+O assistente inicial também ajuda a montar bots pessoais e profissionais. Edite nome, especialidade, modelo, instruções e permissões. A especialidade organiza o comportamento; não confere conhecimento profissional certificado ao modelo.
 
 A sala permite colaboração sequencial de até seis bots, até três rodadas e dez minutos, com cancelamento. Ferramentas da sala permanecem desativadas nesta alfa.
 

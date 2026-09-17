@@ -1,3 +1,4 @@
+import {Updates} from './updates.js';
 import {Music} from './music.js';
 import {Editor} from './editor.js';
 import {ComputerControl} from './computer-control.js';
@@ -48,6 +49,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const mediaDownloads=new MediaDownloads(core.directory,()=>hfAccount.token());
   const library = new ModelLibrary(core.directory, (type, data) => core.store.tx((state, entries) => { if (!state || core.vault.locked) throw new Error('Cofre bloqueado'); core.append(state, entries, type, data); }),undefined,runtime,()=>hfAccount.token());
   const experience=new Experience(core);
+  const updates=new Updates(core.directory,JSON.parse(readFileSync(join(core.root,'package.json'),'utf8')).version);
   const personality=async()=>Boolean((await experience.snapshot()).personality);
   const music=new Music(core.directory,core.root);
   const editor=new Editor(core.root,async(key,prompt,signal)=>exclusive(async()=>{if(core.vault.locked||chats.busy||aux.busy||pro.busy||gateway.status().enabled||experienceJobs.busy||music.running||music.busy)throw Error('Aguarde a IA atual e desligue o motor de música antes de preparar a edição.');const m=await library.load(key,8192);const result=await complete(m.instance_id,[{role:'user',content:prompt}],optionsSchema.parse({context:8192,max_tokens:3000,temperature:.2,reasoning:'off'}),signal,()=>{},runtime.backend(m.instance_id));return result.text;}));
@@ -66,7 +68,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   }
   app.addHook('preClose',async()=>{await editor.close();await music.stop();await computerControl.stop();await connections.close();await experienceJobs.stop();await mediaDownloads.pause();await pro.close();await proMedia.close();await aux.close();});
   app.addHook('onClose', async () => { await exclusive(async () => { await aux.close(); await gateway.stop(); await chats.close(); await library.stop(); }); });
-  const staticFiles: Record<string, [string,string]> = { '/creative.js':['creative.js','application/javascript'], '/creative.css':['creative.css','text/css'], '/experience.js':['experience.js','application/javascript'], '/experience.css':['experience.css','text/css'], '/photo.js':['photo.js','application/javascript'], '/exo.js':['exo.js','application/javascript'], '/exo.css':['exo.css','text/css'], '/app-icon.png':['app-icon.png','image/png'], '/polish.css':['polish.css','text/css'], '/mascot.png':['mascot.png','image/png'], '/mascot-thinking.png':['mascot-thinking.png','image/png'], '/mascot-success.png':['mascot-success.png','image/png'], '/mascot-attention.png':['mascot-attention.png','image/png'], '/mascot.js':['mascot.js','application/javascript'], '/mascot.css':['mascot.css','text/css'], '/premium-experience.js':['premium-experience.js','application/javascript'], '/premium-experience.css':['premium-experience.css','text/css'], '/pro-center.js':['pro-center.js','application/javascript'], '/model-icons.js':['model-icons.js','application/javascript'], '/model-identities.js':['model-identities.js','application/javascript'], '/media-library.js':['media-library.js','application/javascript'], '/subscription.js':['subscription.js','application/javascript'], '/subscription.css':['subscription.css','text/css'], "/chat-assist.js":["chat-assist.js","application/javascript"], "/chat-assist.css":["chat-assist.css","text/css"], '/studio-pro.js':['studio-pro.js','application/javascript'], '/pro.js':['pro.js','application/javascript'], '/pro.css':['pro.css','text/css'], '/': ['index.html','text/html; charset=utf-8'], '/app.js': ['app.js','application/javascript'], '/chat.js': ['chat.js','application/javascript'], '/styles.css': ['styles.css','text/css'], '/sharing.js':['sharing.js','application/javascript'], '/theme.css':['theme.css','text/css'], '/workspace.css':['workspace.css','text/css'], '/professional.css':['professional.css','text/css'], '/icons.js':['icons.js','application/javascript'], '/voice.js':['voice.js','application/javascript'], '/audio-worklet.js':['audio-worklet.js','application/javascript'], '/studio.js':['studio.js','application/javascript'], '/studio-project.js':['studio-project.js','application/javascript'], '/studio-renderer.js':['studio-renderer.js','application/javascript'], '/studio.css':['studio.css','text/css'], '/hub.js':['hub.js','application/javascript'], '/vendor/marked.js':['../node_modules/marked/lib/marked.esm.js','application/javascript'], '/vendor/purify.js':['../node_modules/dompurify/dist/purify.es.mjs','application/javascript'] };
+  const staticFiles: Record<string, [string,string]> = { '/ux.js':['ux.js','application/javascript'], '/ux.css':['ux.css','text/css'], '/creative.js':['creative.js','application/javascript'], '/creative.css':['creative.css','text/css'], '/experience.js':['experience.js','application/javascript'], '/experience.css':['experience.css','text/css'], '/photo.js':['photo.js','application/javascript'], '/exo.js':['exo.js','application/javascript'], '/exo.css':['exo.css','text/css'], '/app-icon.png':['app-icon.png','image/png'], '/polish.css':['polish.css','text/css'], '/mascot.png':['mascot.png','image/png'], '/mascot-thinking.png':['mascot-thinking.png','image/png'], '/mascot-success.png':['mascot-success.png','image/png'], '/mascot-attention.png':['mascot-attention.png','image/png'], '/mascot.js':['mascot.js','application/javascript'], '/mascot.css':['mascot.css','text/css'], '/premium-experience.js':['premium-experience.js','application/javascript'], '/premium-experience.css':['premium-experience.css','text/css'], '/pro-center.js':['pro-center.js','application/javascript'], '/model-icons.js':['model-icons.js','application/javascript'], '/model-identities.js':['model-identities.js','application/javascript'], '/media-library.js':['media-library.js','application/javascript'], '/subscription.js':['subscription.js','application/javascript'], '/subscription.css':['subscription.css','text/css'], "/chat-assist.js":["chat-assist.js","application/javascript"], "/chat-assist.css":["chat-assist.css","text/css"], '/studio-pro.js':['studio-pro.js','application/javascript'], '/pro.js':['pro.js','application/javascript'], '/pro.css':['pro.css','text/css'], '/': ['index.html','text/html; charset=utf-8'], '/app.js': ['app.js','application/javascript'], '/chat.js': ['chat.js','application/javascript'], '/styles.css': ['styles.css','text/css'], '/sharing.js':['sharing.js','application/javascript'], '/theme.css':['theme.css','text/css'], '/workspace.css':['workspace.css','text/css'], '/professional.css':['professional.css','text/css'], '/icons.js':['icons.js','application/javascript'], '/voice.js':['voice.js','application/javascript'], '/audio-worklet.js':['audio-worklet.js','application/javascript'], '/studio.js':['studio.js','application/javascript'], '/studio-project.js':['studio-project.js','application/javascript'], '/studio-renderer.js':['studio-renderer.js','application/javascript'], '/studio.css':['studio.css','text/css'], '/hub.js':['hub.js','application/javascript'], '/vendor/marked.js':['../node_modules/marked/lib/marked.esm.js','application/javascript'], '/vendor/purify.js':['../node_modules/dompurify/dist/purify.es.mjs','application/javascript'] };
   const iconDirectory=join(core.root,'public/model-icons');if(existsSync(iconDirectory))for(const file of readdirSync(iconDirectory)){if(/^[a-f0-9]{24}\.(png|jpg|webp)$/.test(file))staticFiles['/model-icons/'+file]=['model-icons/'+file,file.endsWith('.jpg')?'image/jpeg':file.endsWith('.png')?'image/png':'image/webp'];}
   let failedUnlocks = 0, retryAt = 0;
   app.addHook('onRequest', async (request, reply) => {
@@ -81,9 +83,9 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     const bearer = request.headers.authorization?.replace(/^Bearer /, '') ?? '';
     const cookie = request.headers.cookie?.split('; ').find(v => v.startsWith('colmeia='))?.slice(8) ?? '';
     if (!equal(bearer, token) && !equal(cookie, token)) return reply.code(401).send({ error: 'Abra a aplicação pelo iniciador local para autenticar esta sessão.' });
-    if((music.busy||music.running||editor.busy)&&request.method==='POST'&&/^\/v1\/(chats\/.*\/send|model-library\/(load|unload|engine|import-mlx)|sharing\/start|tasks\/.*\/start|pro\/(jobs|media\/.*)|local-engines\/(generate|transcribe)|experience\/(room|benchmark))$/.test(request.url))return reply.code(409).send({error:'Pare o motor de música ou aguarde o Editor antes de iniciar outra IA.'});
+    if((music.busy||music.running||editor.busy)&&request.method==='POST'&&/^\/v1\/(experience\/bots\/.*\/run|chats\/.*\/send|model-library\/(load|unload|engine|import-mlx)|sharing\/start|tasks\/.*\/start|pro\/(jobs|media\/.*)|local-engines\/(generate|transcribe)|experience\/(room|benchmark))$/.test(request.url))return reply.code(409).send({error:'Pare o motor de música ou aguarde o Editor antes de iniciar outra IA.'});
     if(experienceJobs.busy&&request.method!=='GET'&&!/^\/v1\/(experience\/(room|benchmark)\/stop|assistant\/approve|lock)$/.test(request.url))return reply.code(409).send({error:'Pare o teste ou a reunião antes de iniciar outra operação.'});
-    if(pro.busy&&request.method==='POST'&&/^\/v1\/(chats\/.*\/send|model-library\/(load|unload|engine|import-mlx)|sharing\/start|tasks\/.*\/start|local-engines\/(generate|transcribe))$/.test(request.url))return reply.code(409).send({error:'Aguarde a tarefa Pro ou cancele-a na fila.'});
+    if(pro.busy&&request.method==='POST'&&/^\/v1\/(experience\/bots\/.*\/run|chats\/.*\/send|model-library\/(load|unload|engine|import-mlx)|sharing\/start|tasks\/.*\/start|local-engines\/(generate|transcribe))$/.test(request.url))return reply.code(409).send({error:'Aguarde a tarefa Pro ou cancele-a na fila.'});
     if((aux.busy||proMedia.busy)&&request.method==='POST'&&/\/chats\/[^/]+\/send$/.test(request.url))return reply.code(409).send({error:'Aguarde o motor de voz ou imagem.'});
     if (!['/v1/status','/v1/setup','/v1/unlock','/v1/session'].includes(request.url) && core.vault.locked) return reply.code(423).send({ error: 'Desbloqueie o cofre para continuar.' });
   });
@@ -199,6 +201,36 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/music/connection',async request=>music.configure(body(request)));
   app.post('/v1/music/generate',async request=>{musicIdle();return music.generate(body(request));});
   app.post('/v1/music/stop',async()=>music.stop());
+  app.get('/v1/updates',async()=>updates.status());
+  app.post('/v1/updates/check',async request=>updates.check(z.strictObject({force:z.boolean().default(false)}).parse(body(request)).force));
+  app.post('/v1/updates/preferences',async request=>updates.preferences(body(request)));
+  app.post('/v1/updates/dismiss',async request=>updates.dismiss(body(request)));
+  app.post('/v1/experience/playbooks',async request=>experience.upgrade(key(request)));
+  app.post('/v1/experience/deploy',async request=>{
+    const v=z.strictObject({use:z.enum(['personal','work','both']),model:z.string().max(512).optional()}).parse(body(request));
+    if(chats.busy)throw Error('Aguarde a tarefa atual antes de ativar a equipe.');
+    const exp=await experience.snapshot(),models=(await library.snapshot()).installed;
+    const candidate=v.model||exp.profile.selected_model;
+    let selected=models.find(m=>m.key===candidate);
+    if(v.model&&!selected)throw Error('Escolha um modelo instalado.');
+    if(!selected){const rec=await recommendations(library,aux,core.directory,'chat',exp.profile.objectives);selected=models.find(m=>m.key===rec.models.filter(r=>r.installed).sort((a,b)=>b.bytes-a.bytes)[0]?.key);}
+    if(!selected)throw Error('Instale uma IA compatível em Modelos para ativar sua equipe. Nenhum download foi iniciado.');
+    const deployKey=z.string().regex(/^[a-zA-Z0-9_-]{8,90}$/).parse(key(request));
+    await experience.upgrade(deployKey+'-methods');
+    const bots=await experience.suggest({use:v.use,model:selected.key},deployKey);
+    return {bots,model:selected.key};
+  });
+  app.post('/v1/experience/bots/:id/run',async request=>exclusive(async()=>{
+    const v=z.strictObject({objective:z.string().trim().min(1).max(12000)}).parse(body(request));
+    if(chats.busy||aux.busy||proMedia.busy||pro.busy||experienceJobs.busy||gateway.status().enabled||gateway.busy||core.jobs.size||library.busy||music.running||music.busy||editor.busy)throw Error('Aguarde a tarefa atual ou pare o outro motor antes de começar.');
+    const requestKey=z.string().regex(/^[a-zA-Z0-9_-]{8,90}$/).parse(key(request));
+    const bot=(await experience.snapshot()).bots.find(b=>b.id===id(request));if(!bot)throw Error('Bot não encontrado.');
+    if(!bot.model)throw Error('Ative a equipe com uma IA instalada primeiro.');
+    const loaded=await library.load(bot.model,8192);
+    const chat=await chats.create(requestKey+'-chat',{bot_id:bot.id,preferred_model:bot.model});
+    await chats.send(chat.id,loaded.instance_id,v.objective,requestKey+'-send',optionsSchema.parse({context:8192,max_tokens:2048,reasoning:'off'}),false,bot.access,[],bot.model);
+    return {id:chat.id,model:bot.model};
+  }));
   app.get('/v1/experience',async()=>experience.snapshot());
   app.get('/v1/experience/hardware',async()=>hardware(core.directory));
   app.post('/v1/experience/profile',async request=>experience.profile(body(request),key(request)));

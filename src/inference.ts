@@ -69,22 +69,16 @@ export function contextWindow(
       ? effectiveContext!
       : options.context,
   );
-  const output = Math.min(options.max_tokens, Math.floor(context / 2));
   const system = messages.filter((m) => m.role === "system");
   const turns = messages.filter((m) => m.role !== "system");
-  let budget =
-    context -
-    toolTokens -
-    output -
-    128 -
-    system.reduce(
-      (sum, m) =>
-        sum +
-        estimateTokens(
-          m.content + (m.tool_calls ? JSON.stringify(m.tool_calls) : ""),
-        ),
-      0,
-    );
+  const costOf = (m: Message) => estimateTokens(m.content + (m.tool_calls ? JSON.stringify(m.tool_calls) : ""));
+  const inputBudget = context - toolTokens - 128 - system.reduce((sum,m)=>sum+costOf(m),0);
+  let latestStart=turns.length-1;
+  while(latestStart>0&&turns[latestStart].role!=="user")latestStart--;
+  const latestCost=turns.slice(Math.max(0,latestStart)).reduce((sum,m)=>sum+costOf(m),0);
+  // Reserve only the output that fits after the complete latest turn and all instructions.
+  const output = Math.min(options.max_tokens, Math.floor(context / 2), Math.max(1,inputBudget-latestCost));
+  let budget = inputBudget - output;
   const kept: Message[] = [];
   // Retain whole recent turns so an assistant answer never loses its question.
   for (let i = turns.length - 1; i >= 0;) {

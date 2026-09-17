@@ -20,7 +20,7 @@ test('Pages assets and anchors work under a repository subpath',async()=>{
 });
 test('Downloads have fixed release URLs, size and SHA-256',async()=>{
  const manifest=JSON.parse(await readFile(resolve(root,'releases.json'),'utf8'));
- assert.equal(manifest.version,'0.26.0');assert.deepEqual(manifest.files.map(x=>x.id),['mac','windows','linux']);
+ assert.equal(manifest.version,JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version);assert.deepEqual(manifest.files.map(x=>x.id),['mac','windows','linux']);
  for(const item of manifest.files){assert.match(item.sha256,/^[a-f0-9]{64}$/);assert(item.bytes>1000000&&item.bytes<2*1024**3);assert.equal(typeof item.available,'boolean');assert.equal(item.href,`https://github.com/Arthur06311/localneuron/releases/download/v${manifest.version}/${item.filename}`);}
 });
 test('Pages uses a static allowlist without local administrative APIs',async()=>{

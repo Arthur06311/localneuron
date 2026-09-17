@@ -70,7 +70,7 @@ with tempfile.TemporaryDirectory(prefix='colmeia-package-') as scratch:
     plist = bundle / 'Contents/Info.plist'
     data = plistlib.loads(plist.read_bytes())
     data.update(CFBundleName='LocalNeuron', CFBundleDisplayName='LocalNeuron',
-                CFBundleIdentifier='dev.colmeia.local', CFBundleShortVersionString=json.loads((root / 'package.json').read_text())['version'], CFBundleVersion='26', NSAppleEventsUsageDescription='O LocalNeuron controla aplicativos somente quando você habilita o controle e aprova a ação.', NSMicrophoneUsageDescription='O LocalNeuron usa o microfone para transcrever sua fala localmente com Whisper.')
+                CFBundleIdentifier='dev.colmeia.local', CFBundleShortVersionString=json.loads((root / 'package.json').read_text())['version'], CFBundleVersion='27', NSAppleEventsUsageDescription='O LocalNeuron controla aplicativos somente quando você habilita o controle e aprova a ação.', NSMicrophoneUsageDescription='O LocalNeuron usa o microfone para transcrever sua fala localmente com Whisper.')
     plist.write_bytes(plistlib.dumps(data))
     # Sign away from macOS File Provider, which recreates FinderInfo on bundles.
     for attribute in ['com.apple.FinderInfo', 'com.apple.ResourceFork']:

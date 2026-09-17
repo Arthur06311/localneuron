@@ -32,3 +32,5 @@ test('Resposta cortada mantém o trecho recebido e não é tratada como concluí
  globalThis.fetch=async(url)=>String(url).endsWith('/models')?Response.json({models:[{type:'llm',key:'mini',loaded_instances:[{id:'loaded'}]}]}):new Response('data: '+JSON.stringify({choices:[{delta:{content:'Um trecho útil'},finish_reason:null}]})+'\n\n');
  try{await assert.rejects(complete('loaded',[{role:'user',content:'Oi'}],optionsSchema.parse({}),new AbortController().signal,t=>deltas.push(t)),/interrompida/);assert.deepEqual(deltas,['Um trecho útil']);}finally{globalThis.fetch=original;}
 });
+
+test('Contexto pequeno reduz reserva de saída sem remover instruções nem a última pergunta',()=>{const messages:Message[]=[{role:'system',content:'Regra importante. '.repeat(200)},{role:'user',content:'Prepare um anúncio curto.'}];const result=contextWindow(messages,optionsSchema.parse({context:8192,max_tokens:2048}),2048,50);assert.deepEqual(result.messages,messages);assert.ok(result.max_tokens>0&&result.max_tokens<1024);assert.equal(result.context,2048);});

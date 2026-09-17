@@ -7,7 +7,9 @@
 
 *Interface 0.26 em espaço de demonstração. A ativação Pro de teste mostrada não acompanha os pacotes públicos.*
 
-**Alfa 0.26.0.** Aplicativo desktop para usar modelos de IA no próprio computador, com motores independentes de LM Studio. A instalação de modelos precisa de internet; depois de preparados, os motores compatíveis fazem inferência local e offline. Pesquisar na web e usar serviços conectados exige rede.
+**Alfa 0.27.0.** Aplicativo desktop para usar modelos de IA no próprio computador, com motores independentes de LM Studio. A instalação de modelos precisa de internet; depois de preparados, os motores compatíveis fazem inferência local e offline. Pesquisar na web e usar serviços conectados exige rede.
+
+Veja as [novidades da 0.27](docs/localneuron-0.27.md): acesso lembrado opcional, wizard persistente, equipes em um clique, tarefas por especialista e avisos de atualização.
 
 ## Download e primeiros passos
 
