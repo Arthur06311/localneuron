@@ -8,7 +8,7 @@ A Alfa 0.13 tem aplicação Electron e serviço local compartilhados entre as pl
 |---|---|---|
 | LocalNeuron-macOS-arm64.dmg | Abrir e arrastar LocalNeuron.app para Aplicativos | Executado em Mac Apple Silicon; fluxo real de download e inferência |
 | LocalNeuron-Windows-x64.zip | Extrair a pasta inteira e abrir LocalNeuron.exe | Pacote gerado e estrutura verificada; execução no Windows pendente |
-| LocalNeuron-Linux-x64.run | Executar `bash LocalNeuron-Linux-x64.run`, aguardar e abrir pelo menu | Instalador com verificação; homologação gráfica no Omarchy pendente |
+| LocalNeuron-Linux-x64-Instalar.zip | Extrair e abrir **Instalar LocalNeuron**; instala e abre automaticamente | Instalador com verificação; homologação gráfica no Omarchy pendente |
 
 [Novo instalador Linux, diagnóstico e estado do harness](linux-installer.md). Para pacotes portáteis antigos, aguarde a extração terminar. Mantenha juntos todos os arquivos dos pacotes Windows/Linux. Não mova somente o executável. O Linux precisa de ambiente gráfico, bibliotecas do Electron e configuração de sandbox compatível com a distribuição; não há opção automática para desativar sandbox. Os pacotes são Alfa de teste, sem certificado de distribuição; no Mac há assinatura ad hoc, sem notarização. Assinatura oficial e instaladores de produção continuam no plano.
 

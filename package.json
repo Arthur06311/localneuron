@@ -16,7 +16,7 @@
     "desktop": "electron desktop/main.cjs",
     "package": "npm run build && node scripts/package-desktop.mjs",
     "billing": "node dist/src/billing-service.js",
-    "test:linux-installer": "python3 tests/linux_installer_test.py"
+    "test:linux-installer": "python3 tests/linux_installer_test.py && python3 tests/linux_gui_installer_test.py"
   },
   "dependencies": {
     "@electric-sql/pglite": "0.3.16",

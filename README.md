@@ -13,7 +13,7 @@ Veja as [novidades da 0.27](docs/localneuron-0.27.md): acesso lembrado opcional,
 
 ## Download e primeiros passos
 
-**Linux 0.27 com instalador:** [baixe a revisão Linux](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.1). Os novos pacotes Mac/Windows da 0.27 continuam em preparação; os downloads anteriores da 0.26 permanecem disponíveis. O novo instalador Linux evita abrir o app durante uma extração incompleta.
+**Linux 0.27 com instalador:** [baixe a revisão Linux](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.2). Os novos pacotes Mac/Windows da 0.27 continuam em preparação; os downloads anteriores da 0.26 permanecem disponíveis. O novo instalador Linux evita abrir o app durante uma extração incompleta.
 
 Baixe os instaladores na página de [versões](https://github.com/Arthur06311/localneuron/releases). Os arquivos ZIP/TAR de **Source code** do GitHub são código-fonte, não o aplicativo instalado.
 
@@ -21,9 +21,9 @@ Baixe os instaladores na página de [versões](https://github.com/Arthur06311/lo
 |---|---|---|
 | macOS Apple Silicon | `LocalNeuron-macOS-arm64.dmg` ou ZIP | Aplicativo executado no Mac; assinatura ad hoc, sem notarização Apple |
 | Windows x64 | `LocalNeuron-Windows-x64.zip` | Empacotado e conferido; execução nativa ainda pendente |
-| Linux x64 | `LocalNeuron-Linux-x64.run` (novo instalador) | Instalação com verificação e atalho no menu; homologação gráfica no Omarchy pendente |
+| Linux x64 | `LocalNeuron-Linux-x64-Instalar.zip` (instalação automática) | Instalação com verificação e atalho no menu; homologação gráfica no Omarchy pendente |
 
-1. **Instale.** No Mac, abra o DMG e arraste para Aplicativos. No Windows, extraia a pasta inteira. No Linux, use `bash LocalNeuron-Linux-x64.run` e aguarde “instalado”; depois abra pelo menu. [Guia Linux e diagnóstico](docs/linux-installer.md).
+1. **Instale.** No Mac, abra o DMG e arraste para Aplicativos. No Windows, extraia a pasta inteira. No Linux, extraia `LocalNeuron-Linux-x64-Instalar.zip` e abra **Instalar LocalNeuron**; o aplicativo abre automaticamente ao terminar. [Guia Linux e diagnóstico](docs/linux-installer.md).
 2. **Proteja seu espaço.** Configure o acesso no primeiro uso. Uma instalação existente usa a proteção ou senha já configurada.
 3. **Siga o assistente.** Informe seu perfil, confira RAM/disco e escolha modelos e bots. Você pode repetir o assistente depois.
 4. **Baixe uma IA compatível.** Compare memória estimada, tamanho, licença e motor na biblioteca. Comece com um modelo pequeno.

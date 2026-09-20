@@ -2,13 +2,22 @@
 
 ## Instalar
 
-O novo formato é **LocalNeuron-Linux-x64.run**, um instalador offline por usuário. Aguarde o download terminar e, na pasta onde o salvou, execute:
+Para instalar sem digitar comandos, baixe **LocalNeuron-Linux-x64-Instalar.zip** na [versão gráfica](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.2).
+
+1. Extraia o ZIP e aguarde terminar.
+2. Abra a pasta `LocalNeuron-Instalar`.
+3. Dê dois cliques em **Instalar LocalNeuron** (`.desktop`).
+4. Aguarde a instalação: o app abre automaticamente ao concluir.
+
+O gerenciador de arquivos pode pedir uma vez “Permitir executar” ou “Confiar e iniciar”. O pacote preserva as permissões de execução, mas não altera a política de confiança do desktop. Com Zenity, aparece uma janela de progresso. Sem Zenity, um terminal gráfico compatível realiza tudo automaticamente, sem comandos para digitar. Erros e cancelamento não iniciam o aplicativo. Nenhuma inicialização automática ao ligar o computador é cadastrada.
+
+Também existe o **LocalNeuron-Linux-x64.run**, para uso pelo terminal. Aguarde o download terminar e execute:
 
 ```bash
 bash LocalNeuron-Linux-x64.run
 ```
 
-Não use `sudo`. Ao aparecer “instalado”, procure **LocalNeuron** no menu de aplicativos do Omarchy, GNOME ou KDE. Não é necessário abrir o executável dentro de uma pasta extraída. O instalador não inicia o app automaticamente.
+Não use `sudo`. Ao aparecer “instalado”, procure **LocalNeuron** no menu de aplicativos do Omarchy, GNOME ou KDE. Não é necessário abrir o executável dentro de uma pasta extraída. O modo de terminal `.run --install` não abre o app; o instalador gráfico ZIP abre depois da conclusão.
 
 Para conferir somente o download:
 
@@ -84,3 +93,8 @@ npm run test:linux-installer
 ```
 
 Os testes usam um executável de teste, sem abrir o Electron, para validar instalação, atualização, preservação de dados, concorrência, corrupção, download truncado e falha de extração. Testar a interface real no Omarchy, com seus drivers e modelos, continua sendo uma etapa separada.
+
+
+### Verificação do instalador gráfico
+
+O ZIP contém o mesmo `.run` verificado, a interface de instalação e um atalho `.desktop`. O payload é escrito primeiro no ZIP e o atalho por último. A interface acompanha o processo, pode interromper a extração e só abre o app após retorno bem-sucedido do instalador. Os testes usam diálogos controlados para verificar sucesso, erro, cancelamento e alternativa via terminal; a resolução do atalho é testada com GIO e desktop-file-validate em Linux. A aparência e integração final com o gerenciador de arquivos Omarchy ainda dependem de validação nessa máquina.
