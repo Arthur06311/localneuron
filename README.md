@@ -21,9 +21,9 @@ Baixe os instaladores na página de [versões](https://github.com/Arthur06311/lo
 |---|---|---|
 | macOS Apple Silicon | `LocalNeuron-macOS-arm64.dmg` ou ZIP | Aplicativo executado no Mac; assinatura ad hoc, sem notarização Apple |
 | Windows x64 | `LocalNeuron-Windows-x64.zip` | Empacotado e conferido; execução nativa ainda pendente |
-| Linux x64 | `LocalNeuron-Linux-x64.tar.gz` | Empacotado e conferido; execução nativa ainda pendente |
+| Linux x64 | `LocalNeuron-Linux-x64.run` (novo instalador) | Instalação com verificação e atalho no menu; homologação gráfica no Omarchy pendente |
 
-1. **Instale.** No Mac, abra o DMG e arraste para Aplicativos. No Windows/Linux, extraia a pasta inteira e mantenha todos os arquivos juntos.
+1. **Instale.** No Mac, abra o DMG e arraste para Aplicativos. No Windows, extraia a pasta inteira. No Linux, use `bash LocalNeuron-Linux-x64.run` e aguarde “instalado”; depois abra pelo menu. [Guia Linux e diagnóstico](docs/linux-installer.md).
 2. **Proteja seu espaço.** Configure o acesso no primeiro uso. Uma instalação existente usa a proteção ou senha já configurada.
 3. **Siga o assistente.** Informe seu perfil, confira RAM/disco e escolha modelos e bots. Você pode repetir o assistente depois.
 4. **Baixe uma IA compatível.** Compare memória estimada, tamanho, licença e motor na biblioteca. Comece com um modelo pequeno.

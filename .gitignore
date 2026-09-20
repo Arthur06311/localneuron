@@ -46,3 +46,6 @@ models/
 *.gguf
 *.safetensors
 .DS_Store
+
+LocalNeuron-*.run
+LocalNeuron-*.run.sha256

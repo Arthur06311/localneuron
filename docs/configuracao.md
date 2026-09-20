@@ -5,7 +5,7 @@ LocalNeuron 0.27 · Alfa. Este guia explica o aplicativo instalado no seu comput
 ## Começar
 
 1. Baixe o pacote do seu sistema em **Downloads**. No GitHub Releases, escolha um instalador em Assets; “Source code” é somente o código-fonte.
-2. No Mac, abra o DMG e arraste o app para Aplicativos. Windows/Linux: extraia tudo e abra o executável na pasta.
+2. No Mac, abra o DMG e arraste o app para Aplicativos. No Windows, extraia tudo e abra o executável na pasta. No Linux, execute `bash LocalNeuron-Linux-x64.run`, aguarde a instalação completa e abra pelo menu. Os TAR.GZ antigos precisam terminar toda a extração antes de abrir o app.
 3. Abra o app e configure a proteção do espaço. Se você já tinha senha, use **entrar/desbloquear**, preservando seus dados.
 4. No assistente inicial, confira o computador, escolha seu perfil e revise as recomendações. Você pode voltar ao assistente depois sem recriar os mesmos bots.
 5. Em **Modelos**, escolha uma IA de texto pequena marcada como compatível com o motor disponível. Confira RAM, disco, licença e tamanho antes de baixar.
