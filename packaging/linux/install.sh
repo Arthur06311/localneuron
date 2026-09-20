@@ -59,7 +59,13 @@ tar -xzf "$scratch/payload.tar.gz" -C "$scratch/app" --no-same-owner --no-same-p
 release="$version-$arch-${expected:0:16}"
 destination="$base/versions/$release"
 if [ -e "$destination" ]; then
-  (cd "$destination" && sha256sum -c --quiet files.sha256) || fail 'Instalação existente danificada. Renomeie a pasta indicada antes de reinstalar: '"$destination"
+  if ! (cd "$destination" && sha256sum -c --quiet files.sha256); then
+    printf 'Reparando instalação danificada em uma nova pasta…\n'
+    destination=$(mktemp -d "$base/versions/$release-repair-XXXXXXXX")
+    rmdir -- "$destination"
+    release=${destination##*/}
+    mv -- "$scratch/app" "$destination"
+  fi
 else
   mv -- "$scratch/app" "$destination"
 fi
@@ -86,7 +92,7 @@ Comment=Suas IAs locais
 Exec="$exec_path/start"
 Icon=$icon_path/current/resources/app/public/app-icon.png
 Terminal=false
-Categories=Utility;Development;
+Categories=Utility;
 StartupNotify=true
 StartupWMClass=LocalNeuron
 DESKTOP

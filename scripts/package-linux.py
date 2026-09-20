@@ -55,9 +55,10 @@ def build(source, output, arch):
         launcher.chmod(0o755)
         hashes['launch.sh'] = digest(launcher)
         manifest = scratch / 'files.sha256'
-        manifest.write_text(''.join(f'{value}  {name}\n' for name, value in hashes.items()))
         startup = scratch / 'startup.sha256'
         startup.write_text(''.join(f'{hashes[name]}  {name}\n' for name in REQUIRED if name != 'LocalNeuron'))
+        hashes['startup.sha256'] = digest(startup)
+        manifest.write_text(''.join(f'{value}  {name}\n' for name, value in hashes.items()))
         payload = scratch / 'payload.tar.gz'
         with tarfile.open(payload, 'w:gz', compresslevel=6, format=tarfile.PAX_FORMAT) as archive:
             for path in paths:

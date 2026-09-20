@@ -66,7 +66,7 @@ A correção deste instalador não anuncia novos poderes de controle de computad
 
 ## Verificação desta entrega
 
-Em 20/09/2026, os nove testes do instalador passaram em container Linux Debian x64 (emulação sobre Mac ARM). O instalador real de aproximadamente 289 MB passou na verificação SHA-256, instalação completa, conferência de todos os arquivos e criação do atalho, executado como usuário sem root e sem rede. Build TypeScript e três testes do site também passaram. Isso valida o fluxo de instalação, não a interface gráfica, GPU ou áudio de uma máquina Omarchy física.
+Em 20/09/2026, os dez testes do instalador passaram em container Linux Debian x64 (emulação sobre Mac ARM). O instalador real de aproximadamente 289 MB passou na verificação SHA-256, instalação completa, conferência de todos os arquivos e criação do atalho, executado como usuário sem root e sem rede. O runtime Electron 44.3.0 / Node 24.20.0 executou SQLite e o backend instalado respondeu HTTP 200 no Linux. O atalho passou no validador desktop-file-validate. Build TypeScript e três testes do site também passaram. Isso valida o fluxo de instalação, não a interface gráfica, GPU ou áudio de uma máquina Omarchy física.
 
 ## Gerar e testar
 

@@ -117,6 +117,19 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue(before.is_dir())
         self.assertTrue((current / 'v8_context_snapshot.bin').is_file())
 
+    def test_reinstall_repairs_damaged_files_without_removing_old_version(self):
+        self.run_installer()
+        base = self.data / 'localneuron'
+        broken = (base / 'current').resolve()
+        (broken / 'startup.sha256').write_text('corrupted manifest')
+        self.run_installer()
+        repaired = (base / 'current').resolve()
+        self.assertNotEqual(repaired, broken)
+        self.assertTrue(broken.is_dir())
+        self.assertIn('v8_context_snapshot.bin', (repaired / 'startup.sha256').read_text())
+        result = subprocess.run([str(base / 'start')], env=self.env, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_external_symlink_refused(self):
         (self.source / 'outside').symlink_to('/etc/passwd')
         with self.assertRaisesRegex(ValueError, 'Link fora'):

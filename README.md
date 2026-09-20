@@ -13,7 +13,7 @@ Veja as [novidades da 0.27](docs/localneuron-0.27.md): acesso lembrado opcional,
 
 ## Download e primeiros passos
 
-**Distribuição da 0.27 em preparação:** o código desta versão já está publicado, mas o envio dos instaladores ainda não terminou. O site continua oferecendo a 0.26 até a confirmação dos novos arquivos.
+**Linux 0.27 com instalador:** [baixe a revisão Linux](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.1). Os novos pacotes Mac/Windows da 0.27 continuam em preparação; os downloads anteriores da 0.26 permanecem disponíveis. O novo instalador Linux evita abrir o app durante uma extração incompleta.
 
 Baixe os instaladores na página de [versões](https://github.com/Arthur06311/localneuron/releases). Os arquivos ZIP/TAR de **Source code** do GitHub são código-fonte, não o aplicativo instalado.
 
