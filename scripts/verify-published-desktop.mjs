@@ -7,7 +7,8 @@ import {resolve,join,dirname} from 'node:path';
 let binary=resolve(process.argv[2]);
 const report=resolve(process.argv[3]||'desktop-smoke.json');
 const directory=mkdtempSync(join(tmpdir(),'localneuron-native-'));
-const debugPort=19327,started=Date.now();
+const debugPort=19327;
+let started=Date.now();
 let stderr='',stdout='',child,error='',result={platform:process.platform,arch:process.arch,renderer:false};
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 try {
@@ -21,7 +22,9 @@ try {
    execFileSync('sudo',['apt-get','install','-y',deb],{stdio:'inherit'});
    binary='/opt/localneuron/LocalNeuron';
    result.installer='Debian package built from published Linux bundle; apt install; sandbox enabled';
+   result.installationMs=Date.now()-started;
  }
+ started=Date.now();
  child=spawn(binary,[`--remote-debugging-port=${debugPort}`],{env:{...process.env,COLMEIA_DESKTOP_DATA_DIR:directory,LOCALNEURON_TEST_PORT:'14318'},stdio:['ignore','pipe','pipe']});
  child.on('error',e=>{error=e.message;});
  child.stderr.on('data',c=>stderr=(stderr+c).slice(-12000));
