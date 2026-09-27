@@ -24,7 +24,14 @@ test('Downloads have fixed release URLs, size and SHA-256',async()=>{
  for(const item of manifest.files){assert.match(item.sha256,/^[a-f0-9]{64}$/);assert(item.bytes>1000000&&item.bytes<2*1024**3);assert.equal(typeof item.available,'boolean');assert.equal(item.href,`https://github.com/Arthur06311/localneuron/releases/download/v${manifest.version}/${item.filename}`);}
 });
 test('Pages uses a static allowlist without local administrative APIs',async()=>{
- assert.deepEqual((await readdir(root)).sort(),['.nojekyll','CNAME','app-icon.png','app.js','guide.html','index.html','locale.js','product.png','releases.json','style.css'].sort());
+ assert.deepEqual((await readdir(root)).sort(),['.nojekyll','CNAME','app-icon.png','app.js','guide.html','index.html','locale.js','product.png','downloads.json','releases.json','style.css'].sort());
  const js=await readFile(resolve(root,'app.js'),'utf8');
- assert(js.includes("fetch('./releases.json'"));assert(!js.includes('/api/locale'));assert(!js.includes('/api/releases'));assert(!/127\.0\.0\.1|localhost|\/v1\//.test(js));
+ assert(js.includes("fetch('./downloads.json'"));assert(!js.includes('/api/locale'));assert(!js.includes('/api/releases'));assert(!/127\.0\.0\.1|localhost|\/v1\//.test(js));
+});
+
+test('Website downloads use the published per-platform installer without altering the legacy update feed',async()=>{
+ const data=JSON.parse(await readFile(resolve(root,'downloads.json'),'utf8'));
+ assert.deepEqual(data.files.map(f=>f.id),['mac','windows','linux']);
+ for(const f of data.files){assert.match(f.releaseTag,/^v\d+\.\d+\.\d+(?:-linux\.\d+)?$/);assert.match(f.sha256,/^[a-f0-9]{64}$/);assert.equal(f.available,true);assert.equal(f.href,`https://github.com/Arthur06311/localneuron/releases/download/${f.releaseTag}/${f.filename}`);}
+ const linux=data.files.find(f=>f.id==='linux');assert.equal(linux.filename,'LocalNeuron-Linux-x64-Instalar.zip');assert.equal(linux.releaseTag,'v0.27.0-linux.2');
 });

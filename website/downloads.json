@@ -1,0 +1,35 @@
+{
+  "version": "0.27.0",
+  "files": [
+    {
+      "id": "mac",
+      "filename": "LocalNeuron-macOS-arm64.dmg",
+      "bytes": 396865340,
+      "sha256": "6fa74c9dbe4333cbc20c60cbf08e364bc1c4188bd2fb0642d37ca78b488fab22",
+      "available": true,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.26.0/LocalNeuron-macOS-arm64.dmg",
+      "version": "0.26.0",
+      "releaseTag": "v0.26.0"
+    },
+    {
+      "id": "windows",
+      "filename": "LocalNeuron-Windows-x64.zip",
+      "bytes": 314979101,
+      "sha256": "f2da0d8dd191c9276e0ea93f23b2358d7531316668ba88d0c59c76cc54204a5a",
+      "available": true,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.26.0/LocalNeuron-Windows-x64.zip",
+      "version": "0.26.0",
+      "releaseTag": "v0.26.0"
+    },
+    {
+      "id": "linux",
+      "filename": "LocalNeuron-Linux-x64-Instalar.zip",
+      "bytes": 289101607,
+      "sha256": "7be6d9d151c56ad882286c017ad497248044ee07df826afcb1f28bb89ee8ff86",
+      "available": true,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0-linux.2/LocalNeuron-Linux-x64-Instalar.zip",
+      "version": "0.27.0",
+      "releaseTag": "v0.27.0-linux.2"
+    }
+  ]
+}
