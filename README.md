@@ -13,14 +13,14 @@ Veja as [novidades da 0.27](docs/localneuron-0.27.md): acesso lembrado opcional,
 
 ## Download e primeiros passos
 
-**Linux 0.27 com instalador:** [baixe a revisão Linux](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.3). Os novos pacotes Mac/Windows da 0.27 continuam em preparação; os downloads anteriores da 0.26 permanecem disponíveis. Os pacotes nativos Linux instalam as dependências e configuram o sandbox. A abertura foi testada em Ubuntu 24.04 e Windows.
+**Linux 0.27 com instalador nativo:** pacotes corrigidos e testados; o envio da revisão `v0.27.0-linux.3` está em andamento. Os downloads nativos serão habilitados após a conferência dos arquivos enviados. Os novos pacotes Mac/Windows da 0.27 continuam em preparação; os downloads anteriores da 0.26 permanecem disponíveis. Os pacotes nativos Linux instalam as dependências e configuram o sandbox. A abertura foi testada em Ubuntu 24.04 e Windows.
 
 Baixe os instaladores na página de [versões](https://github.com/Arthur06311/localneuron/releases). Os arquivos ZIP/TAR de **Source code** do GitHub são código-fonte, não o aplicativo instalado.
 
 | Sistema | Arquivo | Estado da validação |
 |---|---|---|
 | macOS Apple Silicon | `LocalNeuron-macOS-arm64.dmg` ou ZIP | Aplicativo executado no Mac; assinatura ad hoc, sem notarização Apple |
-| Windows x64 | `LocalNeuron-Windows-x64.zip` | Empacotado e conferido; execução nativa ainda pendente |
+| Windows x64 | `LocalNeuron-Windows-x64.zip` | ZIP 0.26.0: interface e backend validados em runner Windows; motores/GPU pendentes |
 | Linux x64 | DEB (Ubuntu/Debian) ou PKG.TAR.GZ (Arch/Omarchy) | DEB validado em Ubuntu 24.04; homologação gráfica no Omarchy físico pendente |
 
 1. **Instale.** No Mac, abra o DMG e arraste para Aplicativos. No Windows, extraia a pasta inteira. No Linux, use o pacote DEB no Ubuntu/Debian ou `sudo pacman -U ./LocalNeuron-Linux-x64.pkg.tar.gz` no Arch/Omarchy. [Guia Linux e diagnóstico](docs/linux-installer.md).
