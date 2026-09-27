@@ -2,7 +2,7 @@
 
 ## Instaladores nativos (27/09/2026)
 
-Os pacotes nativos abaixo estão prontos e testados no Ubuntu; a publicação `v0.27.0-linux.3` ainda aguarda o envio completo dos arquivos ao GitHub. Após a publicação:
+Use a [versão nativa de Linux](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.3). O DEB foi testado no Ubuntu e os dois arquivos publicados tiveram tamanho e SHA-256 conferidos:
 
 - **Ubuntu/Debian:** abra `LocalNeuron-Linux-x64.deb` no instalador de aplicativos, ou execute `sudo apt install ./LocalNeuron-Linux-x64.deb`.
 - **Arch/Omarchy:** execute `sudo pacman -U ./LocalNeuron-Linux-x64.pkg.tar.gz`. O pacman instala as dependências e o aplicativo automaticamente.

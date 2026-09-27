@@ -13,7 +13,7 @@ Veja as [novidades da 0.27](docs/localneuron-0.27.md): acesso lembrado opcional,
 
 ## Download e primeiros passos
 
-**Linux 0.27 com instalador nativo:** pacotes corrigidos e testados; o envio da revisão `v0.27.0-linux.3` está em andamento. Os downloads nativos serão habilitados após a conferência dos arquivos enviados. Os novos pacotes Mac/Windows da 0.27 continuam em preparação; os downloads anteriores da 0.26 permanecem disponíveis. Os pacotes nativos Linux instalam as dependências e configuram o sandbox. A abertura foi testada em Ubuntu 24.04 e Windows.
+**Linux 0.27 com instalador nativo:** [baixe os pacotes DEB e Arch](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.3). Os arquivos publicados tiveram tamanho e SHA-256 conferidos. Os novos pacotes Mac/Windows da 0.27 continuam em preparação; os downloads anteriores da 0.26 permanecem disponíveis. Os pacotes nativos Linux instalam as dependências e configuram o sandbox. A abertura foi testada em Ubuntu 24.04 e Windows.
 
 Baixe os instaladores na página de [versões](https://github.com/Arthur06311/localneuron/releases). Os arquivos ZIP/TAR de **Source code** do GitHub são código-fonte, não o aplicativo instalado.
 
