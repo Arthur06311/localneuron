@@ -23,13 +23,26 @@
     },
     {
       "id": "linux",
-      "filename": "LocalNeuron-Linux-x64-Instalar.zip",
-      "bytes": 289101607,
-      "sha256": "7be6d9d151c56ad882286c017ad497248044ee07df826afcb1f28bb89ee8ff86",
+      "filename": "LocalNeuron-Linux-x64.deb",
+      "bytes": 288573090,
+      "sha256": "3eb57d8da0e596f6e63f31885e0d4ebad58e8b55fd8c8cdf501fd86ca6724792",
       "available": true,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0-linux.2/LocalNeuron-Linux-x64-Instalar.zip",
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0-linux.3/LocalNeuron-Linux-x64.deb",
       "version": "0.27.0",
-      "releaseTag": "v0.27.0-linux.2"
+      "releaseTag": "v0.27.0-linux.3",
+      "format": "DEB \u00b7 Ubuntu / Debian",
+      "alternatives": [
+        {
+          "filename": "LocalNeuron-Linux-x64.pkg.tar.gz",
+          "bytes": 288572728,
+          "sha256": "06573cc56a4213f211b274096e67e8067fb4da4a0a037bc016d1f8c791137ddd",
+          "available": true,
+          "version": "0.27.0",
+          "releaseTag": "v0.27.0-linux.3",
+          "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0-linux.3/LocalNeuron-Linux-x64.pkg.tar.gz",
+          "label": "Arch / Omarchy"
+        }
+      ]
     }
   ]
 }
