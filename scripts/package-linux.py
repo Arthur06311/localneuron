@@ -20,7 +20,7 @@ def digest(path):
     with path.open('rb') as stream:
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
-def build(source, output, arch):
+def build(source, output, arch, native_output=None):
     source = source.resolve()
     for name in REQUIRED:
         if not (source / name).is_file() or not (source / name).stat().st_size:
@@ -80,6 +80,12 @@ def build(source, output, arch):
             part.replace(output)
         finally:
             part.unlink(missing_ok=True)
+        if native_output is not None:
+            import importlib.util
+            spec = importlib.util.spec_from_file_location('native_packages', ROOT / 'scripts/package-linux-native.py')
+            native = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(native)
+            native.build(source, native_output, arch, support=scratch)
     checksum = digest(output)
     output.with_suffix(output.suffix + '.sha256').write_text(f'{checksum}  {output.name}\n')
     print(json.dumps({'file': str(output), 'version': version, 'bytes': output.stat().st_size, 'sha256': checksum}))
@@ -89,5 +95,6 @@ if __name__ == '__main__':
     parser.add_argument('source', type=Path)
     parser.add_argument('--arch', choices=['x64', 'arm64'], default='x64')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--native-output', type=Path, help='Also build DEB and Arch packages in this directory')
     args = parser.parse_args()
-    build(args.source, args.output, args.arch)
+    build(args.source, args.output, args.arch, args.native_output)

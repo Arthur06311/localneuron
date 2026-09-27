@@ -58,13 +58,17 @@ def normalize(entry):
         entry.mode = 0o4755
     return entry
 
-def build(source, output, arch='x64'):
+def build(source, output, arch='x64', support=None):
     source = source.resolve()
+    support = source if support is None else support.resolve()
     required = ['LocalNeuron', 'chrome-sandbox', 'v8_context_snapshot.bin', 'snapshot_blob.bin',
-                'resources/app/package.json', 'resources/app/dist/src/server.js', 'launch.sh', 'startup.sha256']
+                'resources/app/package.json', 'resources/app/dist/src/server.js']
     for name in required:
         if not (source / name).is_file() or (source / name).is_symlink() or not (source / name).stat().st_size:
             raise ValueError('Pacote incompleto: ' + name)
+    for name in ['launch.sh', 'startup.sha256']:
+        if not (support / name).is_file() or (support / name).is_symlink():
+            raise ValueError('Arquivo de inicialização ausente: ' + name)
     paths = sorted(source.rglob('*'))
     for path in paths:
         relative = path.relative_to(source)
@@ -87,7 +91,11 @@ def build(source, output, arch='x64'):
             entry.type = tarfile.DIRTYPE
             tar.addfile(normalize(entry))
         for path in paths:
-            tar.add(path, arcname=APP + '/' + path.relative_to(source).as_posix(), recursive=False, filter=normalize)
+            relative = path.relative_to(source).as_posix()
+            if relative not in {'launch.sh', 'startup.sha256'}:
+                tar.add(path, arcname=APP + '/' + relative, recursive=False, filter=normalize)
+        for name in ['launch.sh', 'startup.sha256']:
+            tar.add(support / name, arcname=APP + '/' + name, recursive=False, filter=normalize)
         add_text(tar, 'usr/share/applications/localneuron.desktop', DESKTOP)
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)

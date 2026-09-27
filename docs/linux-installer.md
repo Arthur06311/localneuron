@@ -1,6 +1,31 @@
 # Instalação Linux e revisão do crash no Omarchy
 
-## Instalar
+## Instaladores nativos (27/09/2026)
+
+Use a [versão nativa de Linux](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.3):
+
+- **Ubuntu/Debian:** abra `LocalNeuron-Linux-x64.deb` no instalador de aplicativos, ou execute `sudo apt install ./LocalNeuron-Linux-x64.deb`.
+- **Arch/Omarchy:** execute `sudo pacman -U ./LocalNeuron-Linux-x64.pkg.tar.gz`. O pacman instala as dependências e o aplicativo automaticamente.
+
+Não extraia os pacotes manualmente. Abra o aplicativo com seu usuário normal, sem sudo. Ele fica em `/opt/localneuron`, e modelos/conversas permanecem na pasta do usuário.
+
+O teste nativo reproduziu uma segunda falha, diferente do snapshot ausente: no Ubuntu 24.04, o pacote por usuário abortava porque o helper `chrome-sandbox` não pertencia ao root com modo 4755. Os pacotes nativos instalam todos os diretórios do programa como root, sem escrita por usuários comuns, e configuram o helper oficial do Electron. O DEB também fornece um perfil AppArmor específico para `/opt/localneuron/LocalNeuron` em sistemas com AppArmor 4. Não é usado `--no-sandbox`, nem uma alteração global de namespaces.
+
+Se já havia instalado o pacote por usuário e o menu ainda abre a versão antiga, inicie `/opt/localneuron/launch.sh`. O atalho antigo fica em `~/.local/share/applications/localneuron.desktop`; mova-o para uma pasta de backup para que o menu use o atalho do sistema. Não altere sua pasta de dados.
+
+**Validação:** [teste nativo de Windows e Ubuntu](https://github.com/Arthur06311/localneuron/actions/runs/36354910645). O teste instala o DEB no Ubuntu 24.04, abre a janela real sob Xvfb e verifica a interface e o backend HTTP. O Windows usa o ZIP público 0.26.0, extrai completamente e abre a janela real. Isso não homologa todos os modelos, drivers, microfones ou uma máquina Omarchy física.
+
+Geração dos pacotes a partir de um bundle instalado/verificado:
+
+```bash
+python3 scripts/package-linux-native.py "$HOME/.local/share/localneuron/current" --output releases
+python3 tests/linux_native_package_test.py
+```
+
+## Instalador por usuário (legado)
+
+O ZIP e o `.run` abaixo continuam disponíveis para distribuições que permitem o sandbox por namespaces do usuário. Prefira os pacotes nativos acima; o ZIP por usuário não resolve o bloqueio de sandbox reproduzido no Ubuntu 24.04.
+
 
 Para instalar sem digitar comandos, baixe **LocalNeuron-Linux-x64-Instalar.zip** na [versão gráfica](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.2).
 
@@ -51,7 +76,7 @@ Linux x64 com glibc, sessão gráfica Wayland ou X11, bibliotecas do Electron e 
 
 O launcher verifica os arquivos de inicialização e informa bibliotecas ausentes antes de executar o Electron. Logs de inicialização ficam em `${XDG_STATE_HOME:-~/.local/state}/localneuron/`. Antes de compartilhar logs, revise seu conteúdo e remova dados pessoais. O app continua em alfa; o instalador não equivale a homologação de GPU, áudio, todos os motores ou modelos.
 
-O sandbox permanece ligado. Não há uso automático de `--no-sandbox`, alteração de permissões setuid ou mudança de configuração global do sistema. Em um erro específico de sandbox, confira a política de namespaces da sua distribuição. O Electron moderno suporta Wayland nativamente; não forçamos X11 nem alteramos a configuração do Hyprland. [Documentação Electron](https://www.electronjs.org/docs/latest/tutorial/sandbox), [Wayland no Electron](https://www.electronjs.org/blog/tech-talk-wayland).
+No instalador por usuário, o sandbox permanece ligado. Não há uso automático de `--no-sandbox`, alteração de permissões setuid ou mudança de configuração global do sistema. Em um erro específico de sandbox, confira a política de namespaces da sua distribuição. O Electron moderno suporta Wayland nativamente; não forçamos X11 nem alteramos a configuração do Hyprland. [Documentação Electron](https://www.electronjs.org/docs/latest/tutorial/sandbox), [Wayland no Electron](https://www.electronjs.org/blog/tech-talk-wayland).
 
 Para remover apenas o programa, feche o app e apague a pasta `localneuron` dentro do diretório de dados XDG e o arquivo `applications/localneuron.desktop` desse mesmo diretório. Preserve `~/.config/Colmeia` e quaisquer pastas de modelos/dados escolhidas no aplicativo.
 
@@ -79,7 +104,7 @@ Em 20/09/2026, os dez testes do instalador passaram em container Linux Debian x6
 
 ## Gerar e testar
 
-`npm run package -- linux x64` agora gera a pasta Electron e o `.run` com checksum em `releases/`. Para empacotar uma pasta já construída:
+`npm run package -- linux x64` agora gera a pasta Electron, os pacotes DEB e Arch e o `.run` com checksum em `releases/`. Para empacotar uma pasta já construída:
 
 ```bash
 python3 scripts/package-linux.py releases/LocalNeuron-linux-x64 \
