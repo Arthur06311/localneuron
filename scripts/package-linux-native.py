@@ -30,7 +30,7 @@ StartupWMClass=LocalNeuron
 '''
 POSTINST = '''#!/bin/sh
 set -e
-if [ "$1" = configure ] && command -v apparmor_parser >/dev/null 2>&1 && [ -d /sys/kernel/security/apparmor ]; then
+if [ "$1" = configure ] && command -v apparmor_parser >/dev/null 2>&1 && [ -r /etc/apparmor.d/abi/4.0 ] && [ -d /sys/kernel/security/apparmor ]; then
   apparmor_parser -r /etc/apparmor.d/localneuron
 fi
 '''
@@ -63,7 +63,7 @@ def build(source, output, arch='x64'):
     required = ['LocalNeuron', 'chrome-sandbox', 'v8_context_snapshot.bin', 'snapshot_blob.bin',
                 'resources/app/package.json', 'resources/app/dist/src/server.js', 'launch.sh', 'startup.sha256']
     for name in required:
-        if not (source / name).is_file() or not (source / name).stat().st_size:
+        if not (source / name).is_file() or (source / name).is_symlink() or not (source / name).stat().st_size:
             raise ValueError('Pacote incompleto: ' + name)
     paths = sorted(source.rglob('*'))
     for path in paths:
@@ -91,13 +91,17 @@ def build(source, output, arch='x64'):
         add_text(tar, 'usr/share/applications/localneuron.desktop', DESKTOP)
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
-        with tarfile.open(work / 'data.tar.gz', 'w:gz') as tar:
+        with tarfile.open(work / 'data.tar.gz', 'w:gz', format=tarfile.GNU_FORMAT, compresslevel=6) as tar:
             payload(tar)
+            for directory in ['etc', 'etc/apparmor.d']:
+                entry = tarfile.TarInfo(directory)
+                entry.type = tarfile.DIRTYPE
+                tar.addfile(normalize(entry))
             add_text(tar, 'etc/apparmor.d/localneuron', PROFILE)
         control = f'''Package: localneuron
 Version: {version}-1
 Architecture: {debarch}
-Maintainer: LocalNeuron <support@localneuron.ai>
+Maintainer: LocalNeuron
 Installed-Size: {size // 1024 + 16}
 Depends: libgtk-3-0 | libgtk-3-0t64, libnss3, libasound2 | libasound2t64, libgbm1, libxss1, libxtst6, libgomp1, libcurl4 | libcurl4t64
 Section: utils
@@ -106,7 +110,7 @@ Homepage: https://localneuron.ai
 Description: LocalNeuron local AI desktop
  Local models, conversations and creative tools on your computer.
 '''
-        with tarfile.open(work / 'control.tar.gz', 'w:gz') as tar:
+        with tarfile.open(work / 'control.tar.gz', 'w:gz', format=tarfile.GNU_FORMAT, compresslevel=6) as tar:
             add_text(tar, 'control', control)
             add_text(tar, 'postinst', POSTINST, 0o755)
             add_text(tar, 'postrm', POSTRM, 0o755)
@@ -121,7 +125,7 @@ Description: LocalNeuron local AI desktop
                 if len(data) % 2:
                     stream.write(b'\n')
         pacman = output / f'LocalNeuron-Linux-{arch}.pkg.tar.gz'
-        with tarfile.open(pacman, 'w:gz') as tar:
+        with tarfile.open(pacman, 'w:gz', format=tarfile.GNU_FORMAT, compresslevel=6) as tar:
             add_text(tar, '.PKGINFO', f'pkgname = localneuron\npkgbase = localneuron\npkgver = {version}-1\npkgdesc = LocalNeuron local AI desktop\nurl = https://localneuron.ai\nbuilddate = 0\npackager = LocalNeuron\nsize = {size}\narch = {pacarch}\nlicense = custom\n' + ''.join(f'depend = {p}\n' for p in ['gtk3', 'nss', 'alsa-lib', 'mesa', 'libxss', 'libxtst', 'gcc-libs', 'curl']))
             payload(tar)
     artifacts = []

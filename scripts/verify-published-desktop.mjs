@@ -1,23 +1,34 @@
 // Run against an actual installed/released binary on its target OS.
 // No model downloads, credentials, personal workspace or sandbox-disabling flags.
-import {spawn} from 'node:child_process';
+import {spawn,execFileSync} from 'node:child_process';
 import {mkdtempSync,writeFileSync,readFileSync,existsSync,mkdirSync} from 'node:fs';
 import {tmpdir} from 'node:os';
-import {resolve,join} from 'node:path';
-const binary=resolve(process.argv[2]);
+import {resolve,join,dirname} from 'node:path';
+let binary=resolve(process.argv[2]);
 const report=resolve(process.argv[3]||'desktop-smoke.json');
 const directory=mkdtempSync(join(tmpdir(),'localneuron-native-'));
 const debugPort=19327,started=Date.now();
 let stderr='',stdout='',child,error='',result={platform:process.platform,arch:process.arch,renderer:false};
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 try {
+ // On the Ubuntu CI runner, exercise the native package built from the released
+ // Electron bundle. Installing through apt is part of this test, not a sandbox
+ // bypass. Local invocations always test exactly the executable supplied above.
+ if(process.platform==='linux' && process.env.GITHUB_ACTIONS==='true'){
+   const packages=join(directory,'packages');
+   execFileSync('python3',['scripts/package-linux-native.py',dirname(binary),'--output',packages],{stdio:'inherit'});
+   const deb=join(packages,'LocalNeuron-Linux-x64.deb');
+   execFileSync('sudo',['apt-get','install','-y',deb],{stdio:'inherit'});
+   binary='/opt/localneuron/LocalNeuron';
+   result.installer='Debian package built from published Linux bundle; apt install; sandbox enabled';
+ }
  child=spawn(binary,[`--remote-debugging-port=${debugPort}`],{env:{...process.env,COLMEIA_DESKTOP_DATA_DIR:directory,LOCALNEURON_TEST_PORT:'14318'},stdio:['ignore','pipe','pipe']});
  child.on('error',e=>{error=e.message;});
  child.stderr.on('data',c=>stderr=(stderr+c).slice(-12000));
  child.stdout.on('data',c=>stdout=(stdout+c).slice(-12000));
  let target;
  for(let i=0;i<180;i++){
-   if(error||child.exitCode!==null)throw Error(error||`Desktop exited with ${child.exitCode}`);
+   if(error||child.exitCode!==null||child.signalCode)throw Error(error||`Desktop exited with ${child.signalCode||child.exitCode}`);
    try{const pages=await fetch(`http://127.0.0.1:${debugPort}/json/list`,{signal:AbortSignal.timeout(500)}).then(r=>r.json());target=pages.find(p=>p.type==='page'&&p.url?.startsWith('http://127.0.0.1:14318/'));if(target)break;}catch{}
    await pause(250);
  }
