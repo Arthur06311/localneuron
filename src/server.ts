@@ -21,15 +21,16 @@ import { agentReply } from './agent.js';
 import { complete } from './inference.js';
 import Fastify from 'fastify';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Gateway } from './gateway.js';
 import { optionsSchema } from './inference.js';
 import { memoryStatus } from './model.js';
-import { totalmem } from 'node:os';
+import { totalmem, tmpdir } from 'node:os';
 import { Chats } from './chat.js';
 import { Core } from './core.js';
+import { exportSpace } from './space-archive.js';
 import { localModels } from './model.js';
 import { ModelLibrary } from './model-library.js';
 import { acquireProcessLock } from './lock.js';
@@ -307,6 +308,20 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.get('/v1/log/export', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="colmeia-auditoria.json"').send(await core.export()));
   app.post('/v1/log/verify', async request => { const data = z.strictObject({ bundle: z.unknown(), trusted_fingerprint: z.string().regex(/^[0-9a-f]{64}$/) }).parse(body(request)); return verifyPackage(data.bundle, data.trusted_fingerprint); });
   app.get('/v1/vault/backup', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="colmeia-cofre-cifrado.json"').type('application/json').send(readFileSync(core.vault.path)));
+  app.get('/v1/space/export', async (_request, reply) => {
+    if (core.vault.locked) throw new Error('Cofre bloqueado');
+    const file = join(tmpdir(), `localneuron-espaco-${randomBytes(8).toString('hex')}.zip`);
+    try {
+      await exportSpace(core, file, async () => {
+        await editor.close(); await music.stop(); await computerControl.stop(); await connections.close();
+        await experienceJobs.stop(); await mediaDownloads.pause(); await pro.pause(); await proMedia.close(); await aux.close();
+        await gateway.stop(); await chats.close();
+        if (library.busy) throw new Error('Aguarde o carregamento ou a instalação terminar antes de exportar o espaço.');
+        await library.stop();
+      });
+      return reply.header('Content-Disposition', 'attachment; filename="localneuron-espaco.zip"').type('application/zip').send(readFileSync(file));
+    } finally { rmSync(file, { force: true }); }
+  });
   app.post('/v1/lock', async () => {await editor.close();await music.stop();await computerControl.stop();await connections.close();await experienceJobs.stop();await mediaDownloads.pause();await pro.pause();await proMedia.close();await aux.close();return exclusive(async () => {
     await aux.close(); await gateway.stop(); await chats.close(); await library.stop();
     for (const task of (await core.snapshot()).tasks.filter(t => t.state === 'running')) await core.pause(task.id);

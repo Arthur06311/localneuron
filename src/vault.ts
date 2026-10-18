@@ -1,10 +1,12 @@
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync, generateKeyPairSync } from 'node:crypto';
+import { createCipheriv, createDecipheriv, randomBytes, randomUUID, scryptSync, generateKeyPairSync } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync, renameSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
+const spaceIdPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export class Vault {
   path: string;
   keys: Record<string, string> | null = null;
+  private boundId: string | null = null;
   constructor(dir: string) { mkdirSync(dir, { recursive: true, mode: 0o700 }); this.path = join(dir, 'vault.enc.json'); }
   get exists() { return existsSync(this.path); }
   get locked() { return this.keys === null; }
@@ -12,6 +14,7 @@ export class Vault {
     if (this.exists) throw new Error('Cofre já existe');
     if (password.length < 12) throw new Error('Use uma senha de pelo menos 12 caracteres');
     this.keys = {};
+    this.boundId = randomUUID();
     const publics: Record<string, string> = {};
     for (const id of ['organization', 'human', 'agent', 'service']) {
       const pair = generateKeyPairSync('ed25519');
@@ -28,11 +31,30 @@ export class Vault {
     try { this.keys = JSON.parse(Buffer.concat([decipher.update(Buffer.from(envelope.data, 'base64')), decipher.final()]).toString()); }
     catch { throw new Error('Senha incorreta ou cofre danificado'); }
   }
+  get spaceId() {
+    if (this.boundId) return this.boundId;
+    if (!this.exists) return null;
+    try {
+      const id = JSON.parse(readFileSync(this.path, 'utf8')).space_id;
+      return typeof id === 'string' && spaceIdPattern.test(id) ? id : null;
+    } catch { return null; }
+  }
+  attachSpace(id: string) {
+    if (!spaceIdPattern.test(id)) throw new Error('Identificador de espaço inválido');
+    if (!this.exists) throw new Error('Cofre ausente');
+    const envelope = JSON.parse(readFileSync(this.path, 'utf8'));
+    if (typeof envelope.space_id === 'string' && envelope.space_id !== id) throw new Error('O cofre já está ligado a outro espaço');
+    envelope.space_id = id;
+    writeFileSync(this.path + '.tmp', JSON.stringify(envelope), { mode: 0o600 });
+    renameSync(this.path + '.tmp', this.path);
+    this.boundId = id;
+  }
   save(password: string) {
     const salt = randomBytes(16), iv = randomBytes(12);
     const cipher = createCipheriv('aes-256-gcm', scryptSync(password, salt, 32), iv);
     const data = Buffer.concat([cipher.update(JSON.stringify(this.keys)), cipher.final()]);
-    writeFileSync(this.path + '.tmp', JSON.stringify({ version: 1, salt: salt.toString('hex'), iv: iv.toString('hex'), tag: cipher.getAuthTag().toString('hex'), data: data.toString('base64') }), { mode: 0o600 });
+    const space_id = this.boundId ?? this.spaceId;
+    writeFileSync(this.path + '.tmp', JSON.stringify({ version: 1, ...(space_id ? { space_id } : {}), salt: salt.toString('hex'), iv: iv.toString('hex'), tag: cipher.getAuthTag().toString('hex'), data: data.toString('base64') }), { mode: 0o600 });
     renameSync(this.path + '.tmp', this.path);
   }
   key(id: string) { const key = this.keys?.[id]; if (!key) throw new Error('Cofre bloqueado'); return key; }

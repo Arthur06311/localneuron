@@ -177,6 +177,8 @@ Instalações antigas podem manter a pasta irmã `Colmeia-data/`. O nome legado 
 
 Para backup completo, feche o app e copie a pasta inteira. O backup somente do cofre não inclui conversas, projetos e modelos. Use a exportação de conversas e de projetos quando quiser compartilhar um trabalho específico. Não publique sua pasta de dados no GitHub.
 
+A exportação do espaço (`GET /v1/space/export`) gera um único arquivo, `localneuron-espaco.zip`, com a base PGlite, o cofre cifrado e o workspace. Os motores são parados e a base entra em quiesce antes da cópia. O arquivo não acrescenta segredos em texto simples além do que o cofre já guarda cifrado. Ao abrir um espaço, o cofre e a base precisam corresponder. Se não corresponderem, a abertura é recusada com a mensagem: “O cofre e a base de dados não correspondem. A abertura deste espaço foi recusada.”
+
 ## Solução de problemas
 
 ### O app só oferece criar senha
