@@ -94,7 +94,7 @@ No site, a seleção automática de idioma consulta `country.is` pelo navegador,
 
 ## Status da alfa
 
-Na versão 0.27, `npm test` reúne **143 testes automatizados: 127 da suíte TypeScript do aplicativo e 16 em JavaScript, 4 deles do site**. Em Linux, os 2 testes de acesso local ainda falham por uma limitação do teste; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Os pacotes públicos não contêm conversas, chaves privadas nem a licença Pro de teste do proprietário.
+Na versão 0.27, `npm test` reúne **146 testes automatizados: 130 da suíte TypeScript do aplicativo e 16 em JavaScript, 4 deles do site**. Em Linux, os 2 testes de acesso local ainda falham por uma limitação do teste; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Os pacotes públicos não contêm conversas, chaves privadas nem a licença Pro de teste do proprietário.
 
 Ainda pendentes: notarização Apple, execução nativa de motores/GPU no Windows e no Linux, EXO com duas máquinas físicas e integração com uma instalação real do Resolve Studio. O aplicativo continua **alfa**, sem promessa de suporte universal a modelos ou hardware. Veja as [novidades da 0.27](docs/localneuron-0.27.md). Os guias antigos em `docs/localneuron-*` registram o estado de cada versão.
 
@@ -136,7 +136,7 @@ python3 scripts/fetch-voice-node.py darwin-arm64
 npm run desktop
 ```
 
-Use os alvos dos manifests nas outras plataformas ([distribuição](docs/plataformas.md)). O painel usa a porta 4317 em desenvolvimento e 4318 no desktop. Os nomes legados `COLMEIA_DATA_DIR`, `COLMEIA_DESKTOP_DATA_DIR` e as pastas `Colmeia` são preservados por compatibilidade de dados.
+Use os alvos dos manifests nas outras plataformas ([distribuição](docs/plataformas.md)). O painel prefere a porta 4317 em desenvolvimento e 4318 no desktop. Se a porta estiver ocupada, a próxima livre é usada e a sessão local recebe a porta real. Os nomes legados `COLMEIA_DATA_DIR`, `COLMEIA_DESKTOP_DATA_DIR`, `COLMEIA_PORT` e as pastas `Colmeia` são preservados por compatibilidade de dados.
 
 ```text
 src/          Serviço local, motores, API e persistência

@@ -50,7 +50,7 @@ O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes esp
 
 1. `npm run build` compila `src/**/*.ts` para `dist/`.
 2. `npm start` executa `dist/src/server.js`.
-3. O servidor Fastify escuta por padrão em `127.0.0.1:4317`.
+3. O servidor Fastify prefere `127.0.0.1:4317`. Se a porta estiver ocupada, usa a próxima livre e grava a URL real em `session.json`.
 4. `scripts/open.mjs` lê a sessão local e abre a interface autenticada.
 5. `src/server.ts` serve `public/`, valida as requisições e conecta os módulos de domínio.
 
@@ -58,7 +58,7 @@ O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes esp
 
 1. `npm run desktop` inicia `desktop/main.cjs`.
 2. O processo principal cria uma pasta de dados do desktop e inicia o backend como processo filho.
-3. O backend recebe `COLMEIA_DATA_DIR` e `COLMEIA_PORT`; esses nomes antigos permanecem para compatibilidade com dados já existentes.
+3. O backend recebe `COLMEIA_DATA_DIR` e `COLMEIA_PORT`; esses nomes antigos permanecem para compatibilidade com dados já existentes. O desktop lê a porta real em `session.json` e usa essa origem na janela, no IPC e nas permissões.
 4. `desktop/preload.cjs` expõe somente pontes permitidas ao renderer.
 5. O renderer carrega a mesma interface de `public/` usada no modo navegador local.
 
@@ -193,7 +193,7 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 |---|---|---:|
 | `COLMEIA_DATA_DIR` | Dados do servidor local em modo navegador | Não; padrão `.data/` |
 | `COLMEIA_DESKTOP_DATA_DIR` | Dados do Electron | Não; padrão por plataforma |
-| `COLMEIA_PORT` | Porta do servidor local | Não; padrão `4317` |
+| `COLMEIA_PORT` | Porta preferida do servidor local. Se estiver ocupada, a próxima livre é usada | Não; padrão `4317` |
 | `LOCALNEURON_TEST_PORT` | Porta do backend do desktop, usada em testes e diagnósticos | Não; padrão `4318` |
 | `LOCALNEURON_LICENSE_PUBLIC_KEY` | Chave pública para validar licença | Não; pode vir da configuração pública |
 | `LOCALNEURON_BILLING_URL` | URL do serviço de licença | Não no modo local |
