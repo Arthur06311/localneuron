@@ -134,4 +134,4 @@ Ainda pendentes: notarização Apple, execução nativa Windows/Linux, EXO com d
 
 Para reportar um problema, informe versão, sistema, modelo/motor, passos e mensagem de erro, removendo tokens, prompts privados e caminhos pessoais. Consulte [CONTRIBUTING.md](CONTRIBUTING.md) e [SECURITY.md](SECURITY.md).
 
-O código foi disponibilizado para consulta. Uma licença geral de reutilização do código próprio ainda não foi definida pelo titular; a publicação não concede automaticamente uma licença MIT/Apache. Os componentes de terceiros e modelos mantêm suas licenças. Não é necessário comprar o Pro para baixar e executar modelos locais compatíveis.
+O LocalNeuron é software proprietário. Copyright (c) 2026 Arthur Pinheiro Kriger. All rights reserved. Não há permissão de cópia, modificação nem redistribuição do código próprio sem autorização escrita do titular. Os termos estão em [LICENSE](LICENSE). Os componentes de terceiros e os modelos mantêm suas licenças. Não é necessário comprar o Pro para baixar e executar modelos locais compatíveis.

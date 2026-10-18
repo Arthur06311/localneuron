@@ -31,6 +31,7 @@ Este índice separa a documentação por assunto. Os caminhos do código continu
 - [Minha API](minha-api.md): endpoint compatível em rede privada.
 - [Operação da assinatura](subscription-operations.md): serviço Pro e Stripe.
 - [Verificação](verification.md): evidências e limites de validação.
+- [Licença do aplicativo](../LICENSE): código proprietário; todos os direitos reservados.
 - [Licenças de terceiros](../THIRD_PARTY.md).
 
 Os arquivos `localneuron-*.md` registram decisões e estados de versões antigas. Eles são histórico técnico, não instruções para substituir os guias atuais.

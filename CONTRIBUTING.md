@@ -1,6 +1,6 @@
 # Contribuir com o LocalNeuron
 
-Antes de propor uma alteração, confira o README, as limitações da alfa e o estado da licença do código próprio.
+Antes de propor uma alteração, confira o README, as limitações da alfa e a licença proprietária em [LICENSE](LICENSE). Não há permissão de cópia, modificação nem redistribuição do código próprio sem autorização escrita do titular.
 
 ## Reportar problemas
 
