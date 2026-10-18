@@ -126,7 +126,7 @@ tests/        Testes automatizados e fixtures sintéticas
 
 ## Validação e status
 
-Na versão 0.27, **139 testes automatizados passaram: 136 do aplicativo e 3 do site**. A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Pacotes públicos não contêm conversas, chaves privadas ou a licença Pro de teste do proprietário.
+Na versão 0.27, `npm test` reúne **143 testes automatizados: 127 da suíte TypeScript do aplicativo e 16 em JavaScript, 4 deles do site**. Em Linux, os 2 testes de acesso local ainda falham por uma limitação do teste; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Pacotes públicos não contêm conversas, chaves privadas ou a licença Pro de teste do proprietário.
 
 Ainda pendentes: notarização Apple, execução nativa Windows/Linux, EXO com duas máquinas físicas, integração com uma instalação real do Resolve Studio. O aplicativo continua **alfa**, sem promessa de suporte universal a modelos ou hardware. Guias antigos em `docs/localneuron-*` registram o estado de suas respectivas versões.
 
