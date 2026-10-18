@@ -42,7 +42,7 @@ O formato `Authorization: Bearer <chave>` está confirmado em `src/gateway.ts`. 
 ## Preparação antes de gravar
 
 - **Máquina:** Mac Apple Silicon, onde a validação real é mais completa. O binário visual exige macOS 26+.
-- **Espaço de demonstração limpo.** Use `COLMEIA_DESKTOP_DATA_DIR` apontando para uma pasta nova. Sem conversas pessoais, sem caminhos com o seu nome, sem a licença Pro de teste (o selo deve mostrar **GRÁTIS**) e sem tokens MCP.
+- **Espaço de demonstração limpo.** Use `LOCALNEURON_DESKTOP_DATA_DIR` apontando para uma pasta nova (`COLMEIA_DESKTOP_DATA_DIR` continua aceito). Sem conversas pessoais, sem caminhos com o seu nome, sem a licença Pro de teste (o selo deve mostrar **GRÁTIS**) e sem tokens MCP.
 - Deixe já baixados o modelo de texto pequeno e o perfil de imagem. O plano 2 mostra só o clique e o corte.
 - Ative o modo escuro para combinar com o site. Desligue as notificações, esconda a dock e a área de trabalho, e use escala de interface a 100 %.
 - Faça cada plano várias vezes e grave-os separadamente. É mais fácil cortar e acelerar assim.

@@ -58,7 +58,7 @@ O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes esp
 
 1. `npm run desktop` inicia `desktop/main.cjs`.
 2. O processo principal cria uma pasta de dados do desktop e inicia o backend como processo filho.
-3. O backend recebe `COLMEIA_DATA_DIR` e `COLMEIA_PORT`; esses nomes antigos permanecem para compatibilidade com dados já existentes.
+3. O backend recebe `LOCALNEURON_DATA_DIR` e `LOCALNEURON_PORT`. `COLMEIA_DATA_DIR` e `COLMEIA_PORT` continuam aceitos.
 4. `desktop/preload.cjs` expõe somente pontes permitidas ao renderer.
 5. O renderer carrega a mesma interface de `public/` usada no modo navegador local.
 
@@ -168,7 +168,7 @@ Não migrar pelo Git:
 2. Faça uma cópia completa da pasta de dados, incluindo banco, cofre, workspace e artefatos.
 3. Instale Node.js 24+ apenas se for executar o modo de desenvolvimento; instaladores prontos não precisam dele.
 4. Reinstale o pacote para a plataforma correta.
-5. Restaure a pasta de dados em um local novo e defina `COLMEIA_DESKTOP_DATA_DIR` ou `COLMEIA_DATA_DIR` quando necessário.
+5. Restaure a pasta de dados em um local novo e defina `LOCALNEURON_DESKTOP_DATA_DIR` ou `LOCALNEURON_DATA_DIR` quando necessário. `COLMEIA_DESKTOP_DATA_DIR` e `COLMEIA_DATA_DIR` continuam aceitos.
 6. Abra com a mesma senha; não copie somente `vault.enc.json` sem o banco correspondente.
 7. Refaça os downloads de runtime específicos da plataforma e valide os hashes.
 
@@ -191,9 +191,9 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 
 | Variável | Uso | Obrigatória |
 |---|---|---:|
-| `COLMEIA_DATA_DIR` | Dados do servidor local em modo navegador | Não; padrão `.data/` |
-| `COLMEIA_DESKTOP_DATA_DIR` | Dados do Electron | Não; padrão por plataforma |
-| `COLMEIA_PORT` | Porta do servidor local | Não; padrão `4317` |
+| `LOCALNEURON_DATA_DIR` | Dados do servidor local em modo navegador. `COLMEIA_DATA_DIR` continua aceito. | Não; padrão `.data/` |
+| `LOCALNEURON_DESKTOP_DATA_DIR` | Dados do Electron. `COLMEIA_DESKTOP_DATA_DIR` continua aceito. | Não; padrão por plataforma |
+| `LOCALNEURON_PORT` | Porta do servidor local. `COLMEIA_PORT` continua aceito. | Não; padrão `4317` |
 | `LOCALNEURON_TEST_PORT` | Porta do backend do desktop, usada em testes e diagnósticos | Não; padrão `4318` |
 | `LOCALNEURON_LICENSE_PUBLIC_KEY` | Chave pública para validar licença | Não; pode vir da configuração pública |
 | `LOCALNEURON_BILLING_URL` | URL do serviço de licença | Não no modo local |
@@ -208,7 +208,7 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 
 O arquivo [`.env.example`](../.env.example) lista essas variáveis com valores de exemplo. O app não lê `.env` automaticamente: exporte as variáveis no shell, no gerenciador de serviços ou no cofre de segredos do servidor.
 
-Os nomes `COLMEIA_*` são compatibilidade histórica. Uma migração pode manter esses nomes sem perder dados; uma futura versão pode adicionar aliases `LOCALNEURON_*` com migração explícita.
+Os nomes `COLMEIA_*` são compatibilidade histórica e continuam aceitos. Para cada um existe o alias `LOCALNEURON_*`, que prevalece se os dois estiverem definidos. Quando só o nome antigo está definido, o processo emite um aviso por variável e não mostra o valor. As pastas de dados não mudam de lugar.
 
 ## 7. Comandos de desenvolvimento e release
 

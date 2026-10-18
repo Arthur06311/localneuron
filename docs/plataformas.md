@@ -24,7 +24,7 @@ Novas instalações armazenam dados fora do aplicativo:
 
 O Mac que já usou a Alfa anterior mantém a pasta irmã `Colmeia-data/` quando ela existe. Nesta máquina, ela permanece ao lado de `LocalNeuron.app`. Nenhuma migração ou troca de senha é necessária. Não apague essa pasta ao atualizar. Para backup completo, feche o aplicativo e preserve toda a pasta de dados. O download do cofre na interface contém apenas as chaves cifradas.
 
-`COLMEIA_DESKTOP_DATA_DIR` permite escolher explicitamente outra pasta antes de abrir. Em desenvolvimento, o padrão continua `.desktop/`. O servidor de linha de comando usa `.data/` ou `COLMEIA_DATA_DIR`.
+`LOCALNEURON_DESKTOP_DATA_DIR` permite escolher explicitamente outra pasta antes de abrir. Em desenvolvimento, o padrão continua `.desktop/`. O servidor de linha de comando usa `.data/` ou `LOCALNEURON_DATA_DIR`. `COLMEIA_DESKTOP_DATA_DIR` e `COLMEIA_DATA_DIR` continuam aceitos.
 
 ## Reproduzir os pacotes
 
