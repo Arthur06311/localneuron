@@ -55,6 +55,44 @@ test('Gerenciador só carrega chaves instaladas, contexto curto e descarrega ins
   } finally {mock.restoreAll();rmSync(dir,{recursive:true,force:true});}
 });
 
+test('LM Studio configurável não reinicia se a 1234 já responde e usa a porta pedida ao iniciar',async()=>{
+  const dir=mkdtempSync(join(tmpdir(),'lms-port-'));
+  const events:{type:string;data:any}[]=[];
+  const quiet=new ModelLibrary(dir,async(type,data)=>{events.push({type,data});},null,undefined,()=>undefined,{} as NodeJS.ProcessEnv);
+  let starts=0;quiet.cli=async()=>{starts++;return {stdout:'',stderr:''} as any;};
+  mock.method(globalThis,'fetch',async(url:string)=>{
+    if(url.startsWith('http://127.0.0.1:8080/api/v1/models'))return new Response('',{status:404});
+    if(url.startsWith('http://127.0.0.1:8080/v1/models'))return Response.json({data:[{id:'outro'}]});
+    if(url.startsWith('http://127.0.0.1:1234/api/v1/models'))return Response.json({models:[{type:'llm',key:'qwen',loaded_instances:[]}]});
+    throw new Error('recusado');
+  });
+  try{
+    assert.deepEqual(await quiet.startEngine(),{ok:true});
+    assert.equal(starts,0);
+    mock.restoreAll();
+    mock.method(globalThis,'fetch',async(url:string)=>{
+      if(url.startsWith('http://127.0.0.1:8080/api/v1/models'))return new Response('',{status:404});
+      if(url.startsWith('http://127.0.0.1:8080/v1/models'))return Response.json({data:[{id:'outro'}]});
+      throw new Error('recusado');
+    });
+    await assert.rejects(quiet.startEngine(),/A porta 8080 já está ocupada por outro motor/);
+    assert.equal(starts,0);
+  }finally{mock.restoreAll();}
+  const custom=new ModelLibrary(dir,async(type,data)=>{events.push({type,data});},null,undefined,()=>undefined,{COLMEIA_LMSTUDIO_PORT:'9000'} as NodeJS.ProcessEnv);
+  const calls:string[][]=[];let started=false;
+  custom.cli=async(args:string[])=>{calls.push(args);started=true;return {stdout:'',stderr:''} as any;};
+  mock.method(globalThis,'fetch',async(url:string)=>{
+    if(!started)throw new Error('down');
+    if(url.startsWith('http://127.0.0.1:9000/api/v1/models'))return Response.json({models:[]});
+    throw new Error('down');
+  });
+  try{
+    assert.deepEqual(await custom.startEngine(),{ok:true});
+    assert.deepEqual(calls,[['server','start','--port','9000','--bind','127.0.0.1']]);
+    assert.equal(events.at(-2)?.data.port,9000);
+    assert.equal(events.at(-1)?.data.endpoint,'http://127.0.0.1:9000');
+  }finally{mock.restoreAll();rmSync(dir,{recursive:true,force:true});}
+});
 test('Arquivo alterado nunca é importado; downloads interrompidos são recuperáveis',async()=>{
   const dir=mkdtempSync(join(tmpdir(),'library-recover-'));
   try {

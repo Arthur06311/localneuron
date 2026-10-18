@@ -59,6 +59,8 @@ Para começar, prefira uma quantização Q4 de um modelo pequeno que caiba com f
 
 Não é preciso ter LM Studio aberto para os motores integrados. Depois da instalação dos motores e pesos, desative Internet no chat para usar inferência local sem pesquisa web. Downloads, conexões MCP e consulta de sites continuam dependendo de rede quando acionados.
 
+O LM Studio continua opcional. Se você iniciar o servidor dele, a detecção procura em `127.0.0.1` na porta configurada e também na porta padrão do LM Studio, **1234**. O padrão configurado é **8080**, que é a porta usada quando o LocalNeuron pede para o `lms` iniciar o servidor. Para mudar essa porta, defina `COLMEIA_LMSTUDIO_PORT`. O alias `LOCALNEURON_LMSTUDIO_PORT` também é aceito; se as duas existirem, vale a `COLMEIA_LMSTUDIO_PORT`.
+
 ## Chat e bots
 
 Converse em uma página ampla, com histórico, anexos, memória revisável e ajustes. As conversas podem ser organizadas pelo modelo ou bot. Ramificações permitem testar outra resposta preservando o contexto anterior.

@@ -22,7 +22,7 @@ Fastify + contratos Zod
         │
 Core ─── Juiz determinístico ─── autorização humana Ed25519
  │                 │
- │          Modelo local :8080 / estrutura manual
+ │          LM Studio (8080 ou 1234) / estrutura manual
  │                 │ texto não confiável, sem tool calling
  │          validação e commit transacional
  │

@@ -37,7 +37,7 @@ LM Studio é uma marca da Element Labs, Inc. O LocalNeuron não tem afiliação 
 
 ## Usar os dois
 
-Não é preciso escolher. O LocalNeuron não depende do LM Studio: os motores integrados funcionam sem ele aberto. Se você já tem modelos GGUF na pasta padrão do LM Studio (`~/.lmstudio/models`), o LocalNeuron os encontra e reutiliza sem copiar os pesos. A Minha API usa a porta 4320 e o servidor local do LM Studio costuma usar 1234 [L4], então os dois podem ficar instalados no mesmo computador. Cada modelo carregado ocupa sua própria memória.
+Não é preciso escolher. O LocalNeuron não depende do LM Studio: os motores integrados funcionam sem ele aberto. Se você já tem modelos GGUF na pasta padrão do LM Studio (`~/.lmstudio/models`), o LocalNeuron os encontra e reutiliza sem copiar os pesos. A Minha API usa a porta 4320. Para conversar com o LM Studio, o LocalNeuron procura a porta configurável (padrão 8080, variável `COLMEIA_LMSTUDIO_PORT`) e também a porta padrão 1234 [L4]. Os dois podem ficar instalados no mesmo computador. Cada modelo carregado ocupa sua própria memória.
 
 ## O que esta página não compara
 
