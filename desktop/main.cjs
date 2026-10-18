@@ -5,6 +5,7 @@ const { registerLocalAccess } = require('./local-access.cjs');
 const { registerFolderPicker } = require('./folders.cjs');
 const { allowsClipboard, allowsMicrophone } = require('./permissions.cjs');
 const { join, resolve } = require('node:path');
+const { localSetting, childServerEnv } = require('../scripts/local-env.cjs');
 const { mkdirSync, existsSync, readFileSync,writeFileSync } = require('node:fs');
 const root = resolve(__dirname, '..');
 const bundled = root === join(process.resourcesPath, 'app');
@@ -12,7 +13,7 @@ const bundled = root === join(process.resourcesPath, 'app');
 const legacy = process.platform === 'darwin' ? resolve(root,'../../../..','Colmeia-data') : '';
 const pointer=join(app.getPath('appData'),'LocalNeuron','workspace-location.json');
 let restored=null;try{const saved=JSON.parse(readFileSync(pointer,'utf8'));if(typeof saved.runtime==='string'&&existsSync(join(saved.runtime,'workspace','vault.enc.json')))restored=saved.runtime;}catch{}
-const runtime = process.env.COLMEIA_DESKTOP_DATA_DIR || restored || (bundled ? (legacy && existsSync(legacy) ? legacy : join(app.getPath('appData'), 'Colmeia')) : join(root, '.desktop'));
+const runtime = localSetting(process.env, 'DESKTOP_DATA_DIR') || restored || (bundled ? (legacy && existsSync(legacy) ? legacy : join(app.getPath('appData'), 'Colmeia')) : join(root, '.desktop'));
 mkdirSync(runtime, { recursive: true, mode: 0o700 });
 app.setPath('userData', join(runtime, 'browser'));
 app.setPath('sessionData', join(runtime, 'session'));
@@ -29,7 +30,7 @@ else app.whenReady().then(async () => {
   const dataDirectory = join(runtime, 'workspace');
   const sessionFile = join(dataDirectory, 'session.json');
   const started = Date.now();
-  backend = spawn(process.execPath, [join(root,'dist/src/server.js')], { cwd: root, env: { ...process.env, ELECTRON_RUN_AS_NODE: '1', COLMEIA_DATA_DIR: dataDirectory, COLMEIA_PORT: String(port) }, stdio: ['ignore','pipe','pipe','ipc'] });
+  backend = spawn(process.execPath, [join(root,'dist/src/server.js')], { cwd: root, env: { ...childServerEnv(process.env, dataDirectory, port), ELECTRON_RUN_AS_NODE: '1' }, stdio: ['ignore','pipe','pipe','ipc'] });
   registerComputer(backend);
   let output = '';
   backend.stderr.on('data', chunk => { output = (output + chunk.toString()).slice(-3000); });
