@@ -58,7 +58,7 @@ O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes esp
 
 1. `npm run desktop` inicia `desktop/main.cjs`.
 2. O processo principal cria uma pasta de dados do desktop e inicia o backend como processo filho.
-3. O backend recebe `COLMEIA_DATA_DIR` e `COLMEIA_PORT`; esses nomes antigos permanecem para compatibilidade com dados já existentes.
+3. O backend recebe `LOCALNEURON_DATA_DIR` e `LOCALNEURON_PORT`, e também os nomes antigos `COLMEIA_DATA_DIR` e `COLMEIA_PORT`, com o mesmo valor. Os nomes antigos permanecem para compatibilidade com dados já existentes.
 4. `desktop/preload.cjs` expõe somente pontes permitidas ao renderer.
 5. O renderer carrega a mesma interface de `public/` usada no modo navegador local.
 
@@ -191,9 +191,9 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 
 | Variável | Uso | Obrigatória |
 |---|---|---:|
-| `COLMEIA_DATA_DIR` | Dados do servidor local em modo navegador | Não; padrão `.data/` |
-| `COLMEIA_DESKTOP_DATA_DIR` | Dados do Electron | Não; padrão por plataforma |
-| `COLMEIA_PORT` | Porta do servidor local | Não; padrão `4317` |
+| `LOCALNEURON_DATA_DIR` / `COLMEIA_DATA_DIR` | Dados do servidor local em modo navegador. O nome `LOCALNEURON_*` tem precedência; o nome antigo vale quando o novo não está definido | Não; padrão `.data/` |
+| `LOCALNEURON_DESKTOP_DATA_DIR` / `COLMEIA_DESKTOP_DATA_DIR` | Dados do Electron, com a mesma precedência | Não; padrão por plataforma |
+| `LOCALNEURON_PORT` / `COLMEIA_PORT` | Porta do servidor local, com a mesma precedência | Não; padrão `4317` |
 | `LOCALNEURON_TEST_PORT` | Porta do backend do desktop, usada em testes e diagnósticos | Não; padrão `4318` |
 | `LOCALNEURON_LICENSE_PUBLIC_KEY` | Chave pública para validar licença | Não; pode vir da configuração pública |
 | `LOCALNEURON_BILLING_URL` | URL do serviço de licença | Não no modo local |
@@ -208,7 +208,7 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 
 O arquivo [`.env.example`](../.env.example) lista essas variáveis com valores de exemplo. O app não lê `.env` automaticamente: exporte as variáveis no shell, no gerenciador de serviços ou no cofre de segredos do servidor.
 
-Os nomes `COLMEIA_*` são compatibilidade histórica. Uma migração pode manter esses nomes sem perder dados; uma futura versão pode adicionar aliases `LOCALNEURON_*` com migração explícita.
+Os nomes `COLMEIA_DATA_DIR`, `COLMEIA_DESKTOP_DATA_DIR` e `COLMEIA_PORT` continuam válidos. Se a variável `LOCALNEURON_*` correspondente também estiver definida e não for vazia, ela prevalece. Uma instalação existente que só usa os nomes antigos não muda de pasta. O serviço de cobrança já usa somente nomes `LOCALNEURON_*` e `STRIPE_*`; não há alias `COLMEIA_*` para esses segredos.
 
 ## 7. Comandos de desenvolvimento e release
 
