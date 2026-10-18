@@ -222,7 +222,7 @@ npm start                      # servidor local em 127.0.0.1:4317
 node scripts/open.mjs          # abre uma sessão local autenticada
 npm run desktop                # app Electron
 npm run package                # build e pacote desktop
-node scripts/build-website.mjs # gera website/guide.html
+npm run site                 # gera website/guide.html e website/compare-lm-studio.html
 node --test tests/website.test.mjs
 ```
 
@@ -233,7 +233,7 @@ Os pesos de modelos, runtimes e caches não devem ser incluídos no clone. Use o
 Revalidação em 18/10/2026, sobre o commit `e5694ac` de `main` (a revisão da navegação é o commit anterior, `be40fb1`), com Node.js 24.22.0 em Linux x64:
 
 - `npm run build` passou.
-- `npm test` executa **143 testes**: 127 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 16 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 4, navegação 2, ícones de modelos 2 e acesso local 2).
+- `npm test` executa **153 testes**: 131 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 22 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 5, navegação 2, ícones de modelos 2, acesso local 2, alias de ambiente 4 e arquivos estáticos 1). A revalidação de 18/10/2026 contou 143; o quinto teste do site confere a versão visível com `package.json`.
 - A suíte compilada do backend passou com **127 de 127** testes.
 - Os cinco scripts Python de `tests/` (`resolve_bridge_test.py`, `mlx_protocol_test.py`, `linux_installer_test.py`, `linux_gui_installer_test.py` e `linux_native_package_test.py`) passaram. Eles não fazem parte do `npm test`.
 - A correção do PR #6 (commit `708cede`, já em `main`) faz o mock de `tests/local-access.test.mjs` implementar `safeStorage.getSelectedStorageBackend()`. Antes disso, os 2 testes falhavam no Linux, porque `desktop/local-access.cjs` só chama esse método quando `process.platform === 'linux'`.

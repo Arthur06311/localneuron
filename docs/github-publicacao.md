@@ -5,8 +5,8 @@ O repositório reúne o código do aplicativo e o site informativo em `website/`
 ## Atualizar o site
 
 1. Edite `website/index.html`, `website/style.css`, `website/app.js` ou os textos do guia em `docs/configuracao.md`.
-2. Execute `npm ci`, `node scripts/build-website.mjs` e `node --test tests/website.test.mjs`.
-3. Faça commit das alterações, inclusive `website/guide.html`, e envie para `main`.
+2. Execute `npm ci`, `npm run site` (gera `website/guide.html` e `website/compare-lm-studio.html`) e `node --test tests/website.test.mjs`.
+3. Faça commit das alterações, inclusive `website/guide.html` e `website/compare-lm-studio.html`, e envie para `main`.
 4. Execute `node scripts/publish-pages.mjs` para enviar apenas `website/` à branch `gh-pages`. Em Settings → Pages, a fonte é **Deploy from a branch → gh-pages → / (root)**.
 5. Confira a execução automática do GitHub Pages em Actions e abra a URL resultante. Somente uma execução bem-sucedida comprova publicação.
 

@@ -9,11 +9,11 @@ O documento, as legendas sobrepostas e o texto alternativo estão em **pt-BR**, 
 | **A: GIF do README** | cerca de 20 s (planos 1, 3, 5, 6 e 7; o 6 sai se passar do tamanho) | `README.md`, logo abaixo do título | GIF, 960 px de largura, 12 fps, sem áudio |
 | **B: vídeo do site** | cerca de 40 s (todos os planos) | `website/index.html`, no lugar ou ao lado de `product.png` | MP4 H.264 e WebM VP9, 1280 × 800, 30 fps, sem áudio, com poster |
 
-A mensagem a passar é esta: escolher um modelo, conversar offline, criar uma imagem e servir a mesma IA a outro app, tudo no próprio computador.
+A mensagem a transmitir é esta: escolher um modelo, conversar offline, criar uma imagem e servir a mesma IA a outro app, tudo no próprio computador.
 
 Todos os planos usam funções que existem no repositório (0.27): ilhas de navegação Trabalhar/Criar/Conectar, biblioteca **Modelos** com RAM estimada, botão **Usar offline · desativar Internet e Terminal** no Chat, **Imagem (Photo)** com stable-diffusion.cpp e **Minha API** com **Gerar chave** e **Preparar IA e ligar API →**.
 
-**Fica de fora de propósito:** EXO com duas máquinas (ainda não homologado), Editor/DaVinci (ponte validada só com SDK simulado) e Pro (cobrança não ativa). Não se deve mostrar o que ainda não foi validado.
+**Ficam de fora, de propósito:** EXO com duas máquinas (ainda não homologado), Editor/DaVinci (ponte validada só com SDK simulado) e Pro (cobrança não ativa). Não se deve mostrar o que ainda não foi validado.
 
 ## Storyboard (versão B, cerca de 40 s)
 
@@ -23,11 +23,11 @@ Todos os planos usam funções que existem no repositório (0.27): ilhas de nave
 | 2 | 0:03–0:09 | **Trabalhar → Modelos**, pesquisa “Qwen”, ficha de um modelo de texto pequeno Q4 marcado como integrado | Escrever “Qwen”, abrir a ficha e destacar RAM estimada, tamanho, licença e motor. Clicar **Baixar**; corte direto para o download concluído | Compare RAM, tamanho e licença antes de baixar · *download acelerado* |
 | 3 | 0:09–0:19 | **Chat** com o modelo selecionado | Clicar **Ferramentas → Usar offline · desativar Internet e Terminal**. Escrever: “Resuma em 3 tópicos por que rodar IA no próprio computador ajuda na privacidade.” A resposta aparece em streaming | Offline: a resposta é gerada no seu computador |
 | 4 | 0:19–0:25 | **Criar → Imagem (Photo)** com um perfil integrado já instalado | Escrever “Um farol ao entardecer, estilo aquarela”, clicar para gerar e cortar para o resultado | Imagem local com stable-diffusion.cpp · *tempo de geração cortado* |
-| 5 | 0:25–0:32 | **Conectar → Minha API** | Escolher a IA, opção “somente este computador”, **Gerar chave** (chave desfocada), **Preparar IA e ligar API →**. Aparece a URL base (porta 4320) e o modelo `local` | Minha API: compatível com OpenAI Chat Completions |
+| 5 | 0:25–0:32 | **Conectar → Minha API** | Escolher a IA, opção “Só neste computador”, **Gerar chave** (chave desfocada), **Preparar IA e ligar API →**. Aparece a URL base (porta 4320) e o modelo `local` | Minha API: compatível com OpenAI Chat Completions |
 | 6 | 0:32–0:37 | Terminal ao lado do app | Colar o comando `curl` (abaixo) e mostrar a resposta JSON | Outro app, a mesma IA local |
 | 7 | 0:37–0:40 | Cartão final escuro (`#080b0e`) com o ícone e o acento lima `#c8fc60` | Estático | Sua IA. Seu computador. · localneuron.ai · Alfa 0.27 |
 
-A **versão A (GIF)** junta os planos 1 (2 s), 3 (8 s), 5 (5 s), 6 (3 s) e 7 (2 s), cerca de 20 s. Se o GIF ficar acima do orçamento, corta-se o 6.
+A **versão A (GIF)** junta os planos 1 (2 s), 3 (8 s), 5 (5 s), 6 (3 s) e 7 (2 s), cerca de 20 s. Se o GIF ficar acima do orçamento, corte o plano 6.
 
 Comando do plano 6 (a chave vem de uma variável de ambiente e nunca aparece na tela):
 
@@ -37,7 +37,7 @@ curl -s http://127.0.0.1:4320/v1/chat/completions \
   -d '{"model":"local","messages":[{"role":"user","content":"Diga olá em uma frase."}]}'
 ```
 
-O formato `Authorization: Bearer <chave>` está confirmado em `src/gateway.ts`. Use a URL base exatamente como aparece no painel (no modo “somente este computador” deve ser o loopback). Pedidos com cabeçalho `Origin` de navegador são recusados (403), mas o `curl` não envia esse cabeçalho.
+O formato `Authorization: Bearer <chave>` está confirmado em `src/gateway.ts`. Use a URL base exatamente como aparece no painel (no modo “Só neste computador” deve ser o loopback). Pedidos com cabeçalho `Origin` de navegador são recusados (403), mas o `curl` não envia esse cabeçalho.
 
 ## Preparação antes de gravar
 
