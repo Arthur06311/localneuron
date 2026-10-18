@@ -12,6 +12,7 @@ import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
 import { CATALOG, catalogModel, catalogFiles, modelUrl, type CatalogModel } from './catalog.js';
 import { localModels, memoryStatus } from './model.js';
+import { embeddedEngine } from './embedded-engine.js';
 
 const exec = promisify(execFile);
 const GiB = 1024 ** 3;
@@ -106,7 +107,7 @@ export class ModelLibrary {
     const external=status.api === 'lmstudio' ? await this.inventory().catch(() => []) : [];
     const installed=[...nativeInstalled,...external];
     const disk = statfsSync(this.directory);
-    return { ...status, access_summary:this.access.summary(this.catalog),media_catalog:MEDIA_CATALOG, available:status.available||Boolean(this.runtime?.available)||Boolean(this.runtime?.exo.connected), integrated_available:Boolean(this.runtime?.available), mlx_available:Boolean(this.runtime?.mlxAvailable), integrated_loaded:this.runtime?.status().models||[], total_memory_bytes: totalmem(), platform: process.platform, architecture: process.arch, lms_available: Boolean(this.lms), busy: this.busy, disk_free_bytes: disk.bavail * disk.bsize, catalog: this.catalog.map(model => ({ ...model, availability:this.access.get(model),format: 'GGUF', context: 4096, tokenizer: 'Incluído no GGUF', source: `https://huggingface.co/${model.repo}/tree/${model.revision}`, job: this.jobs[model.id] ?? null, local_key: nativeInstalled.find(entry=>model.id.startsWith('hub-')?entry.path===modelPath(this.directory,model):(entry.path.endsWith('/'+model.file)||entry.path.endsWith('\\'+model.file)))?.key ?? installed.find(entry => entry.key === (this.jobs[model.id]?.model_key ?? `${model.id}-${model.revision.slice(0,12)}`))?.key ?? null, downloaded_file: existsSync(modelPath(this.directory,model)), fits_now: status.available_memory_bytes >= (model.ram_gib + 1) * GiB })), installed };
+    return { ...status, access_summary:this.access.summary(this.catalog),media_catalog:MEDIA_CATALOG, available:status.available||Boolean(this.runtime?.available)||Boolean(this.runtime?.exo.connected), integrated_available:Boolean(this.runtime?.available), mlx_available:Boolean(this.runtime?.mlxAvailable), integrated_loaded:this.runtime?.status().models||[], total_memory_bytes: totalmem(), platform: process.platform, architecture: process.arch, lms_available: Boolean(this.lms), busy: this.busy, disk_free_bytes: disk.bavail * disk.bsize, catalog: this.catalog.map(model => ({ ...model, availability:this.access.get(model),embedded:embeddedEngine({...model,format:'GGUF'},{platform:process.platform,arch:process.arch}),format: 'GGUF', context: 4096, tokenizer: 'Incluído no GGUF', source: `https://huggingface.co/${model.repo}/tree/${model.revision}`, job: this.jobs[model.id] ?? null, local_key: nativeInstalled.find(entry=>model.id.startsWith('hub-')?entry.path===modelPath(this.directory,model):(entry.path.endsWith('/'+model.file)||entry.path.endsWith('\\'+model.file)))?.key ?? installed.find(entry => entry.key === (this.jobs[model.id]?.model_key ?? `${model.id}-${model.revision.slice(0,12)}`))?.key ?? null, downloaded_file: existsSync(modelPath(this.directory,model)), fits_now: status.available_memory_bytes >= (model.ram_gib + 1) * GiB })), installed };
   }
   async startEngine() {
     if(this.runtime?.available)return {ok:true,engine:'integrated'};
