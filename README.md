@@ -1,3 +1,5 @@
+[![CI](https://github.com/Arthur06311/localneuron/actions/workflows/ci.yml/badge.svg)](https://github.com/Arthur06311/localneuron/actions/workflows/ci.yml)
+
 <p align="center"><img src="website/app-icon.png" width="88" alt="LocalNeuron"></p>
 <h1 align="center">LocalNeuron</h1>
 <p align="center"><strong>Sua IA. Seu computador.</strong><br>Baixe modelos, converse, crie e conecte ferramentas em um espaço local.</p>
