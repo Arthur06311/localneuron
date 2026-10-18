@@ -1,4 +1,4 @@
-# Componentes de terceiros — LocalNeuron 0.13
+# Componentes de terceiros
 
 O LocalNeuron integra motores e bibliotecas independentes. Seus autores e licenças continuam aplicáveis. Os arquivos LICENSE/COPYING incluídos nos pacotes npm e nos runtimes acompanham a distribuição.
 
@@ -23,8 +23,8 @@ Integração com [exo-explore/exo](https://github.com/exo-explore/exo), versão 
 
 @modelcontextprotocol/sdk — MIT. Cliente oficial de Model Context Protocol para HTTP/stdio e OAuth. Código: https://github.com/modelcontextprotocol/typescript-sdk . Licença incluída em licenses/LICENSE.mcp-sdk.
 
-## Optional music engine and video editor
+## Motor de música e editor de vídeo opcionais
 
-ACE-Step 1.5 (MIT, copyright 2026 ACEStep) is downloaded separately by the music installer. Pinned source and model revisions are documented in docs/creative-studio.md. Its original license is retained in the installed source directory. uv and Python are installed in an isolated engine directory with their upstream dependencies and licenses.
+O ACE-Step 1.5 (MIT, copyright 2026 ACEStep) é baixado separadamente pelo instalador de música. As revisões fixadas do código e dos modelos estão em docs/creative-studio.md. A licença original permanece no diretório de código instalado. uv e Python são instalados num diretório isolado do motor, com as dependências e as licenças de origem.
 
-The DaVinci Resolve bridge calls the SDK provided by a separately installed DaVinci Resolve Studio. No Blackmagic binaries or SDK files are redistributed.
+A ponte do DaVinci Resolve chama o SDK fornecido por um DaVinci Resolve Studio instalado à parte. Nenhum binário nem arquivo de SDK da Blackmagic é redistribuído.

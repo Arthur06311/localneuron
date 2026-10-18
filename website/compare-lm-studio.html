@@ -95,7 +95,7 @@
 <p><strong>O LocalNeuron tende a atender melhor</strong> se você quer texto, voz, imagem, vídeo e música no mesmo espaço local, em português; quer dividir um modelo entre Macs com EXO; quer compartilhar uma IA com chave e cota por cliente pela Minha API; ou quer bots especialistas com permissões e revisão de ferramentas.</p>
 </section>
 <section><h2 id="usar-os-dois">Usar os dois</h2>
-<p>Não é preciso escolher. O LocalNeuron não depende do LM Studio: os motores integrados funcionam sem ele aberto. Se você já tem modelos GGUF na pasta padrão do LM Studio (<code>~/.lmstudio/models</code>), o LocalNeuron os encontra e reutiliza sem copiar os pesos. A Minha API usa a porta 4320 e o servidor local do LM Studio costuma usar 1234 <a href="#fonte-l4">[L4]</a>, então os dois podem ficar instalados no mesmo computador. Cada modelo carregado ocupa sua própria memória.</p>
+<p>Não é preciso escolher. O LocalNeuron não depende do LM Studio: os motores integrados funcionam sem ele aberto. Se você já tem modelos GGUF na pasta padrão do LM Studio (<code>~/.lmstudio/models</code>), o LocalNeuron os encontra e reutiliza sem copiar os pesos. A Minha API usa a porta 4320. Para o LocalNeuron usar o servidor do LM Studio, ele precisa estar em <code>127.0.0.1:8080</code>: o app consulta essa porta e, ao preparar o motor externo, executa <code>lms server start --port 8080 --bind 127.0.0.1</code>. A documentação do LM Studio cita 1234 como porta usual da API compatível <a href="#fonte-l4">[L4]</a>; um servidor só nessa porta não é detectado. Os dois podem ficar instalados no mesmo computador. Cada modelo carregado ocupa sua própria memória.</p>
 </section>
 <section><h2 id="o-que-esta-pagina-nao-compara">O que esta página não compara</h2>
 <ul>
@@ -106,7 +106,7 @@
 <p>Viu um erro sobre o LM Studio ou sobre o LocalNeuron? <a href="https://github.com/Arthur06311/localneuron/issues">Abra um issue</a> com a fonte, e esta página será corrigida.</p>
 </section>
 <section><h2 id="fontes">Fontes</h2>
-<p>Sobre o LocalNeuron: <a href="https://github.com/Arthur06311/localneuron#readme">README</a>, <a href="https://Arthur06311.github.io/localneuron/guide.html">guia de configuração</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/minha-api.md">Minha API</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/exo.md">Rede EXO</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/mlx-independente.md">MLX independente</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/creative-studio.md">Estúdio criativo</a> e <a href="https://github.com/Arthur06311/localneuron/blob/main/THIRD_PARTY.md">componentes de terceiros</a>.</p>
+<p>Sobre o LocalNeuron: <a href="https://github.com/Arthur06311/localneuron#readme">README</a>, <a href="https://localneuron.ai/guide.html">guia de configuração</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/minha-api.md">Minha API</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/exo.md">Rede EXO</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/mlx-independente.md">MLX independente</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/creative-studio.md">Estúdio criativo</a> e <a href="https://github.com/Arthur06311/localneuron/blob/main/THIRD_PARTY.md">componentes de terceiros</a>.</p>
 <p>Sobre o LM Studio (consultado em 18/10/2026):</p>
 <ul>
 <li id="fonte-l1">[L1] <a href="https://lmstudio.ai/docs/app/system-requirements">System Requirements</a></li>

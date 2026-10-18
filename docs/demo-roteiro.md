@@ -25,7 +25,7 @@ Todos os planos usam funções que existem no repositório (0.27): ilhas de nave
 | 4 | 0:19–0:25 | **Criar → Imagem (Photo)** com um perfil integrado já instalado | Escrever “Um farol ao entardecer, estilo aquarela”, clicar para gerar e cortar para o resultado | Imagem local com stable-diffusion.cpp · *tempo de geração cortado* |
 | 5 | 0:25–0:32 | **Conectar → Minha API** | Escolher a IA, opção “somente este computador”, **Gerar chave** (chave desfocada), **Preparar IA e ligar API →**. Aparece a URL base (porta 4320) e o modelo `local` | Minha API: compatível com OpenAI Chat Completions |
 | 6 | 0:32–0:37 | Terminal ao lado do app | Colar o comando `curl` (abaixo) e mostrar a resposta JSON | Outro app, a mesma IA local |
-| 7 | 0:37–0:40 | Cartão final escuro (`#080b0e`) com o ícone e o acento lima `#c8fc60` | Estático | Sua IA. Seu computador. · Arthur06311.github.io/localneuron · Alfa 0.27 |
+| 7 | 0:37–0:40 | Cartão final escuro (`#080b0e`) com o ícone e o acento lima `#c8fc60` | Estático | Sua IA. Seu computador. · localneuron.ai · Alfa 0.27 |
 
 A **versão A (GIF)** junta os planos 1 (2 s), 3 (8 s), 5 (5 s), 6 (3 s) e 7 (2 s), cerca de 20 s. Se o GIF ficar acima do orçamento, corta-se o 6.
 
@@ -42,7 +42,7 @@ O formato `Authorization: Bearer <chave>` está confirmado em `src/gateway.ts`. 
 ## Preparação antes de gravar
 
 - **Máquina:** Mac Apple Silicon, onde a validação real é mais completa. O binário visual exige macOS 26+.
-- **Espaço de demonstração limpo.** Use `COLMEIA_DESKTOP_DATA_DIR` apontando para uma pasta nova. Sem conversas pessoais, sem caminhos com o seu nome, sem a licença Pro de teste (o selo deve mostrar **GRÁTIS**) e sem tokens MCP.
+- **Espaço de demonstração limpo.** Use `LOCALNEURON_DESKTOP_DATA_DIR` apontando para uma pasta nova (`COLMEIA_DESKTOP_DATA_DIR` continua aceito). Sem conversas pessoais, sem caminhos com o seu nome, sem a licença Pro de teste (o selo deve mostrar **GRÁTIS**) e sem tokens MCP.
 - Deixe já baixados o modelo de texto pequeno e o perfil de imagem. O plano 2 mostra só o clique e o corte.
 - Ative o modo escuro para combinar com o site. Desligue as notificações, esconda a dock e a área de trabalho, e use escala de interface a 100 %.
 - Faça cada plano várias vezes e grave-os separadamente. É mais fácil cortar e acelerar assim.
