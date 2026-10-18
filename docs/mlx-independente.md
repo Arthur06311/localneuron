@@ -1,15 +1,15 @@
-# MLX independente — Colmeia 0.6
+# MLX independente
 
-O pacote Mac inclui Python portátil 3.12.14, MLX 0.32.2 e MLX LM 0.31.3. São bibliotecas abertas usadas diretamente; não há código, executável ou serviço de inferência copiado do LM Studio. O carregador, serviço HTTP local, streaming, integração com ferramentas, cancelamento, limites e interface são da Colmeia. MLX continua sendo a biblioteca da Apple; não foi reescrito do zero nem houve treinamento de novos pesos.
+O pacote Mac inclui Python portátil 3.12.14, MLX 0.32.2 e MLX LM 0.31.3. São bibliotecas abertas usadas diretamente; não há código, executável ou serviço de inferência copiado do LM Studio. O carregador, serviço HTTP local, streaming, integração com ferramentas, cancelamento, limites e interface são do LocalNeuron. MLX continua sendo a biblioteca da Apple; não foi reescrito do zero nem houve treinamento de novos pesos.
 
 ## Usar sem outro programa
 
-1. Abra a Colmeia e desbloqueie com sua senha habitual.
-2. Escolha **Qwen3.5 9B MLX 4bit · MLX integrado · Colmeia**. A cópia independente deste modelo já foi preparada na pasta de dados. A origem foi preservada.
+1. Abra o LocalNeuron e desbloqueie com sua senha habitual.
+2. Baixe um modelo MLX na biblioteca ou use **Adicionar MLX**.
 3. Em Ferramentas, clique em **Usar offline**. Isso desativa Internet e Terminal. Você ainda pode conversar, consultar o computador e trabalhar nos arquivos da pasta escolhida.
 4. Envie sua mensagem. O próprio aplicativo carrega o modelo; LM Studio, Python instalado pelo usuário, conta de provedor e assinatura não são necessários.
 
-O modelo e o aplicativo precisam estar no disco. A instalação/obtenção de outros modelos exige internet ou a transferência de arquivos completos por outro meio. Para incluir outro MLX, **Adicionar MLX** recebe a pasta com config.json, tokenizer e pesos .safetensors, verifica partes e copia os arquivos necessários para a Colmeia. Não copia nem executa arquivos Python do modelo. Pode levar tempo e exige espaço para a cópia.
+O modelo e o aplicativo precisam estar no disco. A instalação/obtenção de outros modelos exige internet ou a transferência de arquivos completos por outro meio. Para incluir outro MLX, **Adicionar MLX** recebe a pasta com config.json, tokenizer e pesos .safetensors, verifica partes e copia os arquivos necessários para a pasta de modelos do LocalNeuron. Não copia nem executa arquivos Python do modelo. Pode levar tempo e exige espaço para a cópia.
 
 ## Offline e ferramentas
 

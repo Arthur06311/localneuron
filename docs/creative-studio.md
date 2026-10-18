@@ -1,4 +1,4 @@
-# Estúdio criativo · LocalNeuron 0.26
+# Estúdio criativo
 
 ## Editor / DaVinci Resolve Studio
 
