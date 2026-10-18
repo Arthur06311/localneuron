@@ -17,7 +17,7 @@ body:
     id: versao
     attributes:
       label: Versão do LocalNeuron
-      description: "Você encontra a versão em Ajustes/Sobre ou no nome do pacote baixado (ex.: 0.27.0, 0.27.0-linux.3)."
+      description: "Você encontra a versão em Preferências → Atualizações ou no nome do pacote baixado (ex.: 0.27.0, 0.27.0-linux.3)."
       placeholder: "0.27.0"
     validations:
       required: true
@@ -28,11 +28,11 @@ body:
       label: Sistema operacional
       options:
         - macOS (Apple Silicon)
-        - macOS (Intel)
+        - macOS (Intel) (não suportado)
         - Windows x64
-        - Windows ARM64
+        - Windows ARM64 (não suportado)
         - Linux x64
-        - Linux ARM64
+        - Linux ARM64 (não suportado)
         - Outro
     validations:
       required: true
@@ -54,7 +54,7 @@ body:
         - DMG (macOS)
         - ZIP portátil (Windows)
         - Instalador Linux (.run / ZIP com interface)
-        - Pacote nativo Linux (DEB/RPM)
+        - Pacote nativo Linux (DEB ou Arch .pkg.tar.gz)
         - Pelo código-fonte (npm)
         - Outro / não sei
     validations:
@@ -135,7 +135,7 @@ body:
       label: Mensagem de erro / logs
       description: |
         Cole a mensagem de erro e o trecho relevante dos logs **já anonimizados**.
-        No Linux: execute `"${XDG_DATA_HOME:-$HOME/.local/share}/localneuron/start" --diagnose`; os logs ficam em `${XDG_STATE_HOME:-~/.local/state}/localneuron/`.
+        No Linux, nos pacotes nativos (DEB ou Arch): execute `/opt/localneuron/launch.sh --diagnose`. No instalador antigo por usuário: `"${XDG_DATA_HOME:-$HOME/.local/share}/localneuron/start" --diagnose`. Os logs ficam em `${XDG_STATE_HOME:-~/.local/state}/localneuron/`.
         O conteúdo será formatado automaticamente como código.
       render: shell
     validations:
