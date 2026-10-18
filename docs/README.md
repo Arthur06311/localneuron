@@ -34,6 +34,7 @@ Este índice separa a documentação por assunto. Os caminhos do código continu
 - [Operação da assinatura](subscription-operations.md): serviço Pro e Stripe.
 - [Verificação](verification.md): evidências e limites de validação.
 - [Notas da 0.27](localneuron-0.27.md): acesso lembrado, equipe e avisos de atualização.
+- [Licença do aplicativo](../LICENSE): código proprietário, de código fechado; todos os direitos reservados.
 - [Licenças de terceiros](../THIRD_PARTY.md).
 
 ## Dados de catálogo

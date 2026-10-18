@@ -153,4 +153,4 @@ tests/        Testes automatizados e fixtures sintéticas
 
 Para reportar um problema, informe versão, sistema, modelo/motor, passos e mensagem de erro. Remova tokens, prompts privados e caminhos pessoais. Consulte [CONTRIBUTING.md](CONTRIBUTING.md) e [SECURITY.md](SECURITY.md).
 
-O LocalNeuron é software proprietário, de código fechado, com todos os direitos reservados. Os componentes de terceiros e os modelos mantêm suas próprias licenças.
+O LocalNeuron é software proprietário, de código fechado, com todos os direitos reservados. Copyright (c) 2026 Arthur Pinheiro Kriger. All rights reserved. Não há permissão de cópia, modificação nem redistribuição do código próprio sem autorização escrita do titular. Os termos estão em [LICENSE](LICENSE). Os componentes de terceiros e os modelos mantêm suas próprias licenças.
