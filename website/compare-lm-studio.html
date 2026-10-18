@@ -1,0 +1,126 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b0e"><title>LocalNeuron e LM Studio — comparação</title><meta name="description" content="Comparação factual entre LocalNeuron e LM Studio: motores, voz, imagem, música, EXO, Minha API, MCP, sistemas e licença, com fontes."><link rel="icon" href="./app-icon.png"><link rel="stylesheet" href="./style.css"></head><body><a class="skip" href="#main">Ir ao conteúdo</a><header class="guide-header"><a class="brand" href="./"><img src="./app-icon.png" width="34" height="34" alt="">LocalNeuron</a><nav aria-label="Navegação"><a href="./guide.html">Guia / Setup</a><a href="./#download">Downloads</a><a href="https://github.com/Arthur06311/localneuron">GitHub ↗</a></nav></header><div class="guide-shell"><nav class="guide-nav" aria-label="Nesta página"><a href="#resumo">Resumo</a><a href="#tabela-comparativa">Tabela comparativa</a><a href="#quando-cada-um-faz-mais-sentido">Quando cada um faz mais sentido</a><a href="#usar-os-dois">Usar os dois</a><a href="#o-que-esta-pagina-nao-compara">O que esta página não compara</a><a href="#fontes">Fontes</a></nav><main class="guide-main" id="main"><p class="eyebrow">COMPARAÇÃO / PORTUGUÊS</p><section aria-label="Introdução"><h1 id="localneuron-e-lm-studio-o-que-muda-entre-eles">LocalNeuron e LM Studio: o que muda entre eles</h1>
+<p>LocalNeuron 0.27 · Alfa. Comparação factual, conferida em 18/10/2026. O LM Studio é um aplicativo maduro e muito usado para rodar modelos locais; esta página não pretende dizer qual é “melhor”, e sim mostrar para que cada um foi pensado, para você escolher — ou usar os dois.</p>
+<p>LM Studio é uma marca da Element Labs, Inc. O LocalNeuron não tem afiliação com o LM Studio. As informações sobre o LM Studio vêm da documentação pública dele (fontes no fim da página) e podem mudar a qualquer momento.</p>
+</section>
+<section><h2 id="resumo">Resumo</h2>
+<ul>
+<li><strong>Os dois</strong> rodam modelos de texto localmente com llama.cpp (GGUF) e, no Mac Apple Silicon, com MLX; funcionam offline depois que os modelos foram baixados; conectam servidores MCP; e oferecem um endpoint compatível com OpenAI.</li>
+<li><strong>O LM Studio</strong> é focado em LLMs e no desenvolvedor: API ampla (Chat Completions, Responses, Embeddings, compatibilidade Anthropic), SDKs Python/TypeScript, CLI <code>lms</code>, modo headless (<code>llmster</code>), acesso entre dispositivos com LM Link e interface em vários idiomas. É multiplataforma.</li>
+<li><strong>O LocalNeuron</strong> é um espaço de trabalho local mais amplo, em versão alfa: além de texto, reúne motores próprios de voz, imagem/vídeo e música, rede EXO para dividir um modelo entre computadores, <strong>Minha API</strong> com chaves e cotas por cliente, bots especialistas e uma ponte para o DaVinci Resolve Studio. A interface do app está em português.</li>
+</ul>
+</section>
+<section><h2 id="tabela-comparativa">Tabela comparativa</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>LocalNeuron 0.27 (alfa)</th>
+<th>LM Studio</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sistemas</td>
+<td>macOS Apple Silicon, Windows x64, Linux x64 (DEB e pacote Arch). Mac Intel não é atendido. Windows: interface e backend validados; motores/GPU pendentes.</td>
+<td>macOS 14+ com Apple Silicon, Windows x64 (AVX2) e ARM, Linux x64 e ARM64 (AppImage; changelog também cita <code>.deb</code>). Mac Intel não é atendido. <a href="#fonte-l1">[L1]</a><a href="#fonte-l9">[L9]</a></td>
+</tr>
+<tr>
+<td>Texto GGUF</td>
+<td>llama.cpp b10809 incluído no pacote. Mac usa Metal; os pacotes Windows/Linux incluídos usam CPU.</td>
+<td>llama.cpp, com runtimes que podem ser baixados e trocados sem atualizar o app; o changelog cita aceleração por CUDA, Vulkan e ROCm. <a href="#fonte-l2">[L2]</a><a href="#fonte-l3">[L3]</a><a href="#fonte-l9">[L9]</a></td>
+</tr>
+<tr>
+<td>MLX (Apple Silicon)</td>
+<td>Runtime próprio embarcado (Python 3.12.14, MLX 0.32.2, MLX LM 0.31.3), com o processo de inferência isolado da rede pelo sandbox do macOS.</td>
+<td>Suporte a MLX em Macs Apple Silicon. <a href="#fonte-l2">[L2]</a></td>
+</tr>
+<tr>
+<td>Voz</td>
+<td>Transcrição local com whisper.cpp (perfis tiny, base, small e large-v3-turbo). Síntese de voz em português com sherpa-onnx/Piper (voz Faber), usada na narração do estúdio.</td>
+<td>Transcrição de voz offline citada no plano gratuito; entrada de voz documentada no Bionic. <a href="#fonte-l7">[L7]</a><a href="#fonte-l8">[L8]</a> Síntese de voz nativa: não documentado em 18/10/2026.</td>
+</tr>
+<tr>
+<td>Imagem e vídeo</td>
+<td>stable-diffusion.cpp com perfis integrados (SD 1.5 para imagem, Wan 2.1 para vídeo), projetos, cenas e exportação. O binário visual do Mac exige macOS 26+.</td>
+<td>Geração de imagem nativa: não documentado em 18/10/2026. Modelos de visão podem receber imagens no Chat Completions. <a href="#fonte-l4">[L4]</a></td>
+</tr>
+<tr>
+<td>Música</td>
+<td>ACE-Step 1.5 opcional, instalado em pasta própria (25 GiB livres), faixas de 10 a 120 s. Geração real de 10 s verificada no Mac Apple Silicon.</td>
+<td>Geração de música: não documentado em 18/10/2026.</td>
+</tr>
+<tr>
+<td>Vários computadores</td>
+<td><strong>Rede EXO</strong> (EXO 1.0.71): divide um modelo de texto compatível entre máquinas. Instalação gerenciada em Mac com macOS 26.2+; outros sistemas podem controlar um EXO existente. Teste com duas máquinas físicas ainda pendente.</td>
+<td><strong>LM Link</strong>: rede criptografada de ponta a ponta (com Tailscale) para usar modelos de outro dispositivo seu, inclusive pelo app Locally no iPhone; até 5 dispositivos no plano gratuito. <a href="#fonte-l6">[L6]</a><a href="#fonte-l7">[L7]</a> Dividir um único modelo entre máquinas: não documentado em 18/10/2026.</td>
+</tr>
+<tr>
+<td>API local</td>
+<td><strong>Minha API</strong>: servidor separado (porta 4320), desligado por padrão, compatível com OpenAI Chat Completions para texto, com streaming. Uma chave por cliente, cotas e revogação; acesso só local ou em rede privada/VPN. Não implementa ferramentas, imagens, áudio, Responses nem Embeddings.</td>
+<td>Endpoints compatíveis com OpenAI (<code>/v1/models</code>, <code>/v1/responses</code>, <code>/v1/chat/completions</code> com texto e imagens, <code>/v1/embeddings</code>, <code>/v1/completions</code>), compatibilidade Anthropic (<code>/v1/messages</code>), REST API própria, SDKs Python e TypeScript e CLI <code>lms</code>. Tokens de API opcionais (0.4.0+). <a href="#fonte-l4">[L4]</a><a href="#fonte-l5">[L5]</a><a href="#fonte-l10">[L10]</a></td>
+</tr>
+<tr>
+<td>MCP</td>
+<td>Cliente MCP para servidores HTTP e stdio, OAuth com PKCE quando o servidor suporta, tokens guardados no cofre, escolha de quais bots podem usar cada conexão e revisão das chamadas.</td>
+<td>Host MCP desde a 0.3.17, servidores locais e remotos via <code>mcp.json</code> ou botão “Add to LM Studio”; MCP também via API. <a href="#fonte-l3">[L3]</a><a href="#fonte-l5">[L5]</a></td>
+</tr>
+<tr>
+<td>Agente e ferramentas</td>
+<td>Assistente com informações do computador, pesquisa e leitura web, arquivos de uma pasta escolhida e terminal opcional, sempre com revisão antes de alterar arquivos ou executar comandos. Bots pessoais e profissionais com equipe ativada em um clique.</td>
+<td>Bionic, app separado de agente para código, pesquisa e documentos, com modelos locais, remotos (LM Link) ou na nuvem do LM Studio. <a href="#fonte-l8">[L8]</a> Conversa com documentos (RAG) offline no LM Studio. <a href="#fonte-l2">[L2]</a><a href="#fonte-l11">[L11]</a></td>
+</tr>
+<tr>
+<td>Funções extras</td>
+<td>Ponte para DaVinci Resolve Studio (cortes propostos por metadados, nova timeline após revisão); catálogo com mais de mil entradas (inclui variantes), RAM estimada, hashes e downloads retomáveis.</td>
+<td>Busca e download de modelos do Hugging Face, presets, decodificação especulativa, requisições paralelas, modo headless (<code>llmster</code>). <a href="#fonte-l2">[L2]</a><a href="#fonte-l3">[L3]</a></td>
+</tr>
+<tr>
+<td>Idioma da interface</td>
+<td>Português (o site tem 7 idiomas).</td>
+<td>Interface em vários idiomas (“LM Studio in your language”). <a href="#fonte-l3">[L3]</a></td>
+</tr>
+<tr>
+<td>Preço e licença</td>
+<td>Download e execução de modelos locais compatíveis sem custo e sem conta. Plano Pro opcional ainda sem cobrança pública. Software proprietário, de código fechado, com todos os direitos reservados. Os componentes de terceiros e os modelos mantêm suas próprias licenças.</td>
+<td>Gratuito para uso pessoal e no trabalho. <a href="#fonte-l12">[L12]</a> Planos pagos opcionais (Bionic+ e Pro) para modelos na nuvem. <a href="#fonte-l7">[L7]</a> Software proprietário, licenciado para uso pessoal ou interno. <a href="#fonte-l13">[L13]</a></td>
+</tr>
+<tr>
+<td>Maturidade</td>
+<td>Alfa. Pacote Mac com assinatura ad hoc, sem notarização Apple; sem suporte universal a modelos ou hardware.</td>
+<td>Atualizações frequentes (0.4.26 em 13/10/2026). <a href="#fonte-l9">[L9]</a></td>
+</tr>
+</tbody></table></div>
+</section>
+<section><h2 id="quando-cada-um-faz-mais-sentido">Quando cada um faz mais sentido</h2>
+<p><strong>O LM Studio tende a atender melhor</strong> se você quer principalmente rodar e servir LLMs; precisa de uma API ampla (Responses, Embeddings, Anthropic) ou de SDKs; quer usar seus modelos em vários dispositivos com LM Link; usa Windows/Linux com GPU; ou precisa de uma interface em outro idioma.</p>
+<p><strong>O LocalNeuron tende a atender melhor</strong> se você quer texto, voz, imagem, vídeo e música no mesmo espaço local, em português; quer dividir um modelo entre Macs com EXO; quer compartilhar uma IA com chave e cota por cliente pela Minha API; ou quer bots especialistas com permissões e revisão de ferramentas.</p>
+</section>
+<section><h2 id="usar-os-dois">Usar os dois</h2>
+<p>Não é preciso escolher. O LocalNeuron não depende do LM Studio: os motores integrados funcionam sem ele aberto. Se você já tem modelos GGUF na pasta padrão do LM Studio (<code>~/.lmstudio/models</code>), o LocalNeuron os encontra e reutiliza sem copiar os pesos. A Minha API usa a porta 4320 e o servidor local do LM Studio costuma usar 1234 <a href="#fonte-l4">[L4]</a>, então os dois podem ficar instalados no mesmo computador. Cada modelo carregado ocupa sua própria memória.</p>
+</section>
+<section><h2 id="o-que-esta-pagina-nao-compara">O que esta página não compara</h2>
+<ul>
+<li><strong>Velocidade.</strong> Não publicamos benchmarks. O desempenho depende do modelo, da quantização, do contexto e do hardware; compare no seu próprio computador.</li>
+<li><strong>Qualidade das respostas.</strong> Ela depende dos pesos do modelo, não do aplicativo. Nenhum dos dois torna um modelo mais inteligente.</li>
+<li><strong>Todas as funções.</strong> Os dois mudam com frequência. Confira a documentação oficial de cada um antes de decidir.</li>
+</ul>
+<p>Viu um erro sobre o LM Studio ou sobre o LocalNeuron? <a href="https://github.com/Arthur06311/localneuron/issues">Abra um issue</a> com a fonte, e esta página será corrigida.</p>
+</section>
+<section><h2 id="fontes">Fontes</h2>
+<p>Sobre o LocalNeuron: <a href="https://github.com/Arthur06311/localneuron#readme">README</a>, <a href="https://Arthur06311.github.io/localneuron/guide.html">guia de configuração</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/minha-api.md">Minha API</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/exo.md">Rede EXO</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/mlx-independente.md">MLX independente</a>, <a href="https://github.com/Arthur06311/localneuron/blob/main/docs/creative-studio.md">Estúdio criativo</a> e <a href="https://github.com/Arthur06311/localneuron/blob/main/THIRD_PARTY.md">componentes de terceiros</a>.</p>
+<p>Sobre o LM Studio (consultado em 18/10/2026):</p>
+<ul>
+<li id="fonte-l1">[L1] <a href="https://lmstudio.ai/docs/app/system-requirements">System Requirements</a></li>
+<li id="fonte-l2">[L2] <a href="https://lmstudio.ai/docs/app">Welcome to LM Studio Docs</a></li>
+<li id="fonte-l3">[L3] <a href="https://lmstudio.ai/docs/app/offline">Offline Operation</a> e <a href="https://lmstudio.ai/docs/app/mcp">Use MCP Servers</a></li>
+<li id="fonte-l4">[L4] <a href="https://lmstudio.ai/docs/developer/openai-compat">OpenAI Compatibility Endpoints</a></li>
+<li id="fonte-l5">[L5] <a href="https://lmstudio.ai/docs/developer">Developer Docs</a></li>
+<li id="fonte-l6">[L6] <a href="https://lmstudio.ai/docs/lmlink">LM Link</a></li>
+<li id="fonte-l7">[L7] <a href="https://lmstudio.ai/pricing">Pricing</a></li>
+<li id="fonte-l8">[L8] <a href="https://lmstudio.ai/docs/bionic">Bionic</a></li>
+<li id="fonte-l9">[L9] <a href="https://lmstudio.ai/changelog/lmstudio">Changelog</a></li>
+<li id="fonte-l10">[L10] <a href="https://lmstudio.ai/docs/developer/core/authentication">Authentication</a></li>
+<li id="fonte-l11">[L11] <a href="https://lmstudio.ai/docs/app/basics/rag">Chat with Documents</a></li>
+<li id="fonte-l12">[L12] <a href="https://lmstudio.ai/blog/free-for-work">Free to use at Home, and now also at Work</a></li>
+<li id="fonte-l13">[L13] <a href="https://lmstudio.ai/app-terms">App Terms of Service</a></li>
+</ul>
+</section><p class="guide-top-links"><a href="./#download">Baixar o LocalNeuron</a><a href="./guide.html">Guia de configuração</a><a href="https://github.com/Arthur06311/localneuron/issues">Corrigir uma informação</a><a href="#main">Voltar ao início ↑</a></p></main></div><footer><a class="brand" href="./">LocalNeuron</a><p>Sua IA. Seu computador.</p><a href="./">Idioma e privacidade</a><span>0.27.0 · Alfa</span></footer></body></html>
