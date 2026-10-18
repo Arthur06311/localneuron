@@ -45,11 +45,20 @@ test('Resposta excessiva de modelo é recusada antes de criar arquivo',async()=>
 });
 
 test('Detecção usa a porta configurada e também encontra o LM Studio na 1234',async()=>{
+  const warnings:string[]=[];
+  const secret='9000';
   assert.equal(lmStudioPort({} as NodeJS.ProcessEnv),8080);
-  assert.equal(lmStudioPort({COLMEIA_LMSTUDIO_PORT:'9000'} as NodeJS.ProcessEnv),9000);
+  assert.equal(lmStudioPort({COLMEIA_LMSTUDIO_PORT:secret} as NodeJS.ProcessEnv,message=>warnings.push(message)),9000);
+  assert.equal(warnings.length,1);
+  assert.match(warnings[0],/COLMEIA_LMSTUDIO_PORT está descontinuada\. Use LOCALNEURON_LMSTUDIO_PORT/);
+  assert.equal(warnings[0].includes(secret),false);
+  assert.equal(lmStudioPort({COLMEIA_LMSTUDIO_PORT:secret} as NodeJS.ProcessEnv,message=>warnings.push(message)),9000);
+  assert.equal(warnings.length,1);
   assert.equal(lmStudioPort({LOCALNEURON_LMSTUDIO_PORT:'9000'} as NodeJS.ProcessEnv),9000);
-  assert.equal(lmStudioPort({COLMEIA_LMSTUDIO_PORT:'9000',LOCALNEURON_LMSTUDIO_PORT:'1234'} as NodeJS.ProcessEnv),9000);
+  assert.equal(lmStudioPort({COLMEIA_LMSTUDIO_PORT:'9000',LOCALNEURON_LMSTUDIO_PORT:'1234'} as NodeJS.ProcessEnv),1234);
+  assert.equal(lmStudioPort({LOCALNEURON_LMSTUDIO_PORT:'',COLMEIA_LMSTUDIO_PORT:'7000'} as NodeJS.ProcessEnv),7000);
   assert.throws(()=>lmStudioPort({COLMEIA_LMSTUDIO_PORT:'zero'} as NodeJS.ProcessEnv),/COLMEIA_LMSTUDIO_PORT inválida/);
+  assert.throws(()=>lmStudioPort({LOCALNEURON_LMSTUDIO_PORT:'zero',COLMEIA_LMSTUDIO_PORT:'8080'} as NodeJS.ProcessEnv),/LOCALNEURON_LMSTUDIO_PORT inválida/);
   const urls:string[]=[];
   mock.method(globalThis,'fetch',async(url:string)=>{
     urls.push(url);
@@ -79,7 +88,7 @@ test('Detecção usa a porta configurada e também encontra o LM Studio na 1234'
     const preferred=await localModels({} as NodeJS.ProcessEnv);
     assert.equal(preferred.api,'lmstudio');assert.equal(preferred.endpoint,'http://127.0.0.1:1234');assert.deepEqual(preferred.models,['test-local']);
     seen.length=0;
-    const configured=await localModels({COLMEIA_LMSTUDIO_PORT:'9000',LOCALNEURON_LMSTUDIO_PORT:'1234'} as NodeJS.ProcessEnv);
+    const configured=await localModels({COLMEIA_LMSTUDIO_PORT:'8080',LOCALNEURON_LMSTUDIO_PORT:'9000'} as NodeJS.ProcessEnv);
     assert.equal(configured.api,'lmstudio');assert.equal(configured.endpoint,'http://127.0.0.1:1234');
     assert.ok(seen.some(url=>url.startsWith('http://127.0.0.1:9000/')));
     assert.ok(!seen.some(url=>url.startsWith('http://127.0.0.1:8080/')));

@@ -78,7 +78,7 @@ test('LM Studio configurável não reinicia se a 1234 já responde e usa a porta
     await assert.rejects(quiet.startEngine(),/A porta 8080 já está ocupada por outro motor/);
     assert.equal(starts,0);
   }finally{mock.restoreAll();}
-  const custom=new ModelLibrary(dir,async(type,data)=>{events.push({type,data});},null,undefined,()=>undefined,{COLMEIA_LMSTUDIO_PORT:'9000'} as NodeJS.ProcessEnv);
+  const custom=new ModelLibrary(dir,async(type,data)=>{events.push({type,data});},null,undefined,()=>undefined,{LOCALNEURON_LMSTUDIO_PORT:'9000',COLMEIA_LMSTUDIO_PORT:'8080'} as NodeJS.ProcessEnv);
   const calls:string[][]=[];let started=false;
   custom.cli=async(args:string[])=>{calls.push(args);started=true;return {stdout:'',stderr:''} as any;};
   mock.method(globalThis,'fetch',async(url:string)=>{

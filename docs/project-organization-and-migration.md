@@ -194,8 +194,8 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 | `COLMEIA_DATA_DIR` | Dados do servidor local em modo navegador | Não; padrão `.data/` |
 | `COLMEIA_DESKTOP_DATA_DIR` | Dados do Electron | Não; padrão por plataforma |
 | `COLMEIA_PORT` | Porta do servidor local | Não; padrão `4317` |
-| `COLMEIA_LMSTUDIO_PORT` | Porta em que o LM Studio é iniciado. A detecção também tenta 1234 | Não; padrão `8080` |
-| `LOCALNEURON_LMSTUDIO_PORT` | Alias de `COLMEIA_LMSTUDIO_PORT` | Não |
+| `LOCALNEURON_LMSTUDIO_PORT` | Porta em que o LM Studio é iniciado. A detecção também tenta 1234. Prevalece sobre o nome antigo | Não; padrão `8080` |
+| `COLMEIA_LMSTUDIO_PORT` | Nome antigo da porta do LM Studio. Sozinha, emite um aviso sem mostrar o valor | Não |
 | `LOCALNEURON_TEST_PORT` | Porta do backend do desktop, usada em testes e diagnósticos | Não; padrão `4318` |
 | `LOCALNEURON_LICENSE_PUBLIC_KEY` | Chave pública para validar licença | Não; pode vir da configuração pública |
 | `LOCALNEURON_BILLING_URL` | URL do serviço de licença | Não no modo local |
