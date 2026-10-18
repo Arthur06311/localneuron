@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
 const root=fileURLToPath(new URL('../website/',import.meta.url));
 test('Pages assets and anchors work under a repository subpath',async()=>{
- for(const name of ['index.html','guide.html']){
+ for(const name of ['index.html','guide.html','compare-lm-studio.html']){
   const html=await readFile(resolve(root,name),'utf8');
   assert.match(html,/<main\b/);assert.match(html,/<h1\b/);
   for(const [,href] of html.matchAll(/(?:href|src)="([^"]+)"/g)){
@@ -24,7 +24,7 @@ test('Downloads have fixed release URLs, size and SHA-256',async()=>{
  for(const item of manifest.files){assert.match(item.sha256,/^[a-f0-9]{64}$/);assert(item.bytes>1000000&&item.bytes<2*1024**3);assert.equal(typeof item.available,'boolean');assert.equal(item.href,`https://github.com/Arthur06311/localneuron/releases/download/v${manifest.version}/${item.filename}`);}
 });
 test('Pages uses a static allowlist without local administrative APIs',async()=>{
- assert.deepEqual((await readdir(root)).sort(),['.nojekyll','CNAME','app-icon.png','app.js','guide.html','index.html','locale.js','product.png','downloads.json','releases.json','style.css'].sort());
+ assert.deepEqual((await readdir(root)).sort(),['.nojekyll','CNAME','app-icon.png','app.js','compare-lm-studio.html','guide.html','index.html','locale.js','product.png','downloads.json','releases.json','style.css'].sort());
  const js=await readFile(resolve(root,'app.js'),'utf8');
  assert(js.includes("fetch('./downloads.json'"));assert(!js.includes('/api/locale'));assert(!js.includes('/api/releases'));assert(!/127\.0\.0\.1|localhost|\/v1\//.test(js));
 });
