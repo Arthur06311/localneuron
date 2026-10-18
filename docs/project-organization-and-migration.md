@@ -1,0 +1,258 @@
+# Organização do projeto e plano de migração
+
+**Projeto:** LocalNeuron  
+**Estado atual:** alfa 0.27.0  
+**Objetivo deste documento:** deixar claro o que existe, onde cada parte mora, como o aplicativo inicia, o que pode ser migrado e o que precisa ser recriado no destino.
+
+> Neste relatório, interpretei “migrar para o recebidor” como preparar o projeto para outro repositório, outra máquina ou um servidor de destino. O LocalNeuron foi construído primeiro como aplicativo local; uma migração para servidor central exige decisões adicionais de autenticação, banco, filas e isolamento.
+
+## 1. Resultado da organização
+
+A organização foi feita sem mover os arquivos de código. Isso é intencional: os imports TypeScript, os caminhos do Electron, os scripts de empacotamento e os dados das versões anteriores dependem dos diretórios atuais.
+
+O que foi acrescentado nesta revisão:
+
+- `docs/README.md`, um índice para encontrar a documentação por assunto.
+- Este relatório, com o mapa técnico, a estratégia de migração e a lista de pendências.
+- Links para o índice e o relatório no README principal.
+
+A navegação da interface também já está organizada em quatro ilhas, implementadas em `public/index.html`, `public/navigation.css` e `public/app.js`:
+
+| Ilha | Páginas |
+|---|---|
+| Trabalhar | Chat, Minha equipe, Modelos |
+| Criar | Imagem, Vídeo, Música, Editor |
+| Conectar | Conexões, Rede EXO, Minha API |
+| Conta | Central Pro, Meu plano, Configuração guiada, Preferências |
+
+## 2. Mapa de diretórios
+
+| Diretório | Responsabilidade | Entra no Git? | Vai para o usuário/servidor? |
+|---|---|---:|---:|
+| `src/` | Serviço local TypeScript, contratos, persistência, motores, APIs e regras de produto | Sim | Compilado para `dist/` |
+| `desktop/` | Processo principal Electron, preload, permissões, controle local, música e ponte do DaVinci | Sim | Sim, dentro do pacote desktop |
+| `public/` | Interface do aplicativo: HTML, CSS, JavaScript, ícones e mascote | Sim | Sim |
+| `runtime/` | Manifestos e protocolos dos runtimes; pesos e binários grandes ficam fora do Git | Sim, manifestos | Runtimes são baixados/preparados por plataforma |
+| `scripts/` | Build do site, download de runtime, verificação, empacotamento e publicação | Sim | Usado no CI e na máquina de release |
+| `tests/` | Testes TypeScript, JavaScript, Python e fixtures | Sim | Não é necessário no instalador |
+| `docs/` | Guias atuais, histórico de versões, operação e publicação | Sim | Publicado como referência |
+| `website/` | Site estático e guia público do GitHub Pages | Sim | Publicado na branch `gh-pages` |
+| `releases/` | Artefatos locais de release e checksums | Parcial; assets grandes não devem ser commitados | GitHub Releases |
+| `licenses/` | Licenças e avisos de componentes distribuídos | Sim | Sim |
+| `dist/` | Saída do TypeScript | Não; gerado por `npm run build` | Sim, no pacote de execução |
+| `.data/`, `.desktop/`, `models/`, `local-engines/` | Dados do usuário, banco, cofre, arquivos e modelos baixados | Não | Copiados apenas em uma migração de dados autorizada |
+
+O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes específicos da plataforma. Isso evita enviar conversas, tokens, pesos de modelos ou chaves privadas para o repositório.
+
+## 3. Como o aplicativo funciona
+
+### Execução no navegador local
+
+1. `npm run build` compila `src/**/*.ts` para `dist/`.
+2. `npm start` executa `dist/src/server.js`.
+3. O servidor Fastify escuta por padrão em `127.0.0.1:4317`.
+4. `scripts/open.mjs` lê a sessão local e abre a interface autenticada.
+5. `src/server.ts` serve `public/`, valida as requisições e conecta os módulos de domínio.
+
+### Execução no Electron
+
+1. `npm run desktop` inicia `desktop/main.cjs`.
+2. O processo principal cria uma pasta de dados do desktop e inicia o backend como processo filho.
+3. O backend recebe `COLMEIA_DATA_DIR` e `COLMEIA_PORT`; esses nomes antigos permanecem para compatibilidade com dados já existentes.
+4. `desktop/preload.cjs` expõe somente pontes permitidas ao renderer.
+5. O renderer carrega a mesma interface de `public/` usada no modo navegador local.
+
+### Núcleo e persistência
+
+- `src/core.ts` controla estado, versões e eventos.
+- `src/store.ts` usa PGlite/PostgreSQL embarcado para o espaço local.
+- `src/vault.ts` protege chaves e segredos com cofre cifrado.
+- `src/lock.ts` impede dois processos usando a mesma pasta.
+- `src/types.ts` define os contratos de estado, tarefas, chats, eventos e identidades.
+- `src/policy.ts` e `src/agent-tools.ts` limitam ferramentas, permissões e aprovações.
+
+### Inferência e motores
+
+- `src/runtime.ts`: processo de texto integrado, llama.cpp e MLX.
+- `src/inference.ts`: opções, contexto, streaming e formato de geração.
+- `src/model-library.ts`, `src/catalog.ts` e `src/catalog-access.ts`: catálogo, memória, acesso, downloads, hashes e importação.
+- `src/mlx-models.ts`: inspeção e preparação de pastas MLX.
+- `src/aux-runtime.ts`, `src/aux-catalog.ts` e `src/media-catalog.ts`: imagem, vídeo e transcrição.
+- `src/music.ts` e `desktop/music-server.py`: ACE-Step em ambiente separado.
+- `src/pro-media.ts`: voz e recursos de mídia Pro.
+- `src/exo.ts` e `src/exo-install.ts`: descoberta, configuração e preparação de rede EXO.
+
+### Chat, bots e ferramentas
+
+- `src/chat.ts` e `src/chat-context.ts`: conversas, anexos, histórico e contexto.
+- `src/agent.ts`: ciclo do assistente e personalidade opcional.
+- `src/experience.ts`, `src/experience-jobs.ts` e `src/bot-playbooks.ts`: wizard, perfis, bots pessoais/profissionais e salas de colaboração.
+- `src/web-tools.ts`: pesquisa e leitura web com validação de destino.
+- `src/connections.ts`: servidores MCP por HTTP/stdio, OAuth e revogação.
+- `src/computer-control.ts` e `desktop/computer.cjs`: controle de computador no desktop, quando habilitado.
+- `src/gateway.ts`: Minha API, desligada por padrão e destinada a rede privada.
+
+### Criação, Pro e cobrança
+
+- `src/editor.ts` e `desktop/resolve-bridge.py`: plano de edição e ponte para o DaVinci Resolve Studio.
+- `src/pro.ts` e `src/pro-documents.ts`: projetos, tarefas, templates, exportações, backups e diagnósticos Pro.
+- `src/subscription.ts`: licença, recursos premium e verificação local.
+- `src/billing-service.ts`: serviço separado para Stripe, preço mensal validado em BRL e emissão de licença assinada.
+- `subscription-config.json`: configuração pública; não contém chave privada.
+
+### Interface
+
+- `public/index.html`: shell da aplicação e páginas navegáveis.
+- `public/app.js`: estado, roteamento, sessão e carregamento dos módulos.
+- `public/chat.js`, `public/studio.js`, `public/photo.js`, `public/voice.js`, `public/exo.js`, `public/pro.js` e demais módulos: comportamento de cada área.
+- `public/*.css`: estilos base, tema, experiência, estúdio, Pro, acessibilidade e navegação.
+- `public/model-identities.js` e `public/model-icons.js`: identificação editorial e ícones dos modelos.
+- `public/mascot*.png`, `public/mascot.js` e `public/mascot.css`: mascote 2D e estados visuais.
+- `public/navigation.css`: ilhas de navegação responsivas criadas na última revisão.
+
+## 4. O que já foi implementado
+
+As entregas acumuladas no histórico público do GitHub foram agrupadas abaixo para facilitar a transferência de contexto:
+
+### Produto e experiência
+
+- Onboarding com senha, wizard repetível, perfil e recomendações.
+- Chat local com streaming, Markdown, anexos, histórico, ramificações, memória revisável, esforço e internet opcional.
+- Bots pessoais e de trabalho, templates por especialidade, tarefas e colaboração entre bots.
+- Catálogo amplo com busca Hugging Face, finalidade, licença, RAM estimada, tamanho, revisão e hashes.
+- Studio para Photo, Video, Música, voz, transcrição e Editor.
+- Mascote 2D com diferentes estados.
+- Pro com projetos, fila, modelos, templates, documentos, exportação, backups e diagnóstico.
+- Navegação atual por quatro ilhas clicáveis.
+
+### Motores e integrações
+
+- llama.cpp para GGUF e MLX independente para Apple Silicon.
+- whisper.cpp/sherpa-onnx para voz, stable-diffusion.cpp para perfis de mídia e ACE-Step opcional para música.
+- EXO para conectar máquinas compatíveis e preparar execução distribuída.
+- Minha API compatível com Chat Completions em rede privada.
+- MCP por HTTP/stdio com OAuth quando suportado.
+- Controle de computador no desktop com permissões explícitas.
+- Ponte de edição para DaVinci Resolve Studio.
+
+### Distribuição e operação
+
+- Site público e guia de configuração no GitHub Pages.
+- Domínio `localneuron.ai` preparado por CNAME/DNS.
+- Download por plataforma e releases com SHA-256.
+- Instalador Linux com preparação, verificação, abertura automática e cancelamento.
+- Pacotes nativos Linux DEB e Arch em preparação/publicação conforme a release.
+- Fluxo de atualização com manifesto e aviso no app.
+- Diagnóstico para o problema do Linux em que o Electron era aberto antes da extração terminar.
+
+## 5. O que deve ser migrado
+
+### Para outro repositório Git
+
+Migrar o histórico e o código-fonte, mantendo:
+
+- `src/`, `desktop/`, `public/`, `runtime/`, `scripts/`, `tests/`, `docs/`, `website/`, `licenses/`;
+- `package.json`, `package-lock.json`, `tsconfig.json`, `.gitignore`, `subscription-config.json`;
+- workflows e arquivos de release que estiverem no repositório de origem;
+- o histórico Git, para preservar decisões, versões e auditoria técnica.
+
+Não migrar pelo Git:
+
+- `.data/`, `.desktop/`, `Colmeia-data/`, `models/`, `local-engines/`, `runtime/*` baixados;
+- `.env`, certificados, chaves Stripe, chaves de assinatura e tokens Hugging Face;
+- conversas, backups pessoais ou arquivos privados.
+
+### Para outra máquina mantendo o espaço do usuário
+
+1. Feche o aplicativo e confirme que não há servidor ou motor rodando.
+2. Faça uma cópia completa da pasta de dados, incluindo banco, cofre, workspace e artefatos.
+3. Instale Node.js 24+ apenas se for executar o modo de desenvolvimento; instaladores prontos não precisam dele.
+4. Reinstale o pacote para a plataforma correta.
+5. Restaure a pasta de dados em um local novo e defina `COLMEIA_DESKTOP_DATA_DIR` ou `COLMEIA_DATA_DIR` quando necessário.
+6. Abra com a mesma senha; não copie somente `vault.enc.json` sem o banco correspondente.
+7. Refaça os downloads de runtime específicos da plataforma e valide os hashes.
+
+### Para um servidor de produção
+
+O código atual não é um serviço multiusuário pronto para ficar exposto diretamente. Antes de migrar para um servidor, é necessário:
+
+- autenticação por usuário e organização, em vez de uma sessão local;
+- banco PostgreSQL gerenciado e migrações versionadas;
+- armazenamento de objetos para arquivos e modelos;
+- fila de jobs e limites por usuário;
+- proxy HTTPS, rate limiting, observabilidade e rotação de segredos;
+- isolamento de cada execução de modelo e de cada ferramenta MCP;
+- política de retenção e exclusão de dados;
+- processo de assinatura/notarização e atualização segura dos clientes.
+
+O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do app local. As variáveis necessárias são `LOCALNEURON_BILLING_DB`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` e `LOCALNEURON_BILLING_PUBLIC_URL`. Elas nunca devem entrar no Git ou no bundle do desktop.
+
+## 6. Configuração e variáveis importantes
+
+| Variável | Uso | Obrigatória |
+|---|---|---:|
+| `COLMEIA_DATA_DIR` | Dados do servidor local em modo navegador | Não; padrão `.data/` |
+| `COLMEIA_DESKTOP_DATA_DIR` | Dados do Electron | Não; padrão por plataforma |
+| `COLMEIA_PORT` | Porta do servidor local | Não; padrão `4317` |
+| `LOCALNEURON_TEST_PORT` | Porta temporária dos testes/desktop | Apenas testes |
+| `LOCALNEURON_LICENSE_PUBLIC_KEY` | Chave pública para validar licença | Não; pode vir da configuração pública |
+| `LOCALNEURON_BILLING_URL` | URL do serviço de licença | Não no modo local |
+| `LOCALNEURON_BILLING_DB` | Banco do serviço de cobrança | Somente billing |
+| `STRIPE_SECRET_KEY` | Chave secreta Stripe | Somente billing |
+| `STRIPE_WEBHOOK_SECRET` | Assinatura de webhook | Somente billing |
+| `STRIPE_MONTHLY_PRICE_ID` | Preço mensal do Pro | Somente billing |
+| `HF_HOME` / `HF_HUB_CACHE` | Cache de modelos e música | Opcional |
+
+Os nomes `COLMEIA_*` são compatibilidade histórica. Uma migração pode manter esses nomes sem perder dados; uma futura versão pode adicionar aliases `LOCALNEURON_*` com migração explícita.
+
+## 7. Comandos de desenvolvimento e release
+
+```sh
+npm ci                         # instala dependências fixadas
+npm run build                  # compila TypeScript
+npm test                       # build + testes TypeScript/JavaScript
+python3 tests/resolve_bridge_test.py
+node scripts/verify.mjs        # verifica artefatos e configuração
+npm start                      # servidor local em 127.0.0.1:4317
+node scripts/open.mjs          # abre uma sessão local autenticada
+npm run desktop                # app Electron
+npm run package                # build e pacote desktop
+node scripts/build-website.mjs # gera website/guide.html
+node --test tests/website.test.mjs
+```
+
+Os pesos de modelos, runtimes e caches não devem ser incluídos no clone. Use os scripts `fetch-runtime.py`, `fetch-mlx.py`, `fetch-tools.py` e `fetch-voice-node.py` com o alvo da plataforma.
+
+## 8. Estado de validação e riscos
+
+Na última revisão da navegação, o build TypeScript passou, os testes do site/navegação passaram e a suíte compilada do backend passou com 127 testes. O repositório público está limpo e sincronizado com `origin/main` no commit `be40fb1`.
+
+Ainda precisam de validação em máquinas físicas antes de chamar o produto de pronto para consumo geral:
+
+1. execução nativa completa em Windows e Linux, incluindo motores e GPU;
+2. duas máquinas físicas no EXO;
+3. notarização e atualização assinada no macOS;
+4. instalação real e edição no DaVinci Resolve Studio;
+5. cobrança Stripe em ambiente de produção com webhook real;
+6. recuperação de backup real e migração de uma instalação existente;
+7. revisão visual em monitores pequenos e acessibilidade com leitor de tela.
+
+O principal risco de uma migração para servidor é tratar um aplicativo local com dados e motores locais como se fosse um backend multiusuário. A separação correta é: o repositório guarda código e manifestos; o desktop guarda dados e motores; o site público guarda apenas informação; o billing guarda licenças e pagamentos; e um futuro servidor precisa de isolamento próprio.
+
+## 9. Checklist de transferência
+
+- [ ] Confirmar o destino: outro Git remoto, outra máquina ou servidor multiusuário.
+- [ ] Fazer backup do repositório e preservar o histórico Git.
+- [ ] Configurar Node.js 24+, Python 3 e dependências de sistema no destino.
+- [ ] Copiar apenas dados autorizados e manter segredos fora do Git.
+- [ ] Recriar `.env` a partir de um cofre de segredos, nunca de um commit.
+- [ ] Executar `npm ci`, `npm run build`, `npm test` e os testes Python.
+- [ ] Preparar runtimes para a plataforma do destino.
+- [ ] Validar o modo de inicialização escolhido: navegador, Electron ou serviço.
+- [ ] Verificar portas, firewall, HTTPS e rede privada antes de habilitar Minha API/EXO.
+- [ ] Publicar releases com hashes e confirmar os downloads no site.
+- [ ] Registrar a nova versão, limitações e evidências no relatório de release.
+
+## 10. Próxima melhoria recomendada
+
+Antes de uma migração para servidor, eu priorizaria três entregas: um sistema de migrações de dados versionado, um arquivo `.env.example` sem segredos e uma pipeline CI que rode build, testes e verificação de artefatos em cada pull request. Isso reduz o risco de levar uma versão incompleta, um banco incompatível ou uma configuração secreta para o destino.

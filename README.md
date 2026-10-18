@@ -69,6 +69,7 @@ As versões, origens e hashes ficam em `runtime/*manifest.json` e nos instalador
 - [Ferramentas do assistente](docs/motor-e-assistente.md) · [Plataformas](docs/plataformas.md)
 - [Arquitetura](docs/architecture.md) · [API administrativa local](docs/api.md)
 - [Operação da assinatura](docs/subscription-operations.md) · [Publicar o site e versões](docs/github-publicacao.md)
+- [Índice da documentação](docs/README.md) · [Mapa do projeto e relatório de migração](docs/project-organization-and-migration.md)
 
 O site público explica as configurações. As mudanças de senha, modelos, API e conexões são feitas **dentro do aplicativo local**, não no GitHub Pages.
 
