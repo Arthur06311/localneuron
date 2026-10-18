@@ -59,6 +59,8 @@ Para começar, prefira uma quantização Q4 de um modelo pequeno que caiba com f
 
 Não é preciso ter LM Studio aberto para os motores integrados. Depois da instalação dos motores e pesos, desative Internet no chat para usar inferência local sem pesquisa web. Downloads, conexões MCP e consulta de sites continuam dependendo de rede quando acionados.
 
+Se o pacote não trouxer o motor integrado da arquitetura, o app pode usar o LM Studio como motor externo. Essa integração usa somente `127.0.0.1:8080`: ao preparar o motor, o app executa `lms server start --port 8080 --bind 127.0.0.1`. Um servidor do LM Studio deixado na porta 1234 não é detectado. Se a porta 8080 já estiver ocupada por outro programa, a preparação é recusada.
+
 ## Chat e bots
 
 Converse em uma página ampla, com histórico, anexos, memória revisável e ajustes. As conversas podem ser organizadas pelo modelo ou bot. Ramificações permitem testar outra resposta preservando o contexto anterior.
@@ -173,9 +175,13 @@ Novas instalações usam as pastas de dados do sistema:
 - Windows: `%APPDATA%/Colmeia/`
 - Linux: `${XDG_CONFIG_HOME:-~/.config}/Colmeia/`
 
-Instalações antigas podem manter a pasta irmã `Colmeia-data/`. O nome legado é preservado para compatibilidade. Em desenvolvimento, o serviço usa `.data/` e o desktop `.desktop/`. Para abrir outra pasta, por exemplo ao restaurar um backup, defina `COLMEIA_DESKTOP_DATA_DIR` antes de abrir o app desktop, ou `COLMEIA_DATA_DIR` no modo navegador.
+Instalações antigas podem manter a pasta irmã `Colmeia-data/`. O nome legado é preservado para compatibilidade. Em desenvolvimento, o serviço usa `.data/` e o desktop `.desktop/`.
 
-Para backup completo, feche o app e copie a pasta inteira. O backup somente do cofre não inclui conversas, projetos e modelos. Use a exportação de conversas e de projetos quando quiser compartilhar um trabalho específico. Não publique sua pasta de dados no GitHub.
+Para restaurar um backup, o caminho principal no aplicativo desktop é o botão **Abrir uma pasta de dados existente**, na tela de acesso. Selecione a pasta pai, a que contém `workspace/` (`workspace/vault.enc.json`). O app reabre esse espaço e deixa a pasta atual intacta. A variável `COLMEIA_DESKTOP_DATA_DIR`, se definida antes de abrir, aponta para essa mesma pasta pai e tem prioridade sobre a pasta escolhida no botão.
+
+No modo navegador o botão não aparece. Defina `COLMEIA_DATA_DIR` com a pasta que contém `vault.enc.json` diretamente: a `workspace` de um backup do desktop, ou a própria `.data` se o espaço nasceu no modo navegador. Não aponte para a pasta pai do desktop.
+
+Para backup completo, feche o app e copie a pasta pai inteira no desktop. No modo navegador, copie a pasta de dados inteira. O backup somente do cofre não inclui conversas, projetos e modelos. Use a exportação de conversas e de projetos quando quiser compartilhar um trabalho específico. Não publique sua pasta de dados no GitHub.
 
 ## Solução de problemas
 

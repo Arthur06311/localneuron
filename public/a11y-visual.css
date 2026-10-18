@@ -1,0 +1,43 @@
+/* Shell contrast, focus and narrow layout. Loaded last so it wins over older nav rules. */
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.nav-island-trigger:focus-visible,.nav-island-menu button:focus-visible,.theme-switch button:focus-visible{outline:3px solid var(--focus)!important;outline-offset:2px;box-shadow:inset 0 0 0 2px var(--focus)}
+.sidebar nav button.nav-island-trigger>span:nth-child(2),
+body.chat-page .sidebar nav button.nav-island-trigger>span:nth-child(2){display:flex!important;width:auto!important;min-width:0;font-size:var(--text-sm)}
+.sidebar nav button.nav-island-trigger strong,
+body.chat-page .sidebar nav button.nav-island-trigger strong{display:block;width:auto;font-size:var(--text-sm);line-height:var(--leading-tight)}
+.sidebar nav button.nav-island-trigger .nav-island-icon,
+body.chat-page .sidebar nav button.nav-island-trigger .nav-island-icon{display:grid!important;width:28px}
+.subhead{font-size:var(--text-md);line-height:var(--leading-body);color:var(--muted)}
+@media(max-width:720px){
+ body,body.chat-page{display:flex;flex-direction:column;height:100dvh;min-height:100dvh;overflow:hidden;padding-top:0}
+ .sidebar,body.chat-page .sidebar{position:relative;inset:auto;width:100%;height:auto;max-height:none;overflow:visible;flex:0 0 auto;z-index:30;padding:8px 8px 10px;border-right:0;border-bottom:1px solid var(--border)}
+ .sidebar nav,body.chat-page .sidebar nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));height:auto;overflow:visible;gap:4px;margin:0}
+ .sidebar nav button.nav-island-trigger,
+ body.chat-page .sidebar nav button.nav-island-trigger{display:flex!important;flex-direction:column!important;width:100%;min-width:0;min-height:68px;align-items:center;justify-content:center}
+ .sidebar nav button.nav-island-trigger .nav-island-icon,
+ .sidebar nav button.nav-island-trigger>span:nth-child(2),
+ body.chat-page .sidebar nav button.nav-island-trigger .nav-island-icon,
+ body.chat-page .sidebar nav button.nav-island-trigger>span:nth-child(2){display:flex!important;width:auto!important}
+ .sidebar nav button.nav-island-trigger strong,
+ body.chat-page .sidebar nav button.nav-island-trigger strong{display:block!important;width:auto!important;font-size:var(--text-xs)!important;text-align:center;white-space:normal}
+ .sidebar nav button.nav-island-trigger .nav-island-chevron,
+ body.chat-page .sidebar nav button.nav-island-trigger .nav-island-chevron{display:block!important;width:auto!important}
+ main,body.chat-page main{margin-left:0;flex:1;min-height:0;height:auto;overflow:auto}
+ body.chat-page main{height:auto}
+ .topbar,body.chat-page .topbar{height:auto;min-height:44px;flex-wrap:wrap;row-gap:6px;padding:8px 12px}
+ .theme-switch{flex-wrap:wrap}
+ .sidebar .sidebar-bottom,
+ body.chat-page .sidebar .sidebar-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;width:100%;margin:8px 0 0;padding:8px 4px 0;border-top:1px solid var(--border);text-align:left;line-height:var(--leading-tight)}
+ .sidebar .sidebar-bottom p,
+ body.chat-page .sidebar .sidebar-bottom p{display:none}
+ .sidebar .sidebar-bottom #ram-sidebar,
+ body.chat-page .sidebar .sidebar-bottom #ram-sidebar{font-size:var(--text-xs);color:var(--muted)}
+ .sidebar .sidebar-bottom .quiet,
+ body.chat-page .sidebar .sidebar-bottom .quiet{display:inline-flex;align-items:center;gap:6px;margin:0;min-height:40px;padding:6px 8px;color:var(--ink);font-size:var(--text-xs)}
+}
+@media(max-width:420px){
+ .mascot-faces{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .neuron-mascot,.neuron-mascot-frame,.neuron-mascot-glyph,.nav-island,.nav-island-chevron,button,.premium-paths button{animation:none!important;transition:none!important}
+}
