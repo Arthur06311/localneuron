@@ -173,7 +173,7 @@ Novas instalações usam as pastas de dados do sistema:
 - Windows: `%APPDATA%/Colmeia/`
 - Linux: `${XDG_CONFIG_HOME:-~/.config}/Colmeia/`
 
-Instalações antigas podem manter a pasta irmã `Colmeia-data/`. O nome legado é preservado para compatibilidade. Em desenvolvimento, o serviço usa `.data/` e o desktop `.desktop/`.
+Instalações antigas podem manter a pasta irmã `Colmeia-data/`. O nome legado é preservado para compatibilidade. Em desenvolvimento, o serviço usa `.data/` e o desktop `.desktop/`. Para abrir outra pasta, por exemplo ao restaurar um backup, defina `COLMEIA_DESKTOP_DATA_DIR` antes de abrir o app desktop, ou `COLMEIA_DATA_DIR` no modo navegador.
 
 Para backup completo, feche o app e copie a pasta inteira. O backup somente do cofre não inclui conversas, projetos e modelos. Use a exportação de conversas e de projetos quando quiser compartilhar um trabalho específico. Não publique sua pasta de dados no GitHub.
 
