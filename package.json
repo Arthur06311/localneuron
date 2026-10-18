@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.3.16",
-    "@modelcontextprotocol/sdk": "1.30.0",
+    "@modelcontextprotocol/sdk": "1.32.1",
     "cheerio": "1.2.0",
     "docx": "9.7.1",
     "dompurify": "3.4.15",
