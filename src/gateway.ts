@@ -3,8 +3,25 @@ import { createHash, randomBytes, timingSafeEqual, randomUUID } from 'node:crypt
 import { readFileSync, writeFileSync, renameSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { networkInterfaces } from 'node:os';
+import { createRequire } from 'node:module';
 import { z } from 'zod';
 import { complete, optionsSchema, type Message, type GenerationOptions, type Generation } from './inference.js';
+import { listensBeyondLoopback } from '../public/network-notice.js';
+const nodeRequire = createRequire(import.meta.url);
+const { legacyEnv } = nodeRequire('../../desktop/env.cjs') as { legacyEnv:(suffix:string,env?:NodeJS.ProcessEnv,warn?:(message:string)=>void)=>string|undefined };
+export type ApiRateLimit = { max:number; windowSeconds:number };
+const DEFAULT_RATE_MAX = 60, DEFAULT_RATE_WINDOW = 60;
+function clampInt(value:string|undefined,min:number,max:number,fallback:number){
+  if(value===undefined||!/^\d+$/.test(value))return fallback;
+  const n=Number(value);return n<min||n>max?fallback:n;
+}
+/** LOCALNEURON_API_RATE_LIMIT / LOCALNEURON_API_RATE_WINDOW_SECONDS. COLMEIA_* permanece e só é usada se a preferida estiver ausente. */
+export function apiRateLimit(env:NodeJS.ProcessEnv=process.env,warn:(message:string)=>void=console.warn):ApiRateLimit{
+  return {max:clampInt(legacyEnv('API_RATE_LIMIT',env,warn),1,10000,DEFAULT_RATE_MAX),windowSeconds:clampInt(legacyEnv('API_RATE_WINDOW_SECONDS',env,warn),1,3600,DEFAULT_RATE_WINDOW)};
+}
+function rateLimitOf(limits?:ApiRateLimit){
+  return limits?{max:clampInt(String(limits.max),1,10000,DEFAULT_RATE_MAX),windowSeconds:clampInt(String(limits.windowSeconds),1,3600,DEFAULT_RATE_WINDOW)}:apiRateLimit();
+}
 export function networkAddresses() {
   return Object.entries(networkInterfaces()).flatMap(([name,values])=>(values||[]).filter(v=>v.family==='IPv4'&&!v.internal&&/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(v.address)).map(v=>({name,address:v.address})));
 }
@@ -17,12 +34,14 @@ export class Gateway {
   private keys:{id:string;name:string;hash:string;prefix:string;daily:number;max_tokens:number;used:number;day:string;paused?:boolean}[]=[];private queued=0;private reserved=false;
   private config:GenerationOptions=optionsSchema.parse({});private file:string;
   stats={requests:0,errors:0,last_request_at:0};
-  constructor(directory:string,private canRun:()=>boolean,private runner:Runner=complete,private port=4320,private root=process.cwd(),private hasPro=()=>true){
+  private limits:ApiRateLimit;
+  constructor(directory:string,private canRun:()=>boolean,private runner:Runner=complete,private port=4320,private root=process.cwd(),private hasPro=()=>true,limits?:ApiRateLimit){
+    this.limits=rateLimitOf(limits);
     mkdirSync(directory,{recursive:true,mode:0o700});this.file=join(directory,'sharing.json');
     try{const saved=JSON.parse(readFileSync(this.file,'utf8'));if(/^[a-f0-9]{64}$/.test(saved.key_hash)){this.keyHash=saved.key_hash;this.keyPrefix=saved.prefix;}if(Array.isArray(saved.keys))this.keys=saved.keys.filter((v:any)=>typeof v.hash==='string'&&/^[a-f0-9]{64}$/.test(v.hash)&&Number.isInteger(v.daily)&&v.daily>0).slice(0,100);}catch{}
   }
   get busy(){return this.controllers.size>0;}
-  status(){return {enabled:Boolean(this.server)&&!this.closing,busy:this.busy,has_key:Boolean(this.keyHash),key_prefix:this.keyPrefix,base_url:this.server?`http://${this.host}:${this.port}/v1`:null,model:'local',local_model:this.model,addresses:networkAddresses(),port:this.port,stats:this.stats,keys:this.keys.map(({hash,...v})=>({...v,used:v.day===new Date().toISOString().slice(0,10)?v.used:0})),queued:this.queued,remote_url:this.server?`http://${this.host}:${this.port}/remote`:null};}
+  status(){return {enabled:Boolean(this.server)&&!this.closing,busy:this.busy,has_key:Boolean(this.keyHash),key_prefix:this.keyPrefix,base_url:this.server?`http://${this.host}:${this.port}/v1`:null,model:'local',local_model:this.model,addresses:networkAddresses(),port:this.port,stats:this.stats,keys:this.keys.map(({hash,...v})=>({...v,used:v.day===new Date().toISOString().slice(0,10)?v.used:0})),queued:this.queued,remote_url:this.server?`http://${this.host}:${this.port}/remote`:null,exposed:Boolean(this.server)&&!this.closing&&listensBeyondLoopback(this.host)};}
   private saveKeys(){writeFileSync(this.file+'.tmp',JSON.stringify({key_hash:this.keyHash,prefix:this.keyPrefix,keys:this.keys}),{mode:0o600});renameSync(this.file+'.tmp',this.file);}
   addKey(value:unknown){const v=z.object({name:z.string().trim().min(1).max(80),daily:z.number().int().min(1).max(100000),max_tokens:z.number().int().min(128).max(32768)}).parse(value);if(this.keys.length>=100)throw Error('Limite de 100 chaves.');const key='lnp_'+randomBytes(32).toString('base64url');this.keys.push({...v,id:randomUUID(),hash:digest(key),prefix:key.slice(0,10)+'…',used:0,day:new Date().toISOString().slice(0,10)});this.saveKeys();return {key};}
   updateKey(id:string,value:unknown){const v=z.strictObject({name:z.string().trim().min(1).max(80),daily:z.number().int().min(1).max(100000),max_tokens:z.number().int().min(128).max(32768),paused:z.boolean()}).parse(value);const key=this.keys.find(k=>k.id===id);if(!key)throw Error('Chave não encontrada.');Object.assign(key,v);this.saveKeys();return {ok:true};}
@@ -37,8 +56,21 @@ export class Gateway {
     this.host=host;this.model=model;this.config=options;this.closing=false;
     const app=Fastify({logger:false,bodyLimit:1024*1024,requestTimeout:30000});
     const failures=new Map<string,{at:number,count:number}>();
+    const hits=new Map<string,{start:number,count:number}>();
     app.addHook('onRequest',async(req,reply)=>{
       reply.header('Cache-Control','no-store').header('X-Content-Type-Options','nosniff').header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'");
+      const bearer=req.headers.authorization?.match(/^Bearer ([A-Za-z0-9_-]{20,100})$/)?.[1]||'';
+      const bucketId=bearer?'key:'+digest(bearer):'ip:'+String(req.ip||'');
+      const now=Date.now(),windowMs=this.limits.windowSeconds*1000;
+      let bucket=hits.get(bucketId);
+      if(!bucket||now-bucket.start>=windowMs)bucket={start:now,count:0};
+      bucket.count++;
+      if(hits.size>5000){for(const [id,entry] of hits)if(now-entry.start>=windowMs)hits.delete(id);}
+      hits.set(bucketId,bucket);
+      if(bucket.count>this.limits.max){
+        const retry=Math.max(1,Math.ceil((bucket.start+windowMs-now)/1000));
+        return reply.code(429).header('Retry-After',String(retry)).send({error:{message:'Muitas chamadas num curto intervalo. Aguarde e tente novamente.',type:'rate_limit'}});
+      }
       if(req.method==='GET'&&['/remote','/remote.js','/remote.css'].includes(req.url))return;
       if(this.closing)return reply.code(503).send({error:{message:'API desligando.',type:'unavailable'}});
       // No cookies or dashboard session accepted; only the independently revocable API key.

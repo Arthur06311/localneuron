@@ -279,6 +279,8 @@ export class ExoRuntime {
       error: this.error,
       checked_at: this.checked,
       installation: this.installer.status(),
+      // O processo local do EXO escuta fora do loopback. Controlar um EXO remoto não escuta neste computador.
+      exposed: this.installer.running,
       connection_addresses: this.installer.running ? Object.values(networkInterfaces()).flatMap(entries => (entries || []).filter(n => n.family === "IPv4" && !n.internal).flatMap(n => { try { return [exoEndpoint("http://" + n.address + ":52415")]; } catch { return []; } })) : [],
     };
   }

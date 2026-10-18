@@ -251,6 +251,9 @@ test("Resposta atrasada do EXO não reconecta a rede depois de desconectar", asy
     assert.equal(exo.connected, false);
     assert.equal(exo.inventory().length, 0);
     assert.equal(exo.snapshot().nodes.length, 0);
+    assert.equal(exo.snapshot().exposed, false);
+    Object.defineProperty(exo.installer, "running", { configurable: true, get: () => true });
+    assert.equal(exo.snapshot().exposed, true);
   } finally {
     await exo.close();
     rmSync(dir, { recursive: true, force: true });
