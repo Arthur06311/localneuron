@@ -34,7 +34,7 @@ O tamanho do aplicativo não inclui os modelos. Download é espaço no disco; RA
 | Aplicativo | macOS Apple Silicon, Windows x64 ou Linux x64 com ambiente gráfico. Windows/Linux ainda aguardam validação nativa. |
 | Texto GGUF | Motor llama.cpp incluído. Escolha arquitetura e quantização suportadas; a estimativa da ficha não substitui um teste real. |
 | MLX | Apple Silicon. Runtime exige macOS 14+; execução desta alfa verificada no macOS 26.6.2. |
-| Photo / Video | Perfis visuais suportados pelo motor. O binário visual Mac exige macOS 26+. |
+| Imagem / Vídeo | Perfis visuais suportados pelo motor. O binário visual Mac exige macOS 26+. |
 | Música | ACE-Step instalado separadamente, 25 GiB livres para preparar o ambiente; cerca de 6,32 GB de pesos mais dependências. RAM/GPU influenciam duração e velocidade. |
 | EXO gerenciado | Mac Apple Silicon com macOS 26.2+; computadores na mesma rede confiável. |
 | Editor | DaVinci Resolve Studio e SDK Python instalados. No Windows/Linux, Python 3 disponível no sistema. |
@@ -77,9 +77,9 @@ A sala permite colaboração sequencial de até seis bots, até três rodadas e 
 
 Ferramentas de computador, arquivos e terminal têm controles próprios. Escolha a pasta de trabalho e revise ações que alterem arquivos ou executem comandos. Controle nativo não equivale a automação visual universal de qualquer aplicativo.
 
-## Photo e Video
+## Imagem e Vídeo
 
-Abra **Photo** para imagens e **Video** para cenas e montagem. O recomendador considera os perfis que o motor realmente integra; os demais modelos da biblioteca visual podem ser apenas downloads de pesos.
+Abra **Imagem** para imagens e **Vídeo** para cenas e montagem. O recomendador considera os perfis que o motor realmente integra; os demais modelos da biblioteca visual podem ser apenas downloads de pesos.
 
 1. Rode o recomendador e confira memória e espaço.
 2. Instale um perfil integrado e espere os arquivos terminarem.

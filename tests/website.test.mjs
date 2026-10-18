@@ -35,3 +35,31 @@ test('Website downloads use the published per-platform installer without alterin
  for(const f of data.files){assert.match(f.releaseTag,/^v\d+\.\d+\.\d+(?:-linux\.\d+)?$/);assert.match(f.sha256,/^[a-f0-9]{64}$/);assert.equal(typeof f.available,'boolean');assert.equal(f.href,`https://github.com/Arthur06311/localneuron/releases/download/${f.releaseTag}/${f.filename}`);}
  const linux=data.files.find(f=>f.id==='linux');assert.equal(linux.filename,'LocalNeuron-Linux-x64.deb');assert.equal(linux.releaseTag,'v0.27.0-linux.3');assert.equal(linux.alternatives[0].filename,'LocalNeuron-Linux-x64.pkg.tar.gz');assert.match(linux.alternatives[0].sha256,/^[a-f0-9]{64}$/);
 });
+test('Visible website version matches package.json',async()=>{
+ const version=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
+ const escaped=version.replaceAll('.','\\.');
+ const index=await readFile(resolve(root,'index.html'),'utf8');
+ const app=await readFile(resolve(root,'app.js'),'utf8');
+ assert.match(index,new RegExp(`id="version">${escaped}</span>`));
+ assert.match(index,new RegExp(`Alfa ${escaped}</p>`));
+ assert.match(index,new RegExp(`CENTRAL DE INFORMAÇÕES · ${escaped}`));
+ assert.match(index,new RegExp(`${escaped}</span> / ALFA`));
+ assert.doesNotMatch(index,/0\.26/);
+ assert.match(app,new RegExp(`Alpha ${escaped}`));
+ assert.match(app,new RegExp(`Alfa ${escaped}`));
+ assert.match(app,new RegExp(`INFORMATION CENTER · ${escaped}`));
+ assert.match(app,new RegExp(`CENTRO DE INFORMACIÓN · ${escaped}`));
+ assert.doesNotMatch(app,/· 0\.27"/);
+ const marker='const landingCopy=';
+ const landingStart=app.indexOf(marker);
+ const landing=JSON.parse(app.slice(landingStart+marker.length,app.indexOf(';\n',landingStart)));
+ const keys=Object.keys(landing.en);
+ assert.deepEqual(Object.keys(landing),['en','es','fr','de','ja','zh']);
+ for(const lang of Object.keys(landing))assert.deepEqual(Object.keys(landing[lang]),keys,lang);
+ assert.match(landing.en.platforms,new RegExp(`Alpha ${escaped}`));
+ assert.match(landing.es.platforms,new RegExp(`Alfa ${escaped}`));
+ for(const name of ['guide.html','compare-lm-studio.html']){
+  const html=await readFile(resolve(root,name),'utf8');
+  assert.match(html,new RegExp(`<span>${escaped} · Alfa</span>`));
+ }
+});
