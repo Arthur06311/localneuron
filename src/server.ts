@@ -23,6 +23,7 @@ import Fastify from 'fastify';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { Gateway } from './gateway.js';
 import { optionsSchema } from './inference.js';
@@ -35,6 +36,8 @@ import { ModelLibrary } from './model-library.js';
 import { acquireProcessLock } from './lock.js';
 import { verifyPackage } from '../scripts/protocol.mjs';
 import { z } from 'zod';
+
+const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as { legacyEnv: (suffix: string) => string | undefined };
 
 const equal = (a: string, b: string) => { const left = Buffer.from(a), right = Buffer.from(b); return left.length === right.length && timingSafeEqual(left,right); };
 export async function createApp(core: Core, token = randomBytes(32).toString('hex'), origin = 'http://127.0.0.1:4317', runtime = new LocalRuntime(core.directory,core.root), planConfig = subscriptionConfig(core.root)) {
@@ -317,8 +320,8 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const root = process.cwd();
-  const directory = resolve(process.env.COLMEIA_DATA_DIR || join(root, '.data'));
-  const port = Number(process.env.COLMEIA_PORT || 4317);
+  const directory = resolve(legacyEnv('DATA_DIR') || join(root, '.data'));
+  const port = Number(legacyEnv('PORT') || 4317);
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const releaseLock = acquireProcessLock(directory);
   const core = new Core(directory, root); await core.init();

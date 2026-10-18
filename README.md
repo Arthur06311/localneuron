@@ -136,7 +136,7 @@ python3 scripts/fetch-voice-node.py darwin-arm64
 npm run desktop
 ```
 
-Use os alvos dos manifests nas outras plataformas ([distribuição](docs/plataformas.md)). O painel usa a porta 4317 em desenvolvimento e 4318 no desktop. Os nomes legados `COLMEIA_DATA_DIR`, `COLMEIA_DESKTOP_DATA_DIR` e as pastas `Colmeia` são preservados por compatibilidade de dados.
+Use os alvos dos manifests nas outras plataformas ([distribuição](docs/plataformas.md)). O painel usa a porta 4317 em desenvolvimento e 4318 no desktop. Os nomes preferidos são `LOCALNEURON_DATA_DIR` e `LOCALNEURON_DESKTOP_DATA_DIR`. Os nomes legados `COLMEIA_DATA_DIR`, `COLMEIA_DESKTOP_DATA_DIR` e as pastas `Colmeia` continuam aceitos.
 
 ```text
 src/          Serviço local, motores, API e persistência
