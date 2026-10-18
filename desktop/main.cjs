@@ -1,6 +1,7 @@
 const { app, BrowserWindow, dialog, session, shell, ipcMain, safeStorage } = require('electron');
 const { spawn } = require('node:child_process');
 const { registerComputer } = require('./computer.cjs');
+const { createMainWindow } = require('./window-policy.cjs');
 const { registerLocalAccess } = require('./local-access.cjs');
 const { registerFolderPicker } = require('./folders.cjs');
 const { allowsClipboard, allowsMicrophone } = require('./permissions.cjs');
@@ -42,13 +43,7 @@ else app.whenReady().then(async () => {
       }
     },100);
   });
-  window = new BrowserWindow({width:1320,height:900,minWidth:760,minHeight:640,title:'LocalNeuron',backgroundColor:'#f6f5f0',autoHideMenuBar:true,webPreferences:{preload:join(root,'desktop/preload.cjs'),nodeIntegration:false,contextIsolation:true,sandbox:true,webSecurity:true,allowRunningInsecureContent:false,spellcheck:false}});
-  window.webContents.setWindowOpenHandler(({url})=>{
-    try { const target=new URL(url); if(['https:','http:'].includes(target.protocol)&&!target.username&&!target.password&&(!target.port||['80','443'].includes(target.port))&&!['localhost','127.0.0.1','[::1]'].includes(target.hostname)) shell.openExternal(target.href).catch(()=>{}); } catch {}
-    return {action:'deny'};
-  });
-  window.webContents.on('will-navigate',(event,url)=>{if(new URL(url).origin!==origin)event.preventDefault();});
-  window.webContents.on('will-attach-webview',event=>event.preventDefault());
+  window = createMainWindow(BrowserWindow, { preload: join(root,'desktop/preload.cjs'), origin, shell });
   session.defaultSession.webRequest.onBeforeRequest((details,callback)=>{callback({cancel:!(details.url.startsWith(origin+'/')||details.url.startsWith('blob:'+origin+'/'))});});
   const localToken=new URL(localSession.url).hash.slice(1);
   registerLocalAccess({ipcMain,safeStorage,dialog,getWindow:()=>window,origin,dataDirectory,token:new URLSearchParams(localToken).get('session')});
