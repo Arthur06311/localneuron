@@ -12,4 +12,4 @@ Use Node.js 24+, `npm ci` e `npm test`. Para a ponte do Editor, execute `python3
 
 Mantenha os dados locais retrocompatíveis. Não substitua inferência real por resultados simulados na interface. Diferencie claramente fixture de teste, download de pesos e motor realmente integrado. Evite adicionar telemetria ou chamadas externas sem controle do usuário.
 
-Em um pull request, descreva o problema, o comportamento final, os testes executados e limitações conhecidas. Novos motores/modelos precisam de origem, versão, licença e hashes verificáveis quando aplicável.
+Pull requests só são aceitos de quem tiver autorização escrita do titular. As contribuições aceitas passam a fazer parte do código proprietário. No pull request, descreva o problema, o comportamento final, os testes executados e as limitações conhecidas. Novos motores/modelos precisam de origem, versão, licença e hashes verificáveis quando aplicável.
