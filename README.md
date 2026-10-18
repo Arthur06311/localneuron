@@ -3,7 +3,7 @@
 <p align="center"><img src="website/app-icon.png" width="88" alt="LocalNeuron"></p>
 <h1 align="center">LocalNeuron</h1>
 <p align="center"><strong>Sua IA. Seu computador.</strong><br>Converse, crie imagens, vídeos e músicas e conecte ferramentas com modelos de IA que rodam no seu próprio computador, sem conta e, depois de instalados, sem internet.</p>
-<p align="center"><a href="https://github.com/Arthur06311/localneuron/releases"><strong>Baixar</strong></a> · <a href="https://Arthur06311.github.io/localneuron/">Site</a> · <a href="https://Arthur06311.github.io/localneuron/guide.html">Guia de configuração</a> · <a href="docs/comparacao-lm-studio.md">LocalNeuron e LM Studio</a> · <a href="https://github.com/Arthur06311/localneuron/issues">Reportar problema</a></p>
+<p align="center"><a href="https://github.com/Arthur06311/localneuron/releases"><strong>Baixar</strong></a> · <a href="https://localneuron.ai/">Site</a> · <a href="https://localneuron.ai/guide.html">Guia de configuração</a> · <a href="docs/comparacao-lm-studio.md">LocalNeuron e LM Studio</a> · <a href="https://github.com/Arthur06311/localneuron/issues">Reportar problema</a></p>
 
 <!-- Substituir pela demo gravada (ver roteiro): ![Demonstração do LocalNeuron: escolher um modelo na biblioteca, conversar offline, gerar uma imagem localmente e ligar a Minha API.](docs/media/localneuron-demo.gif) -->
 ![Interface do LocalNeuron](website/product.png)
@@ -94,7 +94,7 @@ No site, a seleção automática de idioma consulta `country.is` pelo navegador,
 
 ## Status da alfa
 
-Na versão 0.27, `npm test` reúne **143 testes automatizados: 127 da suíte TypeScript do aplicativo e 16 em JavaScript, 4 deles do site**. Em Linux, os 2 testes de acesso local ainda falham por uma limitação do teste; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Os pacotes públicos não contêm conversas, chaves privadas nem a licença Pro de teste do proprietário.
+Na versão 0.27, `npm test` reúne **143 testes automatizados: 127 da suíte TypeScript do aplicativo e 16 em JavaScript, 4 deles do site**. O mock de acesso local no Linux foi corrigido no PR #6, e o workflow de CI roda `npm test`; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Os pacotes públicos não contêm conversas, chaves privadas nem a licença Pro de teste do proprietário.
 
 Ainda pendentes: notarização Apple, execução nativa de motores/GPU no Windows e no Linux, EXO com duas máquinas físicas e integração com uma instalação real do Resolve Studio. O aplicativo continua **alfa**, sem promessa de suporte universal a modelos ou hardware. Veja as [novidades da 0.27](docs/localneuron-0.27.md). Os guias antigos em `docs/localneuron-*` registram o estado de cada versão.
 
