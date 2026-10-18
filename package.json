@@ -12,6 +12,8 @@
     "start": "node dist/src/server.js",
     "dev": "npm run build && npm start",
     "test": "npm run build && node --test dist/tests/*.test.js tests/*.test.mjs",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
     "verify": "node scripts/verify.mjs",
     "desktop": "electron desktop/main.cjs",
     "package": "npm run build && node scripts/package-desktop.mjs",
@@ -39,9 +41,15 @@
   },
   "devDependencies": {
     "@electron/packager": "20.3.0",
+    "@eslint/js": "10.0.1",
     "@types/node": "25.5.0",
     "electron": "44.3.0",
-    "typescript": "5.9.3"
+    "eslint": "10.13.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.2"
   },
   "author": "LocalNeuron",
   "overrides": {

@@ -1,7 +1,7 @@
 // Run against an actual installed/released binary on its target OS.
 // No model downloads, credentials, personal workspace or sandbox-disabling flags.
 import {spawn,execFileSync} from 'node:child_process';
-import {mkdtempSync,writeFileSync,readFileSync,existsSync,mkdirSync} from 'node:fs';
+import {mkdtempSync,writeFileSync,readFileSync,existsSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {resolve,join,dirname} from 'node:path';
 let binary=resolve(process.argv[2]);

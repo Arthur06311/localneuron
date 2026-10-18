@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { Core } from '../src/core.js';
 import { createApp } from '../src/server.js';
 import { judge, parseWorkflow, TOOLS } from '../src/policy.js';
-import { hash, verifyPackage, fingerprint } from '../scripts/protocol.mjs';
+import { verifyPackage, fingerprint } from '../scripts/protocol.mjs';
 import { template } from '../src/model.js';
 import { acquireProcessLock } from '../src/lock.js';
 import type { Task } from '../src/types.js';
