@@ -92,4 +92,4 @@ Atividades das ferramentas ficam na mensagem assinada e incluem estado, descriç
 
 ### MLX (0.6)
 
-`GET /v1/model-library` informa mlx_available e modelos com chave mlx:. `POST /v1/model-library/import-mlx` recebe `{"folder":"/caminho/absoluto"}` e copia os arquivos necessários para a pasta de modelos da Colmeia. Requer sessão local, cofre aberto e ausência de operação concorrente. Carga/descarga e Minha API aceitam chaves mlx: pelo mesmo contrato dos modelos integrados. Esse endpoint não fica disponível na API compartilhada.
+`GET /v1/model-library` informa mlx_available e modelos com chave mlx:. `POST /v1/model-library/import-mlx` recebe `{"folder":"/caminho/absoluto"}` e copia os arquivos necessários para a pasta de modelos do LocalNeuron. Requer sessão local, cofre aberto e ausência de operação concorrente. Carga/descarga e Minha API aceitam chaves mlx: pelo mesmo contrato dos modelos integrados. Esse endpoint não fica disponível na API compartilhada.

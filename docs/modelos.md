@@ -244,7 +244,7 @@ Fontes de licença e capacidades: [Gemma 4](https://deepmind.google/models/gemma
 
 ## Operação 0.5
 
-O pacote inclui llama.cpp e executa GGUF diretamente. Baixe, instale e escolha a versão marcada **integrado**. Arquivos novos ficam na pasta de modelos da Colmeia; GGUFs da pasta padrão do LM Studio são reutilizados sem cópia. No Mac, MLX também pode rodar diretamente: use Adicionar MLX no Chat para copiar a pasta de um modelo. Arquivos de modelos externos continuam listados separadamente. Consulte [MLX independente](mlx-independente.md).
+O pacote inclui llama.cpp e executa GGUF diretamente. Baixe, instale e escolha a versão marcada **integrado**. Arquivos novos ficam na pasta de modelos do LocalNeuron; GGUFs da pasta padrão do LM Studio são reutilizados sem cópia. No Mac, MLX também pode rodar diretamente: use Adicionar MLX no Chat para copiar a pasta de um modelo. Arquivos de modelos externos continuam listados separadamente. Consulte [MLX independente](mlx-independente.md).
 
 Uma instância integrada por vez, contexto solicitado e verificado, flash attention, admissão de RAM e descarregamento ao bloquear/fechar. Minha API pode usar esse mesmo modelo; desligue-a antes de trocar a IA compartilhada. O motor externo ainda pode ampliar o contexto. Arquivos baixados têm tamanho e SHA-256 conferidos; arquivos preexistentes não são automaticamente revalidados.
 

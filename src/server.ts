@@ -304,9 +304,9 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/agents/agent/revoke', async () => { await core.revokeAgent(); return { ok: true }; });
   app.post('/v1/workflows', async request => { const { source } = z.strictObject({ source: z.string().max(32768) }).parse(body(request)); return core.registerWorkflow(source); });
   app.get('/v1/log', async request => { const { from } = z.object({ from: z.coerce.number().int().min(0).default(0) }).parse(request.query); return (await core.store.entries()).filter(entry => entry.seq > from); });
-  app.get('/v1/log/export', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="colmeia-auditoria.json"').send(await core.export()));
+  app.get('/v1/log/export', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-auditoria.json"').send(await core.export()));
   app.post('/v1/log/verify', async request => { const data = z.strictObject({ bundle: z.unknown(), trusted_fingerprint: z.string().regex(/^[0-9a-f]{64}$/) }).parse(body(request)); return verifyPackage(data.bundle, data.trusted_fingerprint); });
-  app.get('/v1/vault/backup', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="colmeia-cofre-cifrado.json"').type('application/json').send(readFileSync(core.vault.path)));
+  app.get('/v1/vault/backup', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-cofre-cifrado.json"').type('application/json').send(readFileSync(core.vault.path)));
   app.post('/v1/lock', async () => {await editor.close();await music.stop();await computerControl.stop();await connections.close();await experienceJobs.stop();await mediaDownloads.pause();await pro.pause();await proMedia.close();await aux.close();return exclusive(async () => {
     await aux.close(); await gateway.stop(); await chats.close(); await library.stop();
     for (const task of (await core.snapshot()).tasks.filter(t => t.state === 'running')) await core.pause(task.id);

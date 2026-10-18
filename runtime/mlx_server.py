@@ -20,7 +20,7 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 # Defense in depth: no outbound sockets, even when manually launching this worker.
 def offline_audit(event, args):
     if event in {'socket.connect', 'socket.getaddrinfo'}:
-        raise PermissionError('O motor MLX da Colmeia funciona sem conexões externas.')
+        raise PermissionError('O motor MLX do LocalNeuron funciona sem conexões externas.')
 sys.addaudithook(offline_audit)
 
 spec = importlib.util.spec_from_file_location('colmeia_mlx_protocol', Path(__file__).with_name('mlx_protocol.py'))
