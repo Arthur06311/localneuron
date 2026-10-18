@@ -236,9 +236,9 @@ Revalidação em 18/10/2026, sobre o commit `e5694ac` de `main` (a revisão da n
 - `npm test` executa **143 testes**: 127 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 16 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 4, navegação 2, ícones de modelos 2 e acesso local 2).
 - A suíte compilada do backend passou com **127 de 127** testes.
 - Os cinco scripts Python de `tests/` (`resolve_bridge_test.py`, `mlx_protocol_test.py`, `linux_installer_test.py`, `linux_gui_installer_test.py` e `linux_native_package_test.py`) passaram. Eles não fazem parte do `npm test`.
-- Em Linux, os 2 testes de `tests/local-access.test.mjs` falham: o `safeStorage` simulado no teste não implementa `getSelectedStorageBackend()`, que `desktop/local-access.cjs` só chama quando `process.platform === 'linux'`. Em outro sistema esse trecho não é executado. O teste precisa ser corrigido.
+- A correção do PR #6 (commit `708cede`, já em `main`) faz o mock de `tests/local-access.test.mjs` implementar `safeStorage.getSelectedStorageBackend()`. Antes disso, os 2 testes falhavam no Linux, porque `desktop/local-access.cjs` só chama esse método quando `process.platform === 'linux'`.
 - O teste “Gerenciador só carrega chaves instaladas, contexto curto e descarrega instâncias conhecidas” (`tests/library.test.ts`) depende da memória livre da máquina. Ele falhou em 1 de 2 execuções com “Memória disponível insuficiente”.
-- Nenhum workflow ativo roda `npm test`. Em `.github/workflows/` existe apenas `desktop-diagnosis.yml`; `ci.yml` e `desktop.yml` continuam como modelos em `.github/workflow-templates/`.
+- O workflow ativo `.github/workflows/ci.yml` roda `npm test` em macOS, Windows e Linux, além de `npm ci`, `npm run build`, os testes Python e `node scripts/verify.mjs`. `desktop-diagnosis.yml` continua em `.github/workflows/`. Os arquivos `ci.yml`, `desktop.yml` e `pages.yml` em `.github/workflow-templates/` seguem como modelos e não são os workflows em execução.
 
 Ainda precisam de validação em máquinas físicas antes de chamar o produto de pronto para consumo geral:
 

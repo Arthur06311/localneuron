@@ -1,8 +1,8 @@
-> A versão 0.8 inclui Whisper e stable-diffusion.cpp. O motor visual do Mac exige macOS 26+. [Detalhes dos motores e modelos](localneuron-0.8.md).
+> O pacote inclui Whisper e stable-diffusion.cpp. O motor visual do Mac exige macOS 26+. [Detalhes dos motores e modelos](localneuron-0.8.md).
 
 # Executar no Mac, Windows e Linux
 
-A Alfa 0.13 tem aplicação Electron e serviço local compartilhados entre as plataformas. O runtime GGUF acompanha os pacotes. O Mac inclui também MLX/Metal independente, com Python e dependências embarcados; LM Studio é opcional. MLX embarcado requer Apple Silicon e macOS 14+, com execução real verificada neste macOS 26.6.2. Os modelos não vêm nos pacotes do aplicativo: você os baixa na biblioteca.
+O LocalNeuron tem aplicação Electron e serviço local compartilhados entre as plataformas. O runtime GGUF acompanha os pacotes. O Mac inclui também MLX/Metal independente, com Python e dependências embarcados; LM Studio é opcional. MLX embarcado requer Apple Silicon e macOS 14+, com execução real verificada neste macOS 26.6.2. Os modelos não vêm nos pacotes do aplicativo: você os baixa na biblioteca.
 
 | Pacote | Como abrir | Validação desta entrega |
 |---|---|---|

@@ -9,10 +9,10 @@ Para usar a interface equivalente no navegador: `npm run build`, `npm start` e `
 ## Backup consistente
 
 1. Pause tarefas em andamento e encerre o aplicativo/serviço.
-2. Copie a pasta **inteira** do espaço: `.data`, `.desktop/workspace` ou `Colmeia-data/workspace`, conforme o modo de uso.
+2. Copie a pasta **inteira** do espaço. No desktop, copie a pasta pai, aquela que contém `workspace/` (ela também guarda `browser/`, `session/` e `logs/`). Exemplos: a pasta `Colmeia` dos dados do sistema, a pasta irmã `Colmeia-data/` de instalações antigas no Mac, ou `.desktop/` em desenvolvimento. No modo navegador, copie a própria pasta de dados (`.data/` ou o caminho de `COLMEIA_DATA_DIR`), que já contém `vault.enc.json`.
 3. Preserve o cofre cifrado e o banco juntos. O download do cofre sozinho não inclui arquivos; exportação de auditoria também não é backup dos documentos.
 4. Guarde a impressão digital e uma cabeça assinada em local independente para detectar apresentação de uma cópia antiga.
-5. Para restaurar, use uma nova pasta, configure `COLMEIA_DATA_DIR` no modo navegador e abra com a mesma senha. Não sobreponha um banco em uso.
+5. Para restaurar no desktop, use o botão **Abrir uma pasta de dados existente** na tela de acesso e selecione a pasta pai que contém `workspace/` (o app procura `workspace/vault.enc.json`). No modo navegador esse botão não aparece: defina `COLMEIA_DATA_DIR` com a pasta que contém `vault.enc.json` diretamente (a `workspace` de um backup do desktop, ou a própria `.data` de um espaço criado no navegador) e abra com a mesma senha. Não sobreponha um banco em uso.
 
 Os testes reabrem o banco persistido e verificam versões e assinaturas. Não houve exercício com backup real do usuário, perda física do dispositivo ou administração por terceiros.
 
