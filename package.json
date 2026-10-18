@@ -2,6 +2,7 @@
   "name": "colmeia-local-alpha",
   "version": "0.27.0",
   "private": true,
+  "license": "UNLICENSED",
   "main": "desktop/main.cjs",
   "type": "module",
   "engines": {

@@ -18,7 +18,7 @@ execFileSync(process.platform==='win32'?'python':'python3',[join(root,'scripts/f
 execFileSync(process.platform==='win32'?'python':'python3',[join(root,'scripts/fetch-voice-node.py'),platform+'-'+arch],{cwd:root,stdio:'inherit'});
 try {
   // Explicit inclusion avoids packaging vaults, sessions, model weights or workspace data.
-  for(const file of ['package.json','package-lock.json','subscription-config.json','dist','desktop','public','workflows','THIRD_PARTY.md','licenses']) cpSync(join(root,file),join(source,file),{recursive:true,...(file==='public'?{filter:runtimeFilter}:{})});
+  for(const file of ['package.json','package-lock.json','LICENSE','subscription-config.json','dist','desktop','public','workflows','THIRD_PARTY.md','licenses']) cpSync(join(root,file),join(source,file),{recursive:true,...(file==='public'?{filter:runtimeFilter}:{})});
   mkdirSync(join(source,'runtime'),{recursive:true});
   for(const file of ['manifest.json','LICENSE.llama.cpp','tools-manifest.json','LICENSE.whisper.cpp'])cpSync(join(root,'runtime',file),join(source,'runtime',file));
   cpSync(join(root,'runtime','tools-'+platform+'-'+arch),join(source,'runtime','tools-'+platform+'-'+arch),{recursive:true,verbatimSymlinks:true,filter:runtimeFilter});
