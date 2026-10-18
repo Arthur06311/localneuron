@@ -33,3 +33,17 @@ jobs:
         shell: bash
         run: python -m unittest discover -s tests -p '*_test.py'
       - run: node scripts/verify.mjs
+
+  versao:
+    name: Versão e changelog
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Conferir package.json e CHANGELOG
+        run: node scripts/check-release-version.mjs
+      - name: Conferir o catálogo único de downloads
+        run: node scripts/build-release-manifest.mjs --check

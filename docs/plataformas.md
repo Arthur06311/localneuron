@@ -41,7 +41,7 @@ npm run package -- darwin arm64
 
 O script usa uma pasta temporária e inclui apenas runtime, interface, workflow e dependências de produção. Rejeita sobrescrever um pacote existente para não tocar em dados colocados ali. Saída em `releases/`. O script específico `python3 scripts/package-macos.py` produz o Mac local assinado ad hoc e exige fechar o aplicativo antes de substituir o bundle.
 
-A matriz em `.github/workflows/desktop.yml` permite executar testes e empacotar em runners nativos. Ela está preparada no código; **não foi disparada em serviço remoto**. Testes de interface, download e inferência em Windows/Linux ainda exigem máquinas desses sistemas. O [Electron Packager](https://github.com/electron/packager) cria os bundles; gerar um pacote não comprova execução na plataforma de destino.
+Os testes de cada sistema rodam em `.github/workflows/ci.yml`. A publicação do AppImage e do instalador NSIS está em [Publicar uma versão](RELEASE.md). O modelo `.github/workflow-templates/desktop.yml` não é o fluxo de release. O [Electron Packager](https://github.com/electron/packager) cria os bundles; gerar um pacote não comprova execução na plataforma de destino.
 
 ## Componente do Windows
 

@@ -16,17 +16,19 @@ O site preserva a escolha manual de idioma e a sugestão automática por país u
 
 ## Publicar uma versão
 
-Os instaladores são grandes: publique-os como **Release assets**, nunca dentro de um commit. A versão inicial é `v0.26.0`, marcada como pré-lançamento.
+Os instaladores são grandes: eles entram como arquivos da GitHub Release, nunca dentro de um commit. O passo a passo, a checagem da tag e o que ainda falta de assinatura estão em [Publicar uma versão](RELEASE.md).
 
-1. Execute os testes, gere os pacotes com os manifests fixados e confira os arquivos conforme `docs/plataformas.md`.
-2. Use configuração pública de assinatura: `subscription-config.json` sem chaves privadas, licença ou ativação do proprietário. Não inclua dados de usuário.
-3. Calcule SHA-256 para cada pacote. Atualize `SHA256SUMS.txt` e `website/releases.json` com nome, bytes, hash e link da versão.
-4. Crie um rascunho de Release e anexe os quatro pacotes e `SHA256SUMS.txt`.
-5. Confira tamanho e digest retornados pelo GitHub; publique o pré-lançamento.
-6. Só depois de confirmar cada link, altere `available` para `true` no manifesto. A página não deve oferecer um instalador ainda não publicado.
-7. Confira o site público em desktop e celular e teste o início do download de cada arquivo.
+O workflow Release gera o AppImage Linux, o instalador NSIS Windows, `SHA256SUMS.txt` e um `releases.json` candidato, e deixa a release em **rascunho**. O macOS continua manual, sem notarização.
 
-Os modelos de workflows em `.github/workflow-templates/` podem ser habilitados pelo mantenedor em `.github/workflows/`. O workflow **Desktop validation** pode ser executado manualmente para validar/empacotar nos runners de cada sistema. Gerar um pacote não substitui teste nativo de inferência, áudio, GPU ou periféricos. A distribuição Apple continua ad hoc até haver Developer ID e notarização reais.
+A página e o aplicativo leem catálogos gerados do mesmo arquivo, `website/release-source.json`:
+
+```bash
+node scripts/build-release-manifest.mjs
+```
+
+Isso reescreve `website/downloads.json` e `website/releases.json`. Não edite os dois à mão. Só mude `available` para `true` quando o link da release publicada existir. A configuração pública de assinatura continua sem chave privada.
+
+Os modelos em `.github/workflow-templates/` não são o fluxo de release. O CI de testes é `.github/workflows/ci.yml`. Gerar um pacote não substitui teste nativo de inferência, áudio, GPU ou periféricos. A distribuição Apple continua ad hoc até haver Developer ID e notarização reais.
 
 Referências: [GitHub Pages com Actions](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [arquivos de releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
 
