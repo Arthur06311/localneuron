@@ -26,7 +26,7 @@ body.chat-page .chat-welcome .neuron-mascot-chat{width:128px;height:128px;margin
 @keyframes neuron-welcome{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:720px){body.chat-page .chat-welcome .neuron-mascot-chat{width:92px;height:92px}.setup .neuron-mascot-welcome{width:82px;height:82px}.setup .neuron-mascot-frame[data-placement="welcome"]{margin:-5px -6px 8px 8px}}
 @media(max-height:720px){body.chat-page .chat-welcome .neuron-mascot-chat{width:80px;height:80px}}
-.chat-message .neuron-mascot-frame[data-placement="reply"]{float:right;width:88px;margin:0 0 8px 12px}
+.chat-message .neuron-mascot-frame[data-placement="reply"]{float:right;width:auto;max-width:100%;margin:0 0 8px 12px}
 .neuron-mascot-reply{width:56px;height:56px;float:none;margin:0}
 .chat-message:has(.neuron-mascot-reply){display:flow-root}
 .mascot-faces{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-4);margin-top:var(--space-5)}
@@ -35,7 +35,7 @@ body.chat-page .chat-welcome .neuron-mascot-chat{width:128px;height:128px;margin
 .mascot-faces .neuron-mascot{margin:0 auto;width:120px;height:120px;max-width:100%}
 .mascot-faces figcaption span{display:block;font-size:var(--text-xs);color:var(--muted);line-height:var(--leading-body);margin-top:var(--space-2)}
 @media(max-width:1000px){.mascot-faces{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:420px){.mascot-faces{gap:var(--space-2)}.mascot-faces figure{padding:var(--space-3)}.mascot-faces .neuron-mascot{width:96px;height:96px}.neuron-mascot-reply{width:44px;height:44px}.chat-message .neuron-mascot-frame[data-placement="reply"]{width:72px}}
+@media(max-width:420px){.mascot-faces{gap:var(--space-2)}.mascot-faces figure{padding:var(--space-3)}.mascot-faces .neuron-mascot{width:96px;height:96px}.neuron-mascot-reply{width:44px;height:44px}.chat-message .neuron-mascot-frame[data-placement="reply"]{width:auto;max-width:100%}}
 @media(prefers-reduced-motion:reduce){
  .neuron-mascot,.neuron-mascot-frame,.neuron-mascot-glyph{animation:none}
  body.chat-page .chat-welcome .neuron-mascot-frame[data-placement="chat"]{animation:none}
