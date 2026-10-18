@@ -225,7 +225,15 @@ Os pesos de modelos, runtimes e caches não devem ser incluídos no clone. Use o
 
 ## 8. Estado de validação e riscos
 
-Na última revisão da navegação, o build TypeScript passou, os testes do site/navegação passaram e a suíte compilada do backend passou com 127 testes. O repositório público está limpo e sincronizado com `origin/main` no commit `be40fb1`.
+Revalidação em 18/10/2026, sobre o commit `e5694ac` de `main` (a revisão da navegação é o commit anterior, `be40fb1`), com Node.js 24.22.0 em Linux x64:
+
+- `npm run build` passou.
+- `npm test` executa **143 testes**: 127 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 16 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 4, navegação 2, ícones de modelos 2 e acesso local 2).
+- A suíte compilada do backend passou com **127 de 127** testes.
+- Os cinco scripts Python de `tests/` (`resolve_bridge_test.py`, `mlx_protocol_test.py`, `linux_installer_test.py`, `linux_gui_installer_test.py` e `linux_native_package_test.py`) passaram. Eles não fazem parte do `npm test`.
+- Em Linux, os 2 testes de `tests/local-access.test.mjs` falham: o `safeStorage` simulado no teste não implementa `getSelectedStorageBackend()`, que `desktop/local-access.cjs` só chama quando `process.platform === 'linux'`. Em outro sistema esse trecho não é executado. O teste precisa ser corrigido.
+- O teste “Gerenciador só carrega chaves instaladas, contexto curto e descarrega instâncias conhecidas” (`tests/library.test.ts`) depende da memória livre da máquina. Ele falhou em 1 de 2 execuções com “Memória disponível insuficiente”.
+- Nenhum workflow ativo roda `npm test`. Em `.github/workflows/` existe apenas `desktop-diagnosis.yml`; `ci.yml` e `desktop.yml` continuam como modelos em `.github/workflow-templates/`.
 
 Ainda precisam de validação em máquinas físicas antes de chamar o produto de pronto para consumo geral:
 
