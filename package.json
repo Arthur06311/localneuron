@@ -1,5 +1,5 @@
 {
-  "name": "colmeia-local-alpha",
+  "name": "localneuron",
   "version": "0.27.0",
   "private": true,
   "license": "UNLICENSED",
@@ -25,9 +25,9 @@
     "@modelcontextprotocol/sdk": "1.30.0",
     "cheerio": "1.2.0",
     "docx": "9.7.1",
-    "dompurify": "3.4.15",
+    "dompurify": "3.4.17",
     "exceljs": "4.4.0",
-    "fastify": "5.12.3",
+    "fastify": "5.12.7",
     "fflate": "0.8.3",
     "ipaddr.js": "2.5.0",
     "marked": "18.0.12",
@@ -49,6 +49,9 @@
   "overrides": {
     "exceljs": {
       "uuid": "11.1.1"
+    },
+    "pptxgenjs": {
+      "image-size": "2.0.4"
     }
   }
 }
