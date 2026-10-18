@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import{mkdtempSync,readFileSync,rmSync,writeFileSync}from'node:fs';import{tmpdir}from'node:os';import{join,resolve}from'node:path';import{createServer,type Server}from'node:http';import{createServer as createHttps}from'node:https';import{execFileSync}from'node:child_process';import{createDecipheriv,createHash}from'node:crypto';import{Vault}from'../src/vault.js';import{Connections,decideOAuthOrigin}from'../src/connections.js';
+import test from 'node:test';import assert from 'node:assert/strict';import{mkdtempSync,readFileSync,rmSync,writeFileSync}from'node:fs';import{tmpdir}from'node:os';import{join,resolve}from'node:path';import{createServer,type Server}from'node:http';import{createServer as createHttps}from'node:https';import{execFileSync}from'node:child_process';import{createDecipheriv,createHash}from'node:crypto';import{Agent,fetch as undiciFetch}from'undici';import{Vault}from'../src/vault.js';import{Connections,decideOAuthOrigin}from'../src/connections.js';
 test('MCP local negocia protocolo, cifra credenciais e respeita revogação',async()=>{const dir=mkdtempSync(join(tmpdir(),'neuron-mcp-')),vault=new Vault(dir);vault.initialize('senha-de-testes-mcp');const file=join(dir,'server.mjs');const sdk=resolve('node_modules/@modelcontextprotocol/sdk/dist/esm');writeFileSync(file,`import {McpServer} from ${JSON.stringify('file://'+sdk+'/server/mcp.js')};import {StdioServerTransport} from ${JSON.stringify('file://'+sdk+'/server/stdio.js')};const s=new McpServer({name:'fixture',version:'1'});s.registerTool('hello',{description:'Teste local',annotations:{readOnlyHint:true}},async()=>({content:[{type:'text',text:'Olá do servidor MCP'}]}));await s.connect(new StdioServerTransport());`);const c=new Connections(dir,vault);try{const row=await c.add({name:'Fixture',command:process.execPath,args:[file],token:'credencial-ficticia-secreta'});assert.equal(row?.connected,true);assert.equal(row?.tools.length,1);assert.ok(!readFileSync(join(dir,'connections.enc.json'),'utf8').includes('credencial-ficticia'));const defs=c.definitions([row!.id],true);assert.equal(defs.length,1);assert.equal(c.definitions([],false).length,0);const result=await c.call(defs[0].function.name,{},[row!.id],new AbortController().signal);assert.match(JSON.stringify(result),/Olá do servidor/);await c.remove(row!.id);await assert.rejects(c.call(defs[0].function.name,{},[row!.id],new AbortController().signal),/revogada/);vault.lock();assert.throws(()=>c.list(),/Cofre/);}finally{await c.close();rmSync(dir,{recursive:true,force:true});}});
 
 test('decideOAuthOrigin permite a origem MCP e a origem fixada e recusa troca',()=>{
@@ -19,6 +19,7 @@ function portOf(server:Server){const address=server.address();if(!address||typeo
 function storedAuth(dir:string,vault:Vault){const key=createHash('sha256').update(vault.key('service')).update('localneuron-mcp-v1').digest(),v=JSON.parse(readFileSync(join(dir,'connections.enc.json'),'utf8')),d=createDecipheriv('aes-256-gcm',key,Buffer.from(v.iv,'hex'));d.setAuthTag(Buffer.from(v.tag,'hex'));return JSON.parse(Buffer.concat([d.update(Buffer.from(v.data,'base64')),d.final()]).toString())[0].auth as {client?:{issuer?:string}}; }
 function metadata(base:string,authorize=base+'/authorize'){return {issuer:base,authorization_endpoint:authorize,token_endpoint:base+'/token',registration_endpoint:base+'/register',response_types_supported:['code'],grant_types_supported:['authorization_code','refresh_token'],code_challenge_methods_supported:['S256'],token_endpoint_auth_methods_supported:['none']};}
 function registration(){return {client_id:'cliente-teste',redirect_uris:['http://127.0.0.1:4317/v1/connections/oauth/callback'],token_endpoint_auth_method:'none'};}
+function trustTestCa(ca:Buffer){const agent=new Agent({connect:{ca}}),previous=globalThis.fetch;globalThis.fetch=((input:RequestInfo|URL,init?:RequestInit)=>undiciFetch(input as never,{...init,dispatcher:agent} as never)) as unknown as typeof fetch;return async()=>{globalThis.fetch=previous;await agent.close();};}
 
 test('OAuth na origem do servidor MCP passa e uma origem alterada é recusada',async()=>{
  const dir=mkdtempSync(join(tmpdir(),'neuron-oauth-')),vault=new Vault(dir);vault.initialize('senha-de-testes-oauth');
@@ -47,8 +48,10 @@ test('OAuth na origem do servidor MCP passa e uma origem alterada é recusada',a
 
 test('OAuth fixa a origem HTTPS do primeiro registro e recusa outra origem',async()=>{
  const dir=mkdtempSync(join(tmpdir(),'neuron-oauth-https-')),certDir=mkdtempSync(join(tmpdir(),'neuron-oauth-cert-')),vault=new Vault(dir);vault.initialize('senha-de-testes-oauth');
- execFileSync('openssl',['req','-x509','-newkey','rsa:2048','-keyout',join(certDir,'key.pem'),'-out',join(certDir,'cert.pem'),'-days','1','-nodes','-subj','/CN=127.0.0.1','-addext','subjectAltName=IP:127.0.0.1'],{stdio:'ignore'});
- const previous=process.env.NODE_TLS_REJECT_UNAUTHORIZED;process.env.NODE_TLS_REJECT_UNAUTHORIZED='0';
+ execFileSync('openssl',['req','-x509','-newkey','rsa:2048','-keyout',join(certDir,'ca.key'),'-out',join(certDir,'ca.pem'),'-days','1','-nodes','-subj','/CN=LocalNeuron Test CA'],{stdio:'ignore'});
+ execFileSync('openssl',['req','-newkey','rsa:2048','-keyout',join(certDir,'key.pem'),'-out',join(certDir,'server.csr'),'-nodes','-subj','/CN=127.0.0.1','-addext','subjectAltName=IP:127.0.0.1'],{stdio:'ignore'});
+ execFileSync('openssl',['x509','-req','-in',join(certDir,'server.csr'),'-CA',join(certDir,'ca.pem'),'-CAkey',join(certDir,'ca.key'),'-CAcreateserial','-out',join(certDir,'cert.pem'),'-days','1','-copy_extensions','copy'],{stdio:'ignore'});
+ let restoreCa=async()=>{};
  const httpsHits:string[]=[],state:{servers:string[]}={servers:[]};
  const httpsServer=createHttps({key:readFileSync(join(certDir,'key.pem')),cert:readFileSync(join(certDir,'cert.pem'))},(req,res)=>{const path=new URL(req.url??'/','https://127.0.0.1').pathname;httpsHits.push(path);req.resume();const base=state.servers[0];if(!base){res.writeHead(500);res.end();return;}
   if(path.includes('oauth-authorization-server')){res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify(metadata(base)));return;}
@@ -58,7 +61,7 @@ test('OAuth fixa a origem HTTPS do primeiro registro e recusa outra origem',asyn
   if(path.includes('oauth-protected-resource')){res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({resource:`http://127.0.0.1:${port}/mcp`,authorization_servers:state.servers}));return;}
   res.writeHead(401,{'WWW-Authenticate':`Bearer resource_metadata="http://127.0.0.1:${port}/.well-known/oauth-protected-resource"`});res.end('unauthorized');});
  const c=new Connections(dir,vault);
- try{const asPort=await listen(httpsServer),mcpPort=await listen(mcp),allowed=`https://127.0.0.1:${asPort}`;state.servers=[allowed];
+ try{restoreCa=trustTestCa(readFileSync(join(certDir,'ca.pem')));const asPort=await listen(httpsServer),mcpPort=await listen(mcp),allowed=`https://127.0.0.1:${asPort}`;state.servers=[allowed];
   const row=await c.add({name:'HTTPS',url:`http://127.0.0.1:${mcpPort}/mcp`,oauth:true});
   assert.ok(row);
   assert.equal(row.authorization_origin,allowed);
@@ -84,7 +87,7 @@ test('OAuth fixa a origem HTTPS do primeiro registro e recusa outra origem',asyn
    assert.equal(outsider.length,0);
    assert.equal(refused.authorization_origin,allowed);
   }finally{await stop(other);}
- }finally{process.env.NODE_TLS_REJECT_UNAUTHORIZED=previous;await c.close();await stop(httpsServer);await stop(mcp);rmSync(dir,{recursive:true,force:true});rmSync(certDir,{recursive:true,force:true});}
+ }finally{await restoreCa();await c.close();await stop(httpsServer);await stop(mcp);rmSync(dir,{recursive:true,force:true});rmSync(certDir,{recursive:true,force:true});}
 });
 
 test('OAuth sem origem fixada recusa HTTP fora do servidor MCP e não o contacta',async()=>{
