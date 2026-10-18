@@ -15,15 +15,12 @@ const scratch=mkdtempSync(join(tmpdir(),'colmeia-build-')),source=join(scratch,'
 mkdirSync(source);
 execFileSync(process.platform==='win32'?'python':'python3',[join(root,'scripts/fetch-runtime.py'),platform+'-'+arch],{cwd:root,stdio:'inherit'});
 execFileSync(process.platform==='win32'?'python':'python3',[join(root,'scripts/fetch-tools.py'),platform+'-'+arch],{cwd:root,stdio:'inherit'});
-execFileSync(process.platform==='win32'?'python':'python3',[join(root,'scripts/fetch-voice-node.py'),platform+'-'+arch],{cwd:root,stdio:'inherit'});
 try {
   // Explicit inclusion avoids packaging vaults, sessions, model weights or workspace data.
   for(const file of ['package.json','package-lock.json','subscription-config.json','dist','desktop','public','workflows','THIRD_PARTY.md','licenses']) cpSync(join(root,file),join(source,file),{recursive:true,...(file==='public'?{filter:runtimeFilter}:{})});
   mkdirSync(join(source,'runtime'),{recursive:true});
   for(const file of ['manifest.json','LICENSE.llama.cpp','tools-manifest.json','LICENSE.whisper.cpp'])cpSync(join(root,'runtime',file),join(source,'runtime',file));
   cpSync(join(root,'runtime','tools-'+platform+'-'+arch),join(source,'runtime','tools-'+platform+'-'+arch),{recursive:true,verbatimSymlinks:true,filter:runtimeFilter});
-  cpSync(join(root,'runtime','voice-node-manifest.json'),join(source,'runtime','voice-node-manifest.json'));
-  cpSync(join(root,'runtime','voice-node-'+platform+'-'+arch),join(source,'runtime','voice-node-'+platform+'-'+arch),{recursive:true});
   cpSync(join(root,'runtime',platform+'-'+arch),join(source,'runtime',platform+'-'+arch),{recursive:true,verbatimSymlinks:true});
   execFileSync(process.platform==='win32'?'npm.cmd':'npm',['ci','--os='+platform,'--cpu='+arch,'--omit=dev','--ignore-scripts','--no-audit','--no-fund'],{cwd:source,stdio:'inherit',shell:process.platform==='win32'});
   if(platform==='darwin'&&arch==='arm64'){execFileSync('python3',[join(root,'scripts/fetch-mlx.py')],{cwd:root,stdio:'inherit'});for(const file of ['mlx-manifest.json','mlx_server.py','mlx_protocol.py'])cpSync(join(root,'runtime',file),join(source,'runtime',file));cpSync(join(root,'runtime/mlx-darwin-arm64'),join(source,'runtime/mlx-darwin-arm64'),{recursive:true,verbatimSymlinks:true});}

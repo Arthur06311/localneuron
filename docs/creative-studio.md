@@ -1,5 +1,14 @@
 # Estúdio criativo · LocalNeuron 0.26
 
+## Narração
+
+A narração do Estúdio usa a voz do sistema, sem download e sem embutir sherpa-onnx, eSpeak NG ou a voz Faber. No Mac o comando é `say`; no Windows, a SAPI pelo PowerShell (`System.Speech`); no Linux, `spd-say` do speech-dispatcher, se estiver instalado, com gravação em WAV por PulseAudio ou PipeWire. Sem o comando no Linux, ou sem uma voz pt-BR em qualquer sistema, a narração fica desativada e a interface explica o motivo.
+
+Uma preferência antiga da voz Faber (`faber-pt-br`) ou a pasta já baixada passa a usar a voz pt-BR do sistema. A escolha de outra voz do sistema que ainda exista é mantida. A pasta antiga não é apagada.
+
+TODO: voltar à voz neural quando o sherpa-onnx 2.0.0 sair sem eSpeak NG. Issue: https://github.com/k2-fsa/sherpa-onnx/issues/3731
+
+
 ## Editor / DaVinci Resolve Studio
 
 A aba Editor conecta o SDK Python local da Blackmagic. Abra um projeto no Resolve Studio, habilite **Preferences → System → General → External scripting using: Local** e importe os arquivos no Media Pool. O Python incluído no Mac Apple Silicon é usado automaticamente; Windows/Linux precisam de Python 3 disponível.

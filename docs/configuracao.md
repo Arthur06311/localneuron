@@ -38,7 +38,7 @@ O tamanho do aplicativo não inclui os modelos. Download é espaço no disco; RA
 | Música | ACE-Step instalado separadamente, 25 GiB livres para preparar o ambiente; cerca de 6,32 GB de pesos mais dependências. RAM/GPU influenciam duração e velocidade. |
 | EXO gerenciado | Mac Apple Silicon com macOS 26.2+; computadores na mesma rede confiável. |
 | Editor | DaVinci Resolve Studio e SDK Python instalados. No Windows/Linux, Python 3 disponível no sistema. |
-| Voz | Permissão do microfone e modelo Whisper instalado. |
+| Voz | Transcrição: permissão do microfone e modelo Whisper instalado. Narração: voz pt-BR do sistema (`say`, SAPI ou `spd-say`). Sem essa voz, a narração aparece desativada. |
 
 No Windows, os motores podem precisar do [Microsoft Visual C++ Redistributable x64](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist). No Linux, use as dependências e a configuração de sandbox exigidas pela sua distribuição.
 

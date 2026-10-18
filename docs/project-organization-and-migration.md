@@ -128,7 +128,7 @@ As entregas acumuladas no histórico público do GitHub foram agrupadas abaixo p
 ### Motores e integrações
 
 - llama.cpp para GGUF e MLX independente para Apple Silicon.
-- whisper.cpp/sherpa-onnx para voz, stable-diffusion.cpp para perfis de mídia e ACE-Step opcional para música.
+- whisper.cpp para transcrição e a voz do sistema para narração. A voz neural com sherpa-onnx fica para a 2.0.0 sem eSpeak NG ([k2-fsa/sherpa-onnx#3731](https://github.com/k2-fsa/sherpa-onnx/issues/3731)). stable-diffusion.cpp cobre os perfis de mídia e ACE-Step é opcional para música.
 - EXO para conectar máquinas compatíveis e preparar execução distribuída.
 - Minha API compatível com Chat Completions em rede privada.
 - MCP por HTTP/stdio com OAuth quando suportado.
@@ -226,15 +226,16 @@ node scripts/build-website.mjs # gera website/guide.html
 node --test tests/website.test.mjs
 ```
 
-Os pesos de modelos, runtimes e caches não devem ser incluídos no clone. Use os scripts `fetch-runtime.py`, `fetch-mlx.py`, `fetch-tools.py` e `fetch-voice-node.py` com o alvo da plataforma.
+Os pesos de modelos, runtimes e caches não devem ser incluídos no clone. Use os scripts `fetch-runtime.py`, `fetch-mlx.py` e `fetch-tools.py` com o alvo da plataforma. A narração não tem runtime próprio: usa a voz do sistema.
 
 ## 8. Estado de validação e riscos
 
 Revalidação em 18/10/2026, sobre o commit `e5694ac` de `main` (a revisão da navegação é o commit anterior, `be40fb1`), com Node.js 24.22.0 em Linux x64:
 
 - `npm run build` passou.
-- `npm test` executa **143 testes**: 127 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 16 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 4, navegação 2, ícones de modelos 2 e acesso local 2).
+- `npm test` executa **143 testes** nessa revisão: 127 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 16 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 4, navegação 2, ícones de modelos 2 e acesso local 2).
 - A suíte compilada do backend passou com **127 de 127** testes.
+- A narração pela voz do sistema acrescenta 8 testes em `tests/system-tts.test.ts`. Com eles, `npm test` reúne **151 testes**: 135 TypeScript e 16 JavaScript.
 - Os cinco scripts Python de `tests/` (`resolve_bridge_test.py`, `mlx_protocol_test.py`, `linux_installer_test.py`, `linux_gui_installer_test.py` e `linux_native_package_test.py`) passaram. Eles não fazem parte do `npm test`.
 - Em Linux, os 2 testes de `tests/local-access.test.mjs` falham: o `safeStorage` simulado no teste não implementa `getSelectedStorageBackend()`, que `desktop/local-access.cjs` só chama quando `process.platform === 'linux'`. Em outro sistema esse trecho não é executado. O teste precisa ser corrigido.
 - O teste “Gerenciador só carrega chaves instaladas, contexto curto e descarrega instâncias conhecidas” (`tests/library.test.ts`) depende da memória livre da máquina. Ele falhou em 1 de 2 execuções com “Memória disponível insuficiente”.
