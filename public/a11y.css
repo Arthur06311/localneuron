@@ -1,0 +1,126 @@
+/* Narrow-shell reachability. Loaded last so it can correct earlier breakpoints. */
+:root { --muted: #5f656e; }
+input::placeholder, textarea::placeholder { opacity: 1; }
+
+.skip-link {
+  position: fixed;
+  left: 8px;
+  top: 8px;
+  z-index: 80;
+  padding: 10px 14px;
+  background: var(--surface, #fff);
+  color: var(--ink, #24272e);
+  border-radius: 8px;
+  transform: translateY(-160%);
+}
+.skip-link:focus { transform: none; }
+/* Paused/cancelled badges keep opaque light fills from styles.css; their text was under 4.5:1. */
+.badge.review, .badge.paused { color: #6a3d12; }
+.badge.cancelled { color: #4f4f4f; }
+
+@media (max-width: 768px) {
+  main, #content, .page-head, .panel, .chat-main, .setup { min-width: 0; max-width: 100%; }
+}
+
+@media (max-width: 720px) {
+  body, body.chat-page {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100dvh;
+    overflow: auto;
+    padding-top: 0;
+  }
+  .sidebar, body.chat-page .sidebar {
+    position: sticky;
+    inset: auto;
+    top: 0;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    z-index: 30;
+    padding: 6px 8px 8px;
+  }
+  .brand, body.chat-page .brand {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 40px;
+    align-items: center;
+    font-size: 0;
+  }
+  .workspace-label, body.chat-page .workspace-label,
+  .premium-sidebar-card { display: none; }
+  .sidebar nav, body.chat-page .sidebar nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 4px;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+  }
+  .nav-island { position: relative; flex: 1 1 calc(50% - 4px); min-width: 0; }
+  .nav-island[data-open="true"] { flex-basis: 100%; }
+  .nav-island-trigger, body.chat-page .nav-island-trigger {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100%;
+    min-height: 40px !important;
+    padding: 8px 10px !important;
+    gap: 6px !important;
+  }
+  .sidebar nav button span, body.chat-page .sidebar nav button span,
+  .nav-island-trigger > span:nth-child(2),
+  body.chat-page .nav-island-trigger > span:nth-child(2) { display: flex !important; }
+  .nav-island-trigger small, body.chat-page .nav-island-trigger small { display: none; }
+  .nav-island-trigger strong, body.chat-page .nav-island-trigger strong { font-size: 12px; }
+  body.chat-page .nav-island-trigger strong::after { content: none; }
+  .sidebar .nav-island-menu, body.chat-page .nav-island-menu {
+    position: static;
+    left: auto;
+    top: auto;
+    width: 100%;
+    min-width: 0;
+    margin: 4px 0 0;
+    box-shadow: none;
+  }
+  .nav-island-menu button, body.chat-page .nav-island-menu button { min-height: 40px !important; }
+  .sidebar-bottom, body.chat-page .sidebar-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
+    margin: 6px 0 0;
+    padding: 0;
+    border: 0;
+    overflow: visible;
+    text-align: left;
+  }
+  .sidebar-bottom > p, body.chat-page .sidebar-bottom > p { display: none; }
+  #ram-sidebar { flex: 1 1 120px; min-width: 0; font-size: 11px; line-height: 1.35; }
+  #lock { display: inline-flex; flex: 0 0 auto; align-items: center; min-height: 40px; padding: 8px 10px; }
+  main, body.chat-page main { margin: 0; width: 100%; height: auto; min-height: 0; flex: 1 1 auto; }
+  body.chat-page #content { height: auto; }
+  .topbar, body.chat-page .topbar {
+    height: auto;
+    min-height: 44px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px 8px;
+    padding: 6px 8px;
+  }
+  #breadcrumb { flex: 1 1 100%; max-width: 100%; }
+  .theme-switch { max-width: 100%; }
+  .theme-switch button { min-height: 32px; }
+}

@@ -27,6 +27,11 @@ jobs:
         with:
           python-version: "3.12"
       - run: npm ci
+      - name: Chromium headless para a auditoria de acessibilidade
+        run: npx playwright install chromium
+      - name: Bibliotecas do Chromium
+        if: runner.os == 'Linux'
+        run: npx playwright install-deps chromium
       - run: npm run build
       - run: npm test
       - name: Testes Python
