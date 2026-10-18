@@ -151,4 +151,4 @@ tests/        Testes automatizados e fixtures sintéticas
 
 Para reportar um problema, informe versão, sistema, modelo/motor, passos e mensagem de erro. Remova tokens, prompts privados e caminhos pessoais. Consulte [CONTRIBUTING.md](CONTRIBUTING.md) e [SECURITY.md](SECURITY.md).
 
-O código foi disponibilizado para consulta. Uma licença geral de reutilização do código próprio ainda não foi definida pelo titular; a publicação não concede automaticamente uma licença MIT/Apache. Os componentes de terceiros e os modelos mantêm suas licenças.
+O LocalNeuron é software proprietário, de código fechado, com todos os direitos reservados. Os componentes de terceiros e os modelos mantêm suas próprias licenças.
