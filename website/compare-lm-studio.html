@@ -1,11 +1,11 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b0e"><title>LocalNeuron e LM Studio — comparação</title><meta name="description" content="Comparação factual entre LocalNeuron e LM Studio: motores, voz, imagem, música, EXO, Minha API, MCP, sistemas e licença, com fontes."><link rel="icon" href="./app-icon.png"><link rel="stylesheet" href="./style.css"></head><body><a class="skip" href="#main">Ir ao conteúdo</a><header class="guide-header"><a class="brand" href="./"><img src="./app-icon.png" width="34" height="34" alt="">LocalNeuron</a><nav aria-label="Navegação"><a href="./guide.html">Guia / Setup</a><a href="./#download">Downloads</a><a href="https://github.com/Arthur06311/localneuron">GitHub ↗</a></nav></header><div class="guide-shell"><nav class="guide-nav" aria-label="Nesta página"><a href="#resumo">Resumo</a><a href="#tabela-comparativa">Tabela comparativa</a><a href="#quando-cada-um-faz-mais-sentido">Quando cada um faz mais sentido</a><a href="#usar-os-dois">Usar os dois</a><a href="#o-que-esta-pagina-nao-compara">O que esta página não compara</a><a href="#fontes">Fontes</a></nav><main class="guide-main" id="main"><p class="eyebrow">COMPARAÇÃO / PORTUGUÊS</p><section aria-label="Introdução"><h1 id="localneuron-e-lm-studio-o-que-muda-entre-eles">LocalNeuron e LM Studio: o que muda entre eles</h1>
 <p>LocalNeuron 0.27 · Alfa. Comparação factual, conferida em 18/10/2026. O LM Studio é um aplicativo maduro e muito usado para rodar modelos locais; esta página não pretende dizer qual é “melhor”, e sim mostrar para que cada um foi pensado, para você escolher — ou usar os dois.</p>
-<p>LM Studio é uma marca da Element Labs, Inc. O LocalNeuron não tem afiliação com o LM Studio. As informações sobre o LM Studio vêm da documentação pública dele (fontes no fim da página) e podem mudar a qualquer momento; itens marcados <strong>a confirmar</strong> não foram verificados em uma fonte oficial.</p>
+<p>LM Studio é uma marca da Element Labs, Inc. O LocalNeuron não tem afiliação com o LM Studio. As informações sobre o LM Studio vêm da documentação pública dele (fontes no fim da página) e podem mudar a qualquer momento.</p>
 </section>
 <section><h2 id="resumo">Resumo</h2>
 <ul>
 <li><strong>Os dois</strong> rodam modelos de texto localmente com llama.cpp (GGUF) e, no Mac Apple Silicon, com MLX; funcionam offline depois que os modelos foram baixados; conectam servidores MCP; e oferecem um endpoint compatível com OpenAI.</li>
-<li><strong>O LM Studio</strong> é focado em LLMs e no desenvolvedor: API ampla (Chat Completions, Responses, Embeddings, compatibilidade Anthropic), SDKs Python/TypeScript, CLI <code>lms</code>, modo headless (<code>llmster</code>), acesso entre dispositivos com LM Link e interface em vários idiomas. É um produto estável e multiplataforma.</li>
+<li><strong>O LM Studio</strong> é focado em LLMs e no desenvolvedor: API ampla (Chat Completions, Responses, Embeddings, compatibilidade Anthropic), SDKs Python/TypeScript, CLI <code>lms</code>, modo headless (<code>llmster</code>), acesso entre dispositivos com LM Link e interface em vários idiomas. É multiplataforma.</li>
 <li><strong>O LocalNeuron</strong> é um espaço de trabalho local mais amplo, em versão alfa: além de texto, reúne motores próprios de voz, imagem/vídeo e música, rede EXO para dividir um modelo entre computadores, <strong>Minha API</strong> com chaves e cotas por cliente, bots especialistas e uma ponte para o DaVinci Resolve Studio. A interface do app está em português.</li>
 </ul>
 </section>
@@ -35,23 +35,23 @@
 </tr>
 <tr>
 <td>Voz</td>
-<td>Transcrição local com whisper.cpp (perfis tiny, base, small e medium). Síntese de voz em português com sherpa-onnx/Piper (voz Faber), usada na narração do estúdio.</td>
-<td>Transcrição de voz offline citada no plano gratuito; entrada de voz documentada no Bionic. <a href="#fonte-l7">[L7]</a><a href="#fonte-l8">[L8]</a> Síntese de voz nativa: não encontrada na documentação consultada (<strong>a confirmar</strong>).</td>
+<td>Transcrição local com whisper.cpp (perfis tiny, base, small e large-v3-turbo). Síntese de voz em português com sherpa-onnx/Piper (voz Faber), usada na narração do estúdio.</td>
+<td>Transcrição de voz offline citada no plano gratuito; entrada de voz documentada no Bionic. <a href="#fonte-l7">[L7]</a><a href="#fonte-l8">[L8]</a> Síntese de voz nativa: não documentado em 18/10/2026.</td>
 </tr>
 <tr>
 <td>Imagem e vídeo</td>
 <td>stable-diffusion.cpp com perfis integrados (SD 1.5 para imagem, Wan 2.1 para vídeo), projetos, cenas e exportação. O binário visual do Mac exige macOS 26+.</td>
-<td>Geração de imagem nativa: não encontrada na documentação oficial; existem plugins da comunidade no Hub (<strong>a confirmar</strong>). Modelos de visão podem receber imagens no Chat Completions. <a href="#fonte-l4">[L4]</a></td>
+<td>Geração de imagem nativa: não documentado em 18/10/2026. Modelos de visão podem receber imagens no Chat Completions. <a href="#fonte-l4">[L4]</a></td>
 </tr>
 <tr>
 <td>Música</td>
 <td>ACE-Step 1.5 opcional, instalado em pasta própria (25 GiB livres), faixas de 10 a 120 s. Geração real de 10 s verificada no Mac Apple Silicon.</td>
-<td>Não encontrada na documentação consultada (<strong>a confirmar</strong>).</td>
+<td>Geração de música: não documentado em 18/10/2026.</td>
 </tr>
 <tr>
 <td>Vários computadores</td>
 <td><strong>Rede EXO</strong> (EXO 1.0.71): divide um modelo de texto compatível entre máquinas. Instalação gerenciada em Mac com macOS 26.2+; outros sistemas podem controlar um EXO existente. Teste com duas máquinas físicas ainda pendente.</td>
-<td><strong>LM Link</strong>: rede criptografada de ponta a ponta (com Tailscale) para usar modelos de outro dispositivo seu, inclusive pelo app Locally no iPhone; até 5 dispositivos no plano gratuito. <a href="#fonte-l6">[L6]</a><a href="#fonte-l7">[L7]</a> Dividir um único modelo entre máquinas: não encontrado na documentação consultada (<strong>a confirmar</strong>).</td>
+<td><strong>LM Link</strong>: rede criptografada de ponta a ponta (com Tailscale) para usar modelos de outro dispositivo seu, inclusive pelo app Locally no iPhone; até 5 dispositivos no plano gratuito. <a href="#fonte-l6">[L6]</a><a href="#fonte-l7">[L7]</a> Dividir um único modelo entre máquinas: não documentado em 18/10/2026.</td>
 </tr>
 <tr>
 <td>API local</td>
@@ -86,7 +86,7 @@
 <tr>
 <td>Maturidade</td>
 <td>Alfa. Pacote Mac com assinatura ad hoc, sem notarização Apple; sem suporte universal a modelos ou hardware.</td>
-<td>Produto estável, com atualizações frequentes (0.4.26 em 13/10/2026). <a href="#fonte-l9">[L9]</a></td>
+<td>Atualizações frequentes (0.4.26 em 13/10/2026). <a href="#fonte-l9">[L9]</a></td>
 </tr>
 </tbody></table></div>
 </section>
