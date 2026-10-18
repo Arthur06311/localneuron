@@ -20,9 +20,11 @@ import { Toolbox,accessSchema } from './agent-tools.js';
 import { agentReply } from './agent.js';
 import { complete } from './inference.js';
 import Fastify from 'fastify';
+import rateLimit from '@fastify/rate-limit';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statfsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { Gateway } from './gateway.js';
 import { optionsSchema } from './inference.js';
@@ -37,9 +39,13 @@ import { acquireProcessLock } from './lock.js';
 import { verifyPackage } from '../scripts/protocol.mjs';
 import { z } from 'zod';
 
+const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as { legacyEnv: (suffix: string) => string | undefined };
+
 const equal = (a: string, b: string) => { const left = Buffer.from(a), right = Buffer.from(b); return left.length === right.length && timingSafeEqual(left,right); };
 export async function createApp(core: Core, token = randomBytes(32).toString('hex'), origin = 'http://127.0.0.1:4317', runtime = new LocalRuntime(core.directory,core.root), planConfig = subscriptionConfig(core.root)) {
   const app = Fastify({ logger: false, bodyLimit: 2 * 1024 * 1024, ajv: { customOptions: { removeAdditional: false } } });
+  // Limite só na rota nova, que lê o disco. global:false deixa as outras rotas livres para o limite global por IP do servidor local.
+  await app.register(rateLimit, { global: false });
   const subscription=new Subscription(core.directory,planConfig);
   const aux=new AuxRuntime(core.directory,core.root);
   const proMedia=new ProMedia(core.directory,core.root);
@@ -69,7 +75,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   }
   app.addHook('preClose',async()=>{await editor.close();await music.stop();await computerControl.stop();await connections.close();await experienceJobs.stop();await mediaDownloads.pause();await pro.close();await proMedia.close();await aux.close();});
   app.addHook('onClose', async () => { await exclusive(async () => { await aux.close(); await gateway.stop(); await chats.close(); await library.stop(); }); });
-  const staticFiles: Record<string, [string,string]> = { '/ux.js':['ux.js','application/javascript'], '/ux.css':['ux.css','text/css'], '/creative.js':['creative.js','application/javascript'], '/creative.css':['creative.css','text/css'], '/experience.js':['experience.js','application/javascript'], '/experience.css':['experience.css','text/css'], '/photo.js':['photo.js','application/javascript'], '/exo.js':['exo.js','application/javascript'], '/exo.css':['exo.css','text/css'], '/app-icon.png':['app-icon.png','image/png'], '/polish.css':['polish.css','text/css'], '/mascot.png':['mascot.png','image/png'], '/mascot-thinking.png':['mascot-thinking.png','image/png'], '/mascot-success.png':['mascot-success.png','image/png'], '/mascot-attention.png':['mascot-attention.png','image/png'], '/mascot.js':['mascot.js','application/javascript'], '/mascot.css':['mascot.css','text/css'], '/premium-experience.js':['premium-experience.js','application/javascript'], '/premium-experience.css':['premium-experience.css','text/css'], '/pro-center.js':['pro-center.js','application/javascript'], '/model-icons.js':['model-icons.js','application/javascript'], '/model-identities.js':['model-identities.js','application/javascript'], '/media-library.js':['media-library.js','application/javascript'], '/subscription.js':['subscription.js','application/javascript'], '/subscription.css':['subscription.css','text/css'], "/chat-assist.js":["chat-assist.js","application/javascript"], "/chat-assist.css":["chat-assist.css","text/css"], '/studio-pro.js':['studio-pro.js','application/javascript'], '/pro.js':['pro.js','application/javascript'], '/pro.css':['pro.css','text/css'], '/': ['index.html','text/html; charset=utf-8'], '/library-progress.js':['library-progress.js','application/javascript'], '/app.js': ['app.js','application/javascript'], '/chat.js': ['chat.js','application/javascript'], '/styles.css': ['styles.css','text/css'], '/sharing.js':['sharing.js','application/javascript'], '/theme.css':['theme.css','text/css'], '/workspace.css':['workspace.css','text/css'], '/professional.css':['professional.css','text/css'], '/icons.js':['icons.js','application/javascript'], '/voice.js':['voice.js','application/javascript'], '/audio-worklet.js':['audio-worklet.js','application/javascript'], '/studio.js':['studio.js','application/javascript'], '/studio-project.js':['studio-project.js','application/javascript'], '/studio-renderer.js':['studio-renderer.js','application/javascript'], '/studio.css':['studio.css','text/css'], '/hub.js':['hub.js','application/javascript'], '/vendor/marked.js':['../node_modules/marked/lib/marked.esm.js','application/javascript'], '/vendor/purify.js':['../node_modules/dompurify/dist/purify.es.mjs','application/javascript'] };
+  const staticFiles: Record<string, [string,string]> = { '/ux.js':['ux.js','application/javascript'], '/ux.css':['ux.css','text/css'], '/creative.js':['creative.js','application/javascript'], '/creative.css':['creative.css','text/css'], '/experience.js':['experience.js','application/javascript'], '/experience.css':['experience.css','text/css'], '/photo.js':['photo.js','application/javascript'], '/exo.js':['exo.js','application/javascript'], '/exo.css':['exo.css','text/css'], '/app-icon.png':['app-icon.png','image/png'], '/polish.css':['polish.css','text/css'], '/mascot.png':['mascot.png','image/png'], '/mascot-thinking.png':['mascot-thinking.png','image/png'], '/mascot-success.png':['mascot-success.png','image/png'], '/mascot-attention.png':['mascot-attention.png','image/png'], '/mascot.js':['mascot.js','application/javascript'], '/mascot.css':['mascot.css','text/css'], '/premium-experience.js':['premium-experience.js','application/javascript'], '/premium-experience.css':['premium-experience.css','text/css'], '/pro-center.js':['pro-center.js','application/javascript'], '/model-icons.js':['model-icons.js','application/javascript'], '/model-identities.js':['model-identities.js','application/javascript'], '/media-library.js':['media-library.js','application/javascript'], '/subscription.js':['subscription.js','application/javascript'], '/subscription.css':['subscription.css','text/css'], "/chat-assist.js":["chat-assist.js","application/javascript"], "/chat-assist.css":["chat-assist.css","text/css"], '/studio-pro.js':['studio-pro.js','application/javascript'], '/pro.js':['pro.js','application/javascript'], '/pro.css':['pro.css','text/css'], '/': ['index.html','text/html; charset=utf-8'], '/library-progress.js':['library-progress.js','application/javascript'], '/app.js': ['app.js','application/javascript'], '/chat.js': ['chat.js','application/javascript'], '/styles.css': ['styles.css','text/css'], '/sharing.js':['sharing.js','application/javascript'], '/theme.css':['theme.css','text/css'], '/workspace.css':['workspace.css','text/css'], '/professional.css':['professional.css','text/css'], '/icons.js':['icons.js','application/javascript'], '/voice.js':['voice.js','application/javascript'], '/audio-worklet.js':['audio-worklet.js','application/javascript'], '/studio.js':['studio.js','application/javascript'], '/studio-project.js':['studio-project.js','application/javascript'], '/studio-renderer.js':['studio-renderer.js','application/javascript'], '/studio.css':['studio.css','text/css'], '/hub.js':['hub.js','application/javascript'], '/vendor/marked.js':['../node_modules/marked/lib/marked.esm.js','application/javascript'], '/vendor/purify.js':['../node_modules/dompurify/dist/purify.es.mjs','application/javascript'], '/navigation.css':['navigation.css','text/css'], '/a11y-visual.css':['a11y-visual.css','text/css'] };
   const iconDirectory=join(core.root,'public/model-icons');if(existsSync(iconDirectory))for(const file of readdirSync(iconDirectory)){if(/^[a-f0-9]{24}\.(png|jpg|webp)$/.test(file))staticFiles['/model-icons/'+file]=['model-icons/'+file,file.endsWith('.jpg')?'image/jpeg':file.endsWith('.png')?'image/png':'image/webp'];}
   let failedUnlocks = 0, retryAt = 0;
   app.addHook('onRequest', async (request, reply) => {
@@ -93,6 +99,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.addHook('preHandler',async(request)=>{const feature=requiredFeature(request.method,request.routeOptions.url||request.url.split('?')[0],request.body);if(feature)subscription.require(feature);});
   app.setErrorHandler((error, _request, reply) => {
     if(error instanceof ProRequired)return reply.code(402).send({error:error.message,code:'pro_required',feature:error.feature});
+    if ((error as { statusCode?: number }).statusCode === 429) return reply.code(429).send({ error: 'Muitas consultas num curto intervalo. Aguarde e tente novamente.' });
     const err = error as Error;
     const message = err instanceof z.ZodError ? 'Dados inválidos: ' + err.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ') : err.message;
     const conflict = /Conflito|Versão mudou|Idempotency-Key reutilizada|imutável/.test(message);
@@ -285,7 +292,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     const revision = libraryRevision({ busy: library.busy, jobs: Object.values(library.jobs), media, studio, profiles, catalogIds: library.catalog.map(model => model.id), access: library.access.summary(library.catalog) });
     return { media, profiles, studio, revision };
   };
-  app.get('/v1/model-library/progress', async () => {
+  app.get('/v1/model-library/progress', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async () => {
     const state = libraryState();
     const memory = memoryStatus();
     const disk = statfsSync(library.directory);
@@ -338,8 +345,8 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const root = process.cwd();
-  const directory = resolve(process.env.COLMEIA_DATA_DIR || join(root, '.data'));
-  const port = Number(process.env.COLMEIA_PORT || 4317);
+  const directory = resolve(legacyEnv('DATA_DIR') || join(root, '.data'));
+  const port = Number(legacyEnv('PORT') || 4317);
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const releaseLock = acquireProcessLock(directory);
   const core = new Core(directory, root); await core.init();

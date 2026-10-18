@@ -31,6 +31,32 @@ test('A interface só pede o catálogo de novo quando a revisão muda', () => {
   assert.equal(mergeLibraryProgress(status, { ...progress, revision: 'nova' }).refreshCatalog, true);
 });
 
+test('O progresso tem limite por IP e o catálogo continua sem esse limite', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'library-progress-limit-'));
+  const core = new Core(dir, resolve('.'));
+  await core.init();
+  await core.setup('senha-fixture-limite');
+  const { app } = await createApp(core, 'progress-limit');
+  const headers = { host: '127.0.0.1:4317', authorization: 'Bearer progress-limit' };
+  try {
+    let limited = 0;
+    for (let i = 0; i < 130; i++) {
+      const response = await app.inject({ method: 'GET', url: '/v1/model-library/progress', headers });
+      if (response.statusCode === 429) {
+        limited++;
+        assert.equal(response.json().error, 'Muitas consultas num curto intervalo. Aguarde e tente novamente.');
+        assert.ok(Number(response.headers['retry-after']) >= 1);
+      } else assert.equal(response.statusCode, 200);
+    }
+    assert.equal(limited, 10);
+    assert.equal((await app.inject({ method: 'GET', url: '/v1/model-library', headers })).statusCode, 200);
+  } finally {
+    await app.close();
+    await core.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test('Catálogo usa ETag e o progresso cabe num ciclo curto', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'library-progress-'));
   const core = new Core(dir, resolve('.'));
