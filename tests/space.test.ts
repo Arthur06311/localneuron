@@ -8,6 +8,7 @@ import { unzipSync } from 'fflate';
 import { Core } from '../src/core.js';
 import { exportSpace, importSpace } from '../src/space-archive.js';
 import { SPACE_MISMATCH } from '../src/space.js';
+import { createExportLimit } from '../src/space-export-limit.js';
 import { createApp } from '../src/server.js';
 
 const password = 'senha-de-teste-espaco';
@@ -78,6 +79,14 @@ test('Abrir um espaço recusa cofre e base que não correspondem', async () => {
     rmSync(left, { recursive: true, force: true });
     rmSync(right, { recursive: true, force: true });
   }
+});
+
+test('Exportação do espaço aceita quatro pedidos por minuto', () => {
+  let time = 1_000;
+  const allow = createExportLimit(4, 60_000, () => time);
+  assert.deepEqual([allow(), allow(), allow(), allow(), allow()], [true, true, true, true, false]);
+  time += 60_000;
+  assert.equal(allow(), true);
 });
 
 test('A rota de exportação devolve o arquivo e omite o token da sessão', async () => {

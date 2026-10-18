@@ -31,6 +31,7 @@ import { totalmem, tmpdir } from 'node:os';
 import { Chats } from './chat.js';
 import { Core } from './core.js';
 import { exportSpace } from './space-archive.js';
+import { createExportLimit } from './space-export-limit.js';
 import { localModels } from './model.js';
 import { ModelLibrary } from './model-library.js';
 import { acquireProcessLock } from './lock.js';
@@ -308,7 +309,9 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.get('/v1/log/export', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="colmeia-auditoria.json"').send(await core.export()));
   app.post('/v1/log/verify', async request => { const data = z.strictObject({ bundle: z.unknown(), trusted_fingerprint: z.string().regex(/^[0-9a-f]{64}$/) }).parse(body(request)); return verifyPackage(data.bundle, data.trusted_fingerprint); });
   app.get('/v1/vault/backup', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="colmeia-cofre-cifrado.json"').type('application/json').send(readFileSync(core.vault.path)));
-  app.get('/v1/space/export', async (_request, reply) => {
+  const spaceExportLimit = createExportLimit();
+  app.get('/v1/space/export', { config: { rateLimit: { max: 4, timeWindow: 60_000 } } }, async (_request, reply) => {
+    if (!spaceExportLimit()) return reply.code(429).send({ error: 'Aguarde antes de exportar o espaço novamente.' });
     if (core.vault.locked) throw new Error('Cofre bloqueado');
     const file = join(tmpdir(), `localneuron-espaco-${randomBytes(8).toString('hex')}.zip`);
     try {
