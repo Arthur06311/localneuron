@@ -1,0 +1,23 @@
+title = "LocalNeuron"
+
+# Estende as regras padrão do gitleaks. Sem useDefault, este arquivo
+# substituiria o conjunto de regras e o scan deixaria de detectar segredos.
+[extend]
+useDefault = true
+
+# Falso positivo justificado. A regra curl-auth-header dispara no exemplo
+# de desenvolvedor da tela de API local (public/sharing.js). O valor extraído
+# é o placeholder literal SUA_CHAVE (8 caracteres, entropia ~2,95, logo acima
+# do limiar 2,75 da regra). Não é credencial: a chave real é gerada em tempo
+# de execução e não entra no repositório.
+#
+# condition = "AND" exige as três restrições ao mesmo tempo. Um Bearer
+# diferente no mesmo arquivo, ou este placeholder em outro caminho, continua
+# sendo reportado.
+[[allowlists]]
+description = "Placeholder SUA_CHAVE no exemplo de curl de public/sharing.js"
+targetRules = ["curl-auth-header"]
+condition = "AND"
+regexTarget = "secret"
+regexes = ['''^SUA_CHAVE$''']
+paths = ['''(^|/)public/sharing\.js$''']

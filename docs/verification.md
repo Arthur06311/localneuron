@@ -23,7 +23,7 @@ Resultado histórico da Alfa 0.1: **24 testes passaram**, nenhuma falha. A suít
 
 O Juiz possui três capacidades reconhecidas neste recorte. A amostra acima verifica alguns casos normais e adversariais; **não se afirma cobertura completa do espaço de ações**, resistência geral a prompt injection ou equivalência a uma auditoria independente. A alteração de cossinatura no pacote também rompe o hash do evento; os testes do Juiz exercitam a ausência de assinatura em separado.
 
-`npm audit --omit=dev`: nenhum alerta conhecido nas dependências de produção no momento da consulta, após atualização do Fastify para 5.12.3. Isso não comprova ausência de vulnerabilidades.
+`npm audit` em 18 de outubro de 2026, depois das atualizações não-breaking do LN-15: Fastify 5.12.7, DOMPurify 3.4.17, `proxy-addr` 2.0.8, `fast-uri` 4.2.2 e 3.1.8, `brace-expansion` 5.0.12, 2.1.7 e 1.1.21, `ip-address` 10.7.4. O `pptxgenjs` 4.0.1 declara `image-size@^1.2.1`; o override força `image-size@2.0.4`, fora desse intervalo, para corrigir o DoS alto. O bundle Node não carrega `image-size` em tempo de execução. Resta 1 alerta alto, `@modelcontextprotocol/sdk` 1.30.0 (GHSA-6qxp-vccf-f47h), tratado no PR do LN-02. O mesmo resultado aparece com `npm audit --omit=dev`. Isso não comprova ausência de vulnerabilidades.
 
 ## Interface
 
