@@ -16,7 +16,7 @@ O site preserva a escolha manual de idioma e a sugestão automática por país u
 
 ## Publicar uma versão
 
-Os instaladores são grandes: publique-os como **Release assets**, nunca dentro de um commit. A versão inicial é `v0.26.0`, marcada como pré-lançamento.
+Os instaladores são grandes: publique-os como **Release assets**, nunca dentro de um commit. A versão inicial é `v0.26.0`, marcada como pré-lançamento. Uma tag `v*` dispara `.github/workflows/release.yml`, que anexa os pacotes e o `SHA256SUMS` a um rascunho. A conferência dos hashes está em [RELEASE.md](RELEASE.md).
 
 1. Execute os testes, gere os pacotes com os manifests fixados e confira os arquivos conforme `docs/plataformas.md`.
 2. Use configuração pública de assinatura: `subscription-config.json` sem chaves privadas, licença ou ativação do proprietário. Não inclua dados de usuário.

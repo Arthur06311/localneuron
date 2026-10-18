@@ -1,0 +1,197 @@
+name: Release
+
+# Assinatura e notarização entram mais tarde, a cargo do Arthur.
+# macOS: depois do DMG, trocar a assinatura ad hoc já existente por Developer ID e notarizar com notarytool.
+# Windows: depois do NSIS, assinar o instalador com signtool / Authenticode.
+# Este workflow não notariza, não assina com certificado e não lê segredo novo.
+# Não adicionar APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID, WIN_CSC_LINK nem WIN_CSC_KEY_PASSWORD aqui.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  macos:
+    name: macOS Apple Silicon
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Confirmar Apple Silicon
+        run: test "$(uname -m)" = "arm64"
+      - run: npm ci
+      - run: npm run build
+      # O empacotamento é o de scripts/package-macos.py: ZIP e DMG, com a assinatura ad hoc que o script já faz.
+      # Developer ID e notarização entram neste ponto, quando o Arthur configurar os segredos. Nada disso corre agora.
+      - name: Gerar ZIP e DMG
+        run: python3 scripts/package-macos.py --dist-only --output-dir releases
+      - uses: actions/upload-artifact@v4
+        with:
+          name: localneuron-macos
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            releases/LocalNeuron-macOS-arm64.dmg
+            releases/LocalNeuron-macOS-arm64.zip
+
+  linux:
+    name: Linux x64
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm ci
+      - run: npm run build
+      - name: DEB, Arch e bundle do Electron
+        run: npm run package -- linux x64
+      - name: AppImage
+        run: python3 scripts/package-appimage.py releases/LocalNeuron-linux-x64 --output releases/LocalNeuron-Linux-x64.AppImage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: localneuron-linux
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            releases/LocalNeuron-Linux-x64.deb
+            releases/LocalNeuron-Linux-x64.pkg.tar.gz
+            releases/LocalNeuron-Linux-x64.AppImage
+
+  windows:
+    name: Windows x64 NSIS
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar NSIS sem ferramentas de assinatura
+        shell: bash
+        run: choco install nsis --no-progress -y
+      - run: npm ci
+      - run: npm run build
+      - name: Empacotar com Electron Packager
+        run: npm run package -- win32 x64
+      # Authenticode entra depois desta etapa, a cargo do Arthur. O makensis abaixo não chama signtool.
+      - name: Gerar instalador NSIS
+        shell: bash
+        run: python scripts/package-nsis.py releases/LocalNeuron-win32-x64 --output releases/LocalNeuron-Windows-x64-Setup.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: localneuron-windows
+          if-no-files-found: error
+          retention-days: 14
+          path: releases/LocalNeuron-Windows-x64-Setup.exe
+
+  # workflow_dispatch só gera os artefatos acima. O rascunho existe apenas no push de uma tag v*.
+  publicar:
+    name: Rascunho da release
+    needs: [macos, linux, windows]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: localneuron-*
+          merge-multiple: true
+          path: release-assets
+      - name: Gerar SHA256SUMS
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p flat
+          expected=(
+            LocalNeuron-macOS-arm64.dmg
+            LocalNeuron-macOS-arm64.zip
+            LocalNeuron-Linux-x64.deb
+            LocalNeuron-Linux-x64.pkg.tar.gz
+            LocalNeuron-Linux-x64.AppImage
+            LocalNeuron-Windows-x64-Setup.exe
+          )
+          args=()
+          for name in "${expected[@]}"; do
+            matches=()
+            while IFS= read -r found; do
+              matches+=("$found")
+            done < <(find release-assets -type f -name "$name" | sort)
+            if [ "${#matches[@]}" -ne 1 ]; then
+              echo "Esperava um arquivo ${name}." >&2
+              find release-assets -type f >&2
+              exit 1
+            fi
+            cp "${matches[0]}" "flat/${name}"
+            args+=("flat/${name}")
+          done
+          python3 scripts/sha256sums.py --output flat/SHA256SUMS "${args[@]}"
+          for name in "${expected[@]}"; do
+            grep -q "  ${name}$" flat/SHA256SUMS
+          done
+      - name: Anexar ao rascunho
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          cat > release-notes.md <<EOF
+          Rascunho gerado pelo workflow de release. Sem certificado de distribuição e sem notarização.
+
+          O macOS usa o empacotamento Apple Silicon já existente (ZIP e DMG, assinatura ad hoc).
+          O Linux inclui o DEB, o pacote Arch e o AppImage.
+          O Windows é um instalador NSIS sem assinatura.
+
+          Confira o arquivo SHA256SUMS antes de instalar. O modo de verificação está em docs/RELEASE.md.
+          EOF
+          assets=(
+            flat/LocalNeuron-macOS-arm64.dmg
+            flat/LocalNeuron-macOS-arm64.zip
+            flat/LocalNeuron-Linux-x64.deb
+            flat/LocalNeuron-Linux-x64.pkg.tar.gz
+            flat/LocalNeuron-Linux-x64.AppImage
+            flat/LocalNeuron-Windows-x64-Setup.exe
+            flat/SHA256SUMS
+          )
+          if draft="$(gh release view "$TAG" --json isDraft --jq .isDraft)"; then
+            if [ "$draft" != "true" ]; then
+              echo "A release ${TAG} já foi publicada. Este workflow só atualiza rascunho." >&2
+              exit 1
+            fi
+            gh release upload "$TAG" "${assets[@]}" --clobber
+            gh release edit "$TAG" --draft --title "LocalNeuron ${TAG}" --notes-file release-notes.md
+          else
+            gh release create "$TAG" --draft --verify-tag --title "LocalNeuron ${TAG}" --notes-file release-notes.md "${assets[@]}"
+          fi
