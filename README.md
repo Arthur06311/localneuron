@@ -136,7 +136,7 @@ python3 scripts/fetch-voice-node.py darwin-arm64
 npm run desktop
 ```
 
-Use os alvos dos manifests nas outras plataformas ([distribuição](docs/plataformas.md)). O painel usa a porta 4317 em desenvolvimento e 4318 no desktop. Os nomes legados `COLMEIA_DATA_DIR`, `COLMEIA_DESKTOP_DATA_DIR` e as pastas `Colmeia` são preservados por compatibilidade de dados.
+Use os alvos dos manifests nas outras plataformas ([distribuição](docs/plataformas.md)). O painel usa a porta 4317 em desenvolvimento e 4318 no desktop. Os nomes preferidos são `LOCALNEURON_DATA_DIR` e `LOCALNEURON_DESKTOP_DATA_DIR`. Os nomes legados `COLMEIA_DATA_DIR`, `COLMEIA_DESKTOP_DATA_DIR` e as pastas `Colmeia` continuam aceitos.
 
 ```text
 src/          Serviço local, motores, API e persistência
@@ -153,4 +153,4 @@ tests/        Testes automatizados e fixtures sintéticas
 
 Para reportar um problema, informe versão, sistema, modelo/motor, passos e mensagem de erro. Remova tokens, prompts privados e caminhos pessoais. Consulte [CONTRIBUTING.md](CONTRIBUTING.md) e [SECURITY.md](SECURITY.md).
 
-O LocalNeuron é software proprietário, de código fechado, com todos os direitos reservados. Os componentes de terceiros e os modelos mantêm suas próprias licenças.
+O LocalNeuron é software proprietário, de código fechado, com todos os direitos reservados. Copyright (c) 2026 Arthur Pinheiro Kriger. All rights reserved. Não há permissão de cópia, modificação nem redistribuição do código próprio sem autorização escrita do titular. Os termos estão em [LICENSE](LICENSE). Os componentes de terceiros e os modelos mantêm suas próprias licenças.
