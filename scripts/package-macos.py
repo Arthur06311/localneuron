@@ -50,7 +50,7 @@ with tempfile.TemporaryDirectory(prefix='colmeia-package-') as scratch:
     (resources / 'default_app.asar').unlink(missing_ok=True)
     app = resources / 'app'
     app.mkdir()
-    for name in ['package.json', 'package-lock.json', 'subscription-config.json', 'dist', 'desktop', 'public', 'workflows', 'THIRD_PARTY.md', 'licenses']:
+    for name in ['package.json', 'package-lock.json', 'LICENSE', 'subscription-config.json', 'dist', 'desktop', 'public', 'workflows', 'THIRD_PARTY.md', 'licenses']:
         source = root / name
         if source.is_dir():
             shutil.copytree(source, app / name, ignore=ignore_runtime_conflicts if name == 'public' else None)
