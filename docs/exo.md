@@ -1,4 +1,4 @@
-# Rede EXO — LocalNeuron 0.24
+# Rede EXO
 
 A Rede EXO permite distribuir um modelo de texto compatível entre vários computadores. O LocalNeuron usa o EXO oficial e sua API; não depende de LM Studio.
 
@@ -45,7 +45,7 @@ Código e requisitos: https://github.com/exo-explore/exo/tree/v1.0.71
 
 Validação local adicional: motor oficial instalado neste Mac, API iniciada, 24 GiB reconhecidos e catálogo real consultado. A preparação de Qwen3 0.6B 8bit iniciou o download; a geração real não foi concluída nesta validação por lentidão da transferência. A extração mantém links simbólicos relativos do runtime MLX, verificados após a instalação.
 
-## Controles de máquinas na versão 0.24
+## Controles de máquinas
 
 - **Participar com este Mac** inicia o nó local. Os endereços privados só aparecem se **Expor a API na rede local** estiver ativo. Sem isso, outro computador não recebe um endereço da LAN para copiar.
 - **Controlar um EXO existente** aceita um IP simples (porta padrão 52415) ou uma URL privada. Esse modo não acrescenta a RAM do computador controlador.

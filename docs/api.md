@@ -1,4 +1,4 @@
-# API administrativa local v1 — 0.4
+# API administrativa local
 
 Um espaço e um responsável por processo. A organização nunca vem de um campo do corpo. Não há isolamento multiempresa implementado; não exponha o listener fora do loopback.
 
@@ -32,14 +32,14 @@ Autenticação: `Authorization: Bearer <token de session.json>` ou cookie da ses
 
 Respostas de erro têm `{error}`. 401 sem sessão, 403 Host/Origin rejeitado, 423 cofre bloqueado, 409 conflito de versão/idempotência, 400 validação/regra recusada. Não há endpoint público para anexar log ou elevar orçamento.
 
-## Biblioteca de modelos (0.2)
+## Biblioteca de modelos
 
 Todas as rotas exigem sessão autenticada e cofre desbloqueado. Corpos são objetos fechados; não aceitam URL, shell ou caminho fornecido pelo cliente.
 
 | Método / rota | Corpo / finalidade |
 |---|---|
 | GET /v1/model-library | Catálogo, memória, disco, biblioteca e progresso |
-| POST /v1/model-library/engine | `{}` — conectar LM Studio local |
+| POST /v1/model-library/engine | `{}` — conectar o LM Studio local em `127.0.0.1:8080` |
 | POST /v1/model-library/download | `{ "id": "qwen3-mini" }` — catálogo fixo |
 | POST /v1/model-library/cancel | `{ "id": "qwen3-mini" }` — abortar transferência |
 | POST /v1/model-library/install | `{ "id": "qwen3-mini" }` — conferir hash e importar |
@@ -49,7 +49,7 @@ Todas as rotas exigem sessão autenticada e cofre desbloqueado. Corpos são obje
 Downloads têm deduplicação por modelo enquanto ativos ou já baixados; instâncias carregadas são reaproveitadas. O gerenciador não promete semântica de transação distribuída com LM Studio. Após falha de importação ou reinício, reconcilia a indexação ao tentar novamente. Não há resume HTTP de parciais. Carregamento, descarregamento, início de entrega e bloqueio usam uma fila local para evitar corrida; downloads têm sua própria operação cancelável.
 
 
-## Chat local (0.4)
+## Chat local
 
 Todas as rotas exigem sessão válida e cofre desbloqueado. POST usa esquema fechado.
 
@@ -78,7 +78,7 @@ O carregamento aceita `{key, context?}`. A configuração efetiva devolvida pelo
 A API para outro aplicativo é um listener **separado**, com chave própria, por padrão na porta 4320. Não fornece rotas administrativas. Consulte [Minha API](minha-api.md) para endpoints compatíveis, autenticação, cancelamento e limites.
 
 
-## Assistente 0.5
+## Assistente
 
 `POST /v1/chats/:id/send` aceita `access`: `{enabled,web,computer,files,terminal,format}`; padrão habilita assistente, web e computador, com arquivos/terminal desligados e formato native. Alternativa de formato: json. Esses valores são capturados por mensagem, sem conceder acesso à API compartilhada.
 
@@ -90,6 +90,6 @@ A API para outro aplicativo é um listener **separado**, com chave própria, por
 Atividades das ferramentas ficam na mensagem assinada e incluem estado, descrição e referências dos arquivos exportados. O conteúdo bruto de raciocínio não é exposto. IDs de modelos integrados começam com `gguf:`; a biblioteca carrega esses arquivos no runtime próprio. Todas essas rotas administrativas mantêm autenticação local, cofre, Host e Origin.
 
 
-### MLX (0.6)
+### MLX
 
-`GET /v1/model-library` informa mlx_available e modelos com chave mlx:. `POST /v1/model-library/import-mlx` recebe `{"folder":"/caminho/absoluto"}` e copia os arquivos necessários para a pasta de modelos da Colmeia. Requer sessão local, cofre aberto e ausência de operação concorrente. Carga/descarga e Minha API aceitam chaves mlx: pelo mesmo contrato dos modelos integrados. Esse endpoint não fica disponível na API compartilhada.
+`GET /v1/model-library` informa mlx_available e modelos com chave mlx:. `POST /v1/model-library/import-mlx` recebe `{"folder":"/caminho/absoluto"}` e copia os arquivos necessários para a pasta de modelos do LocalNeuron. Requer sessão local, cofre aberto e ausência de operação concorrente. Carga/descarga e Minha API aceitam chaves mlx: pelo mesmo contrato dos modelos integrados. Esse endpoint não fica disponível na API compartilhada.
