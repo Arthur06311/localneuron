@@ -52,7 +52,17 @@ test('Visible website version matches package.json',async()=>{
  assert.doesNotMatch(app,/· 0\.27"/);
  const marker='const landingCopy=';
  const landingStart=app.indexOf(marker);
- const landing=JSON.parse(app.slice(landingStart+marker.length,app.indexOf(';\n',landingStart)));
+ assert.notEqual(landingStart,-1);
+ let depth=0,inString=false,escape=false,end=-1;
+ for(let i=landingStart+marker.length;i<app.length;i++){
+  const c=app[i];
+  if(inString){if(escape)escape=false;else if(c==='\\')escape=true;else if(c==='"')inString=false;continue;}
+  if(c==='"')inString=true;
+  else if(c==='{')depth++;
+  else if(c==='}'&&--depth===0){end=i;break;}
+ }
+ assert.notEqual(end,-1);
+ const landing=JSON.parse(app.slice(landingStart+marker.length,end+1));
  const keys=Object.keys(landing.en);
  assert.deepEqual(Object.keys(landing),['en','es','fr','de','ja','zh']);
  for(const lang of Object.keys(landing))assert.deepEqual(Object.keys(landing[lang]),keys,lang);
