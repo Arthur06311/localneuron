@@ -194,14 +194,19 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 | `COLMEIA_DATA_DIR` | Dados do servidor local em modo navegador | Não; padrão `.data/` |
 | `COLMEIA_DESKTOP_DATA_DIR` | Dados do Electron | Não; padrão por plataforma |
 | `COLMEIA_PORT` | Porta do servidor local | Não; padrão `4317` |
-| `LOCALNEURON_TEST_PORT` | Porta temporária dos testes/desktop | Apenas testes |
+| `LOCALNEURON_TEST_PORT` | Porta do backend do desktop, usada em testes e diagnósticos | Não; padrão `4318` |
 | `LOCALNEURON_LICENSE_PUBLIC_KEY` | Chave pública para validar licença | Não; pode vir da configuração pública |
 | `LOCALNEURON_BILLING_URL` | URL do serviço de licença | Não no modo local |
 | `LOCALNEURON_BILLING_DB` | Banco do serviço de cobrança | Somente billing |
 | `STRIPE_SECRET_KEY` | Chave secreta Stripe | Somente billing |
 | `STRIPE_WEBHOOK_SECRET` | Assinatura de webhook | Somente billing |
 | `STRIPE_MONTHLY_PRICE_ID` | Preço mensal do Pro | Somente billing |
-| `HF_HOME` / `HF_HUB_CACHE` | Cache de modelos e música | Opcional |
+| `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` | Caminho do arquivo PEM da chave privada de licença | Somente billing |
+| `LOCALNEURON_BILLING_PUBLIC_URL` | URL pública HTTPS do serviço de cobrança | Somente billing |
+| `LOCALNEURON_BILLING_PORT` | Porta local do serviço de cobrança | Não; padrão `4330` |
+| `HF_HOME` / `HF_HUB_CACHE` | Cache Hugging Face | Hoje ignoradas: o motor de música define esses caminhos dentro da própria pasta |
+
+O arquivo [`.env.example`](../.env.example) lista essas variáveis com valores de exemplo. O app não lê `.env` automaticamente: exporte as variáveis no shell, no gerenciador de serviços ou no cofre de segredos do servidor.
 
 Os nomes `COLMEIA_*` são compatibilidade histórica. Uma migração pode manter esses nomes sem perder dados; uma futura versão pode adicionar aliases `LOCALNEURON_*` com migração explícita.
 
@@ -255,4 +260,4 @@ O principal risco de uma migração para servidor é tratar um aplicativo local 
 
 ## 10. Próxima melhoria recomendada
 
-Antes de uma migração para servidor, eu priorizaria três entregas: um sistema de migrações de dados versionado, um arquivo `.env.example` sem segredos e uma pipeline CI que rode build, testes e verificação de artefatos em cada pull request. Isso reduz o risco de levar uma versão incompleta, um banco incompatível ou uma configuração secreta para o destino.
+Antes de uma migração para servidor, eu priorizaria três entregas: um sistema de migrações de dados versionado, a manutenção do `.env.example` junto com o código e uma pipeline CI que rode build, testes e verificação de artefatos em cada pull request. Isso reduz o risco de levar uma versão incompleta, um banco incompatível ou uma configuração secreta para o destino.
