@@ -27,6 +27,7 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 - A primeira visita e a comparação com o LM Studio ganham texto novo (#4).
 - A documentação corrige a contagem de testes, o índice e as pastas de dados (#3, #2).
 - O repositório ganha `.env.example` e a tabela de variáveis (#1).
+- As ações do GitHub Actions usadas no CI e na release sobem de versão: checkout, setup-node e setup-python para a 7, upload-artifact para a 7 e download-artifact para a 8 (#37).
 - O workflow de release no GitHub Actions dispara com a tag `vX.Y.Z`. O disparo manual não publica. Ele gera ZIP e DMG de macOS Apple Silicon com a assinatura ad hoc já existente, DEB, pacote Arch e AppImage no Linux, e o instalador NSIS no Windows, anexa `SHA256SUMS.txt` e abre a GitHub Release em rascunho. Não usa segredo nem notarização (#20).
 
 ## [0.27.0] — 2026-09-17
