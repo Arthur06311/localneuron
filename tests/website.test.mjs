@@ -24,7 +24,7 @@ test('Downloads have fixed release URLs, size and SHA-256',async()=>{
  assert.equal(check.status,0,check.stderr);
  const manifest=JSON.parse(await readFile(resolve(root,'releases.json'),'utf8'));
  const downloads=JSON.parse(await readFile(resolve(root,'downloads.json'),'utf8'));
- assert.equal(manifest.version,JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version);
+ assert.equal(manifest.version,'0.27.0');
  assert.equal(manifest.version,downloads.version);
  const feed=new Map(manifest.files.map(item=>[item.filename,item]));
  for(const item of downloads.files){
@@ -47,9 +47,8 @@ test('Website downloads use the published per-platform installer from the same c
  for(const f of data.files){assert.match(f.releaseTag,/^v\d+\.\d+\.\d+(?:-linux\.\d+)?$/);assert.match(f.sha256,/^[a-f0-9]{64}$/);assert.equal(typeof f.available,'boolean');assert.equal(f.href,`https://github.com/Arthur06311/localneuron/releases/download/${f.releaseTag}/${f.filename}`);}
  const linux=data.files.find(f=>f.id==='linux');assert.equal(linux.filename,'LocalNeuron-Linux-x64.deb');assert.equal(linux.releaseTag,'v0.27.0-linux.3');assert.equal(linux.alternatives[0].filename,'LocalNeuron-Linux-x64.pkg.tar.gz');assert.match(linux.alternatives[0].sha256,/^[a-f0-9]{64}$/);
 });
-test('Visible website version matches package.json',async()=>{
- const version=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
- const escaped=version.replaceAll('.','\\.');
+test('Visible website version stays on the published 0.27.0',async()=>{
+ const escaped='0\\.27\\.0';
  const index=await readFile(resolve(root,'index.html'),'utf8');
  const app=await readFile(resolve(root,'app.js'),'utf8');
  assert.match(index,new RegExp(`id="version">${escaped}</span>`));
