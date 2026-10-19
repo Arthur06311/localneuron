@@ -1,10 +1,12 @@
 const { app, BrowserWindow, dialog, session, shell, ipcMain, safeStorage } = require('electron');
 const { spawn } = require('node:child_process');
 const { registerComputer } = require('./computer.cjs');
+const { createMainWindow } = require('./window-policy.cjs');
 const { registerLocalAccess } = require('./local-access.cjs');
 const { registerFolderPicker } = require('./folders.cjs');
 const { allowsClipboard, allowsMicrophone } = require('./permissions.cjs');
 const { join, resolve } = require('node:path');
+const { legacyEnv } = require('./env.cjs');
 const { mkdirSync, existsSync, readFileSync,writeFileSync } = require('node:fs');
 const root = resolve(__dirname, '..');
 const bundled = root === join(process.resourcesPath, 'app');
@@ -12,7 +14,7 @@ const bundled = root === join(process.resourcesPath, 'app');
 const legacy = process.platform === 'darwin' ? resolve(root,'../../../..','Colmeia-data') : '';
 const pointer=join(app.getPath('appData'),'LocalNeuron','workspace-location.json');
 let restored=null;try{const saved=JSON.parse(readFileSync(pointer,'utf8'));if(typeof saved.runtime==='string'&&existsSync(join(saved.runtime,'workspace','vault.enc.json')))restored=saved.runtime;}catch{}
-const runtime = process.env.COLMEIA_DESKTOP_DATA_DIR || restored || (bundled ? (legacy && existsSync(legacy) ? legacy : join(app.getPath('appData'), 'Colmeia')) : join(root, '.desktop'));
+const runtime = legacyEnv('DESKTOP_DATA_DIR') || restored || (bundled ? (legacy && existsSync(legacy) ? legacy : join(app.getPath('appData'), 'Colmeia')) : join(root, '.desktop'));
 mkdirSync(runtime, { recursive: true, mode: 0o700 });
 app.setPath('userData', join(runtime, 'browser'));
 app.setPath('sessionData', join(runtime, 'session'));
@@ -29,7 +31,7 @@ else app.whenReady().then(async () => {
   const dataDirectory = join(runtime, 'workspace');
   const sessionFile = join(dataDirectory, 'session.json');
   const started = Date.now();
-  backend = spawn(process.execPath, [join(root,'dist/src/server.js')], { cwd: root, env: { ...process.env, ELECTRON_RUN_AS_NODE: '1', COLMEIA_DATA_DIR: dataDirectory, COLMEIA_PORT: String(port) }, stdio: ['ignore','pipe','pipe','ipc'] });
+  backend = spawn(process.execPath, [join(root,'dist/src/server.js')], { cwd: root, env: { ...process.env, ELECTRON_RUN_AS_NODE: '1', LOCALNEURON_DATA_DIR: dataDirectory, LOCALNEURON_PORT: String(port) }, stdio: ['ignore','pipe','pipe','ipc'] });
   registerComputer(backend);
   let output = '';
   backend.stderr.on('data', chunk => { output = (output + chunk.toString()).slice(-3000); });
@@ -42,13 +44,7 @@ else app.whenReady().then(async () => {
       }
     },100);
   });
-  window = new BrowserWindow({width:1320,height:900,minWidth:760,minHeight:640,title:'LocalNeuron',backgroundColor:'#f6f5f0',autoHideMenuBar:true,webPreferences:{preload:join(root,'desktop/preload.cjs'),nodeIntegration:false,contextIsolation:true,sandbox:true,webSecurity:true,allowRunningInsecureContent:false,spellcheck:false}});
-  window.webContents.setWindowOpenHandler(({url})=>{
-    try { const target=new URL(url); if(['https:','http:'].includes(target.protocol)&&!target.username&&!target.password&&(!target.port||['80','443'].includes(target.port))&&!['localhost','127.0.0.1','[::1]'].includes(target.hostname)) shell.openExternal(target.href).catch(()=>{}); } catch {}
-    return {action:'deny'};
-  });
-  window.webContents.on('will-navigate',(event,url)=>{if(new URL(url).origin!==origin)event.preventDefault();});
-  window.webContents.on('will-attach-webview',event=>event.preventDefault());
+  window = createMainWindow(BrowserWindow, { preload: join(root,'desktop/preload.cjs'), origin, shell });
   session.defaultSession.webRequest.onBeforeRequest((details,callback)=>{callback({cancel:!(details.url.startsWith(origin+'/')||details.url.startsWith('blob:'+origin+'/'))});});
   const localToken=new URL(localSession.url).hash.slice(1);
   registerLocalAccess({ipcMain,safeStorage,dialog,getWindow:()=>window,origin,dataDirectory,token:new URLSearchParams(localToken).get('session')});
