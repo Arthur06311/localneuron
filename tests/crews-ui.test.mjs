@@ -38,7 +38,7 @@ test('um colega não pode escolher 70B ou EXO; o coordenador pode', () => {
     { id: 'gpt-oss-120b', name: 'GPT 120B', parameters_b: 120, local_key: null },
   ];
   const installed = [{ key: 'gguf:qwen', display_name: 'Qwen instalado' }];
-  const colleague = crewModelChoices({ catalog, installed, suggestion: catalog[1], current: 'gguf:qwen', coordinator: false });
+  const colleague = crewModelChoices({ catalog, installed, suggestion: catalog[0], current: 'gguf:qwen', coordinator: false });
   const large = colleague.find(model => model.key === 'gpt-oss-120b');
   assert.equal(large.disabled, true);
   assert.match(modelOptionLabel(large), /só o coordenador/);

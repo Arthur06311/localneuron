@@ -54,6 +54,10 @@ export function crewModelChoices({ catalog = [], installed = [], suggestion = nu
     const card = catalog.find(item => item.local_key === model.key || item.id === model.key);
     push(model.key, model.display_name || card?.name || model.key, card?.parameters_b ?? null);
   }
+  for (const model of catalog) {
+    if (!isAdvancedModel(model.local_key || model.id, model.parameters_b, advancedMin)) continue;
+    push(model.local_key || model.id, model.name, model.parameters_b);
+  }
   if (suggestion) push(suggestion.id, suggestion.name, suggestion.parameters_b);
   if (current) {
     const card = catalog.find(item => item.local_key === current || item.id === current);
