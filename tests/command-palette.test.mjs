@@ -45,7 +45,6 @@ test('Cmd-K e Ctrl-K abrem, as setas percorrem, Enter escolhe e Esc devolve o fo
   inputStarter.focus();
   const doc = {
     body: element('body'),
-    activeElement: null,
     get activeElement() { return active; },
     createElement: element,
     addEventListener(type, fn) { listeners.push([type, fn]); },
