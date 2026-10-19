@@ -1,0 +1,3 @@
+# O checkout do Windows no GitHub Actions usa core.autocrlf=true.
+# Estes JSON são comparados com a saída do gerador, que usa LF.
+website/*.json text eol=lf
