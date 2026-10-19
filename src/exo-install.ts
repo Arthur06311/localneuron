@@ -12,6 +12,58 @@ import { join } from "node:path";
 import { homedir, release, tmpdir } from "node:os";
 import { createHash } from "node:crypto";
 const exec = promisify(execFile);
+export const EXO_API_PORT = "52415";
+export type ExoInstallHooks = {
+  helpText?: string;
+  allowUnsupported?: boolean;
+  spawn?: typeof spawn;
+};
+export type ExoLaunchPlan = {
+  args: string[];
+  apiHost: "127.0.0.1" | "0.0.0.0" | null;
+  exposeLan: boolean;
+  unrestricted: boolean;
+  useLibp2pNamespaceEnv: boolean;
+  namespaceArg: boolean;
+  refusal: string | null;
+};
+export function exoCliFlag(help: string, name: string) {
+  return new RegExp(
+    `(?:^|[\\s\\[])--${name}(?:=|[\\s,\\]]|$)`,
+    "m",
+  ).test(help);
+}
+// EXO 1.0.71 (commit fd707de) hardcodes Hypercorn to 0.0.0.0 and only accepts
+// --api-port. Later sources add --api-host / EXO_API_HOST; detect that at runtime.
+export function planExoLaunch(help: string, exposeLan: boolean): ExoLaunchPlan {
+  const bind = exoCliFlag(help, "api-host");
+  const modernNamespace = exoCliFlag(help, "namespace");
+  const args = ["--api-port", EXO_API_PORT];
+  const base = {
+    useLibp2pNamespaceEnv: !modernNamespace,
+    namespaceArg: modernNamespace,
+  };
+  if (!bind && !exposeLan)
+    return {
+      ...base,
+      args,
+      apiHost: null,
+      exposeLan: false,
+      unrestricted: false,
+      refusal:
+        "Este EXO não oferece bind em loopback. No EXO 1.0.71 a API é fixada em 0.0.0.0, sem autenticação. Iniciar agora deixaria a porta 52415 aberta na rede local. Marque “Expor a API na rede local” somente se aceitar esse risco.",
+    };
+  const apiHost = bind ? (exposeLan ? "0.0.0.0" : "127.0.0.1") : null;
+  if (apiHost) args.push("--api-host", apiHost);
+  return {
+    ...base,
+    args,
+    apiHost,
+    exposeLan,
+    unrestricted: exposeLan && !bind,
+    refusal: null,
+  };
+}
 export const EXO_RELEASE = {
   version: "1.0.71",
   bytes: 412972413,
@@ -29,7 +81,13 @@ export class ExoInstall {
   private downloaded = 0;
   private error = "";
   private output = "";
-  constructor(directory: string) {
+  exposed = false;
+  unrestricted = false;
+  private helpCache: string | null = null;
+  constructor(
+    directory: string,
+    private hooks: ExoInstallHooks = {},
+  ) {
     this.directory = join(
       directory,
       "local-engines",
@@ -192,12 +250,32 @@ export class ExoInstall {
     await this.installing;
     return this.status();
   }
-  async start(network: string, offline: boolean) {
-    if (!this.supported || !this.installed)
+  private async readHelp() {
+    if (this.hooks.helpText !== undefined) return this.hooks.helpText;
+    if (this.helpCache !== null) return this.helpCache;
+    try {
+      const { stdout, stderr } = await exec(
+        join(this.directory, "exo"),
+        ["--help"],
+        { timeout: 20000, maxBuffer: 2 * 1024 ** 2 },
+      );
+      this.helpCache = `${stdout}\n${stderr}`;
+    } catch (error) {
+      const failed = error as { stdout?: string | Buffer; stderr?: string | Buffer };
+      this.helpCache = `${failed.stdout ?? ""}\n${failed.stderr ?? ""}`;
+    }
+    return this.helpCache;
+  }
+  async start(network: string, offline: boolean, exposeLan = false) {
+    if ((!this.hooks.allowUnsupported && !this.supported) || !this.installed)
       throw Error("Instale o motor EXO antes de iniciar este nó.");
     if (this.running) return;
+    const plan = planExoLaunch(await this.readHelp(), exposeLan);
+    if (plan.refusal) throw Error(plan.refusal);
     mkdirSync(join(this.home, "models"), { recursive: true, mode: 0o700 });
-    const env = {
+    const args = [...plan.args];
+    if (plan.namespaceArg) args.push("--namespace", network);
+    const env: NodeJS.ProcessEnv = {
       HOME: homedir(),
       TMPDIR: tmpdir(),
       LANG: "en_US.UTF-8",
@@ -214,19 +292,22 @@ export class ExoInstall {
       EXO_RUNTIME_DIR: this.directory,
       EXO_HOME: this.home,
       EXO_DEFAULT_MODELS_DIR: join(this.home, "models"),
-      EXO_LIBP2P_NAMESPACE: network,
       EXO_OFFLINE: String(offline),
       EXO_ENABLE_IMAGE_MODELS: "false",
       EXO_TRACING_ENABLED: "false",
     };
+    if (plan.useLibp2pNamespaceEnv) env.EXO_LIBP2P_NAMESPACE = network;
+    if (plan.apiHost) env.EXO_API_HOST = plan.apiHost;
     this.output = "";
     this.error = "";
-    const child = spawn(join(this.directory, "exo"), ["--api-port", "52415"], {
+    const child = (this.hooks.spawn ?? spawn)(join(this.directory, "exo"), args, {
       cwd: this.home,
       env,
       detached: true,
       stdio: ["ignore", "pipe", "pipe"],
     });
+    this.exposed = plan.exposeLan;
+    this.unrestricted = plan.unrestricted;
     this.child = child;
     const log = (b: Buffer) => {
       this.output = (this.output + b.toString()).slice(-8000);
@@ -240,6 +321,8 @@ export class ExoInstall {
     child.on("exit", (code) => {
       if (this.child === child) {
         this.child = null;
+        this.exposed = false;
+        this.unrestricted = false;
         if (code) {
           this.error =
             "O EXO encerrou com código " + code + ". Confira o diagnóstico.";
@@ -247,10 +330,17 @@ export class ExoInstall {
         }
       }
     });
-    await new Promise<void>((resolve, reject) => {
-      child.once("spawn", resolve);
-      child.once("error", reject);
-    });
+    try {
+      await new Promise<void>((resolve, reject) => {
+        child.once("spawn", resolve);
+        child.once("error", reject);
+      });
+    } catch (error) {
+      this.exposed = false;
+      this.unrestricted = false;
+      if (this.child === child) this.child = null;
+      throw error;
+    }
     this.phase = "running";
   }
   async stop() {
@@ -261,12 +351,17 @@ export class ExoInstall {
       try {
         process.kill(-child.pid!, signal);
       } catch {}
+      try {
+        child.kill(signal);
+      } catch {}
     };
     kill("SIGTERM");
     const timer = setTimeout(() => kill("SIGKILL"), 5000);
     await exited;
     clearTimeout(timer);
     this.child = null;
+    this.exposed = false;
+    this.unrestricted = false;
     this.phase = this.installed ? "installed" : "idle";
   }
   async close() {

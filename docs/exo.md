@@ -1,4 +1,4 @@
-# Rede EXO — LocalNeuron 0.24
+# Rede EXO
 
 A Rede EXO permite distribuir um modelo de texto compatível entre vários computadores. O LocalNeuron usa o EXO oficial e sua API; não depende de LM Studio.
 
@@ -7,7 +7,7 @@ A Rede EXO permite distribuir um modelo de texto compatível entre vários compu
 1. Abra **Rede EXO** no LocalNeuron dos dois computadores.
 2. Clique em **Instalar motor EXO** em cada Mac. O pacote oficial tem aproximadamente 394 MiB; é conferido por SHA-256 antes de executar.
 3. Copie a **Identificação da rede** do primeiro para o segundo. Use a mesma versão do EXO e a mesma rede local.
-4. Clique em **Iniciar neste Mac** nos dois. Se o macOS pedir acesso à rede local, permita-o para que as máquinas se encontrem.
+4. Clique em **Iniciar neste Mac** nos dois. A API de controle fica só em loopback, a menos que você marque **Expor a API na rede local**. Se o macOS pedir acesso à rede local, permita-o para que as máquinas se encontrem pelo canal de descoberta do EXO. No EXO 1.0.71 essa opção de exposição é obrigatória para iniciar: essa versão não consegue escutar só em loopback.
 5. Quando as duas aparecerem, escolha um modelo, mantenha **Mínimo de máquinas: 2** e clique em **Preparar na rede**.
 6. Aguarde o download/carregamento. Quando a instância estiver pronta, clique em **Conversar**. O chat, histórico e ferramentas do LocalNeuron continuam disponíveis.
 
@@ -23,9 +23,15 @@ O EXO decide se há memória e conexões suficientes e distribui o modelo. O cat
 
 ## Controle e privacidade
 
-Use somente uma rede confiável. A identificação da rede é um namespace de descoberta, **não uma senha**. A API nativa do EXO não usa a autenticação do LocalNeuron; não exponha sua porta à internet. Mensagens e partes do modelo circulam entre os nós. A API de controle do LocalNeuron exige sessão e cofre desbloqueado; endereços EXO aceitos se limitam a loopback e IPs privados.
+Use somente uma rede confiável. A identificação da rede é um namespace de descoberta com 128 bits (`neuron-` e 32 caracteres hexadecimais). Ela limita quais nós se encontram, mas **não é senha da API HTTP** e não cifra o tráfego. A API nativa do EXO não usa a autenticação do LocalNeuron.
 
-**Liberar modelo** remove a instância da rede e pode afetar quem a utiliza em outras máquinas. **Desconectar** encerra apenas o processo EXO iniciado pelo LocalNeuron; um servidor externo continua executando. Fechar ou bloquear o LocalNeuron encerra o nó gerenciado e pode interromper modelos distribuídos. O botão Internet do chat controla as pesquisas do assistente separadamente do modo offline de download do EXO.
+Por padrão, o nó gerenciado escuta só em `127.0.0.1` quando o binário aceita `--api-host`. Os endereços da LAN não são anunciados. **Expor a API na rede local** é um opt-in explícito: a página mantém um aviso visível enquanto a exposição estiver ativa. Bloquear o aplicativo desliga esse opt-in e encerra o nó se ele estava acessível pela rede. Um nó preso ao loopback pode continuar neste computador. Não exponha a porta à internet.
+
+O EXO 1.0.71 empacotado não tem opção de bind. No repositório exo-explore/exo, commit `fd707de30b42db4211d15da96b9052e1dc280ed1`, Hypercorn fica fixo em `0.0.0.0:52415` e a CLI só oferece `--api-port`. O `sandbox-exec` do macOS não consegue limitar conexões de entrada ao loopback. Por isso o LocalNeuron recusa iniciar esse binário sem o opt-in. Se você aceitar, a porta 52415 fica aberta em todas as interfaces IPv4, sem autenticação e sem cifra, até desligar ou bloquear o app. Versões posteriores que anunciam `--api-host` no `--help` recebem `127.0.0.1` por padrão e `0.0.0.0` só com o opt-in. O flag aceita um único host; `127.0.0.1` não abre `::` nem a LAN. `::1` não é escutado à parte, para não usar `::`, que abriria todas as interfaces IPv6.
+
+Mensagens e partes do modelo circulam entre os nós. A API de controle do LocalNeuron exige sessão e cofre desbloqueado; endereços EXO aceitos se limitam a loopback e IPs privados.
+
+**Liberar modelo** remove a instância da rede e pode afetar quem a utiliza em outras máquinas. **Desconectar** encerra apenas o processo EXO iniciado pelo LocalNeuron; um servidor externo continua executando. O botão Internet do chat controla as pesquisas do assistente separadamente do modo offline de download do EXO.
 
 Instalação e cache ficam em `local-engines/` dentro do workspace do aplicativo. Arquivos e ferramentas continuam sob as permissões do computador que está executando o LocalNeuron. A assinatura Pro não é necessária para esta integração.
 
@@ -39,9 +45,9 @@ Código e requisitos: https://github.com/exo-explore/exo/tree/v1.0.71
 
 Validação local adicional: motor oficial instalado neste Mac, API iniciada, 24 GiB reconhecidos e catálogo real consultado. A preparação de Qwen3 0.6B 8bit iniciou o download; a geração real não foi concluída nesta validação por lentidão da transferência. A extração mantém links simbólicos relativos do runtime MLX, verificados após a instalação.
 
-## Controles de máquinas na versão 0.24
+## Controles de máquinas
 
-- **Participar com este Mac** inicia o nó local. Com ele rodando, a página mostra os endereços privados que você pode copiar para outro LocalNeuron.
+- **Participar com este Mac** inicia o nó local. Os endereços privados só aparecem se **Expor a API na rede local** estiver ativo. Sem isso, outro computador não recebe um endereço da LAN para copiar.
 - **Controlar um EXO existente** aceita um IP simples (porta padrão 52415) ou uma URL privada. Esse modo não acrescenta a RAM do computador controlador.
 - Em **Máquinas para esta IA → Escolher os computadores**, marque os nós na lista. O planejamento oficial é consultado, mas a preparação só é enviada se a divisão usar exatamente os nós escolhidos. Se não houver divisão compatível, nenhuma instância é criada. Seleção automática continua disponível.
 - Cada computador mostra RAM e modelos associados. Uma instância com nó ausente aparece como desconectada e fica indisponível no chat.
