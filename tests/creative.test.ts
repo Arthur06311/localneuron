@@ -6,7 +6,7 @@ import {join} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {createServer} from 'node:http';
 import {Music,musicEndpoint,musicRequest} from '../src/music.js';
-import {validateEditPlan,Editor,type ResolveSnapshot} from '../src/editor.js';
+import {validateEditPlan,type ResolveSnapshot} from '../src/editor.js';
 import {personalityInstruction} from '../src/agent.js';
 import {Core} from '../src/core.js';
 import {Experience} from '../src/experience.js';
