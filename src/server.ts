@@ -59,7 +59,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const personality=async()=>Boolean((await experience.snapshot()).personality);
   const music=new Music(core.directory,core.root);
   const editor=new Editor(core.root,async(key,prompt,signal)=>exclusive(async()=>{if(core.vault.locked||chats.busy||aux.busy||pro.busy||gateway.status().enabled||experienceJobs.busy||music.running||music.busy)throw Error('Aguarde a IA atual e desligue o motor de música antes de preparar a edição.');const m=await library.load(key,8192);const result=await complete(m.instance_id,[{role:'user',content:prompt}],optionsSchema.parse({context:8192,max_tokens:3000,temperature:.2,reasoning:'off'}),signal,()=>{},runtime.backend(m.instance_id));return result.text;}));
-  const chats = new Chats(core,agentReply(runtime,toolbox,personality));
+  const chats = new Chats(core,agentReply(runtime,toolbox,personality),async()=>(await library.snapshot()).installed);
   if (!core.vault.locked) await chats.recover();
   let operationBusy=false;
   let experienceJobs:ExperienceJobs;

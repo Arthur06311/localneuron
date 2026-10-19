@@ -1,4 +1,5 @@
 import { attachmentSchema, chatContext } from "./chat-context.js";
+import { indexLocalAttachments, type EmbeddingModelRef } from "./local-rag.js";
 import type { Execution } from "./agent.js";
 import { accessSchema, type Activity } from "./agent-tools.js";
 import { randomUUID } from "node:crypto";
@@ -52,6 +53,7 @@ export class Chats {
   constructor(
     private core: Core,
     private reply: Reply = localReply,
+    private embeddingModels: () => Promise<EmbeddingModelRef[]> = async () => [],
   ) {}
   get busy() {
     return this.jobs.size > 0;
@@ -240,12 +242,19 @@ export class Chats {
       const chat = snapshot.chats!.find(
         (c) => c.id === id,
       )!;
+      const ready = chat.messages.filter((m) => m.status === "complete");
+      const question = [...ready].reverse().find((m) => m.role === "user")?.content || "";
+      const attachments = ready.flatMap((m) => m.attachments || []);
+      const rag = attachments.length
+        ? await indexLocalAttachments(this.core.store, id, attachments, await this.embeddingModels(), question)
+        : undefined;
       const context = chatContext(
-        chat.messages.filter((m) => m.status === "complete"),
+        ready,
         chat.memory || "",
         optionsSchema.parse(
           JSON.parse(chat.messages.at(-1)?.options_json || "{}"),
         ),
+        rag,
       );
       sources = context.sources;
       const complete = await this.reply(

@@ -31,6 +31,22 @@ export const migrations: Migration[] = [
         CREATE TRIGGER immutable_event_log BEFORE UPDATE OR DELETE ON event_log FOR EACH ROW EXECUTE FUNCTION reject_log_mutation();`);
     },
   },
+  {
+    version: 2,
+    name: 'trechos locais dos anexos',
+    async up(tx) {
+      await tx.exec(`CREATE TABLE IF NOT EXISTS attachment_chunks (
+        id text PRIMARY KEY,
+        chat_id text NOT NULL,
+        attachment_id text NOT NULL,
+        name text NOT NULL,
+        location text NOT NULL,
+        chunk_index integer NOT NULL,
+        text text NOT NULL,
+        embedding jsonb
+      )`);
+    },
+  },
 ];
 
 export function futureSchemaMessage(found: number, known: number) {
