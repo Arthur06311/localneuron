@@ -1,0 +1,50 @@
+{
+  "version": "0.27.0",
+  "notes": "Acesso lembrado opcional, wizard que preserva a conclusão, equipes em um clique, tarefas por especialista, melhor uso do contexto e avisos de novas versões. Veja Preferências e Minha equipe. A atualização preserva os dados quando você mantém a pasta de dados existente.",
+  "files": [
+    {
+      "id": "mac",
+      "arch": "arm64",
+      "filename": "LocalNeuron-macOS-arm64.dmg",
+      "bytes": 396865340,
+      "sha256": "6fa74c9dbe4333cbc20c60cbf08e364bc1c4188bd2fb0642d37ca78b488fab22",
+      "available": true,
+      "version": "0.26.0",
+      "releaseTag": "v0.26.0"
+    },
+    {
+      "id": "windows",
+      "arch": "x64",
+      "filename": "LocalNeuron-Windows-x64.zip",
+      "bytes": 314979101,
+      "sha256": "f2da0d8dd191c9276e0ea93f23b2358d7531316668ba88d0c59c76cc54204a5a",
+      "available": true,
+      "version": "0.26.0",
+      "releaseTag": "v0.26.0"
+    },
+    {
+      "id": "linux",
+      "arch": "x64",
+      "filename": "LocalNeuron-Linux-x64.deb",
+      "bytes": 288573090,
+      "sha256": "3eb57d8da0e596f6e63f31885e0d4ebad58e8b55fd8c8cdf501fd86ca6724792",
+      "available": true,
+      "version": "0.27.0",
+      "releaseTag": "v0.27.0-linux.3",
+      "format": "DEB · Ubuntu / Debian",
+      "role": "primary"
+    },
+    {
+      "id": "linux",
+      "arch": "x64",
+      "filename": "LocalNeuron-Linux-x64.pkg.tar.gz",
+      "bytes": 288572728,
+      "sha256": "06573cc56a4213f211b274096e67e8067fb4da4a0a037bc016d1f8c791137ddd",
+      "available": true,
+      "version": "0.27.0",
+      "releaseTag": "v0.27.0-linux.3",
+      "label": "Arch / Omarchy",
+      "role": "alternative"
+    }
+  ]
+}

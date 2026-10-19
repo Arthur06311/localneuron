@@ -34,7 +34,7 @@ O tamanho do aplicativo não inclui os modelos. Download é espaço no disco; RA
 | Aplicativo | macOS Apple Silicon, Windows x64 ou Linux x64 com ambiente gráfico. Windows/Linux ainda aguardam validação nativa. |
 | Texto GGUF | Motor llama.cpp incluído. Escolha arquitetura e quantização suportadas; a estimativa da ficha não substitui um teste real. |
 | MLX | Apple Silicon. Runtime exige macOS 14+; execução desta alfa verificada no macOS 26.6.2. |
-| Photo / Video | Perfis visuais suportados pelo motor. O binário visual Mac exige macOS 26+. |
+| Imagem / Vídeo | Perfis visuais suportados pelo motor. O binário visual Mac exige macOS 26+. |
 | Música | ACE-Step instalado separadamente, 25 GiB livres para preparar o ambiente; cerca de 6,32 GB de pesos mais dependências. RAM/GPU influenciam duração e velocidade. |
 | EXO gerenciado | Mac Apple Silicon com macOS 26.2+; computadores na mesma rede confiável. |
 | Editor | DaVinci Resolve Studio e SDK Python instalados. No Windows/Linux, Python 3 disponível no sistema. |
@@ -79,9 +79,9 @@ A sala permite colaboração sequencial de até seis bots, até três rodadas e 
 
 Ferramentas de computador, arquivos e terminal têm controles próprios. Escolha a pasta de trabalho e revise ações que alterem arquivos ou executem comandos. Controle nativo não equivale a automação visual universal de qualquer aplicativo.
 
-## Photo e Video
+## Imagem e Vídeo
 
-Abra **Photo** para imagens e **Video** para cenas e montagem. O recomendador considera os perfis que o motor realmente integra; os demais modelos da biblioteca visual podem ser apenas downloads de pesos.
+Abra **Imagem** para imagens e **Vídeo** para cenas e montagem. O recomendador considera os perfis que o motor realmente integra; os demais modelos da biblioteca visual podem ser apenas downloads de pesos.
 
 1. Rode o recomendador e confira memória e espaço.
 2. Instale um perfil integrado e espere os arquivos terminarem.
@@ -175,9 +175,13 @@ Novas instalações usam as pastas de dados do sistema:
 - Windows: `%APPDATA%/Colmeia/`
 - Linux: `${XDG_CONFIG_HOME:-~/.config}/Colmeia/`
 
-Instalações antigas podem manter a pasta irmã `Colmeia-data/`. O nome legado é preservado para compatibilidade. Em desenvolvimento, o serviço usa `.data/` e o desktop `.desktop/`. Para abrir outra pasta, por exemplo ao restaurar um backup, defina `COLMEIA_DESKTOP_DATA_DIR` antes de abrir o app desktop, ou `COLMEIA_DATA_DIR` no modo navegador.
+Instalações antigas podem manter a pasta irmã `Colmeia-data/`. O nome legado é preservado para compatibilidade. Em desenvolvimento, o serviço usa `.data/` e o desktop `.desktop/`.
 
-Para backup completo, feche o app e copie a pasta inteira. O backup somente do cofre não inclui conversas, projetos e modelos. Use a exportação de conversas e de projetos quando quiser compartilhar um trabalho específico. Não publique sua pasta de dados no GitHub.
+Para restaurar um backup, o caminho principal no aplicativo desktop é o botão **Abrir uma pasta de dados existente**, na tela de acesso. Selecione a pasta pai, a que contém `workspace/` (`workspace/vault.enc.json`). O app reabre esse espaço e deixa a pasta atual intacta. A variável `COLMEIA_DESKTOP_DATA_DIR`, se definida antes de abrir, aponta para essa mesma pasta pai e tem prioridade sobre a pasta escolhida no botão.
+
+No modo navegador o botão não aparece. Defina `COLMEIA_DATA_DIR` com a pasta que contém `vault.enc.json` diretamente: a `workspace` de um backup do desktop, ou a própria `.data` se o espaço nasceu no modo navegador. Não aponte para a pasta pai do desktop.
+
+Para backup completo, feche o app e copie a pasta pai inteira no desktop. No modo navegador, copie a pasta de dados inteira. O backup somente do cofre não inclui conversas, projetos e modelos. Use a exportação de conversas e de projetos quando quiser compartilhar um trabalho específico. Não publique sua pasta de dados no GitHub.
 
 ## Solução de problemas
 

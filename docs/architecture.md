@@ -1,10 +1,10 @@
-# Atualização 0.5: execução e ferramentas
+# Execução e ferramentas
 
 `runtime.ts` gerencia processo llama.cpp incluído, inventário GGUF, contexto, memória e encerramento. `agent.ts` conduz rodadas de inferência/ferramenta, usando `inference.ts` para streaming e papéis. `agent-tools.ts` impõe acesso, pasta, revisão e execução; `web-tools.ts` busca e lê páginas públicas com validação DNS e conexão fixada. O renderer exibe as atividades e propostas. O preload Electron expõe somente o seletor de pasta, com validação de origem/frame no processo principal.
 
-O Gateway injeta o backend de inferência correto e continua sem ferramentas. O motor próprio tem porta efêmera e chave de processo independente; nem uma nem outra são fornecidas ao modelo. A integração LM Studio anterior continua disponível. Guias completos em `motor-e-assistente.md`.
+O Gateway injeta o backend de inferência correto e continua sem ferramentas. O motor próprio tem porta efêmera e chave de processo independente; nem uma nem outra são fornecidas ao modelo. A integração LM Studio anterior continua disponível em `127.0.0.1:8080`. Guias completos em `motor-e-assistente.md`.
 
-# Arquitetura da Alfa 0.5
+# Arquitetura
 
 A navegação atual contém Chat, Modelos, Minha API e Preferências. `model-library.ts` gerencia download verificado, importação e memória. `chat.ts` persiste conversas e delega inferência a `inference.ts`, que envia mensagens com papéis ao LM Studio em loopback. `gateway.ts` oferece somente inferência em listener separado, sob chave própria e host privado escolhido. A API inicia desligada e é encerrada ao bloquear, fechar ou revogar. Uma operação de geração por vez evita disputa entre chat e API.
 
@@ -66,6 +66,6 @@ Todas as rotas de produto custam zero externamente. Há reserva antes da geraç�
 As referências competitivas do planejamento não foram tratadas como biblioteca homologada. Não foi copiado código de Buzz/Bionic.
 
 
-## MLX independente (0.6)
+## MLX independente
 
 LocalRuntime gerencia um único processo integrado por vez (llama.cpp ou MLX). MLX usa Python portátil e MLX LM oficial, com servidor HTTP próprio em runtime/mlx_server.py. O processo recebe caminho local, chave em arquivo e limites; não aceita novos caminhos por requisição. O sandbox do macOS bloqueia conexões de saída. Parser nativo do tokenizer separa raciocínio, texto e ferramentas; ausência de parser escolhe JSON na camada de agente. O gerenciador copia modelos via mlx-models.ts sem executar código remoto. O empacotamento contém dependências fixadas no manifesto; dados e pesos ficam fora do bundle.

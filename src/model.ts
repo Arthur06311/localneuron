@@ -1,29 +1,22 @@
 import { freemem } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import type { Task } from './types.js';
+
+const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as {
+  legacyEnv: (suffix: string, env?: NodeJS.ProcessEnv, warn?: (message: string) => void) => string | undefined;
+};
 
 export const LM_STUDIO_PORT = 8080;
 export const LM_STUDIO_DEFAULT_PORT = 1234;
 
-const legacyPortWarnings = new Set<string>();
 const present = (value: string | undefined): value is string => typeof value === 'string' && value !== '';
 
 export function lmStudioPort(env: NodeJS.ProcessEnv = process.env, warn: (message: string) => void = console.warn) {
-  // Quando desktop/env.cjs do PR #23 estiver na main, trocar esta leitura por legacyEnv('LMSTUDIO_PORT').
-  const preferred = 'LOCALNEURON_LMSTUDIO_PORT';
-  const legacy = 'COLMEIA_LMSTUDIO_PORT';
-  let name = preferred;
-  let raw = env[preferred];
-  if (!present(raw)) {
-    name = legacy;
-    raw = env[legacy];
-    if (present(raw) && !legacyPortWarnings.has(legacy)) {
-      legacyPortWarnings.add(legacy);
-      warn(`LocalNeuron: ${legacy} está descontinuada. Use ${preferred}. O valor não é exibido.`);
-    }
-  }
+  const raw = legacyEnv('LMSTUDIO_PORT', env, warn);
   if (!present(raw)) return LM_STUDIO_PORT;
+  const name = present(env.LOCALNEURON_LMSTUDIO_PORT) ? 'LOCALNEURON_LMSTUDIO_PORT' : 'COLMEIA_LMSTUDIO_PORT';
   if (!/^\d+$/.test(raw) || Number(raw) < 1 || Number(raw) > 65535) throw new Error(`${name} inválida. Use um número de 1 a 65535.`);
   return Number(raw);
 }
