@@ -21,7 +21,7 @@ test('Base nova recebe as migrações em ordem e o registo da versão', async ()
     await store.init();
     await store.init();
     const versions = await store.db.query<{ version: number; name: string }>('SELECT version, name FROM schema_migrations ORDER BY version');
-    assert.deepEqual(versions.rows, [{ version: 1, name: 'esquema inicial' }]);
+    assert.deepEqual(versions.rows, [{ version: 1, name: 'esquema inicial' }, { version: 2, name: 'equipas sobre os bots existentes' }]);
     await store.db.query(`INSERT INTO event_log VALUES (1, 'hash-novo', '{"seq":1}')`);
     await assert.rejects(() => store.db.exec('DELETE FROM event_log WHERE seq = 1'), /append-only/);
     assert.equal((await store.db.query<{ n: number }>('SELECT count(*)::int AS n FROM event_log')).rows[0].n, 1);
@@ -48,7 +48,7 @@ test('Base antiga sem tabela de versão fica na versão base e conserva os dados
     assert.deepEqual(log.rows.map(row => row.entry_hash), ['hash-antigo']);
     assert.deepEqual((await store.db.query('SELECT version FROM schema_migrations ORDER BY version')).rows, [{ version: 1 }]);
     await store.init();
-    assert.equal((await store.db.query<{ n: number }>('SELECT count(*)::int AS n FROM schema_migrations')).rows[0].n, 1);
+    assert.equal((await store.db.query<{ n: number }>('SELECT count(*)::int AS n FROM schema_migrations')).rows[0].n, 2);
     assert.equal((await store.db.query<{ document: { marker: string } }>('SELECT document FROM workspace_state')).rows[0].document.marker, 'antigo');
   } finally {
     await store.close();
