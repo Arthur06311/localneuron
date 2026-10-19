@@ -29,7 +29,7 @@ test('a ilha Equipas fica entre Trabalhar e Criar e o limite de tokens aparece n
   assert.match(css, /data-nav-island-group="crews"/);
   assert.match(css, /repeat\(5,minmax\(0,1fr\)\)/);
   assert.match(a11y, /repeat\(5,minmax\(0,1fr\)\)/);
-  for (const file of ["'/crews.js'", "'/crews.css'", "'/crew-mascots.js'"]) assert.match(server, file);
+  for (const file of ['/crews.js', '/crews.css', '/crew-mascots.js']) assert.match(server, new RegExp(`'${file}'`));
 });
 
 test('um colega não pode escolher 70B ou EXO; o coordenador pode', () => {
