@@ -1,3 +1,9 @@
+import { createRequire } from 'node:module';
+
+const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as {
+  legacyEnv: (suffix: string, env?: NodeJS.ProcessEnv, warn?: (message: string) => void) => string | undefined;
+};
+
 export const BROWSER_PORT = 4317;
 export const PORT_ATTEMPTS = 20;
 
@@ -9,13 +15,16 @@ export function portFallbackMessage(preferred: number, actual: number) {
   return `A porta ${preferred} está em uso por outro programa. O LocalNeuron abriu na porta ${actual}.`;
 }
 
-export function preferredPort(env: NodeJS.ProcessEnv = process.env, fallback = BROWSER_PORT) {
-  const raw = env.COLMEIA_PORT;
-  if (raw === undefined || raw === '') return fallback;
-  if (!/^\d+$/.test(raw)) throw new Error('COLMEIA_PORT inválida. Use um número de 1 a 65535.');
-  const port = Number(raw);
-  if (port < 1 || port > 65535) throw new Error('COLMEIA_PORT inválida. Use um número de 1 a 65535.');
-  return port;
+function present(value: string | undefined): value is string {
+  return typeof value === 'string' && value !== '';
+}
+
+export function preferredPort(env: NodeJS.ProcessEnv = process.env, fallback = BROWSER_PORT, warn: (message: string) => void = console.warn) {
+  const raw = legacyEnv('PORT', env, warn);
+  if (!present(raw)) return fallback;
+  const name = present(env.LOCALNEURON_PORT) ? 'LOCALNEURON_PORT' : 'COLMEIA_PORT';
+  if (!/^\d+$/.test(raw) || Number(raw) < 1 || Number(raw) > 65535) throw new Error(`${name} inválida. Use um número de 1 a 65535.`);
+  return Number(raw);
 }
 
 function isAddrInUse(error: unknown) {

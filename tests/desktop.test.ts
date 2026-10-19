@@ -23,6 +23,7 @@ test('Sessão do desktop adota a porta real e o microfone acompanha essa origem'
  assert.throws(()=>sessionOrigin({url:'http://127.0.0.1:4320/#session=abc',port:4319},4318),/Sessão local inválida/);
  assert.equal(serviceFailureMessage('Error: listen EADDRINUSE\nA porta 4318 está em uso por outro programa.\n'),'A porta 4318 está em uso por outro programa.');
  assert.equal(serviceFailureMessage('COLMEIA_PORT inválida. Use um número de 1 a 65535.\n'),'COLMEIA_PORT inválida. Use um número de 1 a 65535.');
+ assert.equal(serviceFailureMessage('LOCALNEURON_PORT inválida. Use um número de 1 a 65535.\n'),'LOCALNEURON_PORT inválida. Use um número de 1 a 65535.');
  assert.equal(serviceFailureMessage('stack cru'),'O serviço local encerrou: stack cru');
  const origin=moved.origin;
  assert.equal(allowsMicrophone('media',origin,origin,{mediaType:'audio'},origin),true);
@@ -30,7 +31,7 @@ test('Sessão do desktop adota a porta real e o microfone acompanha essa origem'
  assert.equal(allowsMicrophone('media',origin,'http://127.0.0.1:4318',{mediaType:'audio'},origin),false);
  const main=readFileSync(resolve('desktop/main.cjs'),'utf8');
  assert.match(main,/sessionOrigin\(localSession, preferred\)/);
- assert.match(main,/COLMEIA_PORT: String\(preferred\)/);
+ assert.match(main,/LOCALNEURON_PORT: String\(preferred\)/);
  assert.match(main,/registerFolderPicker\(\{ipcMain,dialog,getWindow:\(\)=>window,origin\}\)/);
  const calls=main.match(/allowsMicrophone\([\s\S]*?,origin\)/g)||[];
  assert.equal(calls.length,2);

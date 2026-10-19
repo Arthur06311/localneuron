@@ -25,7 +25,7 @@ function serviceFailureMessage(output) {
   const text = String(output || '');
   const busy = text.match(/A porta \d+ está em uso por outro programa\./);
   if (busy) return busy[0];
-  const invalid = text.match(/COLMEIA_PORT inválida[^\n]*/);
+  const invalid = text.match(/(?:LOCALNEURON_PORT|COLMEIA_PORT) inválida[^\n]*/);
   if (invalid) return invalid[0].trim();
   return 'O serviço local encerrou: ' + text;
 }

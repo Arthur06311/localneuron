@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
 import { createServer, type AddressInfo } from 'node:net';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { listenWithFallback, portFallbackMessage, portInUseMessage, preferredPort } from '../src/local-port.js';
 import { openLocalServer } from '../src/server.js';
+const { resetEnvWarnings } = createRequire(resolve('desktop/env.cjs'))('./env.cjs') as { resetEnvWarnings: () => void };
 
 function hold(port = 0) {
   const server = createServer();
@@ -19,12 +21,22 @@ function hold(port = 0) {
 }
 
 test('Porta preferida continua válida e, se ocupada, a próxima livre é usada', async () => {
+  const quiet = () => {};
   assert.equal(preferredPort({} as NodeJS.ProcessEnv), 4317);
-  assert.equal(preferredPort({ COLMEIA_PORT: '4400' } as NodeJS.ProcessEnv), 4400);
+  assert.equal(preferredPort({ COLMEIA_PORT: '4400' } as NodeJS.ProcessEnv, undefined, quiet), 4400);
   for (const raw of ['0', '65536', '4317a', '8080 ', '']) {
-    if (raw === '') { assert.equal(preferredPort({ COLMEIA_PORT: '' } as NodeJS.ProcessEnv), 4317); continue; }
-    assert.throws(() => preferredPort({ COLMEIA_PORT: raw } as NodeJS.ProcessEnv), /COLMEIA_PORT inválida/);
+    if (raw === '') { assert.equal(preferredPort({ COLMEIA_PORT: '' } as NodeJS.ProcessEnv, undefined, quiet), 4317); continue; }
+    assert.throws(() => preferredPort({ COLMEIA_PORT: raw } as NodeJS.ProcessEnv, undefined, quiet), /COLMEIA_PORT inválida/);
   }
+  resetEnvWarnings();
+  const warnings: string[] = [];
+  assert.equal(preferredPort({ LOCALNEURON_PORT: '4500', COLMEIA_PORT: '4400' } as NodeJS.ProcessEnv, undefined, message => warnings.push(message)), 4500);
+  assert.equal(warnings.length, 0);
+  assert.equal(preferredPort({ COLMEIA_PORT: '4400' } as NodeJS.ProcessEnv, undefined, message => warnings.push(message)), 4400);
+  assert.equal(warnings.length, 1);
+  assert.match(warnings[0], /COLMEIA_PORT está descontinuada\. Use LOCALNEURON_PORT/);
+  assert.equal(warnings[0].includes('4400'), false);
+  assert.throws(() => preferredPort({ LOCALNEURON_PORT: 'zero', COLMEIA_PORT: '4317' } as NodeJS.ProcessEnv, undefined, quiet), /LOCALNEURON_PORT inválida/);
   const blocker = await hold();
   const probe = await hold();
   const free = probe.port;
