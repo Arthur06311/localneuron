@@ -14,7 +14,6 @@ import {
 import {
   promises as fs,
   constants,
-  existsSync,
   readFileSync,
   writeFileSync,
 } from "node:fs";

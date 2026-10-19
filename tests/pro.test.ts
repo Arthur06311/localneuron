@@ -1,16 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, readFileSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { Pro, sealBackup, openBackup, chooseModel } from "../src/pro.js";
+import { Pro, openBackup, chooseModel } from "../src/pro.js";
 import {
   extractDocument,
-  retrieve,
   exportDocument,
   checkedZip,
 } from "../src/pro-documents.js";
-import { unzipSync, zipSync, strToU8 } from "fflate";
+import { unzipSync, zipSync } from "fflate";
 const fixture = () => {
   const dir = mkdtempSync(join(tmpdir(), "pro-test-"));
   const calls: any[] = [];
