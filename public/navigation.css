@@ -50,3 +50,11 @@ body .sidebar nav .nav-island-icon .ui-icon{color:inherit}
  .nav-island-menu button{min-height:40px!important;text-align:left!important}
 }
 @media(prefers-reduced-motion:reduce){.nav-island,.nav-island-chevron{transition:none}}
+
+#command-palette{position:fixed;inset:12vh auto auto 50%;transform:translateX(-50%);z-index:40;width:min(560px,calc(100vw - 32px));background:#fff;color:#182e29;border:1px solid #dddeda;border-radius:16px;box-shadow:0 18px 50px #0004;padding:14px}
+#command-palette[hidden]{display:none}
+#command-palette-input{width:100%;border:1px solid #dddeda;border-radius:10px;padding:12px 14px}
+#command-palette-list{display:flex;flex-direction:column;gap:4px;max-height:46vh;overflow:auto;margin-top:10px}
+.command-palette-option{text-align:left;border:0;background:transparent;border-radius:8px;padding:10px 12px}
+.command-palette-option[aria-selected="true"]{background:#e7f0ea}
+.command-palette-hint,#command-palette-empty{color:#747d77;font-size:12px;margin:8px 2px 0}
