@@ -1,10 +1,28 @@
 import Fastify, { type FastifyInstance } from 'fastify';
+import rateLimit from '@fastify/rate-limit';
 import { createHash, randomBytes, timingSafeEqual, randomUUID } from 'node:crypto';
 import { readFileSync, writeFileSync, renameSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { networkInterfaces } from 'node:os';
+import { createRequire } from 'node:module';
 import { z } from 'zod';
 import { complete, optionsSchema, type Message, type GenerationOptions, type Generation } from './inference.js';
+import { listensBeyondLoopback } from '../public/network-notice.js';
+const nodeRequire = createRequire(import.meta.url);
+const { legacyEnv } = nodeRequire('../../desktop/env.cjs') as { legacyEnv:(suffix:string,env?:NodeJS.ProcessEnv,warn?:(message:string)=>void)=>string|undefined };
+export type ApiRateLimit = { max:number; windowSeconds:number };
+const DEFAULT_RATE_MAX = 60, DEFAULT_RATE_WINDOW = 60;
+function clampInt(value:string|undefined,min:number,max:number,fallback:number){
+  if(value===undefined||!/^\d+$/.test(value))return fallback;
+  const n=Number(value);return n<min||n>max?fallback:n;
+}
+/** LOCALNEURON_API_RATE_LIMIT / LOCALNEURON_API_RATE_WINDOW_SECONDS. COLMEIA_* permanece e só é usada se a preferida estiver ausente. */
+export function apiRateLimit(env:NodeJS.ProcessEnv=process.env,warn:(message:string)=>void=console.warn):ApiRateLimit{
+  return {max:clampInt(legacyEnv('API_RATE_LIMIT',env,warn),1,10000,DEFAULT_RATE_MAX),windowSeconds:clampInt(legacyEnv('API_RATE_WINDOW_SECONDS',env,warn),1,3600,DEFAULT_RATE_WINDOW)};
+}
+function rateLimitOf(limits?:ApiRateLimit){
+  return limits?{max:clampInt(String(limits.max),1,10000,DEFAULT_RATE_MAX),windowSeconds:clampInt(String(limits.windowSeconds),1,3600,DEFAULT_RATE_WINDOW)}:apiRateLimit();
+}
 export function networkAddresses() {
   return Object.entries(networkInterfaces()).flatMap(([name,values])=>(values||[]).filter(v=>v.family==='IPv4'&&!v.internal&&/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(v.address)).map(v=>({name,address:v.address})));
 }
@@ -17,12 +35,14 @@ export class Gateway {
   private keys:{id:string;name:string;hash:string;prefix:string;daily:number;max_tokens:number;used:number;day:string;paused?:boolean}[]=[];private queued=0;private reserved=false;
   private config:GenerationOptions=optionsSchema.parse({});private file:string;
   stats={requests:0,errors:0,last_request_at:0};
-  constructor(directory:string,private canRun:()=>boolean,private runner:Runner=complete,private port=4320,private root=process.cwd(),private hasPro=()=>true){
+  private limits:ApiRateLimit;
+  constructor(directory:string,private canRun:()=>boolean,private runner:Runner=complete,private port=4320,private root=process.cwd(),private hasPro=()=>true,limits?:ApiRateLimit){
+    this.limits=rateLimitOf(limits);
     mkdirSync(directory,{recursive:true,mode:0o700});this.file=join(directory,'sharing.json');
     try{const saved=JSON.parse(readFileSync(this.file,'utf8'));if(/^[a-f0-9]{64}$/.test(saved.key_hash)){this.keyHash=saved.key_hash;this.keyPrefix=saved.prefix;}if(Array.isArray(saved.keys))this.keys=saved.keys.filter((v:any)=>typeof v.hash==='string'&&/^[a-f0-9]{64}$/.test(v.hash)&&Number.isInteger(v.daily)&&v.daily>0).slice(0,100);}catch{}
   }
   get busy(){return this.controllers.size>0;}
-  status(){return {enabled:Boolean(this.server)&&!this.closing,busy:this.busy,has_key:Boolean(this.keyHash),key_prefix:this.keyPrefix,base_url:this.server?`http://${this.host}:${this.port}/v1`:null,model:'local',local_model:this.model,addresses:networkAddresses(),port:this.port,stats:this.stats,keys:this.keys.map(({hash,...v})=>({...v,used:v.day===new Date().toISOString().slice(0,10)?v.used:0})),queued:this.queued,remote_url:this.server?`http://${this.host}:${this.port}/remote`:null};}
+  status(){return {enabled:Boolean(this.server)&&!this.closing,busy:this.busy,has_key:Boolean(this.keyHash),key_prefix:this.keyPrefix,base_url:this.server?`http://${this.host}:${this.port}/v1`:null,model:'local',local_model:this.model,addresses:networkAddresses(),port:this.port,stats:this.stats,keys:this.keys.map(({hash,...v})=>({...v,used:v.day===new Date().toISOString().slice(0,10)?v.used:0})),queued:this.queued,remote_url:this.server?`http://${this.host}:${this.port}/remote`:null,exposed:Boolean(this.server)&&!this.closing&&listensBeyondLoopback(this.host)};}
   private saveKeys(){writeFileSync(this.file+'.tmp',JSON.stringify({key_hash:this.keyHash,prefix:this.keyPrefix,keys:this.keys}),{mode:0o600});renameSync(this.file+'.tmp',this.file);}
   addKey(value:unknown){const v=z.object({name:z.string().trim().min(1).max(80),daily:z.number().int().min(1).max(100000),max_tokens:z.number().int().min(128).max(32768)}).parse(value);if(this.keys.length>=100)throw Error('Limite de 100 chaves.');const key='lnp_'+randomBytes(32).toString('base64url');this.keys.push({...v,id:randomUUID(),hash:digest(key),prefix:key.slice(0,10)+'…',used:0,day:new Date().toISOString().slice(0,10)});this.saveKeys();return {key};}
   updateKey(id:string,value:unknown){const v=z.strictObject({name:z.string().trim().min(1).max(80),daily:z.number().int().min(1).max(100000),max_tokens:z.number().int().min(128).max(32768),paused:z.boolean()}).parse(value);const key=this.keys.find(k=>k.id===id);if(!key)throw Error('Chave não encontrada.');Object.assign(key,v);this.saveKeys();return {ok:true};}
@@ -37,7 +57,14 @@ export class Gateway {
     this.host=host;this.model=model;this.config=options;this.closing=false;
     const app=Fastify({logger:false,bodyLimit:1024*1024,requestTimeout:30000});
     const failures=new Map<string,{at:number,count:number}>();
-    app.addHook('onRequest',async(req,reply)=>{
+    await app.register(rateLimit,{global:false});
+    const limited={config:{rateLimit:{
+      max:this.limits.max,
+      timeWindow:this.limits.windowSeconds*1000,
+      keyGenerator(req:{headers:{authorization?:string},ip:string}){const bearer=req.headers.authorization?.match(/^Bearer ([A-Za-z0-9_-]{20,100})$/)?.[1]||'';return bearer?'key:'+digest(bearer):'ip:'+String(req.ip||'');},
+      errorResponseBuilder:(_req:unknown,context:{statusCode?:number})=>{const err=new Error('Muitas chamadas num curto intervalo. Aguarde e tente novamente.') as Error & {statusCode?:number};err.statusCode=context.statusCode||429;return err;},
+    }}};
+    app.addHook('preHandler',async(req,reply)=>{
       reply.header('Cache-Control','no-store').header('X-Content-Type-Options','nosniff').header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'");
       if(req.method==='GET'&&['/remote','/remote.js','/remote.css'].includes(req.url))return;
       if(this.closing)return reply.code(503).send({error:{message:'API desligando.',type:'unavailable'}});
@@ -50,9 +77,12 @@ export class Gateway {
       }
       if(req.headers.origin&&req.headers.origin!==`http://${this.host}:${this.port}`)return reply.code(403).send({error:{message:'Use a API no cliente ou backend do seu aplicativo; acesso direto pelo navegador não está habilitado.',type:'origin_error'}});
     });
-    app.setErrorHandler((error,_request,reply)=>reply.code(400).send({error:{message:error instanceof z.ZodError?'Parâmetros inválidos ou não suportados. Aceita apenas mensagens de texto.':(error as Error).message,type:'invalid_request_error'}}));
-    app.get('/v1/models',async()=>({object:'list',data:[{id:'local',object:'model',created:0,owned_by:'colmeia'}]}));
-    app.post('/v1/chat/completions',async(req,reply)=>{
+    app.setErrorHandler((error,_request,reply)=>{
+      if((error as {statusCode?:number}).statusCode===429)return reply.code(429).send({error:{message:(error as Error).message,type:'rate_limit'}});
+      return reply.code(400).send({error:{message:error instanceof z.ZodError?'Parâmetros inválidos ou não suportados. Aceita apenas mensagens de texto.':(error as Error).message,type:'invalid_request_error'}});
+    });
+    app.get('/v1/models',limited,async()=>({object:'list',data:[{id:'local',object:'model',created:0,owned_by:'colmeia'}]}));
+    app.post('/v1/chat/completions',limited,async(req,reply)=>{
       const input=requestSchema.parse(req.body);if(input.model!=='local'&&input.model!==this.model)return reply.code(404).send({error:{message:'Use o modelo local informado pela página Minha API.',type:'model_not_found'}});
       const proKey=(req as any).proKey;if(proKey?.paused)return reply.code(403).send({error:{message:'Esta chave está pausada.'}});if(proKey&&!this.hasPro())return reply.code(402).send({error:{message:'A assinatura Pro deste servidor está inativa. Use a chave básica ou atualize a assinatura.'}});if(proKey){const day=new Date().toISOString().slice(0,10);if(proKey.day!==day){proKey.day=day;proKey.used=0;}if(proKey.used>=proKey.daily)return reply.code(429).send({error:{message:'Cota diária desta chave atingida.'}});}
       if(!proKey&&(this.busy||this.reserved||!this.canRun()))return reply.code(503).header('Retry-After','3').send({error:{message:'A IA está ocupada ou o aplicativo está bloqueado. Tente novamente em instantes.',type:'model_busy'}});
@@ -75,9 +105,9 @@ export class Gateway {
       })();
       this.pending.add(run);try{await run;}finally{this.pending.delete(run);}return reply;
     });
-    app.get('/remote',async(_req,reply)=>reply.type('text/html').send(readFileSync(join(this.root,'public/remote.html'))));
-    app.get('/remote.js',async(_req,reply)=>reply.type('application/javascript').send(readFileSync(join(this.root,'public/remote.js'))));
-    app.get('/remote.css',async(_req,reply)=>reply.type('text/css').send(readFileSync(join(this.root,'public/remote.css'))));
+    app.get('/remote',limited,async(_req,reply)=>reply.type('text/html').send(readFileSync(join(this.root,'public/remote.html'))));
+    app.get('/remote.js',limited,async(_req,reply)=>reply.type('application/javascript').send(readFileSync(join(this.root,'public/remote.js'))));
+    app.get('/remote.css',limited,async(_req,reply)=>reply.type('text/css').send(readFileSync(join(this.root,'public/remote.css'))));
     this.server=app;
     try{await app.listen({host,port:this.port});const address=app.server.address();if(address&&typeof address==='object')this.port=address.port;return this.status();}
     catch(error){this.server=null;await app.close().catch(()=>{});throw error;}
