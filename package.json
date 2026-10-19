@@ -1,6 +1,6 @@
 {
   "name": "localneuron",
-  "version": "0.27.0",
+  "version": "0.28.0",
   "private": true,
   "license": "UNLICENSED",
   "main": "desktop/main.cjs",

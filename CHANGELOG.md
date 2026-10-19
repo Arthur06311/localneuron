@@ -2,23 +2,35 @@
 
 As mudanças notáveis do LocalNeuron estão neste arquivo, no estilo [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
-Cada entrada vem de uma fonte conferível: notas em `docs/localneuron-*.md`, a revisão `docs/release-readiness.md`, tags Git, `website/downloads.json`, `website/releases.json` ou `package.json` (versão atual `0.27.0`). Não há notas separadas da 0.22 à 0.26. As notas da 0.8 à 0.21 entraram no Git juntas no commit `26d2165` (14/09/2026); a data de criação do arquivo não é a data de cada versão, e por isso essas versões ficam sem data.
+Cada entrada vem de uma fonte conferível: notas em `docs/localneuron-*.md`, a revisão `docs/release-readiness.md`, tags Git, `website/downloads.json`, `website/releases.json` ou `package.json` (versão atual `0.28.0`). Não há notas separadas da 0.22 à 0.26. As notas da 0.8 à 0.21 entraram no Git juntas no commit `26d2165` (14/09/2026); a data de criação do arquivo não é a data de cada versão, e por isso essas versões ficam sem data.
 
 O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`, o campo `version` de `package.json` e a seção datada `## [X.Y.Z]` deste arquivo. A data pode usar hífen ou travessão.
 
 ## [Não publicado]
 
-O `package.json` continua em `0.27.0`. Não há tag mais nova que `v0.27.0-linux.3`.
+## [0.28.0] - 2026-10-19
 
-### Adicionado
-
-- Workflow de release no GitHub Actions. Este fluxo substitui o PR #32. Ele dispara com a tag `vX.Y.Z`. O disparo manual só gera artefatos e não publica. Produz o ZIP e o DMG de macOS Apple Silicon com a assinatura ad hoc já existente (sem Developer ID e sem notarização), o DEB, o pacote Arch e o AppImage de Linux, e o instalador NSIS de Windows. Anexa `SHA256SUMS.txt` de todos esses arquivos e abre a GitHub Release em rascunho, com as notas da seção correspondente deste arquivo. Não usa segredo.
-
-### Corrigido
-
-- O aviso de atualização reconhece os artefatos deste fluxo (DMG, ZIP, AppImage, DEB, pacote Arch e Setup NSIS na tag `vX.Y.Z`) e os pacotes já publicados: DEB e Arch em `v0.27.0-linux.3`, DMG e ZIP em `v0.26.0`.
-- O aviso só aparece quando há um instalador mais novo para o sistema e a arquitetura atuais. Um pacote só de Linux não abre o aviso no Mac nem no Windows.
-- `website/downloads.json` e `website/releases.json` passam a ser gerados de `website/release-source.json`, para os dois não divergirem. A conferência ignora a diferença entre LF e CRLF, para o CI no Windows não falhar quando o checkout converte as quebras de linha.
+- O aviso de atualização reconhece DMG, ZIP, AppImage, DEB, pacote Arch e o Setup NSIS, inclusive as tags já publicadas (`v0.27.0-linux.3` e `v0.26.0`), e só aparece quando há pacote mais novo para o sistema atual (#20).
+- `website/downloads.json` e `website/releases.json` passam a sair de um único catálogo, e a conferência ignora CRLF no Windows (#20).
+- O EXO gerenciado fica no loopback, salvo quando a exposição na rede local é explícita (#21).
+- A landing ganha traduções e a versão visível do site permanece alinhada aos pacotes publicados da 0.27.0 (#17).
+- A documentação corrige a restauração, os títulos e este changelog (#16).
+- Ilhas de navegação, mascote e contraste ficam mais fáceis de reconhecer (#9).
+- O esquema do PGlite passa a ter versão e as bases antigas são preservadas (#24).
+- `LOCALNEURON_*` vira o alias preferido das variáveis `COLMEIA_*` (#23).
+- O nome do pacote e o iniciador ficam LocalNeuron, e o CI deixa de compilar duas vezes (#19).
+- O CI ganha gitleaks, CodeQL e npm audit (#14).
+- O Dependabot semanal cobre npm e GitHub Actions (#12).
+- Dependências apontadas pelo npm audit são atualizadas (#8).
+- O projeto fica marcado como software proprietário (#7).
+- Os testes do CI passam a rodar em macOS, Windows e Linux (#6).
+- A primeira visita e a comparação com o LM Studio ganham texto novo (#4).
+- A documentação corrige a contagem de testes, o índice e as pastas de dados (#3, #2).
+- O repositório ganha `.env.example` e a tabela de variáveis (#1).
+- As ações do GitHub Actions usadas no CI e na release sobem de versão: checkout, setup-node e setup-python para a 7, upload-artifact para a 7 e download-artifact para a 8 (#37).
+- As janelas Electron ficam isoladas: navegação externa só em http/https e o preload só chama a lista fechada de canais (#26).
+- A Minha API responde 429 com Retry-After quando a chave ou o IP passa do limite, e a interface avisa se a Minha API ou o EXO local escuta fora do loopback (#29).
+- O workflow de release no GitHub Actions dispara com a tag `vX.Y.Z`. O disparo manual não publica. Ele gera ZIP e DMG de macOS Apple Silicon com a assinatura ad hoc já existente, DEB, pacote Arch e AppImage no Linux, e o instalador NSIS no Windows, anexa `SHA256SUMS.txt` e abre a GitHub Release em rascunho. Não usa segredo nem notarização (#20).
 
 ## [0.27.0] — 2026-09-17
 
