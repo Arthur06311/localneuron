@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import {existsSync} from 'node:fs';
 import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {parse} from 'yaml';
 
-const root=resolve(new URL('..',import.meta.url).pathname);
+const root=fileURLToPath(new URL('..',import.meta.url));
 const dir=resolve(root,'.github/ISSUE_TEMPLATE');
 const requiredIds=['versao','sistema','sistema-versao','motor','passos','esperado','atual','confirmacoes'];
 const engines=['GGUF / llama.cpp (embutido)','MLX / Metal (embutido, Mac)','LM Studio','EXO (cluster)','Minha API (outro computador)','Whisper (voz para texto)','Voz / TTS','stable-diffusion.cpp / estúdio criativo','MCP / ferramentas do agente'];
