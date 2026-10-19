@@ -321,6 +321,7 @@ export class ExoRuntime {
       error: this.error,
       checked_at: this.checked,
       installation: this.installer.status(),
+      exposed: this.installer.running && this.installer.exposed,
       connection_addresses: exoLanAddresses(this.installer.running && this.installer.exposed),
       lan_exposed: this.installer.running && this.installer.exposed,
       lan_warning: this.lanWarning(),
