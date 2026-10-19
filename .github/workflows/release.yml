@@ -10,6 +10,11 @@ on:
   push:
     tags:
       - "v*"
+  pull_request:
+    paths:
+      - .github/workflows/release.yml
+      - scripts/package-*
+      - packaging/**
   workflow_dispatch:
     inputs:
       tag:
@@ -218,7 +223,7 @@ jobs:
           retention-days: 14
           path: flat/SHA256SUMS.txt
 
-  # workflow_dispatch só gera os artefatos acima. O rascunho existe apenas no push de uma tag v*.
+  # pull_request e workflow_dispatch só geram os artefatos acima. O rascunho existe apenas no push de uma tag v*.
   publicar:
     name: Rascunho da release
     needs: [preparar, macos, linux, windows]

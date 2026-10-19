@@ -8,6 +8,10 @@ class ReleaseWorkflowTest(unittest.TestCase):
     def test_draft_release_lists_every_artifact_and_defers_signing(self):
         text = WORKFLOW.read_text(encoding='utf-8')
         self.assertIn('tags:\n      - "v*"', text)
+        self.assertIn('pull_request:', text)
+        self.assertIn('.github/workflows/release.yml', text)
+        self.assertIn('scripts/package-*', text)
+        self.assertIn('packaging/**', text)
         self.assertIn('workflow_dispatch:', text)
         self.assertIn("if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')", text)
         self.assertIn('--draft', text)
