@@ -14,6 +14,8 @@ root = Path(__file__).resolve().parents[1]
 target = root / 'LocalNeuron.app'
 parser = argparse.ArgumentParser()
 parser.add_argument('--local-subscription-config', type=Path, help='Chave pública de teste somente para a instalação local; nunca incluída no ZIP ou DMG.')
+parser.add_argument('--dist-only', action='store_true', help='Grava só o ZIP e o DMG. Não substitui o LocalNeuron.app desta máquina.')
+parser.add_argument('--output-dir', type=Path, help='Pasta do ZIP e do DMG. O padrão continua a raiz do repositório.')
 args = parser.parse_args()
 local_config = None
 if args.local_subscription_config:
@@ -73,8 +75,15 @@ with tempfile.TemporaryDirectory(prefix='colmeia-package-') as scratch:
         subprocess.run(['xattr', '-dr', attribute, str(bundle)], check=False, stderr=subprocess.DEVNULL)
     subprocess.run(['codesign', '--force', '--deep', '--sign', '-', str(bundle)], check=True)
     subprocess.run(['codesign', '--verify', '--deep', '--strict', str(bundle)], check=True)
-    subprocess.run(['ditto', '-c', '-k', '--keepParent', str(bundle), str(root / 'LocalNeuron-macOS-arm64.zip')], check=True)
-    subprocess.run(["python3", str(root / "scripts/package-dmg.py")], cwd=root, check=True)
+    dist_dir = (args.output_dir or root).resolve()
+    dist_dir.mkdir(parents=True, exist_ok=True)
+    zip_path = dist_dir / 'LocalNeuron-macOS-arm64.zip'
+    dmg_path = dist_dir / 'LocalNeuron-macOS-arm64.dmg'
+    subprocess.run(['ditto', '-c', '-k', '--keepParent', str(bundle), str(zip_path)], check=True)
+    subprocess.run(['python3', str(root / 'scripts/package-dmg.py'), '--zip', str(zip_path), '--output', str(dmg_path)], cwd=root, check=True)
+    if args.dist_only:
+        print(f'ZIP e DMG criados em {dist_dir}. Assinatura ad hoc já existente; sem notarização.')
+        raise SystemExit(0)
     # Public ZIP and DMG are sealed before applying the local test configuration.
     if local_config is not None:
         (app / 'subscription-config.json').write_text(json.dumps(local_config, indent=2) + '\n')

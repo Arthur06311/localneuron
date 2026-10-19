@@ -30,7 +30,7 @@
    | Windows x64 | `LocalNeuron-Windows-x64.zip` (0.26) | Use “Extrair tudo” e abra `LocalNeuron.exe` na pasta extraída |
    | Linux x64 | [DEB ou PKG.TAR.GZ (0.27)](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.3) | Ubuntu/Debian: abra o DEB. Arch/Omarchy: `sudo pacman -U ./LocalNeuron-Linux-x64.pkg.tar.gz` |
 
-2. **Abra e siga a configuração guiada.** Proteja seu espaço com uma senha, informe seu perfil e confira a RAM e o disco do computador.
+2. **Abra e siga a configuração guiada.** Proteja seu espaço com a proteção do sistema ou uma senha local, informe seu perfil e confira a RAM e o disco do computador.
 3. **Baixe um modelo pequeno e converse.** Em **Modelos**, escolha um modelo de texto Q4 marcado como compatível com o motor integrado. Depois abra o **Chat**. Em **Ferramentas → Usar offline**, a internet e o terminal ficam desligados.
 
 Os modelos são baixados dentro do app, separadamente. O Mac ARM64 não roda em Mac Intel. Alguns motores têm requisitos próprios (por exemplo, imagem no Mac exige macOS 26+ e o EXO gerenciado exige macOS 26.2+). Veja os [requisitos por motor](docs/configuracao.md#requisitos) e o [guia Linux](docs/linux-installer.md).
@@ -96,7 +96,7 @@ No site, a seleção automática de idioma consulta `country.is` pelo navegador,
 
 ## Status da alfa
 
-Na versão 0.27, `npm test` reúne **160 testes automatizados: 139 da suíte TypeScript do aplicativo e 21 em JavaScript**. Oito deles cobrem a narração pela voz do sistema. O mock de acesso local no Linux foi corrigido no PR #6, e o workflow de CI roda `npm test`; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Os pacotes públicos não contêm conversas, chaves privadas nem a licença Pro de teste do proprietário.
+Na versão 0.28, `npm test` reúne **182 testes automatizados: 148 da suíte TypeScript do aplicativo e 34 em JavaScript**. Oito deles cobrem a narração pela voz do sistema. O mock de acesso local no Linux foi corrigido no PR #6, e o workflow de CI roda `npm test`; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Os pacotes públicos não contêm conversas, chaves privadas nem a licença Pro de teste do proprietário.
 
 Ainda pendentes: notarização Apple, execução nativa de motores/GPU no Windows e no Linux, EXO com duas máquinas físicas e integração com uma instalação real do Resolve Studio. O aplicativo continua **alfa**, sem promessa de suporte universal a modelos ou hardware. Veja as [novidades da 0.27](docs/localneuron-0.27.md). Os guias antigos em `docs/localneuron-*` registram o estado de cada versão.
 
