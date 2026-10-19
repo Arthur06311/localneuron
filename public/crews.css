@@ -1,0 +1,29 @@
+.crews-page{max-width:1180px;margin:0 auto;padding:8px 0 40px}
+.crews-limit{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end;margin:16px 0;padding:14px 16px;border:1px solid var(--island-crews);border-radius:var(--radius-md);background:var(--island-crews-soft)}
+.crews-limit-readout{min-width:220px}
+.crews-limit-readout strong{display:block;font-size:var(--text-lg);line-height:var(--leading-tight)}
+.crews-limit label{display:grid;gap:4px;font-size:var(--text-xs);color:var(--muted)}
+.crews-limit input{width:8rem;min-height:36px}
+.crews-note{margin:0 0 16px}
+.crews-shell{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}
+.crews-roster,.crews-main{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface)}
+.crews-roster{padding:8px;display:grid;gap:4px}
+.crews-roster h2{margin:8px 8px 4px;font-size:var(--text-xs);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.crews-agent,.crews-team-link{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;min-height:52px;padding:6px 8px;border:1px solid transparent;border-radius:var(--radius-sm);background:transparent;color:var(--ink);text-align:left}
+.crews-team-link{grid-template-columns:36px minmax(0,1fr)}
+.crews-agent small,.crews-team-link small{display:block;color:var(--muted);font-size:var(--text-xs)}
+.crews-agent[aria-current="true"],.crews-team-link[aria-current="true"]{border-color:var(--island-crews);background:var(--island-crews-soft)}
+.crew-mascot{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--island-crews-soft);color:var(--island-crews)}
+.crew-mascot svg{width:20px;height:20px}
+.crews-unread{min-width:1.5rem;padding:2px 6px;border-radius:999px;background:var(--island-crews);color:var(--island-on);font-size:var(--text-xs);font-weight:700;text-align:center}
+.crews-main{padding:16px;min-width:0}
+.crews-thread{display:flex;flex-direction:column;gap:10px;max-height:min(52vh,560px);overflow:auto;margin:12px 0}
+.crews-bubble{padding:12px;border:1px solid var(--border);border-radius:12px}
+.crews-bubble header{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:var(--text-xs);color:var(--muted)}
+.crews-bubble p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.crews-bubble[data-author="user"]{background:var(--island-crews-soft)}
+.crews-compose label{display:grid;gap:6px}
+.crews-compose textarea{min-height:88px;resize:vertical}
+.crews-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.crews-model{display:grid;gap:8px;margin-top:16px}
+@media(max-width:800px){.crews-shell{grid-template-columns:1fr}.crews-thread{max-height:46vh}}

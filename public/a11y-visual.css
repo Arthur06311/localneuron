@@ -11,7 +11,7 @@ body.chat-page .sidebar nav button.nav-island-trigger .nav-island-icon{display:g
 @media(max-width:720px){
  body,body.chat-page{display:flex;flex-direction:column;height:100dvh;min-height:100dvh;overflow:hidden;padding-top:0}
  .sidebar,body.chat-page .sidebar{position:relative;inset:auto;width:100%;height:auto;max-height:none;overflow:visible;flex:0 0 auto;z-index:30;padding:8px 8px 10px;border-right:0;border-bottom:1px solid var(--border)}
- .sidebar nav,body.chat-page .sidebar nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));height:auto;overflow:visible;gap:4px;margin:0}
+ .sidebar nav,body.chat-page .sidebar nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));height:auto;overflow:visible;gap:4px;margin:0}
  .sidebar nav button.nav-island-trigger,
  body.chat-page .sidebar nav button.nav-island-trigger{display:flex!important;flex-direction:column!important;width:100%;min-width:0;min-height:68px;align-items:center;justify-content:center}
  .sidebar nav button.nav-island-trigger .nav-island-icon,
