@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
-const HEADING_PATTERN = /^## \[([^\]]+)\](?: - (\d{4}-\d{2}-\d{2}))?\s*$/;
+const HEADING_PATTERN = /^## \[([^\]]+)\](?: [—–-] (\d{4}-\d{2}-\d{2}))?\s*$/;
 
 export function readPackageVersion(packageJson) {
   const version = packageJson?.version;
@@ -79,12 +79,12 @@ function requiredValue(argv, index, flag) {
   return value;
 }
 
-function tagFromEnvironment(version) {
+function tagFromEnvironment() {
   const explicit = process.env.RELEASE_TAG_INPUT?.trim();
   if (explicit) return explicit;
   const ref = process.env.GITHUB_REF || '';
   if (ref.startsWith('refs/tags/')) return ref.slice('refs/tags/'.length);
-  if ((process.env.RELEASE_EVENT || '') === 'workflow_dispatch') return `v${version}`;
+  // workflow_dispatch without a tag builds the selected commit and publishes nothing.
   return null;
 }
 
@@ -114,15 +114,17 @@ function main() {
   const root = resolve(args.root || process.cwd());
   const version = readPackageVersion(JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')));
   const changelog = readFileSync(resolve(root, 'CHANGELOG.md'), 'utf8');
-  const tag = args.tag !== undefined ? args.tag : tagFromEnvironment(version);
+  const tag = args.tag !== undefined ? args.tag : tagFromEnvironment();
   const result = checkReleaseFiles({ version, changelog, tag });
   let sha = null;
   if (args.githubOutput) {
-    if (!result.tag) throw new Error('A release precisa de uma tag vX.Y.Z.');
-    sha = assertHeadMatchesTag(result.tag);
+    if ((process.env.RELEASE_EVENT || '') === 'push' && !result.tag) {
+      throw new Error('A release precisa de uma tag vX.Y.Z.');
+    }
+    sha = result.tag ? assertHeadMatchesTag(result.tag) : execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
     const output = process.env.GITHUB_OUTPUT;
     if (!output) throw new Error('GITHUB_OUTPUT não está definido.');
-    appendFileSync(output, `tag=${result.tag}\nversion=${result.version}\nsha=${sha}\n`);
+    appendFileSync(output, `tag=${result.tag ?? ''}\nversion=${result.version}\nsha=${sha}\n`);
   }
   if (args.notesFile) writeFileSync(args.notesFile, result.notes);
   console.log(result.tag

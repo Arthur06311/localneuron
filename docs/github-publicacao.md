@@ -5,8 +5,8 @@ O repositório reúne o código do aplicativo e o site informativo em `website/`
 ## Atualizar o site
 
 1. Edite `website/index.html`, `website/style.css`, `website/app.js` ou os textos do guia em `docs/configuracao.md`.
-2. Execute `npm ci`, `node scripts/build-website.mjs` e `node --test tests/website.test.mjs`.
-3. Faça commit das alterações, inclusive `website/guide.html`, e envie para `main`.
+2. Execute `npm ci`, `npm run site` (gera `website/guide.html` e `website/compare-lm-studio.html`) e `node --test tests/website.test.mjs`.
+3. Faça commit das alterações, inclusive `website/guide.html` e `website/compare-lm-studio.html`, e envie para `main`.
 4. Execute `node scripts/publish-pages.mjs` para enviar apenas `website/` à branch `gh-pages`. Em Settings → Pages, a fonte é **Deploy from a branch → gh-pages → / (root)**.
 5. Confira a execução automática do GitHub Pages em Actions e abra a URL resultante. Somente uma execução bem-sucedida comprova publicação.
 
@@ -18,7 +18,7 @@ O site preserva a escolha manual de idioma e a sugestão automática por país u
 
 Os instaladores são grandes: eles entram como arquivos da GitHub Release, nunca dentro de um commit. O passo a passo, a checagem da tag e o que ainda falta de assinatura estão em [Publicar uma versão](RELEASE.md).
 
-O workflow Release gera o AppImage Linux, o instalador NSIS Windows, `SHA256SUMS.txt` e um `releases.json` candidato, e deixa a release em **rascunho**. O macOS continua manual, sem notarização.
+O workflow Release gera o DMG e o ZIP de macOS Apple Silicon (assinatura ad hoc), o DEB, o pacote Arch, o AppImage, o instalador NSIS, `SHA256SUMS.txt` e um `releases.json` candidato. No push da tag, a release fica em **rascunho**. O disparo manual não publica. Este fluxo substitui o PR #32.
 
 A página e o aplicativo leem catálogos gerados do mesmo arquivo, `website/release-source.json`:
 

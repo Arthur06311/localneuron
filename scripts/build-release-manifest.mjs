@@ -10,9 +10,15 @@ const downloadsPath=resolve(root,'website/downloads.json');
 const releasesPath=resolve(root,'website/releases.json');
 const HOST='https://github.com/Arthur06311/localneuron/releases/download/';
 const WORKFLOW_FILES={
- 'LocalNeuron-Linux-x64.AppImage':{id:'linux',arch:'x64',format:'AppImage'},
- 'LocalNeuron-Windows-x64-Setup.exe':{id:'windows',arch:'x64',format:'NSIS'},
+ 'LocalNeuron-macOS-arm64.dmg':{id:'mac',arch:'arm64',format:'DMG',role:'primary'},
+ 'LocalNeuron-macOS-arm64.zip':{id:'mac',arch:'arm64',format:'ZIP',role:'alternative',label:'ZIP'},
+ 'LocalNeuron-Linux-x64.AppImage':{id:'linux',arch:'x64',format:'AppImage',role:'primary'},
+ 'LocalNeuron-Linux-x64.deb':{id:'linux',arch:'x64',format:'DEB · Ubuntu / Debian',role:'alternative',label:'DEB · Ubuntu / Debian'},
+ 'LocalNeuron-Linux-x64.pkg.tar.gz':{id:'linux',arch:'x64',format:'Arch',role:'alternative',label:'Arch / Omarchy'},
+ 'LocalNeuron-Windows-x64-Setup.exe':{id:'windows',arch:'x64',format:'NSIS',role:'primary'},
 };
+
+export function canonicalText(value){return String(value).replace(/\r\n/g,'\n').replace(/\r/g,'\n');}
 
 function stable(value){return JSON.stringify(value,null,2)+'\n';}
 
@@ -78,7 +84,9 @@ export function mergeWorkflowSums(source,{sums,tag,version,notes}){
  for(const item of summed){
   const known=WORKFLOW_FILES[item.filename];
   if(!known)throw new Error(`Artefato fora do fluxo de release: ${item.filename}`);
-  files.push({id:known.id,arch:known.arch,filename:item.filename,bytes:item.bytes,sha256:item.sha256,available:false,version,releaseTag:tag,format:known.format,role:'primary'});
+  const entry={id:known.id,arch:known.arch,filename:item.filename,bytes:item.bytes,sha256:item.sha256,available:false,version,releaseTag:tag,format:known.format,role:known.role};
+  if(known.label)entry.label=known.label;
+  files.push(entry);
  }
  return {...source,version,notes:notes??source.notes,files};
 }
@@ -100,8 +108,8 @@ function parseArgs(argv){
 
 function writeOrCheck(path,contents,check){
  if(!check){writeFileSync(path,contents);return;}
- const current=readFileSync(path,'utf8');
- if(current!==contents)throw new Error(`${path} não bate com website/release-source.json. Rode node scripts/build-release-manifest.mjs.`);
+ const current=canonicalText(readFileSync(path,'utf8'));
+ if(current!==canonicalText(contents))throw new Error(`${path} não bate com website/release-source.json. Rode node scripts/build-release-manifest.mjs.`);
 }
 
 function main(){

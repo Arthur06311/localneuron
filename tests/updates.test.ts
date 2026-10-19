@@ -34,10 +34,15 @@ test('O feed aceita o AppImage, o NSIS e as tags já publicadas',()=>{
  assert.equal(published.files.length,4);
  const workflow=releaseManifest({version:'0.28.0',files:[
   file('linux','LocalNeuron-Linux-x64.AppImage','0.28.0','v0.28.0'),
+  file('linux','LocalNeuron-Linux-x64.deb','0.28.0','v0.28.0'),
+  file('linux','LocalNeuron-Linux-x64.pkg.tar.gz','0.28.0','v0.28.0'),
   file('windows','LocalNeuron-Windows-x64-Setup.exe','0.28.0','v0.28.0'),
+  file('mac','LocalNeuron-macOS-arm64.zip','0.28.0','v0.28.0'),
+  file('mac','LocalNeuron-macOS-arm64.dmg','0.28.0','v0.28.0'),
  ]});
  assert.equal(platformOffer(workflow,linuxTarget)?.filename,'LocalNeuron-Linux-x64.AppImage');
  assert.equal(platformOffer(workflow,windowsTarget)?.filename,'LocalNeuron-Windows-x64-Setup.exe');
+ assert.equal(platformOffer(workflow,macTarget)?.filename,'LocalNeuron-macOS-arm64.dmg');
  assert.throws(()=>releaseManifest({version:'0.27.0',files:[file('linux','LocalNeuron-Linux-x64.deb','0.27.0','v0.27.0-evil')]}));
  assert.throws(()=>releaseManifest({version:'0.27.0',files:[file('windows','LocalNeuron-Windows-x64.zip','0.26.0','v0.27.0-linux.3')]}));
  assert.throws(()=>releaseManifest({version:'0.28.0',files:[file('linux','LocalNeuron-Linux-x64.tar.gz','0.28.0','v0.28.0')].map(item=>({...item,filename:'LocalNeuron-Linux-x64.rpm'}))}));

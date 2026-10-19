@@ -16,6 +16,7 @@ test('A tag, o package.json e o changelog precisam ser a mesma versão',()=>{
  assert.throws(()=>checkReleaseFiles({version:'0.27.0',changelog:changelog('0.27.0'),tag:'v0.28.0'}),/v0\.28\.0/);
  assert.throws(()=>checkReleaseFiles({version:'0.28.0',changelog:changelog('0.27.0'),tag:'v0.28.0'}),/0\.28\.0/);
  assert.throws(()=>checkReleaseFiles({version:'0.27.0',changelog:'# Changelog\n\n## [0.27.0]\n\nTexto\n',tag:'v0.27.0'}),/AAAA-MM-DD/);
+ assert.match(checkReleaseFiles({version:'0.27.0',changelog:'# Changelog\n\n## [0.27.0] — 2026-09-17\n\nNota com travessão\n',tag:'v0.27.0'}).notes,/Nota com travessão/);
  assert.throws(()=>checkReleaseFiles({version:'0.27.0',changelog:changelog('0.27.0','')}),/vazia/);
  assert.equal(checkReleaseFiles({version:'0.27.0',changelog:changelog('0.27.0')}).tag,null);
 });
@@ -39,10 +40,14 @@ test('O workflow de release não usa segredo nem assinatura',()=>{
  assert.match(workflow,/--draft/);
  assert.match(workflow,/npm run package -- linux x64/);
  assert.match(workflow,/npm run package -- win32 x64/);
+ assert.match(workflow,/package-macos\.py --dist-only/);
  assert.match(workflow,/package-appimage\.py/);
  assert.match(workflow,/package-nsis\.py/);
  assert.match(workflow,/SHA256SUMS\.txt/);
- assert.doesNotMatch(workflow,/signtool|notarytool|codesign|electron-builder|electron-forge/i);
+ assert.match(workflow,/github\.event_name == 'push' && startsWith\(github\.ref, 'refs\/tags\/v'\)/);
+ const code=workflow.split('\n').map(line=>line.split('#')[0]).join('\n');
+ assert.doesNotMatch(code,/signtool|notarytool|codesign|electron-builder|electron-forge/i);
+ assert.match(workflow,/notarytool/);
  const ux=readFileSync(resolve(root,'public/ux.js'),'utf8');
  assert.match(ux,/clientOffer\(\)/);
  assert.match(ux,/!file/);

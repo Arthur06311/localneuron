@@ -29,7 +29,10 @@ class NsisTest(unittest.TestCase):
         self.assertIn('!define VERSION4 "0.28.0.0"', header)
         self.assertNotIn('SignTool', header)
         script = (ROOT / 'packaging/windows/localneuron.nsi').read_text(encoding='utf-8')
-        self.assertNotIn('signtool', script.lower())
+        code = '\n'.join(line.split(';', 1)[0] for line in script.splitlines())
+        self.assertNotIn('signtool', code.lower())
+        self.assertIn('Não assina', script)
+        self.assertIn('signtool', script.lower())
         self.assertIn('PortugueseBR', script)
 
     def test_missing_executable_is_rejected(self):
@@ -48,7 +51,7 @@ class NsisTest(unittest.TestCase):
             data = output.read_bytes()
             self.assertEqual(data[:2], b'MZ')
             self.assertGreater(result['bytes'], 1024)
-            self.assertNotIn(b'SignTool', data)
+            self.assertNotIn(b'signtool', data.lower())
 
 
 if __name__ == '__main__':

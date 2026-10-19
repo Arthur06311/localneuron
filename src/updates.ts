@@ -10,6 +10,7 @@ const version=z.string().regex(/^\d{1,4}\.\d{1,4}\.\d{1,4}$/);
 // Names produced by the release workflow, plus the installers already published.
 export const RELEASE_ARTIFACTS=[
  {id:'mac',arch:'arm64',filename:'LocalNeuron-macOS-arm64.dmg'},
+ {id:'mac',arch:'arm64',filename:'LocalNeuron-macOS-arm64.zip'},
  {id:'windows',arch:'x64',filename:'LocalNeuron-Windows-x64-Setup.exe'},
  {id:'windows',arch:'x64',filename:'LocalNeuron-Windows-x64.zip'},
  {id:'linux',arch:'x64',filename:'LocalNeuron-Linux-x64.AppImage'},
@@ -19,7 +20,7 @@ export const RELEASE_ARTIFACTS=[
 ] as const;
 
 const PREFERENCE:Record<string,readonly string[]>={
- mac:['LocalNeuron-macOS-arm64.dmg'],
+ mac:['LocalNeuron-macOS-arm64.dmg','LocalNeuron-macOS-arm64.zip'],
  windows:['LocalNeuron-Windows-x64-Setup.exe','LocalNeuron-Windows-x64.zip'],
  linux:['LocalNeuron-Linux-x64.AppImage','LocalNeuron-Linux-x64.deb','LocalNeuron-Linux-x64.pkg.tar.gz','LocalNeuron-Linux-x64.tar.gz'],
 };
