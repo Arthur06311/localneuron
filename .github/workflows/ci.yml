@@ -18,18 +18,31 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: npm ci
-      - run: npm run build
       - run: npm test
       - name: Testes Python
         shell: bash
         run: python -m unittest discover -s tests -p '*_test.py'
       - run: node scripts/verify.mjs
+
+  versao:
+    name: Versão e changelog
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Conferir package.json e CHANGELOG
+        run: node scripts/check-release-version.mjs
+      - name: Conferir o catálogo único de downloads
+        run: node scripts/build-release-manifest.mjs --check

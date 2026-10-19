@@ -25,7 +25,7 @@ try {
    result.installationMs=Date.now()-started;
  }
  started=Date.now();
- child=spawn(binary,[`--remote-debugging-port=${debugPort}`],{env:{...process.env,COLMEIA_DESKTOP_DATA_DIR:directory,LOCALNEURON_TEST_PORT:'14318'},stdio:['ignore','pipe','pipe']});
+ child=spawn(binary,[`--remote-debugging-port=${debugPort}`],{env:{...process.env,LOCALNEURON_DESKTOP_DATA_DIR:directory,LOCALNEURON_TEST_PORT:'14318'},stdio:['ignore','pipe','pipe']});
  child.on('error',e=>{error=e.message;});
  child.stderr.on('data',c=>stderr=(stderr+c).slice(-12000));
  child.stdout.on('data',c=>stdout=(stdout+c).slice(-12000));

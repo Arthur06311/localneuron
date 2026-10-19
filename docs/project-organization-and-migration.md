@@ -58,7 +58,7 @@ O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes esp
 
 1. `npm run desktop` inicia `desktop/main.cjs`.
 2. O processo principal cria uma pasta de dados do desktop e inicia o backend como processo filho.
-3. O backend recebe `COLMEIA_DATA_DIR` e `COLMEIA_PORT`; esses nomes antigos permanecem para compatibilidade com dados já existentes.
+3. O backend recebe `LOCALNEURON_DATA_DIR` e `LOCALNEURON_PORT`. `COLMEIA_DATA_DIR` e `COLMEIA_PORT` continuam aceitos.
 4. `desktop/preload.cjs` expõe somente pontes permitidas ao renderer.
 5. O renderer carrega a mesma interface de `public/` usada no modo navegador local.
 
@@ -168,7 +168,7 @@ Não migrar pelo Git:
 2. Faça uma cópia completa da pasta de dados, incluindo banco, cofre, workspace e artefatos.
 3. Instale Node.js 24+ apenas se for executar o modo de desenvolvimento; instaladores prontos não precisam dele.
 4. Reinstale o pacote para a plataforma correta.
-5. Restaure a pasta de dados em um local novo e defina `COLMEIA_DESKTOP_DATA_DIR` ou `COLMEIA_DATA_DIR` quando necessário.
+5. Restaure a pasta de dados em um local novo e defina `LOCALNEURON_DESKTOP_DATA_DIR` ou `LOCALNEURON_DATA_DIR` quando necessário. `COLMEIA_DESKTOP_DATA_DIR` e `COLMEIA_DATA_DIR` continuam aceitos.
 6. Abra com a mesma senha; não copie somente `vault.enc.json` sem o banco correspondente.
 7. Refaça os downloads de runtime específicos da plataforma e valide os hashes.
 
@@ -191,9 +191,9 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 
 | Variável | Uso | Obrigatória |
 |---|---|---:|
-| `COLMEIA_DATA_DIR` | Dados do servidor local em modo navegador | Não; padrão `.data/` |
-| `COLMEIA_DESKTOP_DATA_DIR` | Dados do Electron | Não; padrão por plataforma |
-| `COLMEIA_PORT` | Porta do servidor local | Não; padrão `4317` |
+| `LOCALNEURON_DATA_DIR` | Dados do servidor local em modo navegador. `COLMEIA_DATA_DIR` continua aceito. | Não; padrão `.data/` |
+| `LOCALNEURON_DESKTOP_DATA_DIR` | Dados do Electron. `COLMEIA_DESKTOP_DATA_DIR` continua aceito. | Não; padrão por plataforma |
+| `LOCALNEURON_PORT` | Porta do servidor local. `COLMEIA_PORT` continua aceito. | Não; padrão `4317` |
 | `LOCALNEURON_TEST_PORT` | Porta do backend do desktop, usada em testes e diagnósticos | Não; padrão `4318` |
 | `LOCALNEURON_LICENSE_PUBLIC_KEY` | Chave pública para validar licença | Não; pode vir da configuração pública |
 | `LOCALNEURON_BILLING_URL` | URL do serviço de licença | Não no modo local |
@@ -208,7 +208,7 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 
 O arquivo [`.env.example`](../.env.example) lista essas variáveis com valores de exemplo. O app não lê `.env` automaticamente: exporte as variáveis no shell, no gerenciador de serviços ou no cofre de segredos do servidor.
 
-Os nomes `COLMEIA_*` são compatibilidade histórica. Uma migração pode manter esses nomes sem perder dados; uma futura versão pode adicionar aliases `LOCALNEURON_*` com migração explícita.
+Os nomes `COLMEIA_*` são compatibilidade histórica e continuam aceitos. Para cada um existe o alias `LOCALNEURON_*`, que prevalece se os dois estiverem definidos. Quando só o nome antigo está definido, o processo emite um aviso por variável e não mostra o valor. As pastas de dados não mudam de lugar.
 
 ## 7. Comandos de desenvolvimento e release
 
@@ -222,7 +222,7 @@ npm start                      # servidor local em 127.0.0.1:4317
 node scripts/open.mjs          # abre uma sessão local autenticada
 npm run desktop                # app Electron
 npm run package                # build e pacote desktop
-node scripts/build-website.mjs # gera website/guide.html
+npm run site                 # gera website/guide.html e website/compare-lm-studio.html
 node --test tests/website.test.mjs
 ```
 
@@ -233,12 +233,12 @@ Os pesos de modelos, runtimes e caches não devem ser incluídos no clone. Use o
 Revalidação em 18/10/2026, sobre o commit `e5694ac` de `main` (a revisão da navegação é o commit anterior, `be40fb1`), com Node.js 24.22.0 em Linux x64:
 
 - `npm run build` passou.
-- `npm test` executa **143 testes**: 127 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 16 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 4, navegação 2, ícones de modelos 2 e acesso local 2).
+- `npm test` executa **153 testes**: 131 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 22 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 5, navegação 2, ícones de modelos 2, acesso local 2, alias de ambiente 4 e arquivos estáticos 1). A revalidação de 18/10/2026 contou 143; o quinto teste do site confere a versão visível com `package.json`.
 - A suíte compilada do backend passou com **127 de 127** testes.
 - Os cinco scripts Python de `tests/` (`resolve_bridge_test.py`, `mlx_protocol_test.py`, `linux_installer_test.py`, `linux_gui_installer_test.py` e `linux_native_package_test.py`) passaram. Eles não fazem parte do `npm test`.
-- Em Linux, os 2 testes de `tests/local-access.test.mjs` falham: o `safeStorage` simulado no teste não implementa `getSelectedStorageBackend()`, que `desktop/local-access.cjs` só chama quando `process.platform === 'linux'`. Em outro sistema esse trecho não é executado. O teste precisa ser corrigido.
+- A correção do PR #6 (commit `708cede`, já em `main`) faz o mock de `tests/local-access.test.mjs` implementar `safeStorage.getSelectedStorageBackend()`. Antes disso, os 2 testes falhavam no Linux, porque `desktop/local-access.cjs` só chama esse método quando `process.platform === 'linux'`.
 - O teste “Gerenciador só carrega chaves instaladas, contexto curto e descarrega instâncias conhecidas” (`tests/library.test.ts`) depende da memória livre da máquina. Ele falhou em 1 de 2 execuções com “Memória disponível insuficiente”.
-- Nenhum workflow ativo roda `npm test`. Em `.github/workflows/` existe apenas `desktop-diagnosis.yml`; `ci.yml` e `desktop.yml` continuam como modelos em `.github/workflow-templates/`.
+- O workflow ativo `.github/workflows/ci.yml` roda `npm test` em macOS, Windows e Linux, além de `npm ci`, `npm run build`, os testes Python e `node scripts/verify.mjs`. `desktop-diagnosis.yml` continua em `.github/workflows/`. Os arquivos `ci.yml`, `desktop.yml` e `pages.yml` em `.github/workflow-templates/` seguem como modelos e não são os workflows em execução.
 
 Ainda precisam de validação em máquinas físicas antes de chamar o produto de pronto para consumo geral:
 
