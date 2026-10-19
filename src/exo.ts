@@ -5,7 +5,28 @@ import { z } from "zod";
 import { networkInterfaces } from "node:os";
 import { memoryStatus } from "./model.js";
 import type { Backend } from "./inference.js";
-import { ExoInstall } from "./exo-install.js";
+import { ExoInstall, type ExoInstallHooks } from "./exo-install.js";
+export const EXO_NAMESPACE = /^neuron-[0-9a-f]{32}$/;
+export function exoNamespace() {
+  return "neuron-" + randomBytes(16).toString("hex");
+}
+type Nic = { family: string | number; internal: boolean; address: string };
+export function exoLanAddresses(
+  announce: boolean,
+  interfaces: Record<string, readonly Nic[] | undefined> = networkInterfaces(),
+) {
+  if (!announce) return [];
+  return Object.values(interfaces)
+    .flatMap((entries) => entries ?? [])
+    .filter((n) => n.family === "IPv4" && !n.internal)
+    .flatMap((n) => {
+      try {
+        return [exoEndpoint("http://" + n.address + ":52415")];
+      } catch {
+        return [];
+      }
+    });
+}
 export function exoEndpoint(value: string) {
   const input = value.trim();
   const u = new URL(input.includes("://") ? input : "http://" + input);
@@ -36,8 +57,9 @@ export function exoEndpoint(value: string) {
 const configSchema = z.strictObject({
   enabled: z.boolean(),
   endpoint: z.string().max(150).transform(exoEndpoint),
-  network: z.string().regex(/^[a-zA-Z0-9_-]{4,60}$/),
+  network: z.string().regex(EXO_NAMESPACE, "A identificação da rede precisa de 128 bits (neuron- e 32 caracteres hexadecimais)."),
   offline: z.boolean(),
+  expose_lan: z.boolean().default(false),
 });
 const value = (v: any, snake: string, camel: string) =>
   v?.[snake] ?? v?.[camel];
@@ -194,21 +216,41 @@ export class ExoRuntime {
   constructor(
     directory: string,
     private fetcher = fetch,
+    hooks?: ExoInstallHooks,
   ) {
     mkdirSync(directory, { recursive: true, mode: 0o700 });
     this.file = join(directory, "exo-config.json");
     this.config = {
       enabled: false,
       endpoint: "http://127.0.0.1:52415",
-      network: "neuron-" + randomBytes(4).toString("hex"),
+      network: exoNamespace(),
       offline: false,
+      expose_lan: false,
     };
     try {
-      this.config = configSchema.parse(
-        JSON.parse(readFileSync(this.file, "utf8")),
-      );
+      const raw = JSON.parse(readFileSync(this.file, "utf8")) as Record<string, unknown>;
+      let changed = false;
+      if (!EXO_NAMESPACE.test(String(raw.network ?? ""))) {
+        raw.network = exoNamespace();
+        changed = true;
+      }
+      if (typeof raw.expose_lan !== "boolean") {
+        raw.expose_lan = false;
+        changed = true;
+      }
+      this.config = configSchema.parse(raw);
+      if (changed) this.persist();
     } catch {}
-    this.installer = new ExoInstall(directory);
+    this.installer = new ExoInstall(directory, hooks);
+  }
+  private persist() {
+    writeFileSync(this.file, JSON.stringify(this.config), { mode: 0o600 });
+  }
+  private lanWarning() {
+    if (!this.installer.running || !this.installer.exposed) return "";
+    if (this.installer.unrestricted)
+      return "Este EXO não permite bind em loopback: a versão 1.0.71 fixa a API em 0.0.0.0 e não tem --api-host. A porta 52415 está acessível em todas as interfaces IPv4, sem autenticação e sem cifra, enquanto o nó estiver em execução. Bloquear o aplicativo encerra o nó.";
+    return "A API nativa do EXO está aberta na rede local, sem autenticação. Qualquer dispositivo nesta rede pode criar ou remover instâncias, forçar downloads e ler respostas. Desligue a exposição quando terminar. Bloquear o aplicativo também encerra essa exposição.";
   }
   async request(
     path: string,
@@ -279,7 +321,10 @@ export class ExoRuntime {
       error: this.error,
       checked_at: this.checked,
       installation: this.installer.status(),
-      connection_addresses: this.installer.running ? Object.values(networkInterfaces()).flatMap(entries => (entries || []).filter(n => n.family === "IPv4" && !n.internal).flatMap(n => { try { return [exoEndpoint("http://" + n.address + ":52415")]; } catch { return []; } })) : [],
+      exposed: this.installer.running && this.installer.exposed,
+      connection_addresses: exoLanAddresses(this.installer.running && this.installer.exposed),
+      lan_exposed: this.installer.running && this.installer.exposed,
+      lan_warning: this.lanWarning(),
     };
   }
   configure(input: unknown) {
@@ -288,7 +333,7 @@ export class ExoRuntime {
     this.config = configSchema.parse(input);
     this.error = "";
     this.revision++;
-    writeFileSync(this.file, JSON.stringify(this.config), { mode: 0o600 });
+    this.persist();
     this.connected = false;
     this.checked = 0;
     this.cached = exoState({ topology: { nodes: [] } }, { data: [] });
@@ -441,9 +486,9 @@ export class ExoRuntime {
       throw Error(
         "Já existe um EXO na porta 52415. Use Conectar ao EXO existente.",
       );
-    await this.installer.start(this.config.network, this.config.offline);
+    await this.installer.start(this.config.network, this.config.offline, this.config.expose_lan);
     this.config.enabled = true;
-    writeFileSync(this.file, JSON.stringify(this.config), { mode: 0o600 });
+    this.persist();
     this.checked = 0;
     return this.snapshot();
   }
@@ -454,8 +499,14 @@ export class ExoRuntime {
     this.checked = 0;
     this.error = "";
     this.cached = exoState({ topology: { nodes: [] } }, { data: [] });
-    writeFileSync(this.file, JSON.stringify(this.config), { mode: 0o600 });
+    this.persist();
     this.connected = false;
+    return this.snapshot();
+  }
+  async restrictLan() {
+    this.config.expose_lan = false;
+    if (this.installer.running && this.installer.exposed) return this.stop();
+    this.persist();
     return this.snapshot();
   }
   async close() {
