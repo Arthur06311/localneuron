@@ -2,6 +2,7 @@
 """Wrap an Electron Packager Windows directory as an unsigned NSIS installer."""
 import argparse
 from pathlib import Path
+import ntpath
 import os
 import re
 import shutil
@@ -24,10 +25,16 @@ def version_fields(version):
     return version, match.group(1) + '.0'
 
 
-def nsis_string(value):
-    if any(char in value for char in '"\r\n$`'):
+def nsis_define_path(path, windows=None):
+    """Caminho de /DSOURCE e /DOUTFILE. No Windows o makensis só abre D:\\..."""
+    if windows is None:
+        windows = os.name == 'nt'
+    text = str(path)
+    if any(char in text for char in '"\r\n$`'):
         raise ValueError('Caminho incompatível com o NSIS')
-    return value.replace('\\', '/')
+    if windows:
+        return ntpath.normpath(text.replace('/', '\\'))
+    return text.replace('\\', '/')
 
 
 def nsis_include(path, windows=None):
@@ -46,15 +53,11 @@ def nsis_include(path, windows=None):
     return text.replace('\\', '/')
 
 
-def render_header(version, source, output, estimated_kib):
+def render_header(version, estimated_kib):
     full, numeric = version_fields(version)
-    source_text = nsis_string(str(Path(source).resolve()))
-    output_text = nsis_string(str(Path(output).resolve()))
     return '\n'.join([
         f'!define VERSION "{full}"',
         f'!define VERSION4 "{numeric}"',
-        f'!define SOURCE "{source_text}"',
-        f'!define OUTFILE "{output_text}"',
         f'!define ESTIMATED_SIZE {estimated_kib}',
         '',
     ])
@@ -85,8 +88,14 @@ def build(source, output, makensis=None):
     # Stage next to the template so the script and the !include stay on the workspace drive.
     with tempfile.TemporaryDirectory(prefix='localneuron-nsis-', dir=template.parent) as temporary:
         script = Path(temporary) / 'localneuron-build.nsi'
-        script.write_text(render_header(version, source, output, estimated_kib(source)) + f'!include "{nsis_include(template)}"\n', encoding='utf-8')
-        subprocess.run([compiler, '-INPUTCHARSET', 'UTF8', str(script)], check=True)
+        script.write_text(render_header(version, estimated_kib(source)) + f'!include "{nsis_include(template)}"\n', encoding='utf-8')
+        subprocess.run([
+            compiler,
+            '-INPUTCHARSET', 'UTF8',
+            '-DSOURCE=' + nsis_define_path(source),
+            '-DOUTFILE=' + nsis_define_path(output),
+            str(script),
+        ], check=True)
     if not output.is_file() or output.stat().st_size < 1024 or output.read_bytes()[:2] != b'MZ':
         raise ValueError('O instalador NSIS não foi gerado')
     return {'file': str(output), 'version': version, 'bytes': output.stat().st_size}

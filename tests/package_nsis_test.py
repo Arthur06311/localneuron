@@ -25,16 +25,26 @@ def fixture(root):
 
 class NsisTest(unittest.TestCase):
     def test_header_has_version_and_no_signing(self):
-        header = nsis.render_header('0.28.0-alpha.1', Path('/tmp/src'), Path('/tmp/out/Setup.exe'), 12)
+        header = nsis.render_header('0.28.0-alpha.1', 12)
         self.assertIn('!define VERSION "0.28.0-alpha.1"', header)
         self.assertIn('!define VERSION4 "0.28.0.0"', header)
         self.assertNotIn('SignTool', header)
+        self.assertNotIn('SOURCE', header)
         script = (ROOT / 'packaging/windows/localneuron.nsi').read_text(encoding='utf-8')
         code = '\n'.join(line.split(';', 1)[0] for line in script.splitlines())
         self.assertNotIn('signtool', code.lower())
         self.assertIn('Não assina', script)
         self.assertIn('signtool', script.lower())
         self.assertIn('PortugueseBR', script)
+        self.assertIn('File /r "${SOURCE}\\*.*"', script)
+
+    def test_windows_defines_use_backslashes(self):
+        source = nsis.nsis_define_path('D:/a/localneuron/localneuron/releases/LocalNeuron-win32-x64', windows=True)
+        output = nsis.nsis_define_path('D:/a/localneuron/localneuron/releases/LocalNeuron-Windows-x64-Setup.exe', windows=True)
+        self.assertEqual(source, 'D:\\a\\localneuron\\localneuron\\releases\\LocalNeuron-win32-x64')
+        self.assertEqual(output, 'D:\\a\\localneuron\\localneuron\\releases\\LocalNeuron-Windows-x64-Setup.exe')
+        self.assertNotIn('/', source)
+        self.assertNotIn('/', output)
 
     def test_windows_include_stays_absolute(self):
         included = nsis.nsis_include('D:/a/localneuron/localneuron/packaging/windows/localneuron.nsi', windows=True)
@@ -49,6 +59,7 @@ class NsisTest(unittest.TestCase):
 
             def fake_run(command, check):
                 script = Path(command[-1])
+                seen['command'] = command
                 seen['script'] = script
                 seen['text'] = script.read_text(encoding='utf-8')
                 output.write_bytes(b'MZ' + b'x' * 2048)
@@ -57,6 +68,9 @@ class NsisTest(unittest.TestCase):
                 nsis.build(fixture(root), output, 'makensis')
             self.assertTrue(seen['script'].is_relative_to(nsis.TEMPLATE.parent))
             self.assertIn(f'!include "{nsis.nsis_include(nsis.TEMPLATE.resolve())}"', seen['text'])
+            defines = [item for item in seen['command'] if item.startswith('-D')]
+            self.assertIn('-DSOURCE=' + nsis.nsis_define_path(fixture(root).resolve()), defines)
+            self.assertTrue(any(item.startswith('-DOUTFILE=') for item in defines))
             self.assertFalse(seen['script'].exists())
 
     def test_missing_executable_is_rejected(self):

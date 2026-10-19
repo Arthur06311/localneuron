@@ -48,7 +48,7 @@ VIAddVersionKey "CompanyName" "LocalNeuron"
 
 Section "LocalNeuron"
   SetOutPath "$INSTDIR"
-  File /r "${SOURCE}/*.*"
+  File /r "${SOURCE}\*.*"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateDirectory "$SMPROGRAMS\LocalNeuron"
   CreateShortcut "$SMPROGRAMS\LocalNeuron\LocalNeuron.lnk" "$INSTDIR\LocalNeuron.exe"
