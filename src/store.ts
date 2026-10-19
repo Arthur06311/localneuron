@@ -1,5 +1,6 @@
 import { PGlite } from '@electric-sql/pglite';
 import type { State, Entry } from './types.js';
+import { applyMigrations } from './migrations.js';
 import { SPACE_MISMATCH } from './space.js';
 
 export class Store {
@@ -8,14 +9,7 @@ export class Store {
   assertIntegrity: (state: State, entries: Entry[]) => void = () => {};
   sealState: (state: State, entries: Entry[]) => void = () => {};
   constructor(dir?: string) { this.db = new PGlite(dir); }
-  async init() {
-    await this.db.exec(`CREATE TABLE IF NOT EXISTS workspace_state (id integer PRIMARY KEY CHECK (id = 1), document jsonb NOT NULL);
-      CREATE TABLE IF NOT EXISTS event_log (seq bigint PRIMARY KEY, entry_hash text UNIQUE NOT NULL, document jsonb NOT NULL);
-      CREATE OR REPLACE FUNCTION reject_log_mutation() RETURNS trigger AS $$ BEGIN RAISE EXCEPTION 'event_log is append-only'; END; $$ LANGUAGE plpgsql;
-      DROP TRIGGER IF EXISTS immutable_event_log ON event_log;
-      CREATE TRIGGER immutable_event_log BEFORE UPDATE OR DELETE ON event_log FOR EACH ROW EXECUTE FUNCTION reject_log_mutation();
-      CREATE TABLE IF NOT EXISTS space_binding (id integer PRIMARY KEY CHECK (id = 1), space_id text NOT NULL);`);
-  }
+  async init() { await applyMigrations(this.db); }
   async binding() {
     await this.queue;
     const result = await this.db.query<{ space_id: string }>('SELECT space_id FROM space_binding WHERE id = 1');

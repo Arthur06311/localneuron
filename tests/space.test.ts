@@ -8,7 +8,6 @@ import { unzipSync } from 'fflate';
 import { Core } from '../src/core.js';
 import { exportSpace, importSpace } from '../src/space-archive.js';
 import { SPACE_MISMATCH } from '../src/space.js';
-import { createExportLimit } from '../src/space-export-limit.js';
 import { createApp } from '../src/server.js';
 
 const password = 'senha-de-teste-espaco';
@@ -81,14 +80,6 @@ test('Abrir um espaço recusa cofre e base que não correspondem', async () => {
   }
 });
 
-test('Exportação do espaço aceita quatro pedidos por minuto', () => {
-  let time = 1_000;
-  const allow = createExportLimit(4, 60_000, () => time);
-  assert.deepEqual([allow(), allow(), allow(), allow(), allow()], [true, true, true, true, false]);
-  time += 60_000;
-  assert.equal(allow(), true);
-});
-
 test('A rota de exportação devolve o arquivo e omite o token da sessão', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'espaco-rota-'));
   const core = new Core(dir, root);
@@ -99,11 +90,19 @@ test('A rota de exportação devolve o arquivo e omite o token da sessão', asyn
   try {
     const denied = await app.inject({ method: 'GET', url: '/v1/space/export', headers: { host: '127.0.0.1:4317' } });
     assert.equal(denied.statusCode, 401);
-    const response = await app.inject({ method: 'GET', url: '/v1/space/export', headers: { host: '127.0.0.1:4317', authorization: 'Bearer token-da-rota-de-exportacao' } });
+    const headers = { host: '127.0.0.1:4317', authorization: 'Bearer token-da-rota-de-exportacao' };
+    const response = await app.inject({ method: 'GET', url: '/v1/space/export', headers });
     assert.equal(response.statusCode, 200);
     assert.equal(response.headers['content-type'], 'application/zip');
     assert.equal(response.body.includes('token-da-rota-de-exportacao'), false);
     assert.equal(response.body.includes(password), false);
+    await app.inject({ method: 'GET', url: '/v1/space/export', headers });
+    await app.inject({ method: 'GET', url: '/v1/space/export', headers });
+    const fourth = await app.inject({ method: 'GET', url: '/v1/space/export', headers });
+    assert.equal(fourth.statusCode, 200);
+    const blocked = await app.inject({ method: 'GET', url: '/v1/space/export', headers });
+    assert.equal(blocked.statusCode, 429);
+    assert.match(blocked.body, /Aguarde antes de exportar o espaço novamente/);
   } finally {
     await app.close();
     await core.close();
