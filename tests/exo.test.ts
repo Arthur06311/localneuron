@@ -1,12 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { exoEndpoint, exoState, ExoRuntime } from "../src/exo.js";
+import { EventEmitter } from "node:events";
+import { exoEndpoint, exoLanAddresses, exoNamespace, exoState, ExoRuntime, EXO_NAMESPACE } from "../src/exo.js";
+import { exoCliFlag, planExoLaunch, type ExoInstallHooks } from "../src/exo-install.js";
 import { complete, optionsSchema } from "../src/inference.js";
 const G = 1024 ** 3,
-  model = "mlx-community/Qwen3-8B-4bit";
+  model = "mlx-community/Qwen3-8B-4bit",
+  networkId = "neuron-" + "0123456789abcdef".repeat(2);
+const helpLegacy = "usage: EXO [-h] [--api-port API_PORT]\n  --api-port API_PORT\n";
+const helpBind = helpLegacy + "  --api-host API_HOST  HTTP API host to bind.\n";
+const helpModern = helpBind + "  --namespace NAMESPACE  Discovery namespace.\n";
 const catalog = {
   data: [
     {
@@ -133,7 +139,7 @@ test("EXO prepara pelo planejamento oficial, encaminha o ID do modelo e retira m
     exo.configure({
       enabled: true,
       endpoint: "http://127.0.0.1:52416",
-      network: "test-exo",
+      network: networkId,
       offline: false,
     });
     await exo.refresh(true);
@@ -241,7 +247,7 @@ test("Resposta atrasada do EXO não reconecta a rede depois de desconectar", asy
     exo.configure({
       enabled: true,
       endpoint: "http://localhost:52415",
-      network: "test-race",
+      network: networkId,
       offline: false,
     });
     const pending = exo.refresh(true);
@@ -253,6 +259,8 @@ test("Resposta atrasada do EXO não reconecta a rede depois de desconectar", asy
     assert.equal(exo.snapshot().nodes.length, 0);
     assert.equal(exo.snapshot().exposed, false);
     Object.defineProperty(exo.installer, "running", { configurable: true, get: () => true });
+    assert.equal(exo.snapshot().exposed, false);
+    Object.defineProperty(exo.installer, "exposed", { configurable: true, get: () => true });
     assert.equal(exo.snapshot().exposed, true);
   } finally {
     await exo.close();
@@ -282,7 +290,7 @@ test("Seleção manual usa somente as máquinas escolhidas e recusa divisões am
     throw Error(u.pathname);
   });
   try {
-    exo.configure({enabled:true,endpoint:"192.168.1.8",network:"test-select",offline:false});
+    exo.configure({enabled:true,endpoint:"192.168.1.8",network:networkId,offline:false});
     await exo.prepare(model,2,"Pipeline",["a","b"]);assert.equal(sent,1);
     extra = true;
     await assert.rejects(exo.prepare(model,2,"Pipeline",["a","b"]), /exatamente/);
@@ -302,8 +310,194 @@ test("Trocar a rede durante o planejamento não cria instância no destino novo"
     sent++;return Response.json({});
   });
   try {
-    const config={enabled:true,endpoint:'192.168.1.8',network:'test-race',offline:false};exo.configure(config);
+    const config={enabled:true,endpoint:'192.168.1.8',network:networkId,offline:false};exo.configure(config);
     const pending=exo.prepare(model,2,'Pipeline');await planning;exo.configure({...config,endpoint:'192.168.1.9'});release();
     await assert.rejects(pending,/conexão EXO mudou/);assert.equal(sent,0);
   } finally {await exo.close();rmSync(dir,{recursive:true,force:true});}
+});
+const nics = {
+  lo: [{ address: "127.0.0.1", family: "IPv4", internal: true }],
+  eth0: [
+    { address: "192.168.1.20", family: "IPv4", internal: false },
+    { address: "8.8.8.8", family: "IPv4", internal: false },
+  ],
+  lan: [{ address: "10.1.2.3", family: "IPv4", internal: false }],
+  wifi: [{ address: "fe80::1", family: "IPv6", internal: false }],
+};
+test("Endereços LAN só são anunciados com exposição ativa", () => {
+  assert.deepEqual(exoLanAddresses(false, nics), []);
+  assert.deepEqual(exoLanAddresses(true, nics), [
+    "http://192.168.1.20:52415",
+    "http://10.1.2.3:52415",
+  ]);
+});
+test("Identificação nova tem 128 bits e identificações curtas são rejeitadas", () => {
+  const id = exoNamespace();
+  assert.match(id, EXO_NAMESPACE);
+  assert.equal(Buffer.from(id.slice("neuron-".length), "hex").length, 16);
+  assert.notEqual(exoNamespace(), exoNamespace());
+  assert.equal(exoCliFlag("  --api-host API_HOST", "api-host"), true);
+  assert.equal(exoCliFlag("[--api-host API_HOST]", "api-host"), true);
+  assert.equal(exoCliFlag("--api-hostname", "api-host"), false);
+  const loopback = planExoLaunch(helpBind, false);
+  assert.equal(loopback.refusal, null);
+  assert.equal(loopback.apiHost, "127.0.0.1");
+  assert.deepEqual(loopback.args, ["--api-port", "52415", "--api-host", "127.0.0.1"]);
+  const opted = planExoLaunch(helpBind, true);
+  assert.equal(opted.apiHost, "0.0.0.0");
+  assert.equal(opted.unrestricted, false);
+  const legacy = planExoLaunch(helpLegacy, false);
+  assert.match(legacy.refusal ?? "", /0\.0\.0\.0/);
+  assert.equal(planExoLaunch(helpLegacy, true).unrestricted, true);
+  assert.equal(planExoLaunch(helpLegacy, true).apiHost, null);
+  assert.equal(planExoLaunch(helpModern, false).namespaceArg, true);
+  assert.equal(planExoLaunch(helpModern, false).useLibp2pNamespaceEnv, false);
+});
+test("Configuração antiga ganha namespace de 128 bits e não anuncia a LAN", () => {
+  const dir = mkdtempSync(join(tmpdir(), "exo-migrate-"));
+  try {
+    writeFileSync(join(dir, "exo-config.json"), JSON.stringify({
+      enabled: false,
+      endpoint: "http://10.0.0.4:52415",
+      network: "neuron-abcd",
+      offline: true,
+    }));
+    const exo = new ExoRuntime(dir);
+    assert.match(exo.config.network, EXO_NAMESPACE);
+    assert.notEqual(exo.config.network, "neuron-abcd");
+    assert.equal(exo.config.endpoint, "http://10.0.0.4:52415");
+    assert.equal(exo.config.offline, true);
+    assert.equal(exo.config.expose_lan, false);
+    assert.deepEqual(exo.snapshot().connection_addresses, []);
+    assert.equal(exo.snapshot().lan_exposed, false);
+    assert.equal(exo.snapshot().lan_warning, "");
+    const saved = JSON.parse(readFileSync(join(dir, "exo-config.json"), "utf8"));
+    assert.equal(saved.network, exo.config.network);
+    assert.equal(saved.expose_lan, false);
+    assert.throws(() => exo.configure({
+      enabled: true,
+      endpoint: "http://127.0.0.1:52415",
+      network: "test-exo",
+      offline: false,
+      expose_lan: false,
+    }), /128 bits/);
+    exo.configure({
+      enabled: true,
+      endpoint: "http://127.0.0.1:52415",
+      network: networkId,
+      offline: false,
+      expose_lan: true,
+    });
+    assert.equal(exo.snapshot().expose_lan, true);
+    assert.deepEqual(exo.snapshot().connection_addresses, []);
+    assert.equal(exo.snapshot().lan_warning, "");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+function fakeSpawn(calls: { args: readonly string[]; env: NodeJS.ProcessEnv }[]) {
+  return ((
+    _command: string,
+    args: readonly string[],
+    options: { env: NodeJS.ProcessEnv },
+  ) => {
+    calls.push({ args, env: options.env });
+    const child = new EventEmitter() as EventEmitter & {
+      pid: number;
+      exitCode: number | null;
+      signalCode: NodeJS.Signals | null;
+      stdout: EventEmitter;
+      stderr: EventEmitter;
+      kill: (signal?: NodeJS.Signals) => boolean;
+    };
+    child.pid = 51515;
+    child.exitCode = null;
+    child.signalCode = null;
+    child.stdout = new EventEmitter();
+    child.stderr = new EventEmitter();
+    child.kill = (signal) => {
+      if (child.signalCode || child.exitCode !== null) return true;
+      child.signalCode = signal ?? "SIGTERM";
+      child.emit("exit", null, child.signalCode);
+      return true;
+    };
+    queueMicrotask(() => child.emit("spawn"));
+    return child;
+  }) as NonNullable<ExoInstallHooks["spawn"]>;
+}
+const offlineFetch: typeof fetch = async () => new Response(null, { status: 503 });
+async function bootExo(help: string, exposeLan: boolean) {
+  const dir = mkdtempSync(join(tmpdir(), "exo-bind-"));
+  const calls: { args: readonly string[]; env: NodeJS.ProcessEnv }[] = [];
+  const exo = new ExoRuntime(dir, offlineFetch, {
+    helpText: help,
+    allowUnsupported: true,
+    spawn: fakeSpawn(calls),
+  });
+  mkdirSync(exo.installer.directory, { recursive: true });
+  writeFileSync(join(exo.installer.directory, "exo"), "");
+  exo.configure({
+    enabled: true,
+    endpoint: "http://127.0.0.1:52415",
+    network: networkId,
+    offline: false,
+    expose_lan: exposeLan,
+  });
+  return { dir, exo, calls };
+}
+test("Padrão é loopback e opt-in anuncia a LAN; EXO sem bind não inicia sozinho", async () => {
+  const loopback = await bootExo(helpBind, false);
+  const modern = await bootExo(helpModern, false);
+  const exposed = await bootExo(helpBind, true);
+  const legacy = await bootExo(helpLegacy, true);
+  const refused = await bootExo(helpLegacy, false);
+  try {
+    await loopback.exo.start();
+    assert.deepEqual(loopback.calls[0].args, ["--api-port", "52415", "--api-host", "127.0.0.1"]);
+    assert.equal(loopback.calls[0].env.EXO_API_HOST, "127.0.0.1");
+    assert.equal(loopback.calls[0].env.EXO_LIBP2P_NAMESPACE, networkId);
+    assert.equal(loopback.exo.snapshot().lan_exposed, false);
+    assert.equal(loopback.exo.snapshot().lan_warning, "");
+    assert.deepEqual(loopback.exo.snapshot().connection_addresses, []);
+    await loopback.exo.restrictLan();
+    assert.equal(loopback.exo.installer.running, true);
+
+    await modern.exo.start();
+    assert.ok(modern.calls[0].args.includes("--namespace"));
+    assert.equal(modern.calls[0].args.at(-1), networkId);
+    assert.equal(modern.calls[0].env.EXO_API_HOST, "127.0.0.1");
+    assert.equal(modern.calls[0].env.EXO_LIBP2P_NAMESPACE, undefined);
+
+    await exposed.exo.start();
+    assert.equal(exposed.calls[0].env.EXO_API_HOST, "0.0.0.0");
+    assert.ok(exposed.calls[0].args.includes("0.0.0.0"));
+    assert.equal(exposed.exo.snapshot().lan_exposed, true);
+    assert.match(exposed.exo.snapshot().lan_warning, /sem autenticação/);
+    assert.doesNotMatch(exposed.exo.snapshot().lan_warning, /não tem --api-host/);
+    assert.deepEqual(exposed.exo.snapshot().connection_addresses, exoLanAddresses(true));
+    await exposed.exo.restrictLan();
+    assert.equal(exposed.exo.installer.running, false);
+    assert.equal(exposed.exo.config.expose_lan, false);
+    assert.deepEqual(exposed.exo.snapshot().connection_addresses, []);
+    assert.equal(exposed.exo.snapshot().lan_warning, "");
+
+    await legacy.exo.start();
+    assert.deepEqual(legacy.calls[0].args, ["--api-port", "52415"]);
+    assert.equal(legacy.calls[0].env.EXO_API_HOST, undefined);
+    assert.equal(legacy.exo.installer.unrestricted, true);
+    assert.match(legacy.exo.snapshot().lan_warning, /0\.0\.0\.0/);
+    assert.deepEqual(legacy.exo.snapshot().connection_addresses, exoLanAddresses(true));
+    await legacy.exo.restrictLan();
+    assert.equal(legacy.exo.installer.running, false);
+
+    await assert.rejects(refused.exo.start(), /0\.0\.0\.0/);
+    assert.equal(refused.calls.length, 0);
+    assert.equal(refused.exo.installer.running, false);
+    assert.deepEqual(refused.exo.snapshot().connection_addresses, []);
+  } finally {
+    await Promise.all([loopback, modern, exposed, legacy, refused].map(async (item) => {
+      await item.exo.close();
+      rmSync(item.dir, { recursive: true, force: true });
+    }));
+  }
 });

@@ -1,4 +1,5 @@
 import Fastify, { type FastifyInstance } from 'fastify';
+import rateLimit from '@fastify/rate-limit';
 import { createHash, randomBytes, timingSafeEqual, randomUUID } from 'node:crypto';
 import { readFileSync, writeFileSync, renameSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -56,21 +57,15 @@ export class Gateway {
     this.host=host;this.model=model;this.config=options;this.closing=false;
     const app=Fastify({logger:false,bodyLimit:1024*1024,requestTimeout:30000});
     const failures=new Map<string,{at:number,count:number}>();
-    const hits=new Map<string,{start:number,count:number}>();
-    app.addHook('onRequest',async(req,reply)=>{
+    await app.register(rateLimit,{global:false});
+    const limited={config:{rateLimit:{
+      max:this.limits.max,
+      timeWindow:this.limits.windowSeconds*1000,
+      keyGenerator(req:{headers:{authorization?:string},ip:string}){const bearer=req.headers.authorization?.match(/^Bearer ([A-Za-z0-9_-]{20,100})$/)?.[1]||'';return bearer?'key:'+digest(bearer):'ip:'+String(req.ip||'');},
+      errorResponseBuilder:(_req:unknown,context:{statusCode?:number})=>{const err=new Error('Muitas chamadas num curto intervalo. Aguarde e tente novamente.') as Error & {statusCode?:number};err.statusCode=context.statusCode||429;return err;},
+    }}};
+    app.addHook('preHandler',async(req,reply)=>{
       reply.header('Cache-Control','no-store').header('X-Content-Type-Options','nosniff').header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'");
-      const bearer=req.headers.authorization?.match(/^Bearer ([A-Za-z0-9_-]{20,100})$/)?.[1]||'';
-      const bucketId=bearer?'key:'+digest(bearer):'ip:'+String(req.ip||'');
-      const now=Date.now(),windowMs=this.limits.windowSeconds*1000;
-      let bucket=hits.get(bucketId);
-      if(!bucket||now-bucket.start>=windowMs)bucket={start:now,count:0};
-      bucket.count++;
-      if(hits.size>5000){for(const [id,entry] of hits)if(now-entry.start>=windowMs)hits.delete(id);}
-      hits.set(bucketId,bucket);
-      if(bucket.count>this.limits.max){
-        const retry=Math.max(1,Math.ceil((bucket.start+windowMs-now)/1000));
-        return reply.code(429).header('Retry-After',String(retry)).send({error:{message:'Muitas chamadas num curto intervalo. Aguarde e tente novamente.',type:'rate_limit'}});
-      }
       if(req.method==='GET'&&['/remote','/remote.js','/remote.css'].includes(req.url))return;
       if(this.closing)return reply.code(503).send({error:{message:'API desligando.',type:'unavailable'}});
       // No cookies or dashboard session accepted; only the independently revocable API key.
@@ -82,9 +77,12 @@ export class Gateway {
       }
       if(req.headers.origin&&req.headers.origin!==`http://${this.host}:${this.port}`)return reply.code(403).send({error:{message:'Use a API no cliente ou backend do seu aplicativo; acesso direto pelo navegador não está habilitado.',type:'origin_error'}});
     });
-    app.setErrorHandler((error,_request,reply)=>reply.code(400).send({error:{message:error instanceof z.ZodError?'Parâmetros inválidos ou não suportados. Aceita apenas mensagens de texto.':(error as Error).message,type:'invalid_request_error'}}));
-    app.get('/v1/models',async()=>({object:'list',data:[{id:'local',object:'model',created:0,owned_by:'colmeia'}]}));
-    app.post('/v1/chat/completions',async(req,reply)=>{
+    app.setErrorHandler((error,_request,reply)=>{
+      if((error as {statusCode?:number}).statusCode===429)return reply.code(429).send({error:{message:(error as Error).message,type:'rate_limit'}});
+      return reply.code(400).send({error:{message:error instanceof z.ZodError?'Parâmetros inválidos ou não suportados. Aceita apenas mensagens de texto.':(error as Error).message,type:'invalid_request_error'}});
+    });
+    app.get('/v1/models',limited,async()=>({object:'list',data:[{id:'local',object:'model',created:0,owned_by:'colmeia'}]}));
+    app.post('/v1/chat/completions',limited,async(req,reply)=>{
       const input=requestSchema.parse(req.body);if(input.model!=='local'&&input.model!==this.model)return reply.code(404).send({error:{message:'Use o modelo local informado pela página Minha API.',type:'model_not_found'}});
       const proKey=(req as any).proKey;if(proKey?.paused)return reply.code(403).send({error:{message:'Esta chave está pausada.'}});if(proKey&&!this.hasPro())return reply.code(402).send({error:{message:'A assinatura Pro deste servidor está inativa. Use a chave básica ou atualize a assinatura.'}});if(proKey){const day=new Date().toISOString().slice(0,10);if(proKey.day!==day){proKey.day=day;proKey.used=0;}if(proKey.used>=proKey.daily)return reply.code(429).send({error:{message:'Cota diária desta chave atingida.'}});}
       if(!proKey&&(this.busy||this.reserved||!this.canRun()))return reply.code(503).header('Retry-After','3').send({error:{message:'A IA está ocupada ou o aplicativo está bloqueado. Tente novamente em instantes.',type:'model_busy'}});
@@ -107,9 +105,9 @@ export class Gateway {
       })();
       this.pending.add(run);try{await run;}finally{this.pending.delete(run);}return reply;
     });
-    app.get('/remote',async(_req,reply)=>reply.type('text/html').send(readFileSync(join(this.root,'public/remote.html'))));
-    app.get('/remote.js',async(_req,reply)=>reply.type('application/javascript').send(readFileSync(join(this.root,'public/remote.js'))));
-    app.get('/remote.css',async(_req,reply)=>reply.type('text/css').send(readFileSync(join(this.root,'public/remote.css'))));
+    app.get('/remote',limited,async(_req,reply)=>reply.type('text/html').send(readFileSync(join(this.root,'public/remote.html'))));
+    app.get('/remote.js',limited,async(_req,reply)=>reply.type('application/javascript').send(readFileSync(join(this.root,'public/remote.js'))));
+    app.get('/remote.css',limited,async(_req,reply)=>reply.type('text/css').send(readFileSync(join(this.root,'public/remote.css'))));
     this.server=app;
     try{await app.listen({host,port:this.port});const address=app.server.address();if(address&&typeof address==='object')this.port=address.port;return this.status();}
     catch(error){this.server=null;await app.close().catch(()=>{});throw error;}
