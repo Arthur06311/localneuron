@@ -29,6 +29,7 @@ Este índice separa a documentação por assunto. Os caminhos do código continu
 ## Produto, publicação e suporte
 
 - [Publicação no GitHub](github-publicacao.md): GitHub Pages, releases, hashes e domínio.
+- [Publicar uma versão](RELEASE.md): tag, DMG, ZIP, DEB, Arch, AppImage, NSIS, rascunho e o que ainda falta de assinatura.
 - [Domínio Name.com](dominio-namecom.md): DNS e domínio próprio.
 - [Minha API](minha-api.md): endpoint compatível em rede privada.
 - [Operação da assinatura](subscription-operations.md): serviço Pro e Stripe.
