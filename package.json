@@ -1,6 +1,6 @@
 {
   "name": "localneuron",
-  "version": "0.27.0",
+  "version": "0.28.0",
   "private": true,
   "license": "UNLICENSED",
   "main": "desktop/main.cjs",
@@ -14,6 +14,7 @@
     "dev": "npm run build && npm start",
     "test": "npm run build && node --test dist/tests/*.test.js tests/*.test.mjs",
     "verify": "node scripts/verify.mjs",
+    "site": "node scripts/build-website.mjs",
     "desktop": "electron desktop/main.cjs",
     "package": "npm run build && node scripts/package-desktop.mjs",
     "billing": "node dist/src/billing-service.js",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.3.16",
+    "@fastify/rate-limit": "10.3.0",
     "@modelcontextprotocol/sdk": "1.30.0",
     "cheerio": "1.2.0",
     "docx": "9.7.1",

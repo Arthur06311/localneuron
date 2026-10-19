@@ -1,4 +1,4 @@
-# Motor integrado e assistente — Alfa 0.5
+# Motor integrado e assistente
 
 O LocalNeuron executa GGUF diretamente, sem precisar do LM Studio. O pacote inclui **llama.cpp b10809**, a revisão indicada pela versão estável upstream v0.4.0 em 09/09/2026. A camada de gerenciamento, conversa, ferramentas e revisão é implementada no próprio aplicativo. Não houve treinamento de novos pesos nem cópia do código do Bionic. A conversa recebe informações confirmadas sobre o motor, a execução local e as ferramentas habilitadas, para responder sobre o próprio ambiente.
 
@@ -19,7 +19,7 @@ A seleção da pasta é feita por diálogo nativo no desktop; no navegador, info
 - Uma sessão de inferência e contexto solicitado explicitamente. O aplicativo confere o contexto retornado pelo processo; não aceita ajuste silencioso para um contexto maior.
 - Flash Attention, reutilização de prompt, lote de entrada limitado e orçamento de raciocínio por requisição. Uma chamada pode ser interrompida.
 - Verificação de memória antes e após carregar. Trocar a IA integrada descarrega a anterior. Bloquear ou fechar descarrega o processo integrado. A mesma IA pode responder à Minha API; trocar o modelo compartilhado exige desligar a API.
-- Mac ARM64 usa o backend Metal. Pacotes Windows/Linux x64 incluídos usam CPU; não se promete a mesma velocidade. Na versão 0.6, MLX também tem motor próprio integrado no Mac. Consulte [MLX independente](mlx-independente.md). Outras configurações externas de aceleração continuam disponíveis pelo LM Studio.
+- Mac ARM64 usa o backend Metal. Pacotes Windows/Linux x64 incluídos usam CPU; não se promete a mesma velocidade. Na versão 0.6, MLX também tem motor próprio integrado no Mac. Consulte [MLX independente](mlx-independente.md). Outras configurações externas de aceleração continuam disponíveis pelo LM Studio em `127.0.0.1:8080`.
 - Novos modelos precisam de arquitetura, tokenizer e template reconhecidos pela revisão do runtime. GGUFs multipartes, imagens, áudio, embeddings e toda combinação de quantização/hardware não foram homologados. Não existe garantia de compatibilidade com todos os modelos existentes.
 
 O catálogo continua com 29 arquivos. Modelos maiores não são automaticamente melhores para todas as tarefas. Ferramentas acrescentam informações atuais e capacidade de agir; qualidade de raciocínio continua dependendo dos pesos, do contexto e da pergunta. Não foi demonstrada superioridade geral sobre Bionic.

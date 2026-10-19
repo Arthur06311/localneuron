@@ -1,4 +1,4 @@
-# Biblioteca de modelos — Alfa 0.5
+# Biblioteca de modelos
 
 229 modelos de texto selecionados, com versão e SHA-256 fixos. Há modelos de pesos abertos sob licenças diferentes; não se afirma que todo modelo seja open source no mesmo sentido. ChatGPT é um serviço online; gpt-oss é a opção da OpenAI para execução local.
 
@@ -242,7 +242,7 @@ Metadados conferidos em 10/09/2026 pela API de blobs do Hugging Face. Tamanhos e
 
 Fontes de licença e capacidades: [Gemma 4](https://deepmind.google/models/gemma/gemma-4/), [DeepSeek R1 e licenças das bases destiladas](https://huggingface.co/deepseek-ai/DeepSeek-R1), [Phi-4 Mini](https://huggingface.co/microsoft/Phi-4-mini-instruct), [modelos abertos OpenAI](https://help.openai.com/en/articles/11870455-openai-open-weight-models). Para cada arquivo, a tabela liga à revisão de origem. Llama usa licença comunitária; as destilações DeepSeek baseadas em Llama preservam condições da base.
 
-## Operação 0.5
+## Operação
 
 O pacote inclui llama.cpp e executa GGUF diretamente. Baixe, instale e escolha a versão marcada **integrado**. Arquivos novos ficam na pasta de modelos do LocalNeuron; GGUFs da pasta padrão do LM Studio são reutilizados sem cópia. No Mac, MLX também pode rodar diretamente: use Adicionar MLX no Chat para copiar a pasta de um modelo. Arquivos de modelos externos continuam listados separadamente. Consulte [MLX independente](mlx-independente.md).
 
@@ -252,13 +252,13 @@ Consulte [motor e assistente](motor-e-assistente.md) para uso de ferramentas, ar
 
 ## Limites
 
-O catálogo não inclui todos os modelos existentes. É possível usar modelos adicionais instalados manualmente no LM Studio. Qualidade, consumo de RAM e compatibilidade de cada arquivo ainda não foram homologados. Não há revalidação de hash a cada inferência depois da importação. Modelos grandes, em especial gpt-oss 120B, exigem computadores com muita memória. Não há imagens, áudio ou atualização automática assinada do catálogo. Busca web e terminal com revisão estão disponíveis no modo Assistente.
+O catálogo não inclui todos os modelos existentes. É possível usar modelos adicionais instalados manualmente no LM Studio. O LocalNeuron só reconhece esse servidor em `127.0.0.1:8080`. Qualidade, consumo de RAM e compatibilidade de cada arquivo ainda não foram homologados. Não há revalidação de hash a cada inferência depois da importação. Modelos grandes, em especial gpt-oss 120B, exigem computadores com muita memória. Não há imagens, áudio ou atualização automática assinada do catálogo. Busca web e terminal com revisão estão disponíveis no modo Assistente.
 
 ## Imagem e vídeo
 
 As 6 referências visuais ficam separadas por finalidade: FLUX.1-schnell, Qwen-Image e SDXL (imagem); Wan2.1-T2V-1.3B, Wan2.2-TI2V-5B e CogVideoX-2b (vídeo). São links aos arquivos oficiais, sem instalação ou geração visual integrada. Requisitos e tamanhos precisam ser consultados na configuração do motor visual escolhido. VRAM é memória de vídeo; não confundir com a RAM total do computador.
 
-## Catálogo 0.7
+## Ampliação do catálogo
 
 200 novos modelos/fine-tunes distintos, uma quantização por entrada. Licenças declaradas nas novas fontes: Apache-2.0, MIT, Artistic-2.0 e OpenMDW-1.1. As categorias são usos sugeridos pela família/ficha, sem pontuação comparativa. Consulte também a licença do modelo original. Metadados exatos: `src/catalog.ts`; procedência: `docs/catalog-sources.json`. Para conferir novamente os commits, bytes e hashes publicados sem baixar pesos: `npm run build && python3 scripts/verify-catalog.py`.
 

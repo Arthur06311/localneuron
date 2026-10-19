@@ -32,7 +32,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://ENDERECO-DESTE-PC:4320/v1",
-    api_key=os.environ["COLMEIA_API_KEY"],
+    api_key=os.environ["LOCALNEURON_API_KEY"],
 )
 response = client.chat.completions.create(
     model="local",
@@ -41,7 +41,7 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
-A biblioteca `openai` é usada apenas como cliente de protocolo; o endereço aponta para o computador que hospeda o LocalNeuron.
+A biblioteca `openai` é usada apenas como cliente de protocolo; o endereço aponta para o computador que hospeda o LocalNeuron. O nome `LOCALNEURON_API_KEY` é só da variável do script cliente: o aplicativo não lê essa variável.
 
 ## Memória e concorrência
 

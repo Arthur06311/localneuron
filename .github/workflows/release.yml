@@ -1,0 +1,255 @@
+name: Release
+
+# Assinatura e notarização entram mais tarde, a cargo do Arthur.
+# macOS: depois do DMG, trocar a assinatura ad hoc já existente por Developer ID e notarizar com notarytool.
+# Windows: depois do NSIS, assinar o instalador com signtool / Authenticode.
+# Este workflow não notariza, não assina com certificado e não lê segredo novo.
+# Não adicionar APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID, WIN_CSC_LINK nem WIN_CSC_KEY_PASSWORD aqui.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag já existente só para reconstruir os artefatos (ex.: v0.28.0). Vazio usa o commit selecionado. O disparo manual não publica."
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  preparar:
+    name: Conferir tag, versão e changelog
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      tag: ${{ steps.check.outputs.tag }}
+      version: ${{ steps.check.outputs.version }}
+      sha: ${{ steps.check.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Ir para a tag informada
+        if: github.event_name == 'workflow_dispatch' && inputs.tag != ''
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          if ! printf '%s\n' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "Tag inválida. Use vX.Y.Z." >&2
+            exit 1
+          fi
+          git fetch origin "refs/tags/${TAG}:refs/tags/${TAG}"
+          git checkout --detach "refs/tags/${TAG}"
+      - name: Conferir tag, package.json e changelog
+        id: check
+        shell: bash
+        env:
+          RELEASE_EVENT: ${{ github.event_name }}
+          RELEASE_TAG_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || '' }}
+        run: node scripts/check-release-version.mjs --github-output
+
+  macos:
+    name: macOS Apple Silicon
+    needs: preparar
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.preparar.outputs.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Confirmar Apple Silicon
+        run: test "$(uname -m)" = "arm64"
+      - run: npm ci
+      - run: npm run build
+      # O empacotamento é o de scripts/package-macos.py: ZIP e DMG, com a assinatura ad hoc que o script já faz.
+      # Developer ID e notarização entram neste ponto, quando o Arthur configurar os segredos. Nada disso corre agora.
+      - name: Gerar ZIP e DMG
+        run: python3 scripts/package-macos.py --dist-only --output-dir releases
+      - uses: actions/upload-artifact@v7
+        with:
+          name: localneuron-macos
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            releases/LocalNeuron-macOS-arm64.dmg
+            releases/LocalNeuron-macOS-arm64.zip
+
+  linux:
+    name: Linux x64
+    needs: preparar
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.preparar.outputs.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: npm ci
+      - name: DEB, Arch e bundle do Electron
+        run: npm run package -- linux x64
+      - name: AppImage
+        run: python3 scripts/package-appimage.py releases/LocalNeuron-linux-x64 --output releases/LocalNeuron-Linux-x64.AppImage
+      - uses: actions/upload-artifact@v7
+        with:
+          name: localneuron-linux
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            releases/LocalNeuron-Linux-x64.deb
+            releases/LocalNeuron-Linux-x64.pkg.tar.gz
+            releases/LocalNeuron-Linux-x64.AppImage
+
+  windows:
+    name: Windows x64 NSIS
+    needs: preparar
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.preparar.outputs.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Instalar NSIS sem ferramentas de assinatura
+        shell: bash
+        run: choco install nsis --no-progress -y
+      - run: npm ci
+      - name: Empacotar com Electron Packager
+        run: npm run package -- win32 x64
+      # Authenticode entra depois desta etapa, a cargo do Arthur. O makensis abaixo não chama signtool.
+      - name: Gerar instalador NSIS
+        shell: bash
+        run: python scripts/package-nsis.py releases/LocalNeuron-win32-x64 --output releases/LocalNeuron-Windows-x64-Setup.exe
+      - uses: actions/upload-artifact@v7
+        with:
+          name: localneuron-windows
+          if-no-files-found: error
+          retention-days: 14
+          path: releases/LocalNeuron-Windows-x64-Setup.exe
+
+  # workflow_dispatch só gera os artefatos acima. O rascunho existe apenas no push de uma tag v*.
+  publicar:
+    name: Rascunho da release
+    needs: [preparar, macos, linux, windows]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.preparar.outputs.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: localneuron-*
+          merge-multiple: true
+          path: release-assets
+      - name: Conferir artefatos e gerar SHA256SUMS.txt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p flat
+          expected=(
+            LocalNeuron-macOS-arm64.dmg
+            LocalNeuron-macOS-arm64.zip
+            LocalNeuron-Linux-x64.deb
+            LocalNeuron-Linux-x64.pkg.tar.gz
+            LocalNeuron-Linux-x64.AppImage
+            LocalNeuron-Windows-x64-Setup.exe
+          )
+          args=()
+          for name in "${expected[@]}"; do
+            matches=()
+            while IFS= read -r found; do
+              matches+=("$found")
+            done < <(find release-assets -type f -name "$name" | sort)
+            if [ "${#matches[@]}" -ne 1 ]; then
+              echo "Esperava um arquivo ${name}." >&2
+              find release-assets -type f >&2
+              exit 1
+            fi
+            cp "${matches[0]}" "flat/${name}"
+            args+=("flat/${name}")
+          done
+          python3 scripts/sha256sums.py --output flat/SHA256SUMS.txt "${args[@]}"
+          for name in "${expected[@]}"; do
+            grep -q "  ${name}$" flat/SHA256SUMS.txt
+          done
+      - name: Extrair notas e gerar o feed candidato
+        shell: bash
+        env:
+          TAG: ${{ needs.preparar.outputs.tag }}
+          VERSION: ${{ needs.preparar.outputs.version }}
+        run: |
+          set -euo pipefail
+          node scripts/check-release-version.mjs --tag "$TAG" --notes-file release-notes.md
+          mkdir -p /tmp/release-sums
+          cp flat/SHA256SUMS.txt flat/LocalNeuron-* /tmp/release-sums/
+          node scripts/build-release-manifest.mjs --sums /tmp/release-sums/SHA256SUMS.txt --tag "$TAG" --version "$VERSION" --notes-file release-notes.md --output flat/releases.json
+      - name: Publicar rascunho
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.preparar.outputs.tag }}
+          VERSION: ${{ needs.preparar.outputs.version }}
+        run: |
+          set -euo pipefail
+          title="LocalNeuron ${VERSION}"
+          assets=(
+            flat/LocalNeuron-macOS-arm64.dmg
+            flat/LocalNeuron-macOS-arm64.zip
+            flat/LocalNeuron-Linux-x64.deb
+            flat/LocalNeuron-Linux-x64.pkg.tar.gz
+            flat/LocalNeuron-Linux-x64.AppImage
+            flat/LocalNeuron-Windows-x64-Setup.exe
+            flat/SHA256SUMS.txt
+            flat/releases.json
+          )
+          if draft="$(gh release view "$TAG" --json isDraft --jq .isDraft)"; then
+            if [ "$draft" != "true" ]; then
+              echo "A release ${TAG} já foi publicada. Este workflow só atualiza rascunho." >&2
+              exit 1
+            fi
+            gh release upload "$TAG" "${assets[@]}" --clobber
+            gh release edit "$TAG" --draft --title "$title" --notes-file release-notes.md
+          else
+            gh release create "$TAG" --draft --verify-tag --title "$title" --notes-file release-notes.md "${assets[@]}"
+          fi
