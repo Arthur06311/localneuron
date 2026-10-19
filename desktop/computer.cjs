@@ -1,9 +1,10 @@
 const {BrowserWindow,systemPreferences}=require('electron');
+const {createAgentWindow}=require('./window-policy.cjs');
 const {execFile}=require('node:child_process');
 function registerComputer(backend){
  let browser=null,version=0;
  const script=(source,args=[])=>new Promise((resolve,reject)=>execFile('/usr/bin/osascript',['-e',source,'--',...args],{timeout:15000,maxBuffer:100000},(error,stdout)=>error?reject(new Error('O macOS não permitiu esta ação. Confira Acessibilidade e Automação nos Ajustes do Sistema.')):resolve(stdout.trim())));
- const ensureBrowser=()=>{if(!browser||browser.isDestroyed()){browser=new BrowserWindow({width:1100,height:780,title:'LocalNeuron · Navegador controlado pela IA',webPreferences:{partition:'persist:localneuron-agent-browser',sandbox:true,nodeIntegration:false,contextIsolation:true,webSecurity:true}});browser.webContents.setWindowOpenHandler(()=>({action:'deny'}));browser.webContents.session.setPermissionRequestHandler((_wc,_p,callback)=>callback(false));browser.webContents.on('did-navigate',()=>version++);browser.webContents.on('did-navigate-in-page',()=>version++);}return browser;};
+ const ensureBrowser=()=>{if(!browser||browser.isDestroyed()){browser=createAgentWindow(BrowserWindow);browser.webContents.session.setPermissionRequestHandler((_wc,_p,callback)=>callback(false));browser.webContents.on('did-navigate',()=>version++);browser.webContents.on('did-navigate-in-page',()=>version++);}return browser;};
  const address=value=>{const url=new URL(value);if(!['https:','http:'].includes(url.protocol)||url.username||url.password||['localhost','127.0.0.1','[::1]'].includes(url.hostname))throw Error('Use uma página HTTP/HTTPS pública, sem credenciais na URL.');return url.href;};
  async function run(name,args){
   if(name==='browser_open'){const w=ensureBrowser();await w.loadURL(address(args.url));return {url:w.webContents.getURL(),title:w.webContents.getTitle(),note:'Use browser_snapshot para ler a página e obter referências atuais.'};}
