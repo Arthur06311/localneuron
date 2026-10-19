@@ -1,8 +1,8 @@
-> A versão 0.8 inclui Whisper e stable-diffusion.cpp. O motor visual do Mac exige macOS 26+. [Detalhes dos motores e modelos](localneuron-0.8.md).
+> O pacote inclui Whisper e stable-diffusion.cpp. O motor visual do Mac exige macOS 26+. [Detalhes dos motores e modelos](localneuron-0.8.md).
 
 # Executar no Mac, Windows e Linux
 
-A Alfa 0.13 tem aplicação Electron e serviço local compartilhados entre as plataformas. O runtime GGUF acompanha os pacotes. O Mac inclui também MLX/Metal independente, com Python e dependências embarcados; LM Studio é opcional. MLX embarcado requer Apple Silicon e macOS 14+, com execução real verificada neste macOS 26.6.2. Os modelos não vêm nos pacotes do aplicativo: você os baixa na biblioteca.
+O LocalNeuron tem aplicação Electron e serviço local compartilhados entre as plataformas. O runtime GGUF acompanha os pacotes. O Mac inclui também MLX/Metal independente, com Python e dependências embarcados; LM Studio é opcional. MLX embarcado requer Apple Silicon e macOS 14+, com execução real verificada neste macOS 26.6.2. Os modelos não vêm nos pacotes do aplicativo: você os baixa na biblioteca.
 
 | Pacote | Como abrir | Validação desta entrega |
 |---|---|---|
@@ -24,7 +24,7 @@ Novas instalações armazenam dados fora do aplicativo:
 
 O Mac que já usou a Alfa anterior mantém a pasta irmã `Colmeia-data/` quando ela existe. Nesta máquina, ela permanece ao lado de `LocalNeuron.app`. Nenhuma migração ou troca de senha é necessária. Não apague essa pasta ao atualizar. Para backup completo, feche o aplicativo e preserve toda a pasta de dados. O download do cofre na interface contém apenas as chaves cifradas.
 
-`COLMEIA_DESKTOP_DATA_DIR` permite escolher explicitamente outra pasta antes de abrir. Em desenvolvimento, o padrão continua `.desktop/`. O servidor de linha de comando usa `.data/` ou `COLMEIA_DATA_DIR`.
+`LOCALNEURON_DESKTOP_DATA_DIR` permite escolher explicitamente outra pasta antes de abrir. Em desenvolvimento, o padrão continua `.desktop/`. O servidor de linha de comando usa `.data/` ou `LOCALNEURON_DATA_DIR`. `COLMEIA_DESKTOP_DATA_DIR` e `COLMEIA_DATA_DIR` continuam aceitos.
 
 ## Reproduzir os pacotes
 
@@ -41,7 +41,7 @@ npm run package -- darwin arm64
 
 O script usa uma pasta temporária e inclui apenas runtime, interface, workflow e dependências de produção. Rejeita sobrescrever um pacote existente para não tocar em dados colocados ali. Saída em `releases/`. O script específico `python3 scripts/package-macos.py` produz o Mac local assinado ad hoc e exige fechar o aplicativo antes de substituir o bundle.
 
-A matriz em `.github/workflows/desktop.yml` permite executar testes e empacotar em runners nativos. Ela está preparada no código; **não foi disparada em serviço remoto**. Testes de interface, download e inferência em Windows/Linux ainda exigem máquinas desses sistemas. O [Electron Packager](https://github.com/electron/packager) cria os bundles; gerar um pacote não comprova execução na plataforma de destino.
+Os testes de cada sistema rodam em `.github/workflows/ci.yml`. A publicação do DMG, do ZIP, do DEB, do pacote Arch, do AppImage e do instalador NSIS está em [Publicar uma versão](RELEASE.md). O modelo `.github/workflow-templates/desktop.yml` não é o fluxo de release. O [Electron Packager](https://github.com/electron/packager) cria os bundles; gerar um pacote não comprova execução na plataforma de destino.
 
 ## Componente do Windows
 
