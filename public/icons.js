@@ -18,6 +18,13 @@ const paths = {
  arrow: '<path d="M12 19V5m-6 6 6-6 6 6"/>',
  star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9Z"/>',
  compare: '<path d="M9 3H5v18h4m6-18h4v18h-4M9 8h6m-6 8h6"/>',
- lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>'
+ lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>',
+ image: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 15-4.5-4.5L7 20"/>',
+ video: '<rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3z"/>',
+ plug: '<path d="M9 7v4a3 3 0 0 0 6 0V7M8 7h8M12 15v4"/><path d="M9 21h6"/>',
+ key: '<circle cx="8" cy="15" r="4"/><path d="m11.2 12.8 9.3-9.3M17 4h3.5V7.5"/>',
+ compass: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 6-6 2 2-6z"/>',
+ user: '<circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/>',
+ users: '<circle cx="9" cy="8.5" r="2.8"/><path d="M3.8 19a5.2 5.2 0 0 1 10.4 0"/><circle cx="17" cy="9" r="2.2"/><path d="M16.2 19a4.6 4.6 0 0 1 4-4.4"/>'
 };
 export const icon = name => `<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths[name] || paths.chat}</svg>`;

@@ -196,6 +196,15 @@
 .exo-selection { display: flex; flex-wrap: wrap; align-items: end; gap: 14px; margin: 22px 0; }
 .exo-selection label { flex: 1; min-width: 220px; }
 .exo-selection p { flex-basis: 100%; color: var(--muted); font-size: 13px; margin: 0; }
+#exo-lan-warning {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--accent, #8a3b12);
+  border-radius: 10px;
+  line-height: 1.6;
+}
+#exo-lan-warning[hidden] { display: none; }
+.exo-expose-note { color: var(--muted); font-size: 13px; line-height: 1.6; }
 .exo-address-list { padding: 16px; border: 1px solid var(--line); border-radius: 10px; }
 .exo-address-list button { max-width: 100%; overflow-wrap: anywhere; margin: 5px 0; }
 .exo-node > input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--accent); }
