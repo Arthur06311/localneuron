@@ -1,4 +1,4 @@
-import type { GenerationOptions, Generation } from './inference.js';
+import type { Generation } from './inference.js';
 export type Identity = { id: string; name: string; kind: 'human' | 'agent' | 'service'; public_key: string; owner_id: string | null; revoked_seq: number | null; epoch: number };
 export type Grant = { body: { human_id: string; agent_id: string; log_id: string; task_id: string; action_hash: string; epoch: number; issued_at: number; expires_at: number }; signature: string };
 export type Action = { tool: string; task_id: string; input_hash: string; destination: 'local'; cost_minor: number };
