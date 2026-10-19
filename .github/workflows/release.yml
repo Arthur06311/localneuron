@@ -81,6 +81,12 @@ jobs:
         run: test "$(uname -m)" = "arm64"
       - run: npm ci
       - run: npm run build
+      # electron 44 não tem postinstall. npm ci deixa o pacote sem o Electron.app que o ZIP e o DMG copiam.
+      - name: Instalar o binário do Electron
+        run: |
+          set -euo pipefail
+          node node_modules/electron/install.js
+          test -d node_modules/electron/dist/Electron.app
       # O empacotamento é o de scripts/package-macos.py: ZIP e DMG, com a assinatura ad hoc que o script já faz.
       # Developer ID e notarização entram neste ponto, quando o Arthur configurar os segredos. Nada disso corre agora.
       - name: Gerar ZIP e DMG
@@ -157,6 +163,60 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           path: releases/LocalNeuron-Windows-x64-Setup.exe
+
+  # O disparo manual também gera SHA256SUMS.txt. Só o job seguinte publica, e apenas no push de uma tag v*.
+  somas:
+    name: SHA256SUMS
+    needs: [macos, linux, windows]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: localneuron-*
+          merge-multiple: true
+          path: release-assets
+      - name: Conferir artefatos e gerar SHA256SUMS.txt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p flat
+          expected=(
+            LocalNeuron-macOS-arm64.dmg
+            LocalNeuron-macOS-arm64.zip
+            LocalNeuron-Linux-x64.deb
+            LocalNeuron-Linux-x64.pkg.tar.gz
+            LocalNeuron-Linux-x64.AppImage
+            LocalNeuron-Windows-x64-Setup.exe
+          )
+          args=()
+          for name in "${expected[@]}"; do
+            matches=()
+            while IFS= read -r found; do
+              matches+=("$found")
+            done < <(find release-assets -type f -name "$name" | sort)
+            if [ "${#matches[@]}" -ne 1 ]; then
+              echo "Esperava um arquivo ${name}." >&2
+              find release-assets -type f >&2
+              exit 1
+            fi
+            cp "${matches[0]}" "flat/${name}"
+            args+=("flat/${name}")
+          done
+          python3 scripts/sha256sums.py --output flat/SHA256SUMS.txt "${args[@]}"
+          for name in "${expected[@]}"; do
+            grep -q "  ${name}$" flat/SHA256SUMS.txt
+          done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: localneuron-sha256
+          if-no-files-found: error
+          retention-days: 14
+          path: flat/SHA256SUMS.txt
 
   # workflow_dispatch só gera os artefatos acima. O rascunho existe apenas no push de uma tag v*.
   publicar:

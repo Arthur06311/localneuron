@@ -12,6 +12,9 @@ class ReleaseWorkflowTest(unittest.TestCase):
         self.assertIn("if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')", text)
         self.assertIn('--draft', text)
         self.assertIn('--dist-only', text)
+        self.assertIn('node node_modules/electron/install.js', text)
+        self.assertIn('node_modules/electron/dist/Electron.app', text)
+        self.assertLess(text.index('node node_modules/electron/install.js'), text.index('scripts/package-macos.py'))
         self.assertIn('flat/SHA256SUMS.txt', text)
         for name in [
             'LocalNeuron-macOS-arm64.dmg',

@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('nsis', ROOT / 'scripts/package-nsis.py')
@@ -34,6 +35,29 @@ class NsisTest(unittest.TestCase):
         self.assertIn('Não assina', script)
         self.assertIn('signtool', script.lower())
         self.assertIn('PortugueseBR', script)
+
+    def test_windows_include_stays_absolute(self):
+        included = nsis.nsis_include('D:/a/localneuron/localneuron/packaging/windows/localneuron.nsi', windows=True)
+        self.assertEqual(included, 'D:\\a\\localneuron\\localneuron\\packaging\\windows\\localneuron.nsi')
+        self.assertNotIn('/', included)
+
+    def test_script_is_staged_next_to_the_template(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            output = root / 'LocalNeuron-Windows-x64-Setup.exe'
+            seen = {}
+
+            def fake_run(command, check):
+                script = Path(command[-1])
+                seen['script'] = script
+                seen['text'] = script.read_text(encoding='utf-8')
+                output.write_bytes(b'MZ' + b'x' * 2048)
+
+            with mock.patch.object(nsis.subprocess, 'run', fake_run):
+                nsis.build(fixture(root), output, 'makensis')
+            self.assertTrue(seen['script'].is_relative_to(nsis.TEMPLATE.parent))
+            self.assertIn(f'!include "{nsis.nsis_include(nsis.TEMPLATE.resolve())}"', seen['text'])
+            self.assertFalse(seen['script'].exists())
 
     def test_missing_executable_is_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:

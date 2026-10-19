@@ -2,6 +2,7 @@
 """Wrap an Electron Packager Windows directory as an unsigned NSIS installer."""
 import argparse
 from pathlib import Path
+import os
 import re
 import shutil
 import subprocess
@@ -27,6 +28,22 @@ def nsis_string(value):
     if any(char in value for char in '"\r\n$`'):
         raise ValueError('Caminho incompatível com o NSIS')
     return value.replace('\\', '/')
+
+
+def nsis_include(path, windows=None):
+    """Caminho absoluto que o makensis trata como absoluto.
+
+    No Windows, só a barra invertida (D:\\...) é absoluta. D:/... fica relativo ao
+    script. No runner o script caía em C: e o repositório em D:.
+    """
+    if windows is None:
+        windows = os.name == 'nt'
+    text = str(path)
+    if any(char in text for char in '"\r\n$`'):
+        raise ValueError('Caminho incompatível com o NSIS')
+    if windows:
+        return text.replace('/', '\\')
+    return text.replace('\\', '/')
 
 
 def render_header(version, source, output, estimated_kib):
@@ -64,9 +81,11 @@ def build(source, output, makensis=None):
     version = release_bundle.validate_bundle(source, release_bundle.WINDOWS_FILES, 'LocalNeuron.exe')
     output.parent.mkdir(parents=True, exist_ok=True)
     compiler = makensis or find_makensis()
-    with tempfile.TemporaryDirectory(prefix='localneuron-nsis-') as temporary:
+    template = TEMPLATE.resolve()
+    # Stage next to the template so the script and the !include stay on the workspace drive.
+    with tempfile.TemporaryDirectory(prefix='localneuron-nsis-', dir=template.parent) as temporary:
         script = Path(temporary) / 'localneuron-build.nsi'
-        script.write_text(render_header(version, source, output, estimated_kib(source)) + f'!include "{nsis_string(str(TEMPLATE))}"\n', encoding='utf-8')
+        script.write_text(render_header(version, source, output, estimated_kib(source)) + f'!include "{nsis_include(template)}"\n', encoding='utf-8')
         subprocess.run([compiler, '-INPUTCHARSET', 'UTF8', str(script)], check=True)
     if not output.is_file() or output.stat().st_size < 1024 or output.read_bytes()[:2] != b'MZ':
         raise ValueError('O instalador NSIS não foi gerado')
