@@ -51,3 +51,15 @@ test('o aviso de descontinuação sai uma vez por variável', () => {
   assert.equal(messages.length, 2);
   for (const message of messages) assert.equal(message.includes(secret), false);
 });
+
+test('LOCALNEURON_* vazio cai para COLMEIA_* e a ausência dos dois não devolve valor', () => {
+  resetEnvWarnings();
+  const messages = [];
+  assert.equal(legacyEnv('PORT', { LOCALNEURON_PORT: '', COLMEIA_PORT: '4322' }, message => messages.push(message)), '4322');
+  assert.equal(messages.length, 1);
+  assert.match(messages[0], /COLMEIA_PORT está descontinuada/);
+  assert.equal(messages[0].includes('4322'), false);
+  resetEnvWarnings();
+  assert.equal(legacyEnv('DATA_DIR', { LOCALNEURON_DATA_DIR: '', COLMEIA_DATA_DIR: '' }, () => {}), undefined);
+  assert.equal(legacyEnv('DESKTOP_DATA_DIR', {}, () => {}), undefined);
+});
