@@ -60,24 +60,44 @@ test('abertura pelo sistema não revela a chave ao renderer', async () => {
   } finally { harness.restore(); rmSync(dir, { recursive: true, force: true }); }
 });
 
-test('cofre antigo pede migração e senha errada não substitui o arquivo', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'neuron-migrate-'));
+test('abertura de cofre antigo não pede senha e não devolve a chave', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'neuron-open-legacy-'));
   const vault = join(dir, 'vault.enc.json');
   writeFileSync(vault, 'cofre-original');
   writeFileSync(join(dir, 'device-access.bin'), 'senha-antiga-cifrada');
-  let calls = 0;
-  const harness = register(dir, async (url) => {
-    calls += 1;
-    assert.equal(String(url).endsWith('/v1/vault/device-migrate'), true);
-    return Response.json({ error: 'Senha incorreta ou cofre danificado' }, { status: 400 });
+  let secret = '';
+  const harness = register(dir, async (url, options) => {
+    const body = JSON.parse(options.body);
+    assert.equal(String(url).endsWith('/v1/vault/device-fresh'), true);
+    assert.equal(body.password, undefined);
+    secret = body.secret;
+    writeFileSync(vault, 'cofre-novo');
+    return Response.json({ ok: true });
   });
   try {
-    const pending = await harness.handler(harness.event, 'open');
-    assert.deepEqual(pending, { migration: true });
-    assert.equal(calls, 0);
-    await assert.rejects(harness.handler(harness.event, { action: 'migrate', password: 'senha-errada' }), /incorreta/);
+    const result = await harness.handler(harness.event, 'open');
+    assert.deepEqual(result, { ok: true });
+    assert.equal(result.migration, undefined);
+    assert.equal(JSON.stringify(result).includes(secret), false);
+    assert.equal(readFileSync(vault, 'utf8'), 'cofre-novo');
+    const stored = readFileSync(join(dir, 'vault-device-key.bin'));
+    assert.equal(stored.includes(Buffer.from(secret)), false);
+    assert.equal(readFileSync(join(dir, 'device-access.bin'), 'utf8'), 'senha-antiga-cifrada');
+  } finally { harness.restore(); rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('falha ao guardar o cofre antigo não substitui o arquivo', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'neuron-open-legacy-fail-'));
+  const vault = join(dir, 'vault.enc.json');
+  writeFileSync(vault, 'cofre-original');
+  writeFileSync(join(dir, 'device-access.bin'), 'senha-antiga-cifrada');
+  const harness = register(dir, async (url) => {
+    assert.equal(String(url).endsWith('/v1/vault/device-fresh'), true);
+    return Response.json({ error: 'Não foi possível guardar a cópia' }, { status: 400 });
+  });
+  try {
+    await assert.rejects(harness.handler(harness.event, 'open'), /cópia/);
     assert.equal(readFileSync(vault, 'utf8'), 'cofre-original');
-    assert.equal(existsSync(vault + '.next'), false);
     assert.equal(existsSync(join(dir, 'vault-device-key.bin')), false);
     assert.equal(existsSync(join(dir, 'device-access.bin')), true);
   } finally { harness.restore(); rmSync(dir, { recursive: true, force: true }); }

@@ -14,7 +14,6 @@ function registerLocalAccess({ ipcMain, safeStorage, getWindow, origin, dataDire
       if (action === 'open') {
         const result = await openDeviceVault({ origin, token, dataDirectory, safeStorage, nonce, warn });
         if (result.ok) return { ok: true };
-        if (result.migration) return { migration: true };
         return { ok: false, error: result.error || 'Não foi possível abrir o cofre.' };
       }
       if (action === 'migrate') {
