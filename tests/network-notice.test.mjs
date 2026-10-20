@@ -21,7 +21,7 @@ test('Minha API e EXO mostram o aviso quando o estado indica escuta fora do loop
   const sharing = readFileSync(new URL('../public/sharing.js', import.meta.url), 'utf8');
   const exo = readFileSync(new URL('../public/exo.js', import.meta.url), 'utf8');
   assert.match(sharing, /exposureBanner\(state\.exposed,'A Minha API'\)/);
+  assert.match(sharing, /<h1>Minha API<\/h1>/);
   assert.match(exo, /id="exo-exposure"/);
   assert.match(exo, /exposureBanner\(state\.exposed, "A Rede EXO"\)/);
-  assert.equal(sharing.includes('API local'), true);
 });
