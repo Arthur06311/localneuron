@@ -22,7 +22,7 @@ import { complete } from './inference.js';
 import Fastify from 'fastify';
 import rateLimit from '@fastify/rate-limit';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statfsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -33,6 +33,7 @@ import { totalmem } from 'node:os';
 import { Chats } from './chat.js';
 import { Core } from './core.js';
 import { localModels } from './model.js';
+import { libraryRevision } from './library-progress.js';
 import { ModelLibrary } from './model-library.js';
 import { acquireProcessLock } from './lock.js';
 import { verifyPackage } from '../scripts/protocol.mjs';
@@ -74,7 +75,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   }
   app.addHook('preClose',async()=>{await editor.close();await music.stop();await computerControl.stop();await connections.close();await experienceJobs.stop();await mediaDownloads.pause();await pro.close();await proMedia.close();await aux.close();});
   app.addHook('onClose', async () => { await exclusive(async () => { await aux.close(); await gateway.stop(); await chats.close(); await library.stop(); await runtime.exo.restrictLan(); }); });
-  const staticFiles: Record<string, [string,string]> = { '/ux.js':['ux.js','application/javascript'], '/ux.css':['ux.css','text/css'], '/creative.js':['creative.js','application/javascript'], '/creative.css':['creative.css','text/css'], '/experience.js':['experience.js','application/javascript'], '/experience.css':['experience.css','text/css'], '/photo.js':['photo.js','application/javascript'], '/exo.js':['exo.js','application/javascript'], '/exo.css':['exo.css','text/css'], '/app-icon.png':['app-icon.png','image/png'], '/polish.css':['polish.css','text/css'], '/mascot.png':['mascot.png','image/png'], '/mascot-thinking.png':['mascot-thinking.png','image/png'], '/mascot-success.png':['mascot-success.png','image/png'], '/mascot-attention.png':['mascot-attention.png','image/png'], '/mascot.js':['mascot.js','application/javascript'], '/mascot.css':['mascot.css','text/css'], '/premium-experience.js':['premium-experience.js','application/javascript'], '/premium-experience.css':['premium-experience.css','text/css'], '/pro-center.js':['pro-center.js','application/javascript'], '/model-icons.js':['model-icons.js','application/javascript'], '/model-identities.js':['model-identities.js','application/javascript'], '/media-library.js':['media-library.js','application/javascript'], '/subscription.js':['subscription.js','application/javascript'], '/subscription.css':['subscription.css','text/css'], "/chat-assist.js":["chat-assist.js","application/javascript"], "/chat-assist.css":["chat-assist.css","text/css"], '/studio-pro.js':['studio-pro.js','application/javascript'], '/pro.js':['pro.js','application/javascript'], '/pro.css':['pro.css','text/css'], '/': ['index.html','text/html; charset=utf-8'], '/app.js': ['app.js','application/javascript'], '/chat.js': ['chat.js','application/javascript'], '/styles.css': ['styles.css','text/css'], '/sharing.js':['sharing.js','application/javascript'], '/starter-model.js':['starter-model.js','application/javascript'], '/network-notice.js':['network-notice.js','application/javascript'], '/theme.css':['theme.css','text/css'], '/workspace.css':['workspace.css','text/css'], '/professional.css':['professional.css','text/css'], '/icons.js':['icons.js','application/javascript'], '/voice.js':['voice.js','application/javascript'], '/audio-worklet.js':['audio-worklet.js','application/javascript'], '/studio.js':['studio.js','application/javascript'], '/studio-project.js':['studio-project.js','application/javascript'], '/studio-renderer.js':['studio-renderer.js','application/javascript'], '/studio.css':['studio.css','text/css'], '/hub.js':['hub.js','application/javascript'], '/vendor/marked.js':['../node_modules/marked/lib/marked.esm.js','application/javascript'], '/vendor/purify.js':['../node_modules/dompurify/dist/purify.es.mjs','application/javascript'], '/navigation.css':['navigation.css','text/css'], '/a11y-visual.css':['a11y-visual.css','text/css'] };
+  const staticFiles: Record<string, [string,string]> = { '/ux.js':['ux.js','application/javascript'], '/ux.css':['ux.css','text/css'], '/creative.js':['creative.js','application/javascript'], '/creative.css':['creative.css','text/css'], '/experience.js':['experience.js','application/javascript'], '/experience.css':['experience.css','text/css'], '/photo.js':['photo.js','application/javascript'], '/exo.js':['exo.js','application/javascript'], '/exo.css':['exo.css','text/css'], '/app-icon.png':['app-icon.png','image/png'], '/polish.css':['polish.css','text/css'], '/mascot.png':['mascot.png','image/png'], '/mascot-thinking.png':['mascot-thinking.png','image/png'], '/mascot-success.png':['mascot-success.png','image/png'], '/mascot-attention.png':['mascot-attention.png','image/png'], '/mascot.js':['mascot.js','application/javascript'], '/mascot.css':['mascot.css','text/css'], '/premium-experience.js':['premium-experience.js','application/javascript'], '/premium-experience.css':['premium-experience.css','text/css'], '/pro-center.js':['pro-center.js','application/javascript'], '/model-icons.js':['model-icons.js','application/javascript'], '/model-identities.js':['model-identities.js','application/javascript'], '/media-library.js':['media-library.js','application/javascript'], '/subscription.js':['subscription.js','application/javascript'], '/subscription.css':['subscription.css','text/css'], "/chat-assist.js":["chat-assist.js","application/javascript"], "/chat-assist.css":["chat-assist.css","text/css"], '/studio-pro.js':['studio-pro.js','application/javascript'], '/pro.js':['pro.js','application/javascript'], '/pro.css':['pro.css','text/css'], '/': ['index.html','text/html; charset=utf-8'], '/library-progress.js':['library-progress.js','application/javascript'], '/app.js': ['app.js','application/javascript'], '/chat.js': ['chat.js','application/javascript'], '/styles.css': ['styles.css','text/css'], '/sharing.js':['sharing.js','application/javascript'], '/starter-model.js':['starter-model.js','application/javascript'], '/network-notice.js':['network-notice.js','application/javascript'], '/theme.css':['theme.css','text/css'], '/workspace.css':['workspace.css','text/css'], '/professional.css':['professional.css','text/css'], '/icons.js':['icons.js','application/javascript'], '/voice.js':['voice.js','application/javascript'], '/audio-worklet.js':['audio-worklet.js','application/javascript'], '/studio.js':['studio.js','application/javascript'], '/studio-project.js':['studio-project.js','application/javascript'], '/studio-renderer.js':['studio-renderer.js','application/javascript'], '/studio.css':['studio.css','text/css'], '/hub.js':['hub.js','application/javascript'], '/vendor/marked.js':['../node_modules/marked/lib/marked.esm.js','application/javascript'], '/vendor/purify.js':['../node_modules/dompurify/dist/purify.es.mjs','application/javascript'], '/navigation.css':['navigation.css','text/css'], '/a11y-visual.css':['a11y-visual.css','text/css'] };
   const iconDirectory=join(core.root,'public/model-icons');if(existsSync(iconDirectory))for(const file of readdirSync(iconDirectory)){if(/^[a-f0-9]{24}\.(png|jpg|webp)$/.test(file))staticFiles['/model-icons/'+file]=['model-icons/'+file,file.endsWith('.jpg')?'image/jpeg':file.endsWith('.png')?'image/png':'image/webp'];}
   let failedUnlocks = 0, retryAt = 0;
   app.addHook('onRequest', async (request, reply) => {
@@ -98,6 +99,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.addHook('preHandler',async(request)=>{const feature=requiredFeature(request.method,request.routeOptions.url||request.url.split('?')[0],request.body);if(feature)subscription.require(feature);});
   app.setErrorHandler((error, _request, reply) => {
     if(error instanceof ProRequired)return reply.code(402).send({error:error.message,code:'pro_required',feature:error.feature});
+    if ((error as { statusCode?: number }).statusCode === 429) return reply.code(429).send({ error: 'Muitas consultas num curto intervalo. Aguarde e tente novamente.' });
     const err = error as Error;
     const message = err instanceof z.ZodError ? 'Dados inválidos: ' + err.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ') : err.message;
     const conflict = /Conflito|Versão mudou|Idempotency-Key reutilizada|imutável/.test(message);
@@ -283,7 +285,27 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/chats/:id/rename',async request=>{const {title}=z.strictObject({title:z.string().trim().min(1).max(100)}).parse(body(request));return chats.rename(id(request),title);});
   app.delete('/v1/chats/:id',async request=>chats.remove(id(request)));
   app.get('/v1/models', async () => localModels());
-  app.get('/v1/model-library', async () => ({...await library.snapshot(),media_downloads:mediaDownloads.snapshot(),media_profiles:aux.snapshot().models.filter(m=>m.kind!=='speech'),studio_download:aux.download}));
+  const libraryState = () => {
+    const media = mediaDownloads.snapshot();
+    const profiles = aux.snapshot().models.filter(model => model.kind !== 'speech');
+    const studio = aux.download ?? null;
+    const revision = libraryRevision({ busy: library.busy, jobs: Object.values(library.jobs), media, studio, profiles, catalogIds: library.catalog.map(model => model.id), access: library.access.summary(library.catalog) });
+    return { media, profiles, studio, revision };
+  };
+  app.get('/v1/model-library/progress', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async () => {
+    const state = libraryState();
+    const memory = memoryStatus();
+    const disk = statfsSync(library.directory);
+    return { revision: state.revision, busy: library.busy, disk_free_bytes: disk.bavail * disk.bsize, available_memory_bytes: memory.available_memory_bytes, total_memory_bytes: totalmem(), jobs: Object.values(library.jobs).map(job => ({ id: job.id, state: job.state, downloaded: job.downloaded, total: job.total, error: job.error, model_key: job.model_key })), media_downloads: { busy: state.media.busy, jobs: state.media.jobs.map(job => ({ model: job.model, file: job.file, state: job.state, downloaded: job.downloaded, total: job.total, error: job.error })) }, studio_download: state.studio };
+  });
+  app.get('/v1/model-library', async (request, reply) => {
+    const state = libraryState();
+    const etag = `"${state.revision}"`;
+    reply.header('etag', etag);
+    if (request.headers['if-none-match'] === etag) return reply.code(304).send();
+    const json = JSON.stringify({ ...await library.snapshot(), media_downloads: state.media, media_profiles: state.profiles, studio_download: state.studio, revision: state.revision });
+    return reply.type('application/json; charset=utf-8').send(json);
+  });
   app.get('/v1/media-downloads',async()=>mediaDownloads.snapshot());
   app.post('/v1/media-downloads',async request=>{const {model,file}=z.strictObject({model:z.string().max(100),file:z.number().int().min(0).max(999)}).parse(body(request));if(library.active||aux.download?.state==='downloading')throw Error('Aguarde ou pause o outro download antes de baixar pesos visuais.');return mediaDownloads.download(model,file);});
   app.post('/v1/media-downloads/pause',async()=>mediaDownloads.pause());
@@ -310,9 +332,9 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/agents/agent/revoke', async () => { await core.revokeAgent(); return { ok: true }; });
   app.post('/v1/workflows', async request => { const { source } = z.strictObject({ source: z.string().max(32768) }).parse(body(request)); return core.registerWorkflow(source); });
   app.get('/v1/log', async request => { const { from } = z.object({ from: z.coerce.number().int().min(0).default(0) }).parse(request.query); return (await core.store.entries()).filter(entry => entry.seq > from); });
-  app.get('/v1/log/export', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="colmeia-auditoria.json"').send(await core.export()));
+  app.get('/v1/log/export', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-auditoria.json"').send(await core.export()));
   app.post('/v1/log/verify', async request => { const data = z.strictObject({ bundle: z.unknown(), trusted_fingerprint: z.string().regex(/^[0-9a-f]{64}$/) }).parse(body(request)); return verifyPackage(data.bundle, data.trusted_fingerprint); });
-  app.get('/v1/vault/backup', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async (_request, reply) => reply.header('Content-Disposition','attachment; filename="colmeia-cofre-cifrado.json"').type('application/json').send(readFileSync(core.vault.path)));
+  app.get('/v1/vault/backup', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-cofre-cifrado.json"').type('application/json').send(readFileSync(core.vault.path)));
   app.post('/v1/lock', async () => {await editor.close();await music.stop();await computerControl.stop();await connections.close();await experienceJobs.stop();await mediaDownloads.pause();await pro.pause();await proMedia.close();await aux.close();return exclusive(async () => {
     await aux.close(); await gateway.stop(); await chats.close(); await library.stop(); await runtime.exo.restrictLan();
     for (const task of (await core.snapshot()).tasks.filter(t => t.state === 'running')) await core.pause(task.id);

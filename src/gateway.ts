@@ -81,7 +81,7 @@ export class Gateway {
       if((error as {statusCode?:number}).statusCode===429)return reply.code(429).send({error:{message:(error as Error).message,type:'rate_limit'}});
       return reply.code(400).send({error:{message:error instanceof z.ZodError?'Parâmetros inválidos ou não suportados. Aceita apenas mensagens de texto.':(error as Error).message,type:'invalid_request_error'}});
     });
-    app.get('/v1/models',limited,async()=>({object:'list',data:[{id:'local',object:'model',created:0,owned_by:'colmeia'}]}));
+    app.get('/v1/models',limited,async()=>({object:'list',data:[{id:'local',object:'model',created:0,owned_by:'localneuron'}]}));
     app.post('/v1/chat/completions',limited,async(req,reply)=>{
       const input=requestSchema.parse(req.body);if(input.model!=='local'&&input.model!==this.model)return reply.code(404).send({error:{message:'Use o modelo local informado pela página Minha API.',type:'model_not_found'}});
       const proKey=(req as any).proKey;if(proKey?.paused)return reply.code(403).send({error:{message:'Esta chave está pausada.'}});if(proKey&&!this.hasPro())return reply.code(402).send({error:{message:'A assinatura Pro deste servidor está inativa. Use a chave básica ou atualize a assinatura.'}});if(proKey){const day=new Date().toISOString().slice(0,10);if(proKey.day!==day){proKey.day=day;proKey.used=0;}if(proKey.used>=proKey.daily)return reply.code(429).send({error:{message:'Cota diária desta chave atingida.'}});}
