@@ -8,6 +8,7 @@ export const PALETTE_PAGES = [
   ['editor', 'Ir para o editor'],
   ['connections', 'Ir para as ligações'],
   ['exo', 'Ir para a rede EXO'],
+  ['server', 'Ir para o modo servidor'],
   ['sharing', 'Ir para a minha API'],
   ['pro', 'Ir para a Central Pro'],
   ['subscription', 'Ir para o meu plano'],
