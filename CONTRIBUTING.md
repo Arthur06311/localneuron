@@ -8,7 +8,7 @@ Use o formulário [🐞 Relatar um bug](https://github.com/Arthur06311/localneur
 
 ## Desenvolvimento
 
-Use Node.js 24+, `npm ci` e `npm test`. Para a ponte do Editor, execute `python3 tests/resolve_bridge_test.py`. Alterações no guia exigem `node scripts/build-website.mjs` e `node --test tests/website.test.mjs`.
+Use Node.js 24+, `npm ci` e `npm test`. Para a ponte do Editor, execute `python3 tests/resolve_bridge_test.py`. O site público muda por pull request contra a branch `gh-pages`. A pasta `website/` em `main` fica vazia de propósito.
 
 Mantenha os dados locais retrocompatíveis. Não substitua inferência real por resultados simulados na interface. Diferencie claramente fixture de teste, download de pesos e motor realmente integrado. Evite adicionar telemetria ou chamadas externas sem controle do usuário.
 

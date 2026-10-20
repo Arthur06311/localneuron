@@ -1,16 +1,17 @@
 # Publicação no GitHub
 
-O repositório reúne o código do aplicativo e o site informativo em `website/`. O GitHub Pages publica somente essa pasta. O serviço local, cofre e configurações dos usuários não são hospedados pelo Pages.
+O repositório reúne o código do aplicativo. O site informativo tem uma única fonte: a branch `gh-pages`, publicada em https://localneuron.ai. A pasta `website/` em `main` fica vazia de propósito e não é publicada. O serviço local, cofre e configurações dos usuários não são hospedados pelo Pages.
 
 ## Atualizar o site
 
-1. Edite `website/index.html`, `website/style.css`, `website/app.js` ou os textos do guia em `docs/configuracao.md`.
-2. Execute `npm ci`, `npm run site` (gera `website/guide.html` e `website/compare-lm-studio.html`) e `node --test tests/website.test.mjs`.
-3. Faça commit das alterações, inclusive `website/guide.html` e `website/compare-lm-studio.html`, e envie para `main`.
-4. Execute `node scripts/publish-pages.mjs` para enviar apenas `website/` à branch `gh-pages`. Em Settings → Pages, a fonte é **Deploy from a branch → gh-pages → / (root)**.
-5. Confira a execução automática do GitHub Pages em Actions e abra a URL resultante. Somente uma execução bem-sucedida comprova publicação.
+Abra um pull request contra a branch `gh-pages`, não contra `main`.
 
-Todos os caminhos de assets são relativos, compatíveis com `https://USUARIO.github.io/localneuron/` e domínio próprio futuro. Quando o titular informar o domínio, configure DNS e Custom domain no GitHub antes de adicionar `website/CNAME`. Não preencha CNAME com um domínio fictício.
+1. Crie um branch a partir de `gh-pages`.
+2. Edite o site nesse branch.
+3. Na abertura do pull request, escolha `gh-pages` como base.
+4. Confira a execução do GitHub Pages em Actions e abra https://localneuron.ai. Somente uma execução bem-sucedida comprova publicação.
+
+Não rode `scripts/publish-pages.mjs` e não envie a pasta `website/` de `main` para `gh-pages`. Em Settings → Pages, a fonte é **Deploy from a branch → gh-pages → / (root)**. O domínio está no `CNAME` dessa branch.
 
 O site preserva a escolha manual de idioma e a sugestão automática por país usando `country.is` no navegador, com fallback de idioma. Não há backend Worker, R2, cadastro, compra ou acesso ao app local pelo site.
 
@@ -20,13 +21,13 @@ Os instaladores são grandes: eles entram como arquivos da GitHub Release, nunca
 
 O workflow Release gera o DMG e o ZIP de macOS Apple Silicon (assinatura ad hoc), o DEB, o pacote Arch, o AppImage, o instalador NSIS, `SHA256SUMS.txt` e um `releases.json` candidato. No push da tag, a release fica em **rascunho**. O disparo manual não publica. Este fluxo substitui o PR #32.
 
-A página e o aplicativo leem catálogos gerados do mesmo arquivo, `website/release-source.json`:
+O aplicativo lê o feed publicado em `gh-pages/releases.json`. Em `main`, a fonte conferida pelo CI é `catalog/release-source.json`:
 
 ```bash
 node scripts/build-release-manifest.mjs
 ```
 
-Isso reescreve `website/downloads.json` e `website/releases.json`. Não edite os dois à mão. Só mude `available` para `true` quando o link da release publicada existir. A configuração pública de assinatura continua sem chave privada.
+Isso reescreve `catalog/downloads.json` e `catalog/releases.json`. Não edite os dois à mão. Só mude `available` para `true` quando o link da release publicada existir. Para o app passar a ver o feed, envie `releases.json` à branch `gh-pages` por um pull request contra essa branch. A configuração pública de assinatura continua sem chave privada.
 
 Os modelos em `.github/workflow-templates/` não são o fluxo de release. O CI de testes é `.github/workflows/ci.yml`. Gerar um pacote não substitui teste nativo de inferência, áudio, GPU ou periféricos. A distribuição Apple continua ad hoc até haver Developer ID e notarização reais.
 
