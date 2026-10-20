@@ -128,7 +128,7 @@ As entregas acumuladas no histórico público do GitHub foram agrupadas abaixo p
 ### Motores e integrações
 
 - llama.cpp para GGUF e MLX independente para Apple Silicon.
-- whisper.cpp/sherpa-onnx para voz, stable-diffusion.cpp para perfis de mídia e ACE-Step opcional para música.
+- whisper.cpp para transcrição e a voz do sistema para narração. A voz neural com sherpa-onnx fica para a 2.0.0 sem eSpeak NG ([k2-fsa/sherpa-onnx#3731](https://github.com/k2-fsa/sherpa-onnx/issues/3731)). stable-diffusion.cpp cobre os perfis de mídia e ACE-Step é opcional para música.
 - EXO para conectar máquinas compatíveis e preparar execução distribuída.
 - Minha API compatível com Chat Completions em rede privada.
 - MCP por HTTP/stdio com OAuth quando suportado.
@@ -226,15 +226,16 @@ npm run site                 # gera website/guide.html e website/compare-lm-stud
 node --test tests/website.test.mjs
 ```
 
-Os pesos de modelos, runtimes e caches não devem ser incluídos no clone. Use os scripts `fetch-runtime.py`, `fetch-mlx.py`, `fetch-tools.py` e `fetch-voice-node.py` com o alvo da plataforma.
+Os pesos de modelos, runtimes e caches não devem ser incluídos no clone. Use os scripts `fetch-runtime.py`, `fetch-mlx.py` e `fetch-tools.py` com o alvo da plataforma. A narração não tem runtime próprio: usa a voz do sistema.
 
 ## 8. Estado de validação e riscos
 
 Revalidação em 18/10/2026, sobre o commit `e5694ac` de `main` (a revisão da navegação é o commit anterior, `be40fb1`), com Node.js 24.22.0 em Linux x64:
 
 - `npm run build` passou.
-- `npm test` executa **153 testes**: 131 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 22 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 5, navegação 2, ícones de modelos 2, acesso local 2, alias de ambiente 4 e arquivos estáticos 1). A revalidação de 18/10/2026 contou 143; o quinto teste do site confere a versão visível com `package.json`.
+- `npm test` executa **153 testes** na main anterior a esta junção: 131 da suíte TypeScript compilada (`dist/tests/*.test.js`) e 22 testes JavaScript (`tests/*.test.mjs`: estúdio 6, site 5, navegação 2, ícones de modelos 2, acesso local 2, alias de ambiente 4 e arquivos estáticos 1). A revalidação de 18/10/2026 contou 143; o quinto teste do site confere a versão visível com `package.json`.
 - A suíte compilada do backend passou com **127 de 127** testes.
+- A narração pela voz do sistema acrescenta 8 testes em `tests/system-tts.test.ts`. Juntando essa narração à main `a34917e` (0.28.0), `npm test` reúne **182 testes**: 148 TypeScript e 34 JavaScript.
 - Os cinco scripts Python de `tests/` (`resolve_bridge_test.py`, `mlx_protocol_test.py`, `linux_installer_test.py`, `linux_gui_installer_test.py` e `linux_native_package_test.py`) passaram. Eles não fazem parte do `npm test`.
 - A correção do PR #6 (commit `708cede`, já em `main`) faz o mock de `tests/local-access.test.mjs` implementar `safeStorage.getSelectedStorageBackend()`. Antes disso, os 2 testes falhavam no Linux, porque `desktop/local-access.cjs` só chama esse método quando `process.platform === 'linux'`.
 - O teste “Gerenciador só carrega chaves instaladas, contexto curto e descarrega instâncias conhecidas” (`tests/library.test.ts`) depende da memória livre da máquina. Ele falhou em 1 de 2 execuções com “Memória disponível insuficiente”.
