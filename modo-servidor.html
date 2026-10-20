@@ -39,7 +39,7 @@
 <div><dt>Limite</dt><dd>Participar pede Mac Apple Silicon com macOS 26.2 ou mais recente. No Windows, só o modo de controlar está disponível. No Linux, o LocalNeuron não instala o motor. Quem quiser participar instala o EXO pelo projeto oficial.</dd></div>
 <div><dt>Garantia</dt><dd>Controlar não acrescenta a RAM desta máquina à rede.</dd></div>
 </dl>
-<p class="pending"><strong>A confirmar. Proposta, não lançado.</strong> Uma tela com três papéis (contribuir, gerenciar a rede, só usar) e papéis de coordenador e worker não fazem parte desta versão. Não use esses nomes como funções disponíveis.</p>
+<p><strong>Em breve.</strong> Contribuir, Gerenciar e Só usar ainda não estão no instalador 0.28.1. Nesta versão, use Participar com este Mac ou Controlar um EXO existente.</p>
 
 <h2>Conectar os computadores</h2>
 <ol>
@@ -51,7 +51,7 @@
 </ol>
 <p>A primeira preparação precisa de internet para baixar o modelo. Depois, Iniciar sem internet usa modelos já baixados.</p>
 <p class="note">A identificação da rede (<code>neuron-</code> e 32 caracteres hexadecimais) só define quais nós se encontram. Não é senha e não cifra o tráfego.</p>
-<p class="pending"><strong>A confirmar. Proposta, não lançado.</strong> Pareamento por código de 6 dígitos ou QR não está implementado. Não há esse passo nesta versão.</p>
+<p><strong>Em breve.</strong> O pareamento por código de 6 dígitos ainda não está no instalador 0.28.1. Nesta versão, os Macs se encontram pela identificação da rede.</p>
 
 <h2>O que fica exposto na rede</h2>
 <p>Use somente uma rede privada confiável, ou VPN. Não encaminhe as portas no roteador.</p>
@@ -72,10 +72,9 @@
 
 <h2>Ligação entre os Macs</h2>
 <p>Estado: Wi-Fi ou Ethernet na mesma rede local é o caminho documentado para começar. Limite: mais RAM somada não garante mais velocidade. A ligação entre as máquinas pesa. Garantia: não é preciso um cabo especial só para um coordenador nesse caminho de rede comum.</p>
-<p class="pending"><strong>A confirmar.</strong> Não está confirmado se o app pede sempre o motor MlxRing, nem se usa RDMA ou MlxJaccl. Thunderbolt 5, malha de cabos e o comando de ativação no modo Recuperação não estão publicados como procedimento desta versão.</p>
 
 <h2>Esquemas de cabo para RDMA</h2>
-<p>Os desenhos abaixo ilustram a malha descrita para RDMA. Não são uma tela do aplicativo e não confirmam que esta versão usa RDMA.</p>
+<p>Os desenhos abaixo são ilustração de cabeamento, não uma tela do aplicativo. RDMA requer macOS 26.2+ e Thunderbolt 5.</p>
 <figure class="diagram">
 <svg role="img" aria-labelledby="mesh-title mesh-desc" viewBox="0 0 720 280">
 <title id="mesh-title">Malha completa com Thunderbolt 5</title>
@@ -130,7 +129,6 @@
 Mac A ligado a Mac B e a Mac C. Não há cabo entre B e C. Para a malha de RDMA descrita acima, esse desenho está incompleto.
 </figcaption>
 </figure>
-<p class="pending"><strong>A confirmar.</strong> O número de portas Thunderbolt 5 por modelo e o limite prático de Macs na malha não estão publicados.</p>
 
 <h2>Rodar modelos grandes</h2>
 <p>A soma da memória livre define que modelo cabe. O EXO confere memória e ligações e divide o modelo por camadas, no padrão, ou por tensores, só quando o modelo declara suporte. Em Máquinas para esta IA você escolhe os computadores, ou deixa o EXO escolher.</p>
