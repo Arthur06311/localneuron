@@ -6,6 +6,8 @@ import {Connections} from './connections.js';
 import { ExperienceJobs } from './experience-jobs.js';
 import { Experience, botTemplates } from './experience.js';
 import { Crews, registerCrewRoutes } from './crews.js';
+import { CrewTalk } from './crew-talk.js';
+import { crewRemoteComplete } from './crew-remote.js';
 import { CrewSecrets } from './crew-secrets.js';
 import { crewCandidates, crewMachine } from './crew-models.js';
 import { recommendations, hardware } from './recommendations.js';
@@ -25,27 +27,30 @@ import { complete } from './inference.js';
 import Fastify from 'fastify';
 import rateLimit from '@fastify/rate-limit';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statfsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, rmSync, statfsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { Gateway } from './gateway.js';
 import { optionsSchema } from './inference.js';
 import { memoryStatus } from './model.js';
-import { totalmem } from 'node:os';
+import { totalmem, tmpdir } from 'node:os';
 import { Chats } from './chat.js';
 import { Core } from './core.js';
+import { exportSpace } from './space-archive.js';
 import { localModels } from './model.js';
 import { libraryRevision } from './library-progress.js';
 import { ModelLibrary } from './model-library.js';
 import { acquireProcessLock } from './lock.js';
+import { listenWithFallback, preferredPort } from './local-port.js';
 import { verifyPackage } from '../scripts/protocol.mjs';
 import { z } from 'zod';
 
 const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as { legacyEnv: (suffix: string) => string | undefined };
 
 const equal = (a: string, b: string) => { const left = Buffer.from(a), right = Buffer.from(b); return left.length === right.length && timingSafeEqual(left,right); };
-export async function createApp(core: Core, token = randomBytes(32).toString('hex'), origin = 'http://127.0.0.1:4317', runtime = new LocalRuntime(core.directory,core.root), planConfig = subscriptionConfig(core.root)) {
+export async function createApp(core: Core, token = randomBytes(32).toString('hex'), initialOrigin = 'http://127.0.0.1:4317', runtime = new LocalRuntime(core.directory,core.root), planConfig = subscriptionConfig(core.root)) {
+  let origin = initialOrigin;
   const app = Fastify({ logger: false, bodyLimit: 2 * 1024 * 1024, ajv: { customOptions: { removeAdditional: false } } });
   // Limite só na rota nova, que lê o disco. global:false deixa as outras rotas livres para o limite global por IP do servidor local.
   await app.register(rateLimit, { global: false });
@@ -54,7 +59,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const proMedia=new ProMedia(core.directory,core.root);
   const toolbox=new Toolbox(core.directory);
   const computerControl=new ComputerControl();toolbox.computerControl=computerControl;
-  const connections=new Connections(core.directory,core.vault,origin);toolbox.connections=connections;
+  const connections=new Connections(core.directory,core.vault,()=>origin);toolbox.connections=connections;
   const hfAccount=new HFAccount(core.directory,core.vault);
   const mediaDownloads=new MediaDownloads(core.directory,()=>hfAccount.token());
   const library = new ModelLibrary(core.directory, (type, data) => core.store.tx((state, entries) => { if (!state || core.vault.locked) throw new Error('Cofre bloqueado'); core.append(state, entries, type, data); }),undefined,runtime,()=>hfAccount.token());
@@ -67,10 +72,11 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const chats = new Chats(core,agentReply(runtime,toolbox,personality),async()=>(await library.snapshot()).installed);
   if (!core.vault.locked) await chats.recover();
   let operationBusy=false;
+  let crewTalk: CrewTalk | undefined;
   let experienceJobs:ExperienceJobs;
   let pro:Pro;
 
-  const gateway=new Gateway(core.directory,()=>!music.busy&&!music.running&&!editor.busy&&!core.vault.locked&&!chats.busy&&!core.jobs.size&&!operationBusy&&!aux.busy&&!proMedia.busy&&!pro?.busy&&!experienceJobs?.busy,(model,messages,options,signal,delta)=>complete(model,messages,options,signal,delta,runtime.backend(model)),4320,core.root,()=>subscription.active);
+  const gateway=new Gateway(core.directory,()=>!music.busy&&!music.running&&!editor.busy&&!core.vault.locked&&!chats.busy&&!core.jobs.size&&!operationBusy&&!aux.busy&&!proMedia.busy&&!pro?.busy&&!experienceJobs?.busy&&!crewTalk?.busy,(model,messages,options,signal,delta)=>complete(model,messages,options,signal,delta,runtime.backend(model)),4320,core.root,()=>subscription.active);
   pro=new Pro(core.directory,{models:async()=>(await library.snapshot()).installed,canRun:()=>!music.busy&&!music.running&&!editor.busy&&!experienceJobs?.busy&&subscription.active&&!core.vault.locked&&!operationBusy&&!chats.busy&&!gateway.busy&&!aux.busy&&!proMedia.busy&&!core.jobs.size&&!library.busy,run:async(key,messages,options,signal,delta)=>exclusive(async()=>{signal.throwIfAborted();if(core.vault.locked||chats.busy||gateway.busy||aux.busy)throw Error('Aguarde o motor atual.');if(gateway.status().enabled&&gateway.status().local_model!==key)throw Error('Desligue Minha API antes de executar outra IA no Pro.');subscription.require('jobs');const model=await library.load(key,options.context);signal.throwIfAborted();const result=await agentReply(runtime,toolbox,personality)(model.instance_id,messages.filter(m=>m.role==='user'||m.role==='assistant').map((m,i)=>({id:String(i),role:m.role as 'user'|'assistant',content:m.content,at:Date.now(),status:'complete' as const})),signal,delta,{...options,system:messages.filter(m=>m.role==='system').map(m=>m.content).join('\n')||options.system},{chatId:'pro-job',access:{enabled:false},activity:()=>{}});return typeof result==='string'?result:result.text;})});
   experienceJobs=new ExperienceJobs(experience,async(key,prompt,options,signal,delta,bot)=>exclusive(async()=>{signal.throwIfAborted();if(core.vault.locked)throw Error('Cofre bloqueado');const model=await library.load(key,options.context);signal.throwIfAborted();return agentReply(runtime,toolbox,personality)(model.instance_id,[{id:'experience',role:'user',content:prompt,at:Date.now(),status:'complete'}],signal,delta,options,{chatId:'experience',privateContext:false,access:{enabled:false},activity:()=>{}});}),()=>!music.busy&&!music.running&&!editor.busy&&!core.vault.locked&&!operationBusy&&!chats.busy&&!pro.busy&&!gateway.status().enabled&&!gateway.busy&&!aux.busy&&!proMedia.busy&&!core.jobs.size&&!library.busy,core.directory);
   let modelGate = Promise.resolve();
@@ -79,7 +85,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   }
   app.addHook('preClose',async()=>{await editor.close();await music.stop();await computerControl.stop();await connections.close();await experienceJobs.stop();await mediaDownloads.pause();await pro.close();await proMedia.close();await aux.close();});
   app.addHook('onClose', async () => { await exclusive(async () => { await aux.close(); await gateway.stop(); await chats.close(); await library.stop(); await runtime.exo.restrictLan(); }); });
-  const staticFiles: Record<string, [string,string]> = { '/ux.js':['ux.js','application/javascript'], '/ux.css':['ux.css','text/css'], '/creative.js':['creative.js','application/javascript'], '/creative.css':['creative.css','text/css'], '/experience.js':['experience.js','application/javascript'], '/experience.css':['experience.css','text/css'], '/crews.js':['crews.js','application/javascript'], '/crews.css':['crews.css','text/css'], '/crew-mascots.js':['crew-mascots.js','application/javascript'], '/photo.js':['photo.js','application/javascript'], '/exo.js':['exo.js','application/javascript'], '/exo.css':['exo.css','text/css'], '/app-icon.png':['app-icon.png','image/png'], '/polish.css':['polish.css','text/css'], '/mascot.png':['mascot.png','image/png'], '/mascot-thinking.png':['mascot-thinking.png','image/png'], '/mascot-success.png':['mascot-success.png','image/png'], '/mascot-attention.png':['mascot-attention.png','image/png'], '/mascot.js':['mascot.js','application/javascript'], '/mascot.css':['mascot.css','text/css'], '/premium-experience.js':['premium-experience.js','application/javascript'], '/premium-experience.css':['premium-experience.css','text/css'], '/pro-center.js':['pro-center.js','application/javascript'], '/model-icons.js':['model-icons.js','application/javascript'], '/model-identities.js':['model-identities.js','application/javascript'], '/media-library.js':['media-library.js','application/javascript'], '/subscription.js':['subscription.js','application/javascript'], '/subscription.css':['subscription.css','text/css'], "/chat-assist.js":["chat-assist.js","application/javascript"], "/chat-assist.css":["chat-assist.css","text/css"], '/studio-pro.js':['studio-pro.js','application/javascript'], '/pro.js':['pro.js','application/javascript'], '/pro.css':['pro.css','text/css'], '/': ['index.html','text/html; charset=utf-8'], '/library-progress.js':['library-progress.js','application/javascript'], '/app.js': ['app.js','application/javascript'], '/chat.js': ['chat.js','application/javascript'], '/styles.css': ['styles.css','text/css'], '/reply-speed.js':['reply-speed.js','application/javascript'], '/sharing.js':['sharing.js','application/javascript'], '/starter-model.js':['starter-model.js','application/javascript'], '/network-notice.js':['network-notice.js','application/javascript'], '/theme.css':['theme.css','text/css'], '/workspace.css':['workspace.css','text/css'], '/professional.css':['professional.css','text/css'], '/icons.js':['icons.js','application/javascript'], '/voice.js':['voice.js','application/javascript'], '/audio-worklet.js':['audio-worklet.js','application/javascript'], '/studio.js':['studio.js','application/javascript'], '/studio-project.js':['studio-project.js','application/javascript'], '/studio-renderer.js':['studio-renderer.js','application/javascript'], '/studio.css':['studio.css','text/css'], '/hub.js':['hub.js','application/javascript'], '/vendor/marked.js':['../node_modules/marked/lib/marked.esm.js','application/javascript'], '/vendor/purify.js':['../node_modules/dompurify/dist/purify.es.mjs','application/javascript'], '/navigation.css':['navigation.css','text/css'], '/a11y-visual.css':['a11y-visual.css','text/css'] };
+  const staticFiles: Record<string, [string,string]> = { '/command-palette.js':['command-palette.js','application/javascript'], '/ux.js':['ux.js','application/javascript'], '/ux.css':['ux.css','text/css'], '/creative.js':['creative.js','application/javascript'], '/creative.css':['creative.css','text/css'], '/experience.js':['experience.js','application/javascript'], '/experience.css':['experience.css','text/css'], '/crews.js':['crews.js','application/javascript'], '/crews.css':['crews.css','text/css'], '/crew-mascots.js':['crew-mascots.js','application/javascript'], '/photo.js':['photo.js','application/javascript'], '/exo.js':['exo.js','application/javascript'], '/exo.css':['exo.css','text/css'], '/app-icon.png':['app-icon.png','image/png'], '/polish.css':['polish.css','text/css'], '/mascot.png':['mascot.png','image/png'], '/mascot-thinking.png':['mascot-thinking.png','image/png'], '/mascot-success.png':['mascot-success.png','image/png'], '/mascot-attention.png':['mascot-attention.png','image/png'], '/mascot.js':['mascot.js','application/javascript'], '/mascot.css':['mascot.css','text/css'], '/premium-experience.js':['premium-experience.js','application/javascript'], '/premium-experience.css':['premium-experience.css','text/css'], '/pro-center.js':['pro-center.js','application/javascript'], '/model-icons.js':['model-icons.js','application/javascript'], '/model-identities.js':['model-identities.js','application/javascript'], '/media-library.js':['media-library.js','application/javascript'], '/subscription.js':['subscription.js','application/javascript'], '/subscription.css':['subscription.css','text/css'], "/chat-assist.js":["chat-assist.js","application/javascript"], "/chat-assist.css":["chat-assist.css","text/css"], '/studio-pro.js':['studio-pro.js','application/javascript'], '/pro.js':['pro.js','application/javascript'], '/pro.css':['pro.css','text/css'], '/': ['index.html','text/html; charset=utf-8'], '/library-progress.js':['library-progress.js','application/javascript'], '/app.js': ['app.js','application/javascript'], '/chat.js': ['chat.js','application/javascript'], '/styles.css': ['styles.css','text/css'], '/reply-speed.js':['reply-speed.js','application/javascript'], '/sharing.js':['sharing.js','application/javascript'], '/starter-model.js':['starter-model.js','application/javascript'], '/network-notice.js':['network-notice.js','application/javascript'], '/theme.css':['theme.css','text/css'], '/workspace.css':['workspace.css','text/css'], '/professional.css':['professional.css','text/css'], '/icons.js':['icons.js','application/javascript'], '/voice.js':['voice.js','application/javascript'], '/audio-worklet.js':['audio-worklet.js','application/javascript'], '/studio.js':['studio.js','application/javascript'], '/studio-project.js':['studio-project.js','application/javascript'], '/studio-renderer.js':['studio-renderer.js','application/javascript'], '/studio.css':['studio.css','text/css'], '/hub.js':['hub.js','application/javascript'], '/vendor/marked.js':['../node_modules/marked/lib/marked.esm.js','application/javascript'], '/vendor/purify.js':['../node_modules/dompurify/dist/purify.es.mjs','application/javascript'], '/navigation.css':['navigation.css','text/css'], '/a11y-visual.css':['a11y-visual.css','text/css'] };
   const iconDirectory=join(core.root,'public/model-icons');if(existsSync(iconDirectory))for(const file of readdirSync(iconDirectory)){if(/^[a-f0-9]{24}\.(png|jpg|webp)$/.test(file))staticFiles['/model-icons/'+file]=['model-icons/'+file,file.endsWith('.jpg')?'image/jpeg':file.endsWith('.png')?'image/png':'image/webp'];}
   let failedUnlocks = 0, retryAt = 0;
   app.addHook('onRequest', async (request, reply) => {
@@ -103,7 +109,13 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.addHook('preHandler',async(request)=>{const feature=requiredFeature(request.method,request.routeOptions.url||request.url.split('?')[0],request.body);if(feature)subscription.require(feature);});
   app.setErrorHandler((error, _request, reply) => {
     if(error instanceof ProRequired)return reply.code(402).send({error:error.message,code:'pro_required',feature:error.feature});
-    if ((error as { statusCode?: number }).statusCode === 429) return reply.code(429).send({ error: 'Muitas consultas num curto intervalo. Aguarde e tente novamente.' });
+    const statusCode = (error as { statusCode?: number }).statusCode;
+    if (statusCode === 429) {
+      const message = (error as { message?: string }).message || '';
+      const errorText = message && !message.startsWith('Rate limit exceeded') ? message : 'Muitas consultas num curto intervalo. Aguarde e tente novamente.';
+      return reply.code(429).send({ error: errorText });
+    }
+    if (statusCode === 409) return reply.code(409).send({ error: (error as Error).message });
     const err = error as Error;
     const message = err instanceof z.ZodError ? 'Dados inválidos: ' + err.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ') : err.message;
     const conflict = /Conflito|Versão mudou|Idempotency-Key reutilizada|imutável/.test(message);
@@ -235,6 +247,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   });
   app.post('/v1/experience/bots/:id/run',async request=>exclusive(async()=>{
     const v=z.strictObject({objective:z.string().trim().min(1).max(12000)}).parse(body(request));
+    if(crewTalk?.busy)throw Error('Aguarde a conversa da equipa.');
     if(chats.busy||aux.busy||proMedia.busy||pro.busy||experienceJobs.busy||gateway.status().enabled||gateway.busy||core.jobs.size||library.busy||music.running||music.busy||editor.busy)throw Error('Aguarde a tarefa atual ou pare o outro motor antes de começar.');
     const requestKey=z.string().regex(/^[a-zA-Z0-9_-]{8,90}$/).parse(key(request));
     const bot=(await experience.snapshot()).bots.find(b=>b.id===id(request));if(!bot)throw Error('Bot não encontrado.');
@@ -251,7 +264,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/experience/bots',async request=>{if(chats.busy)throw Error('Pare a resposta antes de editar permissões.');return experience.bot(body(request),key(request));});
   app.delete('/v1/experience/bots/:id',async request=>experience.remove(id(request)));
   app.post('/v1/experience/recommendations',async request=>{const v=z.strictObject({kind:z.enum(['chat','image','video']),objective:z.string().max(2000).default('')}).parse(body(request));return recommendations(library,aux,core.directory,v.kind,v.objective);});
-  app.get('/v1/resources',async()=>({...memoryStatus(),total_memory_bytes:totalmem(),generation_busy:music.busy||editor.busy||chats.busy||gateway.busy||aux.busy,library_busy:library.busy,updated_at:Date.now()}));
+  app.get('/v1/resources',async()=>({...memoryStatus(),total_memory_bytes:totalmem(),generation_busy:music.busy||editor.busy||chats.busy||gateway.busy||aux.busy||Boolean(crewTalk?.busy),library_busy:library.busy,updated_at:Date.now()}));
   app.post('/v1/sharing/keys',async request=>gateway.addKey(body(request)));
   app.post('/v1/sharing/keys/:id',async request=>gateway.updateKey(id(request),body(request)));
   app.delete('/v1/sharing/keys/:id',async request=>gateway.removeKey(id(request)));
@@ -282,6 +295,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/chats', async request => { const metadata=z.strictObject({bot_id:z.string().uuid().optional(),preferred_model:z.string().max(512).optional()}).parse(body(request)); return chats.create(key(request),metadata); });
   app.post('/v1/chats/:id/send', {bodyLimit:2*1024**2}, async request => exclusive(async () => {
     const data = z.strictObject({ model: z.string().min(1).max(512), model_key:z.string().max(512).optional(), content: z.string().trim().min(1).max(131072), options:optionsSchema.optional(), retry:z.boolean().default(false),access:accessSchema.optional(),attachments:z.array(attachmentSchema).max(4).default([]) }).parse(body(request));
+    if(crewTalk?.busy)throw new Error('Aguarde a conversa da equipa.');
     if(aux.busy||proMedia.busy)throw new Error('Aguarde o motor de voz ou imagem.');
     if(gateway.busy)throw new Error('A IA está atendendo uma chamada da API. Tente em instantes.');
     return chats.send(id(request), data.model, data.content, key(request), data.options, data.retry,data.access,data.attachments,data.model_key);
@@ -336,32 +350,98 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.get('/v1/tasks/:id/download', async (request, reply) => { const state = await core.snapshot(), task = state.tasks.find(t => t.id === id(request)); const version = task?.versions.at(-1); if (!version) throw new Error('Entrega sem arquivo'); return reply.header('Content-Disposition', `attachment; filename="conteudo-${task!.id}.md"`).type('text/markdown; charset=utf-8').send(version.body); });
   app.post('/v1/agents/agent/revoke', async () => { await core.revokeAgent(); return { ok: true }; });
   app.post('/v1/workflows', async request => { const { source } = z.strictObject({ source: z.string().max(32768) }).parse(body(request)); return core.registerWorkflow(source); });
-  app.get('/v1/log', async request => { const { from } = z.object({ from: z.coerce.number().int().min(0).default(0) }).parse(request.query); return (await core.store.entries()).filter(entry => entry.seq > from); });
-  app.get('/v1/log/export', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-auditoria.json"').send(await core.export()));
-  app.post('/v1/log/verify', async request => { const data = z.strictObject({ bundle: z.unknown(), trusted_fingerprint: z.string().regex(/^[0-9a-f]{64}$/) }).parse(body(request)); return verifyPackage(data.bundle, data.trusted_fingerprint); });
+  app.get('/v1/log', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async request => { const { from } = z.object({ from: z.coerce.number().int().min(0).default(0) }).parse(request.query); return (await core.store.entries()).filter(entry => entry.seq > from); });
+  app.get('/v1/log/export', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-auditoria.json"').send(await core.export()));
+  app.post('/v1/log/verify', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async request => { const data = z.strictObject({ bundle: z.unknown(), trusted_fingerprint: z.string().regex(/^[0-9a-f]{64}$/) }).parse(body(request)); return verifyPackage(data.bundle, data.trusted_fingerprint); });
   app.get('/v1/vault/backup', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-cofre-cifrado.json"').type('application/json').send(readFileSync(core.vault.path)));
+  app.get('/v1/space/export', { config: { rateLimit: { max: 4, timeWindow: '1 minute', errorResponseBuilder: () => ({ statusCode: 429, error: 'Too Many Requests', message: 'Aguarde antes de exportar o espaço novamente.' }) } } }, async (_request, reply) => {
+    if (core.vault.locked) throw new Error('Cofre bloqueado');
+    const file = join(tmpdir(), `localneuron-espaco-${randomBytes(8).toString('hex')}.zip`);
+    try {
+      await exportSpace(core, file, async () => {
+        await editor.close(); await music.stop(); await computerControl.stop(); await connections.close();
+        await experienceJobs.stop(); await mediaDownloads.pause(); await pro.pause(); await proMedia.close(); await aux.close();
+        await gateway.stop(); await chats.close();
+        if (library.busy) throw new Error('Aguarde o carregamento ou a instalação terminar antes de exportar o espaço.');
+        await library.stop();
+      });
+      return reply.header('Content-Disposition', 'attachment; filename="localneuron-espaco.zip"').type('application/zip').send(readFileSync(file));
+    } finally { rmSync(file, { force: true }); }
+  });
   app.post('/v1/lock', async () => {await editor.close();await music.stop();await computerControl.stop();await connections.close();await experienceJobs.stop();await mediaDownloads.pause();await pro.pause();await proMedia.close();await aux.close();return exclusive(async () => {
     await aux.close(); await gateway.stop(); await chats.close(); await library.stop(); await runtime.exo.restrictLan();
     for (const task of (await core.snapshot()).tasks.filter(t => t.state === 'running')) await core.pause(task.id);
     await Promise.allSettled([...core.jobs.values()].map(j => j.promise)); core.vault.lock(); return { ok: true };
   });});
-  registerCrewRoutes(app, crews);
-  return { app, token, subscription };
+  crewTalk = new CrewTalk(crews, async input => {
+    const snap = await crews.snapshot();
+    const provider = snap.providers.find(item => item.id === input.providerId);
+    if (!provider) throw new Error('Provedor não encontrado.');
+    if (provider.kind !== 'local') {
+      return crewRemoteComplete({
+        kind: provider.kind,
+        endpoint: provider.endpoint,
+        model: input.model,
+        leaves_computer: provider.leaves_computer,
+        trusted_network: provider.trusted_network,
+        acknowledged: provider.acknowledged,
+        confirm_remote: provider.confirm_remote,
+        enabled: provider.enabled,
+        token: crews.tokenFor(provider.id),
+      }, input.messages, input.maxTokens, input.signal);
+    }
+    const loaded = await library.load(input.model, 4096);
+    const system = input.messages.filter(message => message.role === 'system').map(message => message.content).join('\n');
+    const dialogue = input.messages.filter(message => message.role !== 'system');
+    const options = optionsSchema.parse({ context: 4096, max_tokens: Math.min(1024, Math.max(1, input.maxTokens)), temperature: 0.2, reasoning: 'off', system });
+    const result = await complete(loaded.instance_id, dialogue, options, input.signal, () => {}, runtime.backend(loaded.instance_id));
+    return { text: result.text };
+  }, exclusive, () => {
+    if (core.vault.locked) return 'Desbloqueie o cofre para continuar.';
+    if (chats.busy || gateway.busy || gateway.status().enabled || aux.busy || pro.busy || proMedia.busy || experienceJobs.busy || music.running || music.busy || editor.busy || library.busy) return 'Aguarde a IA atual antes da conversa da equipa.';
+    return null;
+  });
+  registerCrewRoutes(app, crews, crewTalk);
+  return { app, token, subscription, setOrigin(next: string) { origin = next; } };
+}
+
+export async function openLocalServer(directory: string, root: string, env: NodeJS.ProcessEnv = process.env) {
+  const preferred = preferredPort(env);
+  mkdirSync(directory, { recursive: true, mode: 0o700 });
+  const releaseLock = acquireProcessLock(directory);
+  const core = new Core(directory, root);
+  let app: Awaited<ReturnType<typeof createApp>>['app'] | undefined;
+  try {
+    await core.init();
+    const created = await createApp(core, undefined, `http://127.0.0.1:${preferred}`);
+    app = created.app;
+    const bound = await listenWithFallback(preferred, async port => {
+      created.setOrigin(`http://127.0.0.1:${port}`);
+      await created.app.listen({ host: '127.0.0.1', port });
+    });
+    const session = { url: `${bound.origin}/#session=${created.token}`, port: bound.port, preferred_port: preferred, fallback: bound.fallback, ...(bound.message ? { message: bound.message } : {}), started_at: Date.now() };
+    writeFileSync(join(directory, 'session.json'), JSON.stringify(session), { mode: 0o600 });
+    return { app: created.app, core, token: created.token, releaseLock, session, bound };
+  } catch (error) {
+    await app?.close().catch(() => {});
+    await core.close().catch(() => {});
+    releaseLock();
+    throw error;
+  }
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const root = process.cwd();
   const directory = resolve(legacyEnv('DATA_DIR') || join(root, '.data'));
-  const port = Number(legacyEnv('PORT') || 4317);
-  mkdirSync(directory, { recursive: true, mode: 0o700 });
-  const releaseLock = acquireProcessLock(directory);
-  const core = new Core(directory, root); await core.init();
-  const origin = `http://127.0.0.1:${port}`;
-  const { app, token } = await createApp(core, undefined, origin);
-  await app.listen({ host: '127.0.0.1', port });
-  writeFileSync(join(directory,'session.json'), JSON.stringify({ url: `${origin}/#session=${token}`, port, started_at: Date.now() }), { mode: 0o600 });
-  console.log(`LocalNeuron local: ${origin} — sessão no iniciador scripts/open.mjs`);
-  const close = async () => { await app.close(); await core.close(); releaseLock(); process.exit(0); };
-  process.on('exit', releaseLock);
-  process.on('SIGINT', close); process.on('SIGTERM', close);
+  try {
+    const started = await openLocalServer(directory, root);
+    console.log(`LocalNeuron local: ${started.bound.origin} — sessão no iniciador scripts/open.mjs`);
+    if (started.bound.message) console.log(started.bound.message);
+    const close = async () => { await started.app.close(); await started.core.close(); started.releaseLock(); process.exit(0); };
+    process.on('exit', started.releaseLock);
+    process.on('SIGINT', close); process.on('SIGTERM', close);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : 'O serviço local não iniciou.');
+    process.exit(1);
+  }
 }

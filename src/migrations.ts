@@ -84,6 +84,13 @@ export const migrations: Migration[] = [
   },
   {
     version: 3,
+    name: 'vínculo do espaço',
+    async up(tx) {
+      await tx.exec('CREATE TABLE IF NOT EXISTS space_binding (id integer PRIMARY KEY CHECK (id = 1), space_id text NOT NULL)');
+    },
+  },
+  {
+    version: 4,
     name: 'trechos locais dos anexos',
     async up(tx) {
       await tx.exec(`CREATE TABLE IF NOT EXISTS attachment_chunks (
