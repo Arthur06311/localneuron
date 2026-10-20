@@ -38,6 +38,28 @@ export function modelOptionLabel(entry) {
   return `${size}${entry.name}${entry.advanced ? ' · só o coordenador' : ''}`;
 }
 
+export function initials(name) {
+  const parts = String(name || 'AG').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return 'AG';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+}
+
+/** Um rótulo só. Evita «Coordenador · Coordenador» e «Colega · Código». */
+export function memberCaption(member) {
+  const name = String(member?.name || '').trim().toLowerCase();
+  const role = String(member?.role || '').trim();
+  const mascot = CREW_MASCOT_LABELS[member?.mascot] || '';
+  const distinct = value => Boolean(value) && value.toLowerCase() !== name;
+  if (member?.coordinator) {
+    if (distinct(role) && role.toLowerCase() !== 'coordenador') return role;
+    return name === 'coordenador' ? '' : 'Coordenador';
+  }
+  if (distinct(role) && role.toLowerCase() !== 'colega') return role;
+  if (distinct(mascot)) return mascot;
+  return 'Colega';
+}
+
 export function estimateTokens(text) {
   const length = String(text ?? '').length;
   if (!length) return 0;

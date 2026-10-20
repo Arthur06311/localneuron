@@ -24,6 +24,7 @@ Este índice separa a documentação por assunto. Os caminhos do código continu
 - [MLX independente](mlx-independente.md): runtime Apple Silicon e execução offline.
 - [Motor e assistente](motor-e-assistente.md): inferência, ferramentas, aprovações e controle do computador.
 - [Rede EXO](exo.md): conexão de máquinas e execução distribuída.
+- [Teste manual do EXO em dois Macs](testes/exo-2-macs.md): roteiro para Wi-Fi ou Ethernet e para Thunderbolt 5 com RDMA.
 - [Creative Studio](creative-studio.md): Photo, Video, Música, Editor e voz.
 
 ## Produto, publicação e suporte

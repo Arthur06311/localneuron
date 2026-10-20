@@ -49,7 +49,7 @@ Instalação e cache ficam em `local-engines/` dentro do workspace do aplicativo
 
 EXO 1.0.71, commit `fd707de30b42db4211d15da96b9052e1dc280ed1`. SHA-256 do DMG: `bc81a23ec647a995c5f8237857e749bc3de7ba8ec40f2aab39886c1a04beaac7`.
 
-Os testes verificam endereços privados, estados de duas máquinas, modelo ainda não pronto, perda de nó, preparação pela API oficial e streaming com o ID correto. O fluxo visual preparar → conversar foi validado com uma rede simulada. Execução distribuída real entre duas máquinas e sistemas Windows/Linux ainda exige validação nesses equipamentos.
+Os testes verificam endereços privados, estados de duas máquinas, modelo ainda não pronto, perda de nó, preparação pela API oficial e streaming com o ID correto. O fluxo visual preparar → conversar foi validado com uma rede simulada. Execução distribuída real entre duas máquinas e sistemas Windows/Linux ainda exige validação nesses equipamentos. O roteiro para dois Macs físicos está em [testes/exo-2-macs.md](testes/exo-2-macs.md).
 
 Código e requisitos: https://github.com/exo-explore/exo/tree/v1.0.71
 
