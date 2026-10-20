@@ -82,6 +82,13 @@ export const migrations: Migration[] = [
         CREATE INDEX crew_messages_scope_idx ON crew_messages (scope, created_at);`);
     },
   },
+  {
+    version: 3,
+    name: 'vínculo do espaço',
+    async up(tx) {
+      await tx.exec('CREATE TABLE IF NOT EXISTS space_binding (id integer PRIMARY KEY CHECK (id = 1), space_id text NOT NULL)');
+    },
+  },
 ];
 
 export function futureSchemaMessage(found: number, known: number) {
