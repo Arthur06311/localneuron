@@ -8,6 +8,7 @@ export type TalkStop = 'done' | 'rounds' | 'tokens' | 'abort' | 'self' | 'local'
 export type TalkComplete = (input: {
   botId: string;
   model: string;
+  providerId: string;
   messages: TalkMessage[];
   maxTokens: number;
   signal: AbortSignal;
@@ -19,8 +20,9 @@ type Seat = {
   role: string;
   instructions: string;
   model: string;
+  providerId: string;
   coordinator: boolean;
-  here: boolean;
+  channel: 'local' | 'remote' | 'closed';
 };
 
 function clip(text: string, max: number) {
@@ -51,10 +53,17 @@ function seatFor(token: string, seats: Seat[]): Seat | 'self' | null {
   return null;
 }
 
+function channelFor(member: { coordinator: boolean; model: string }, provider: { kind: string; enabled: boolean; model: string } | undefined) {
+  if (!provider?.enabled) return 'closed' as const;
+  if (!member.coordinator && provider.kind !== 'local') return 'closed' as const;
+  if (provider.kind === 'local') return member.model && !member.model.startsWith('exo:') ? 'local' as const : 'closed' as const;
+  return provider.model ? 'remote' as const : 'closed' as const;
+}
+
 /**
  * Uma ronda pede no máximo um colega, nunca o próprio coordenador.
  * Para quando acaba as rondas, os tokens, o pedido, ou a ligação é cancelada.
- * Nesta fase só há chamada local: outro computador e a nuvem ficam para a fase seguinte.
+ * Só o coordenador pode usar um provedor que sai deste computador.
  */
 export async function runCrewTalk(crews: Crews, complete: TalkComplete, content: string, signal: AbortSignal) {
   if (signal.aborted) return finish(crews, 'abort', 0, 0, 0, 0);
@@ -69,13 +78,17 @@ export async function runCrewTalk(crews: Crews, complete: TalkComplete, content:
   const providers = new Map(snap.providers.map(provider => [provider.id, provider]));
   const seats: Seat[] = snap.members.filter(member => !member.missing).map(member => {
     const provider = providers.get(member.provider_id);
-    const here = provider?.kind === 'local' && provider.enabled && !member.model.startsWith('exo:');
-    return { botId: member.bot_id, name: member.name || 'Agente', role: member.role, instructions: member.instructions, model: member.model, coordinator: member.coordinator, here };
+    const channel = channelFor(member, provider);
+    const model = provider && provider.kind !== 'local' ? provider.model : member.model;
+    return { botId: member.bot_id, name: member.name || 'Agente', role: member.role, instructions: member.instructions, model, providerId: member.provider_id, coordinator: member.coordinator, channel };
   });
   const coordinator = seats.find(seat => seat.coordinator);
   if (!coordinator) throw new Error('A equipa precisa de um coordenador.');
-  if (!coordinator.here) throw new Error('Nesta fase a conversa usa só o modelo neste computador.');
-  if (!coordinator.model) throw new Error('Escolha um modelo para o coordenador antes de começar a conversa.');
+  const coordinatorProvider = providers.get(coordinator.providerId);
+  if (coordinator.channel === 'closed' && coordinator.model.startsWith('exo:')) throw new Error('O EXO da equipa fica só em loopback (127.0.0.1). Esta opção não abre a rede.');
+  if (coordinator.channel === 'closed' && coordinatorProvider && coordinatorProvider.kind !== 'local' && !coordinatorProvider.model) throw new Error('Indique o modelo deste provedor.');
+  if (coordinator.channel === 'closed' && !coordinator.model) throw new Error('Escolha um modelo para o coordenador antes de começar a conversa.');
+  if (coordinator.channel === 'closed') throw new Error('O coordenador precisa de um modelo neste computador ou de um provedor confirmado.');
   const colleagues = seats.filter(seat => !seat.coordinator);
 
   await crews.addTeamUserMessage(content, 1);
@@ -101,8 +114,8 @@ export async function runCrewTalk(crews: Crews, complete: TalkComplete, content:
       await crews.recordNotice('O coordenador pediu alguém que não está na equipa. A ronda para aqui.', round);
       return finish(crews, 'done', round, used, settings.max_rounds, settings.max_tokens);
     }
-    if (!target.here) {
-      await crews.recordNotice(`${target.name} não fala nesta fase: a conversa fica no modelo deste computador.`, round);
+    if (target.channel !== 'local') {
+      await crews.recordNotice(`${target.name} fica no modelo deste computador. Só o coordenador pode usar outro provedor.`, round);
       return finish(crews, 'local', round, used, settings.max_rounds, settings.max_tokens);
     }
     if (!target.model) {
@@ -127,7 +140,7 @@ const abortedTalk = Symbol('abort');
 
 async function ask(complete: TalkComplete, seat: Seat, messages: TalkMessage[], remaining: number, signal: AbortSignal) {
   try {
-    const result = await complete({ botId: seat.botId, model: seat.model, messages, maxTokens: Math.max(1, Math.min(1024, remaining)), signal });
+    const result = await complete({ botId: seat.botId, model: seat.model, providerId: seat.providerId, messages, maxTokens: Math.max(1, Math.min(1024, remaining)), signal });
     const text = result.text.trim();
     return text || 'Sem resposta.';
   } catch (error) {

@@ -7,6 +7,7 @@ import { ExperienceJobs } from './experience-jobs.js';
 import { Experience, botTemplates } from './experience.js';
 import { Crews, registerCrewRoutes } from './crews.js';
 import { CrewTalk } from './crew-talk.js';
+import { crewRemoteComplete } from './crew-remote.js';
 import { CrewSecrets } from './crew-secrets.js';
 import { crewCandidates, crewMachine } from './crew-models.js';
 import { recommendations, hardware } from './recommendations.js';
@@ -373,6 +374,22 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     await Promise.allSettled([...core.jobs.values()].map(j => j.promise)); core.vault.lock(); return { ok: true };
   });});
   crewTalk = new CrewTalk(crews, async input => {
+    const snap = await crews.snapshot();
+    const provider = snap.providers.find(item => item.id === input.providerId);
+    if (!provider) throw new Error('Provedor não encontrado.');
+    if (provider.kind !== 'local') {
+      return crewRemoteComplete({
+        kind: provider.kind,
+        endpoint: provider.endpoint,
+        model: input.model,
+        leaves_computer: provider.leaves_computer,
+        trusted_network: provider.trusted_network,
+        acknowledged: provider.acknowledged,
+        confirm_remote: provider.confirm_remote,
+        enabled: provider.enabled,
+        token: crews.tokenFor(provider.id),
+      }, input.messages, input.maxTokens, input.signal);
+    }
     const loaded = await library.load(input.model, 4096);
     const system = input.messages.filter(message => message.role === 'system').map(message => message.content).join('\n');
     const dialogue = input.messages.filter(message => message.role !== 'system');
