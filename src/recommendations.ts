@@ -1,6 +1,7 @@
 import { cpus,platform,arch,totalmem } from 'node:os';
 import { statfsSync } from 'node:fs';
 import { memoryStatus } from './model.js';
+import { suggestStarterModel } from './starter-model.js';
 import type { ModelLibrary } from './model-library.js';
 import type { AuxRuntime } from './aux-runtime.js';
 const GiB=1024**3;
@@ -14,5 +15,6 @@ export async function recommendations(library:ModelLibrary,aux:AuxRuntime,direct
  candidates.sort((a,b)=>score(b)-score(a));
  const selected=candidates.slice(0,8);const fastest=[...candidates].sort((a,b)=>a.ram_gib-b.ram_gib)[0];if(fastest&&!selected.includes(fastest))selected.push(fastest);
  const extras=snapshot.installed.filter(m=>!selected.some(c=>c.local_key===m.key)&&m.size_bytes&&m.size_bytes*1.4/GiB+1.5<limit).slice(0,4).map(m=>({id:m.key,name:m.display_name||m.key,description:"Modelo já disponível neste computador.",ram_gib:Math.ceil((m.size_bytes||0)*1.4/GiB+1),bytes:m.size_bytes||0,key:m.key,installed:true,engine:m.format==='MLX'?'MLX':'llama.cpp',reason:"Já instalado. Use Testar velocidade para verificar a execução real.",limitation:"Estimativa pelo tamanho dos arquivos. A compatibilidade precisa ser confirmada pelo teste.",evidence:'estimated',license:'Consulte a ficha do modelo importado'}));
- return {hardware:machine,kind,models:[...extras,...selected.map(m=>({id:m.id,name:m.name,description:m.description,ram_gib:m.ram_gib,bytes:m.bytes,key:m.local_key,installed:Boolean(m.local_key),engine:'llama.cpp',reason:m===fastest?'Menor consumo estimado entre os candidatos.':m.local_key?'Já instalado; evita outro download.':'Arquitetura declarada pelo motor e memória livre estimada suficiente.',limitation:m.limitation,evidence:'estimated',license:m.license}))]};
+ const starter=suggestStarterModel(snapshot.catalog,{totalMemoryBytes:machine.total_memory_bytes,availableMemoryBytes:machine.available_memory_bytes,diskFreeBytes:disk,platform:machine.platform,architecture:machine.architecture,installedCount:snapshot.installed.length},m=>({access:m.availability?.access||'unknown',support:m.availability?.support||{status:'unknown'}}));
+ return {hardware:machine,kind,starter,models:[...extras,...selected.map(m=>({id:m.id,name:m.name,description:m.description,ram_gib:m.ram_gib,bytes:m.bytes,key:m.local_key,installed:Boolean(m.local_key),engine:'llama.cpp',reason:m===fastest?'Menor consumo estimado entre os candidatos.':m.local_key?'Já instalado; evita outro download.':'Arquitetura declarada pelo motor e memória livre estimada suficiente.',limitation:m.limitation,evidence:'estimated',license:m.license}))]};
 }

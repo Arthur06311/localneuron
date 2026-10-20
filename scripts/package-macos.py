@@ -41,8 +41,6 @@ subprocess.run(['python3', str(root / 'scripts/fetch-runtime.py'), 'darwin-arm64
 subprocess.run(['python3', str(root / 'scripts/fetch-mlx.py')], cwd=root, check=True)
 subprocess.run(['python3', str(root / 'scripts/fetch-tools.py'), 'darwin-arm64'], cwd=root, check=True)
 
-subprocess.run(['python3', str(root / 'scripts/fetch-voice-node.py'), 'darwin-arm64'], cwd=root, check=True)
-
 subprocess.run(['node', str(root / 'scripts/validate-subscription.mjs')], cwd=root, check=True)
 
 with tempfile.TemporaryDirectory(prefix='colmeia-package-') as scratch:
@@ -62,8 +60,6 @@ with tempfile.TemporaryDirectory(prefix='colmeia-package-') as scratch:
     for name in ['manifest.json', 'LICENSE.llama.cpp', 'tools-manifest.json','LICENSE.whisper.cpp']:
         shutil.copy2(root / 'runtime' / name, app / 'runtime' / name)
     shutil.copytree(root / 'runtime/tools-darwin-arm64', app / 'runtime/tools-darwin-arm64', symlinks=True, ignore=ignore_runtime_conflicts)
-    shutil.copy2(root / 'runtime/voice-node-manifest.json', app / 'runtime/voice-node-manifest.json')
-    shutil.copytree(root / 'runtime/voice-node-darwin-arm64', app / 'runtime/voice-node-darwin-arm64')
     shutil.copytree(root / 'runtime/darwin-arm64', app / 'runtime/darwin-arm64', symlinks=True)
     for name in ['mlx-manifest.json', 'mlx_server.py', 'mlx_protocol.py']:
         shutil.copy2(root / 'runtime' / name, app / 'runtime' / name)
