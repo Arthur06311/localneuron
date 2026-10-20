@@ -16,6 +16,10 @@ code,pre,.mono{font-family:var(--mono)}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 header,.guide-header{max-width:1120px;margin:0 auto;padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;border-bottom:1px solid var(--line)}
+header{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand actions" "nav nav";align-items:center;gap:2px 12px}
+header .brand{grid-area:brand}
+header nav{grid-area:nav;margin:0 -8px}
+header .header-actions{grid-area:actions;margin-left:0}
 .guide-header{position:sticky;top:0;z-index:5;max-width:none;background:var(--bg)}
 .brand{display:inline-flex;align-items:center;gap:8px;font-weight:600;letter-spacing:-.02em;white-space:nowrap}
 .brand img{width:18px;height:18px;border-radius:5px;object-fit:cover}
@@ -163,6 +167,10 @@ html[lang=ja] h1,html[lang=zh-CN] h1{letter-spacing:0}
 .guide-nav{position:static;max-height:none;display:flex;flex-wrap:wrap}
 .section-heading,.docs-banner,.closing{display:block}
 .docs-banner .button,.closing a{margin-top:12px}
+}
+@media(max-width:900px){
+header nav{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+header nav a{white-space:nowrap}
 }
 @media(max-width:640px){
 header,.guide-header,.wrap,.hero{padding-left:16px;padding-right:16px}
