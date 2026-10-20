@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module';
 import { z } from 'zod';
 
 export const CREW_MASCOTS = ['coordenador', 'redacao', 'analise', 'codigo', 'pesquisa'] as const;
@@ -43,24 +44,12 @@ export function tokenHint(token: string) {
 
 export type HostClass = 'loopback' | 'private' | 'public' | 'blocked';
 
+const { hostClass } = createRequire(import.meta.url)('../../desktop/public-url.cjs') as {
+  hostClass: (hostname: string) => HostClass;
+};
+
 export function classifyHost(hostname: string): HostClass {
-  const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
-  if (host === 'localhost' || host === '::1' || host === '127.0.0.1') return 'loopback';
-  if (host === '0.0.0.0' || host === '255.255.255.255' || host === 'metadata.google.internal') return 'blocked';
-  const parts = host.split('.');
-  if (parts.length === 4 && parts.every(part => /^\d{1,3}$/.test(part))) {
-    const nums = parts.map(Number);
-    if (nums.some(n => n > 255)) return 'blocked';
-    const [a, b] = nums;
-    if (a === 127) return 'loopback';
-    if (a === 0 || a >= 224) return 'blocked';
-    if (a === 169 && b === 254) return 'blocked';
-    if (a === 10 || (a === 192 && b === 168) || (a === 172 && b >= 16 && b <= 31) || (a === 100 && b >= 64 && b <= 127)) return 'private';
-    return 'public';
-  }
-  if (host.includes(':') || /^\d/.test(host)) return 'blocked';
-  if (!/^[a-z0-9.-]+$/.test(host) || host.startsWith('.') || host.endsWith('.') || host.startsWith('-') || host.endsWith('-') || host.includes('..')) return 'blocked';
-  return 'public';
+  return hostClass(hostname);
 }
 
 export type ParsedEndpoint = {

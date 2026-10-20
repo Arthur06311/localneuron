@@ -1,3 +1,5 @@
+const { isPublicHttpUrl, isAgentHttpUrl } = require('./public-url.cjs');
+
 const SECURE_WEB_PREFERENCES = Object.freeze({
   nodeIntegration: false,
   nodeIntegrationInWorker: false,
@@ -17,31 +19,6 @@ function agentWebPreferences() {
   return { ...SECURE_WEB_PREFERENCES, partition: 'persist:localneuron-agent-browser' };
 }
 
-function isPublicHttpUrl(value) {
-  try {
-    const target = new URL(value);
-    return ['https:', 'http:'].includes(target.protocol)
-      && !target.username
-      && !target.password
-      && (!target.port || ['80', '443'].includes(target.port))
-      && !['localhost', '127.0.0.1', '[::1]'].includes(target.hostname);
-  } catch {
-    return false;
-  }
-}
-
-function isAgentHttpUrl(value) {
-  try {
-    const target = new URL(value);
-    return ['https:', 'http:'].includes(target.protocol)
-      && !target.username
-      && !target.password
-      && !['localhost', '127.0.0.1', '[::1]'].includes(target.hostname);
-  } catch {
-    return false;
-  }
-}
-
 function leavesApp(url, origin) {
   try {
     const target = new URL(url);
@@ -52,12 +29,18 @@ function leavesApp(url, origin) {
   }
 }
 
-function openExternalHttp(url, openExternal) {
+function openExternalHttp(url, openExternal, resolveHost) {
   if (!isPublicHttpUrl(url)) return false;
-  try {
-    const pending = openExternal(new URL(url).href);
-    if (pending && typeof pending.catch === 'function') pending.catch(() => {});
-  } catch {}
+  const href = new URL(url).href;
+  const open = () => {
+    try {
+      const pending = openExternal(href);
+      if (pending && typeof pending.catch === 'function') pending.catch(() => {});
+    } catch { /* o navegador do sistema pode recusar o endereço */ }
+    return true;
+  };
+  if (typeof resolveHost !== 'function') return open();
+  Promise.resolve(resolveHost(new URL(url).hostname)).then(ok => { if (ok) open(); }).catch(() => {});
   return true;
 }
 
@@ -65,7 +48,7 @@ function blockWhen(event, blocked) {
   if (blocked) event.preventDefault();
 }
 
-function createMainWindow(BrowserWindow, { preload, origin, shell }) {
+function createMainWindow(BrowserWindow, { preload, origin, shell, resolveHost }) {
   const window = new BrowserWindow({
     width: 1320,
     height: 900,
@@ -77,7 +60,7 @@ function createMainWindow(BrowserWindow, { preload, origin, shell }) {
     webPreferences: mainWebPreferences(preload),
   });
   window.webContents.setWindowOpenHandler(({ url }) => {
-    openExternalHttp(url, href => shell.openExternal(href));
+    openExternalHttp(url, href => shell.openExternal(href), resolveHost);
     return { action: 'deny' };
   });
   const blockExternal = (event, url) => blockWhen(event, leavesApp(url, origin));
@@ -87,7 +70,7 @@ function createMainWindow(BrowserWindow, { preload, origin, shell }) {
   return window;
 }
 
-function createAgentWindow(BrowserWindow) {
+function createAgentWindow(BrowserWindow, { resolveHost } = {}) {
   const window = new BrowserWindow({
     width: 1100,
     height: 780,
@@ -95,7 +78,15 @@ function createAgentWindow(BrowserWindow) {
     webPreferences: agentWebPreferences(),
   });
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
-  const blockUnsafe = (event, url) => blockWhen(event, !isAgentHttpUrl(url));
+  const blockUnsafe = (event, url) => {
+    if (!isAgentHttpUrl(url)) { event.preventDefault(); return; }
+    if (typeof resolveHost !== 'function') return;
+    event.preventDefault();
+    const href = new URL(url).href;
+    Promise.resolve(resolveHost(new URL(url).hostname)).then(ok => {
+      if (ok && (typeof window.isDestroyed !== 'function' || !window.isDestroyed())) window.loadURL(href);
+    }).catch(() => {});
+  };
   window.webContents.on('will-navigate', blockUnsafe);
   window.webContents.on('will-redirect', blockUnsafe);
   window.webContents.on('will-attach-webview', event => event.preventDefault());

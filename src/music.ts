@@ -2,6 +2,7 @@ import {spawn,execFile,type ChildProcess} from 'node:child_process';
 import {existsSync,mkdirSync,readFileSync,writeFileSync,readdirSync,renameSync,statSync} from 'node:fs';
 import {join,resolve} from 'node:path';
 import {homedir,tmpdir} from 'node:os';
+import {redactSensitive} from './redact-log.js';
 import {randomBytes,randomUUID} from 'node:crypto';
 import {z} from 'zod';
 import {setTimeout as delay} from 'node:timers/promises';
@@ -17,7 +18,7 @@ export class Music {
  get busy(){return !!this.controller||this.installing;}
  get installed(){try{const v=JSON.parse(readFileSync(join(this.home,'installed.json'),'utf8'));return v.revision===ACE_REVISION&&v.verified===true;}catch{return false;}}
  get running(){return !!this.child&&!this.installing;}
- status(){return {installed:this.installed,running:this.running,busy:this.busy,phase:this.phase,error:this.error,diagnostic:this.diagnostic.slice(-1800),endpoint:this.endpoint,job:this.job,engine:'ACE-Step 1.5',revision:ACE_REVISION};}
+ status(){const secrets=[this.key,this.job?.prompt].filter((item):item is string=>typeof item==='string');return {installed:this.installed,running:this.running,busy:this.busy,phase:this.phase,error:redactSensitive(this.error,secrets),diagnostic:redactSensitive(this.diagnostic,secrets).slice(-1800),endpoint:this.endpoint,job:this.job?{...this.job,error:this.job.error?redactSensitive(this.job.error,secrets):this.job.error}:this.job,engine:'ACE-Step 1.5',revision:ACE_REVISION};}
  private env():NodeJS.ProcessEnv{return {HOME:homedir(),USERPROFILE:homedir(),TMPDIR:tmpdir(),TEMP:tmpdir(),PATH:process.env.PATH,SYSTEMROOT:process.env.SYSTEMROOT,PROGRAMDATA:process.env.PROGRAMDATA,PROGRAMFILES:process.env.PROGRAMFILES,LANG:'en_US.UTF-8',HF_HOME:join(this.home,'cache/huggingface'),HF_HUB_CACHE:join(this.home,'cache/huggingface/hub'),HF_XET_CACHE:join(this.home,'cache/xet'),XDG_CACHE_HOME:join(this.home,'cache'),MODELSCOPE_CACHE:join(this.home,'cache/modelscope')};}
  private python(){const bundled=join(this.root,'runtime/mlx-darwin-arm64/python/bin/python3');return existsSync(bundled)?bundled:process.platform==='win32'?'python':'python3';}
  private launch(command:string,args:string[],env:NodeJS.ProcessEnv,cwd:string){

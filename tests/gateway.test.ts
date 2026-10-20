@@ -14,6 +14,9 @@ test('API isolada autentica, responde nos dois formatos e não publica o painel'
   await assert.rejects(gateway.start('0.0.0.0','model',optionsSchema.parse({})),/rede privada/);
   await gateway.start('127.0.0.1','model',optionsSchema.parse({}));const url=gateway.status().base_url!,headers={authorization:'Bearer '+key,'content-type':'application/json'};
   assert.equal((await fetch(url+'/models')).status,401);assert.equal((await fetch(url+'/models',{headers:{authorization:'Bearer bad-key'}})).status,401);
+  const api=gateway.server;if(!api)throw Error('API não abriu');
+  assert.equal((await api.inject({method:'GET',url:'/v1/models',headers:{host:'evil.test',authorization:'Bearer '+key}})).statusCode,403);
+  assert.equal((await api.inject({method:'GET',url:'/v1/models',headers:{host:`127.0.0.1:${gateway.status().port}`,'sec-fetch-site':'cross-site',authorization:'Bearer '+key}})).statusCode,403);
   assert.equal((await fetch(url+'/workspace',{headers})).status,404);assert.equal((await fetch(url+'/models',{headers:{...headers,origin:'https://evil.example'}})).status,403);
   assert.equal((await (await fetch(url+'/models',{headers})).json() as any).data[0].id,'local');
   const input={model:'local',messages:[{role:'user',content:'Olá'}]};

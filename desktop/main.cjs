@@ -1,16 +1,21 @@
 const { app, BrowserWindow, dialog, session, shell, ipcMain, safeStorage } = require('electron');
 const { spawn } = require('node:child_process');
+const { lookup } = require('node:dns/promises');
 const { registerComputer } = require('./computer.cjs');
 const { createMainWindow } = require('./window-policy.cjs');
 const { registerLocalAccess } = require('./local-access.cjs');
 const { registerFolderPicker } = require('./folders.cjs');
 const { allowsClipboard, allowsMicrophone } = require('./permissions.cjs');
 const { sessionOrigin, desktopPort, serviceFailureMessage } = require('./session-origin.cjs');
+const { resolvesPublic } = require('./public-url.cjs');
+const { APP_CSP } = require('./content-security.cjs');
+const { redactSensitive } = require('./redact.cjs');
 const { randomBytes } = require('node:crypto');
 const { openDeviceVault } = require('./vault-open.cjs');
 const { join, resolve } = require('node:path');
 const { legacyEnv } = require('./env.cjs');
-const { mkdirSync, existsSync, readFileSync,writeFileSync } = require('node:fs');
+const { mkdirSync, existsSync, readFileSync, writeFileSync } = require('node:fs');
+app.enableSandbox();
 const root = resolve(__dirname, '..');
 const bundled = root === join(process.resourcesPath, 'app');
 // Keep the first Mac alpha's existing vault in place. New installations use OS app data.
@@ -18,7 +23,13 @@ const legacy = process.platform === 'darwin' ? resolve(root,'../../../..','Colme
 const pointer=join(app.getPath('appData'),'LocalNeuron','workspace-location.json');
 let restored=null;try{const saved=JSON.parse(readFileSync(pointer,'utf8'));if(typeof saved.runtime==='string'&&existsSync(join(saved.runtime,'workspace','vault.enc.json')))restored=saved.runtime;}catch{}
 const runtime = legacyEnv('DESKTOP_DATA_DIR') || restored || (bundled ? (legacy && existsSync(legacy) ? legacy : join(app.getPath('appData'), 'Colmeia')) : join(root, '.desktop'));
-mkdirSync(runtime, { recursive: true, mode: 0o700 });
+try { mkdirSync(runtime, { recursive: true, mode: 0o700 }); }
+catch (error) {
+  const code = error && error.code;
+  const message = code === 'ENOSPC' ? 'Não há espaço em disco para abrir o LocalNeuron.' : 'Não foi possível criar a pasta de dados deste usuário. Confira as permissões e o espaço em disco.';
+  try { dialog.showErrorBox('LocalNeuron não iniciou', message); } catch { /* a interface ainda pode não existir */ }
+  app.exit(1);
+}
 app.setPath('userData', join(runtime, 'browser'));
 app.setPath('sessionData', join(runtime, 'session'));
 app.setPath('logs', join(runtime, 'logs'));
@@ -28,8 +39,25 @@ if (!app.requestSingleInstanceLock()) app.quit();
 else app.whenReady().then(async () => {
   const preferred = desktopPort();
   let origin = `http://127.0.0.1:${preferred}`;
+  app.on('web-contents-created', (_event, contents) => {
+    contents.setWindowOpenHandler(() => ({ action: 'deny' }));
+    contents.on('will-attach-webview', event => event.preventDefault());
+    const blockForeign = (event, url) => {
+      if (contents.session !== session.defaultSession) return;
+      if (String(url).startsWith('devtools://')) return;
+      let allowed = false;
+      try {
+        const target = new URL(url);
+        allowed = target.origin === origin && !target.username && !target.password;
+      } catch { allowed = false; }
+      if (!allowed) event.preventDefault();
+    };
+    contents.on('will-navigate', blockForeign);
+    contents.on('will-redirect', blockForeign);
+  });
   session.defaultSession.setPermissionRequestHandler((contents, permission, callback, details) => callback(allowsClipboard(permission, details.requestingUrl, contents?.getURL(), origin)||allowsMicrophone(permission,details.requestingUrl,contents?.getURL(),details,origin)));
   session.defaultSession.setPermissionCheckHandler((contents, permission, requestingOrigin, details) => details.isMainFrame !== false && (allowsClipboard(permission, requestingOrigin, contents?.getURL(), origin)||allowsMicrophone(permission,requestingOrigin,contents?.getURL(),details,origin)));
+  if (typeof session.defaultSession.setDevicePermissionHandler === 'function') session.defaultSession.setDevicePermissionHandler(() => false);
   ipcMain.handle('localneuron:restore-workspace',async event=>{if(!window||event.senderFrame!==window.webContents.mainFrame||new URL(event.senderFrame.url).origin!==origin)throw Error('Origem recusada');const result=await dialog.showOpenDialog(window,{title:'Abra a pasta de dados existente (contém workspace)',properties:['openDirectory']});if(result.canceled)return {cancelled:true};const target=result.filePaths[0];if(!existsSync(join(target,'workspace','vault.enc.json')))throw Error('Escolha a pasta que contém workspace/vault.enc.json. Nenhum dado foi alterado.');const confirm=await dialog.showMessageBox(window,{type:'question',message:'Reabrir o LocalNeuron com este espaço?',detail:target+'\nA pasta atual permanece intacta.',buttons:['Reabrir','Cancelar'],cancelId:1});if(confirm.response!==0)return {cancelled:true};mkdirSync(join(app.getPath('appData'),'LocalNeuron'),{recursive:true,mode:0o700});writeFileSync(pointer,JSON.stringify({runtime:target}),{mode:0o600});app.relaunch();app.quit();return {ok:true};});
   const dataDirectory = join(runtime, 'workspace');
   const sessionFile = join(dataDirectory, 'session.json');
@@ -50,8 +78,14 @@ else app.whenReady().then(async () => {
   });
   const resolved = sessionOrigin(localSession, preferred);
   origin = resolved.origin;
-  window = createMainWindow(BrowserWindow, { preload: join(root,'desktop/preload.cjs'), origin, shell });
+  window = createMainWindow(BrowserWindow, { preload: join(root,'desktop/preload.cjs'), origin, shell, resolveHost: hostname => resolvesPublic(hostname, lookup) });
   session.defaultSession.webRequest.onBeforeRequest((details,callback)=>{callback({cancel:!(details.url.startsWith(origin+'/')||details.url.startsWith('blob:'+origin+'/'))});});
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    const responseHeaders = Object.assign({}, details.responseHeaders);
+    responseHeaders['Content-Security-Policy'] = [APP_CSP];
+    responseHeaders['X-Content-Type-Options'] = ['nosniff'];
+    callback({ responseHeaders });
+  });
   registerFolderPicker({ipcMain,dialog,getWindow:()=>window,origin});
   const localToken=new URL(localSession.url).hash.slice(1);
   const sessionToken=new URLSearchParams(localToken).get('session');
@@ -63,3 +97,11 @@ else app.whenReady().then(async () => {
 app.on('second-instance',()=>{if(window){if(window.isMinimized())window.restore();window.focus();}});
 app.on('window-all-closed',()=>app.quit());
 app.on('before-quit',()=>{if(backend&&!backend.killed)backend.kill('SIGTERM');});
+let fatalShown = false;
+function reportFatal() {
+  if (fatalShown) return;
+  fatalShown = true;
+  try { dialog.showErrorBox('LocalNeuron', 'O aplicativo encontrou um erro inesperado e precisa ser fechado. Nada foi enviado para fora deste computador.'); } catch { /* a interface ainda pode não existir */ }
+}
+process.on('uncaughtException', error => { console.error(redactSensitive(error instanceof Error ? error.message : 'Erro inesperado.')); reportFatal(); app.exit(1); });
+process.on('unhandledRejection', error => { console.error(redactSensitive(error instanceof Error ? error.message : 'Uma operação local falhou.')); });

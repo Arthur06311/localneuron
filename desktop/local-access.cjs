@@ -3,6 +3,7 @@ const { freshDeviceVault, importLegacyDeviceVault, migrateDeviceVault, openDevic
 function registerLocalAccess({ ipcMain, safeStorage, getWindow, origin, dataDirectory, token, nonce, warn }) {
   let pending = false;
   ipcMain.handle('localneuron:local-access', async (event, input) => {
+    if (input !== undefined && typeof input !== 'string' && (input === null || typeof input !== 'object' || Array.isArray(input) || (Object.getPrototypeOf(input) !== Object.prototype && Object.getPrototypeOf(input) !== null))) throw new Error('Pedido inválido.');
     const action = typeof input === 'string' ? input : input?.action;
     const data = typeof input === 'object' && input ? input : {};
     const window = getWindow();

@@ -1,4 +1,6 @@
+import { lookup } from 'node:dns/promises';
 import { parseEndpoint, planProvider, redactSecrets, type ProviderKind } from './crew-policy.js';
+import { assertResolvedFetch, policyForHost } from './fetch-guard.js';
 
 export type RemoteMessage = { role: 'system' | 'user' | 'assistant'; content: string };
 
@@ -68,6 +70,7 @@ export async function crewRemoteComplete(provider: RemoteProvider, messages: Rem
   const call = AbortSignal.any([signal, AbortSignal.timeout(30_000)]);
   let response: { ok: boolean; status: number; text: () => Promise<string> };
   try {
+    if (fetchImpl === fetch) await assertResolvedFetch(new URL(target.url), policyForHost(new URL(target.url).hostname), lookup);
     response = await fetchImpl(target.url, { method: 'POST', headers, body, redirect: 'error', signal: call });
   } catch (error) {
     if (signal.aborted || (error instanceof Error && error.name === 'AbortError')) throw error;

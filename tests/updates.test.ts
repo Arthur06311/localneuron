@@ -84,9 +84,13 @@ test('A disponibilidade é da plataforma e da arquitetura, não de qualquer paco
 test('Aviso persiste, respeita desativação e volta na próxima versão; offline preserva cache',async()=>{
  const dir=mkdtempSync(join(tmpdir(),'neuron-updates-'));
  let calls=0,release=manifest(),offline=false;
- const fetcher:typeof fetch=async(url,options)=>{calls++;assert.equal(url,RELEASE_FEED);assert.equal(options?.redirect,'error');assert.equal(options?.body,undefined);if(offline)throw Error('offline');return Response.json(release);};
+ const fetcher:typeof fetch=async(url,options)=>{calls++;assert.equal(url,RELEASE_FEED);assert.equal(options?.redirect,'error');assert.equal(options?.body,undefined);const headers=options?.headers as Record<string,string>|undefined;assert.equal(headers?.['user-agent'],'LocalNeuron');assert.equal(headers?.['user-agent']?.includes('node'),false);if(offline)throw Error('offline');return Response.json(release);};
  try{
   let updates=new Updates(dir,'0.27.0',fetcher,macTarget);
+  assert.equal(updates.status().automatic,false);
+  await updates.check();
+  assert.equal(calls,0);
+  updates.preferences({automatic:true});
   await updates.check();
   assert.equal(updates.status().available,true);
   assert.equal(calls,1);

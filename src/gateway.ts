@@ -66,6 +66,8 @@ export class Gateway {
     }}};
     app.addHook('preHandler',async(req,reply)=>{
       reply.header('Cache-Control','no-store').header('X-Content-Type-Options','nosniff').header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'");
+      if(req.headers.host!==`${this.host}:${this.port}`)return reply.code(403).send({error:{message:'Host recusado.',type:'origin_error'}});
+      if(req.headers['sec-fetch-site']==='cross-site')return reply.code(403).send({error:{message:'Origem externa recusada.',type:'origin_error'}});
       if(req.method==='GET'&&['/remote','/remote.js','/remote.css'].includes(req.url))return;
       if(this.closing)return reply.code(503).send({error:{message:'API desligando.',type:'unavailable'}});
       // No cookies or dashboard session accepted; only the independently revocable API key.
