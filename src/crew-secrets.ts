@@ -49,6 +49,9 @@ export class CrewSecrets {
   has(id: string) {
     return Boolean(this.read()[id]);
   }
+  get(id: string) {
+    return this.read()[id] ?? null;
+  }
   /** null mantém; string vazia apaga. */
   put(id: string, token: string | null) {
     if (token === null) return;
