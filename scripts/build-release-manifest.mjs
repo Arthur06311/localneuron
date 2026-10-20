@@ -64,7 +64,7 @@ function readSums(path){
  const entries=[];
  for(const line of readFileSync(path,'utf8').split(/\r?\n/)){
   if(!line.trim())continue;
-  const match=/^([a-f0-9]{64})  (\S+)$/.exec(line);
+  const match=/^([a-f0-9]{64}) {2,}(\S+)$/.exec(line);
   if(!match)throw new Error('Linha inválida em SHA256SUMS.txt.');
   const filename=match[2];
   const file=resolve(folder,filename);

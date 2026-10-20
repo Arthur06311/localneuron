@@ -38,7 +38,8 @@ Todas as rotas exigem sessão autenticada e cofre desbloqueado. Corpos são obje
 
 | Método / rota | Corpo / finalidade |
 |---|---|
-| GET /v1/model-library | Catálogo, memória, disco, biblioteca e progresso |
+| GET /v1/model-library | Catálogo completo, memória, disco e biblioteca. Responde `ETag`; `If-None-Match` igual devolve 304. |
+| GET /v1/model-library/progress | Estado leve do download: jobs, disco, RAM e `revision`. A interface consulta este endereço enquanto baixa e só repete o catálogo quando `revision` muda. Até 120 pedidos por minuto por IP; o excesso responde 429. |
 | POST /v1/model-library/engine | `{}` — conectar o LM Studio local em `127.0.0.1:8080` |
 | POST /v1/model-library/download | `{ "id": "qwen3-mini" }` — catálogo fixo |
 | POST /v1/model-library/cancel | `{ "id": "qwen3-mini" }` — abortar transferência |
