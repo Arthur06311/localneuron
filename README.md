@@ -137,7 +137,7 @@ python3 scripts/fetch-tools.py darwin-arm64
 npm run desktop
 ```
 
-Use os alvos dos manifests nas outras plataformas ([distribuição](docs/plataformas.md)). O painel usa a porta 4317 em desenvolvimento e 4318 no desktop. Os nomes preferidos são `LOCALNEURON_DATA_DIR` e `LOCALNEURON_DESKTOP_DATA_DIR`. Os nomes legados `COLMEIA_DATA_DIR`, `COLMEIA_DESKTOP_DATA_DIR` e as pastas `Colmeia` continuam aceitos.
+Use os alvos dos manifests nas outras plataformas ([distribuição](docs/plataformas.md)). O painel prefere a porta 4317 em desenvolvimento e 4318 no desktop. Se a porta estiver ocupada, a próxima livre é usada e a sessão local recebe a porta real. Os nomes preferidos são `LOCALNEURON_DATA_DIR`, `LOCALNEURON_DESKTOP_DATA_DIR` e `LOCALNEURON_PORT`. Os nomes legados `COLMEIA_DATA_DIR`, `COLMEIA_DESKTOP_DATA_DIR`, `COLMEIA_PORT` e as pastas `Colmeia` continuam aceitos.
 
 ```text
 src/          Serviço local, motores, API e persistência
