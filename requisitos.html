@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f1114">
+<title>Requisitos — LocalNeuron</title>
+<meta name="description" content="Requisitos do LocalNeuron 0.28.1 para macOS Apple Silicon, Windows x64 e Linux x64. O que está documentado e o que ainda falta confirmar.">
+<link rel="canonical" href="https://localneuron.ai/requisitos.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="LocalNeuron">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://localneuron.ai/requisitos.html">
+<meta property="og:title" content="Requisitos — LocalNeuron">
+<meta property="og:description" content="Requisitos do LocalNeuron para macOS, Windows e Linux. Números oficiais que faltam ficam marcados como a confirmar.">
+<meta property="og:image" content="https://localneuron.ai/product.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Requisitos — LocalNeuron">
+<meta name="twitter:description" content="Requisitos do LocalNeuron para macOS, Windows e Linux.">
+<meta name="twitter:image" content="https://localneuron.ai/product.png">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" href="./app-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<a class="skip" href="#main">Ir ao conteúdo</a>
+<header class="guide-header">
+<a class="brand" href="./"><img src="./app-icon.png" width="18" height="18" alt="">LocalNeuron</a>
+<nav aria-label="Navegação"><a href="./">Início</a><a href="./primeiros-passos.html">Começar</a><a href="./#download">Download</a><a href="./guide.html">Guia de configuração</a></nav>
+</header>
+<main class="guide-main prose" id="main" style="max-width:980px;margin:0 auto;padding:28px 20px 72px">
+<p class="eyebrow">Requisitos · alfa</p>
+<h1>Requisitos do sistema</h1>
+<p>LocalNeuron está em alfa. O Mac Apple Silicon é a plataforma validada com download e inferência reais. No Windows e no Linux, a validação nativa dos motores e da GPU ainda está pendente.</p>
+<p>O tamanho do aplicativo não inclui os modelos. Download é espaço em disco. RAM é a memória usada enquanto o modelo roda. Contexto maior, vídeo e várias ferramentas abertas aumentam o consumo.</p>
+
+<h2>macOS</h2>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>Mínimo</th><th>Recomendado</th></tr></thead>
+<tbody>
+<tr><th scope="row">Processador</th><td>Apple Silicon. Mac Intel não é compatível.</td><td>A confirmar. Não há chip recomendado publicado.</td></tr>
+<tr><th scope="row">Sistema</th><td>macOS 14 ou mais recente, para o motor MLX.</td><td>macOS 26 ou mais recente para Imagem e Vídeo. macOS 26.2 ou mais recente para a Rede EXO.</td></tr>
+<tr><th scope="row">RAM</th><td>A confirmar. Não há mínimo oficial publicado. O menor modelo do catálogo, Qwen3 Mini, sugere um PC com 8 GiB. Isso é estimativa, não requisito.</td><td>A confirmar. Não há RAM recomendada oficial. Modelos de 4B a 8B sugerem 16 GiB. Isso é estimativa, não requisito.</td></tr>
+<tr><th scope="row">Disco</th><td>A confirmar. O tamanho do app instalado não está publicado. Os modelos pedem espaço à parte.</td><td>25 GiB livres extras se for usar Música (ACE-Step).</td></tr>
+</tbody></table></div>
+<ul>
+<li>Pacote: <code>LocalNeuron-macOS-arm64.dmg</code>.</li>
+<li>Motores no Mac: llama.cpp com Metal (GGUF), MLX (Apple Silicon, macOS 14+), whisper.cpp e stable-diffusion.cpp (macOS 26+).</li>
+<li>A execução desta alfa foi verificada no macOS 26.6.2.</li>
+</ul>
+
+<h2>Windows</h2>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>Mínimo</th><th>Recomendado</th></tr></thead>
+<tbody>
+<tr><th scope="row">Processador</th><td>x64</td><td>A confirmar. Não há processador recomendado publicado.</td></tr>
+<tr><th scope="row">Sistema</th><td>A confirmar. A versão mínima do Windows não está publicada.</td><td>A confirmar. A versão recomendada não está publicada.</td></tr>
+<tr><th scope="row">RAM</th><td>A confirmar. O mínimo não está documentado.</td><td>A confirmar. O recomendado não está documentado.</td></tr>
+<tr><th scope="row">GPU</th><td>Os motores incluídos rodam em CPU. A aceleração por GPU no Windows ainda não foi validada.</td><td>A confirmar. Não há GPU recomendada publicada.</td></tr>
+<tr><th scope="row">Disco</th><td>A confirmar. O espaço em disco do app não está publicado. Os modelos pedem espaço à parte.</td><td>—</td></tr>
+</tbody></table></div>
+<ul>
+<li>Pacote: <code>LocalNeuron-Windows-x64-Setup.exe</code>. Execute o instalador. Não há ZIP para extrair.</li>
+<li>Os motores podem precisar do <a href="https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist">Microsoft Visual C++ Redistributable x64 (v14)</a>.</li>
+<li>O Editor pede Python 3 instalado no sistema.</li>
+<li>No Windows, a Rede EXO só controla um EXO de outro computador. Não há nó nativo.</li>
+<li>Estado: pacote gerado. A execução nativa dos motores ainda está pendente.</li>
+</ul>
+
+<h2>Linux</h2>
+<p>Linux x64 com glibc e sessão gráfica Wayland ou X11, com as bibliotecas do Electron e um sandbox de namespaces compatível com a distribuição.</p>
+<ul>
+<li>DEB: <code>LocalNeuron-Linux-x64.deb</code>, para Ubuntu e Debian. Testado no Ubuntu 24.04. Abra no instalador de aplicativos.</li>
+<li>AppImage: <code>LocalNeuron-Linux-x64.AppImage</code>. Marque como executável e abra.</li>
+<li>Arch e Omarchy: instale com <code>sudo pacman -U</code> o pacote publicado. Não extraia o arquivo à mão.</li>
+</ul>
+<p>Os motores incluídos rodam em CPU. A aceleração por GPU no Linux ainda não foi validada.</p>
+<p class="pending"><strong>A confirmar.</strong> RAM e disco mínimos do Linux não estão publicados.</p>
+
+<h2>Quanto de memória cada modelo pede</h2>
+<p>Estimativas da biblioteca para contexto curto. Não são requisito oficial nem medição.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Modelo</th><th>Download</th><th>RAM estimada</th><th>PC sugerido</th></tr></thead>
+<tbody>
+<tr><td>Qwen3 · Mini (0.6B)</td><td>0,64 GB</td><td>2 GiB</td><td>8 GiB</td></tr>
+<tr><td>Qwen3.5 · 2B</td><td>1,28 GB</td><td>4 GiB</td><td>8 GiB</td></tr>
+<tr><td>Qwen3 · Equilibrado (4B)</td><td>2,50 GB</td><td>5 GiB</td><td>16 GiB</td></tr>
+<tr><td>Qwen3 · Ampliado (8B)</td><td>5,03 GB</td><td>8 GiB</td><td>16 GiB</td></tr>
+<tr><td>Qwen3.5 · 9B</td><td>5,68 GB</td><td>10 GiB</td><td>24 GiB</td></tr>
+<tr><td>Qwen3.5 · 27B</td><td>16,74 GB</td><td>24 GiB</td><td>48 GiB</td></tr>
+</tbody></table></div>
+<p>A coluna “PC sugerido” é estimativa da biblioteca, não um requisito oficial. A ficha de cada modelo mostra a estimativa antes do download. Se faltar memória, use Liberar memória, reduza o contexto ou escolha um modelo menor.</p>
+
+<h2>Requisitos por recurso</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Recurso</th><th>Requisito</th></tr></thead>
+<tbody>
+<tr><td>Texto GGUF</td><td>llama.cpp incluído. Metal no Mac. CPU no Windows e no Linux.</td></tr>
+<tr><td>MLX</td><td>Apple Silicon, macOS 14 ou mais recente.</td></tr>
+<tr><td>Imagem e Vídeo</td><td>No Mac, macOS 26 ou mais recente. Também há binário para Windows x64 e Linux compatível.</td></tr>
+<tr><td>Música (ACE-Step 1.5)</td><td>Instalação separada. 25 GiB livres. Os pesos e as dependências ocupam cerca de 5,89 GiB (6,32 GB na ficha). Validado no Mac Apple Silicon.</td></tr>
+<tr><td>Voz</td><td>Transcrição: permissão do microfone e modelo Whisper. Narração: voz pt-BR do sistema. Sem essa voz, a narração fica desativada.</td></tr>
+<tr><td>Editor</td><td>DaVinci Resolve Studio e SDK Python. Não vêm no pacote.</td></tr>
+<tr><td>Rede EXO (nó)</td><td>Mac Apple Silicon com macOS 26.2 ou mais recente, na mesma rede confiável.</td></tr>
+<tr><td>RDMA via Thunderbolt 5</td><td>A confirmar se o app usa esse caminho. Não está publicado como função desta versão.</td></tr>
+</tbody></table></div>
+<p class="guide-top-links"><a href="./#download">Baixar</a><a href="./primeiros-passos.html">Primeiros passos</a><a href="./modo-servidor.html">Modo servidor</a><a href="./">Início</a></p>
+</main>
+<footer>
+<a class="brand" href="./"><img src="./app-icon.png" alt="" width="18" height="18">LocalNeuron</a>
+<p>Sua IA. Seu computador.</p>
+<a href="./#privacidade">Idioma e privacidade</a>
+<span>0.28.1 · Alfa</span>
+</footer>
+</body>
+</html>
