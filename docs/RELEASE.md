@@ -61,19 +61,19 @@ O instalador Windows pede administrador e o SmartScreen avisa, porque não há c
 
 ## Catálogo único de downloads
 
-A fonte é [`website/release-source.json`](../website/release-source.json). O script gera os dois arquivos que o site e o aplicativo leem:
+A fonte em `main` é [`catalog/release-source.json`](../catalog/release-source.json). O script gera os dois arquivos conferidos pelo CI:
 
 ```bash
 node scripts/build-release-manifest.mjs
 node scripts/build-release-manifest.mjs --check
 ```
 
-- `website/downloads.json` alimenta a página de downloads.
-- `website/releases.json` é o feed do aplicativo (`gh-pages/releases.json`).
+- `catalog/downloads.json` é o catálogo de downloads em `main`. A página pública lê o arquivo da branch `gh-pages`.
+- `catalog/releases.json` é a cópia em `main` do feed. O aplicativo lê `gh-pages/releases.json`.
 
 O aviso de atualização só fica verdadeiro quando o arquivo daquela plataforma e arquitetura é mais novo que a versão instalada. Hoje o Linux publicado é o DEB da tag `v0.27.0-linux.3`; Mac e Windows continuam no DMG e no ZIP da `v0.26.0`. Um pacote só de Linux não abre o aviso no Mac nem no Windows.
 
-Quando o rascunho estiver conferido e publicado, edite o catálogo: inclua DMG, ZIP, DEB, pacote Arch, AppImage e Setup com bytes, SHA-256 e `available: true`, rode o script e publique o site como em [Publicação no GitHub](github-publicacao.md). O `releases.json` anexado ao rascunho já traz os hashes, com `available: false`, para copiar.
+Quando o rascunho estiver conferido e publicado, edite `catalog/release-source.json`: inclua DMG, ZIP, DEB, pacote Arch, AppImage e Setup com bytes, SHA-256 e `available: true`, rode o script e envie o `releases.json` à branch `gh-pages` por um pull request contra essa branch, como em [Publicação no GitHub](github-publicacao.md). O `releases.json` anexado ao rascunho já traz os hashes, com `available: false`, para copiar.
 
 Preferência do aviso, quando mais de um arquivo da mesma plataforma está disponível:
 

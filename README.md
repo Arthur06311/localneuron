@@ -1,12 +1,12 @@
 [![CI](https://github.com/Arthur06311/localneuron/actions/workflows/ci.yml/badge.svg)](https://github.com/Arthur06311/localneuron/actions/workflows/ci.yml)
 
-<p align="center"><img src="website/app-icon.png" width="88" alt="LocalNeuron"></p>
+<p align="center"><img src="https://localneuron.ai/app-icon.png" width="88" alt="LocalNeuron"></p>
 <h1 align="center">LocalNeuron</h1>
 <p align="center"><strong>Sua IA. Seu computador.</strong><br>Converse, crie imagens, vídeos e músicas e conecte ferramentas com modelos de IA que rodam no seu próprio computador, sem conta e, depois de instalados, sem internet.</p>
 <p align="center"><a href="https://github.com/Arthur06311/localneuron/releases"><strong>Baixar</strong></a> · <a href="https://localneuron.ai/">Site</a> · <a href="https://localneuron.ai/guide.html">Guia de configuração</a> · <a href="docs/comparacao-lm-studio.md">LocalNeuron e LM Studio</a> · <a href="https://github.com/Arthur06311/localneuron/issues">Reportar problema</a></p>
 
 <!-- Substituir pela demo gravada (ver roteiro): ![Demonstração do LocalNeuron: escolher um modelo na biblioteca, conversar offline, gerar uma imagem localmente e ligar a Minha API.](docs/media/localneuron-demo.gif) -->
-![Interface do LocalNeuron](website/product.png)
+![Interface do LocalNeuron](https://localneuron.ai/product.png)
 
 *Interface 0.26 em espaço de demonstração. A ativação Pro de teste mostrada não acompanha os pacotes públicos.*
 
@@ -144,7 +144,8 @@ src/          Serviço local, motores, API e persistência
 desktop/      Electron, permissões e pontes Python
 public/       Interface do aplicativo
 runtime/      Manifests e protocolos; pesos ficam fora do Git
-website/      Site estático publicado pelo GitHub Pages
+website/      Pasta vazia de propósito; o site vive na branch gh-pages
+catalog/      Catálogo de downloads e feed de atualização conferido no CI
 docs/         Guias de uso e operação
 scripts/      Preparação, verificação e empacotamento
 tests/        Testes automatizados e fixtures sintéticas

@@ -34,10 +34,11 @@ A navegação da interface também já está organizada em cinco ilhas, implemen
 | `desktop/` | Processo principal Electron, preload, permissões, controle local, música e ponte do DaVinci | Sim | Sim, dentro do pacote desktop |
 | `public/` | Interface do aplicativo: HTML, CSS, JavaScript, ícones e mascote | Sim | Sim |
 | `runtime/` | Manifestos e protocolos dos runtimes; pesos e binários grandes ficam fora do Git | Sim, manifestos | Runtimes são baixados/preparados por plataforma |
-| `scripts/` | Build do site, download de runtime, verificação, empacotamento e publicação | Sim | Usado no CI e na máquina de release |
+| `scripts/` | Catálogo de release, download de runtime, verificação, empacotamento e publicação | Sim | Usado no CI e na máquina de release |
 | `tests/` | Testes TypeScript, JavaScript, Python e fixtures | Sim | Não é necessário no instalador |
 | `docs/` | Guias atuais, histórico de versões, operação e publicação | Sim | Publicado como referência |
-| `website/` | Site estático e guia público do GitHub Pages | Sim | Publicado na branch `gh-pages` |
+| `website/` | Pasta vazia de propósito. O site público vive na branch `gh-pages` | Sim, só o README | Não. O site publicado é a branch `gh-pages` |
+| `catalog/` | Catálogo de downloads e feed de atualização conferido no CI | Sim | O feed que o app lê é `gh-pages/releases.json` |
 | `releases/` | Artefatos locais de release e checksums | Parcial; assets grandes não devem ser commitados | GitHub Releases |
 | `licenses/` | Licenças e avisos de componentes distribuídos | Sim | Sim |
 | `dist/` | Saída do TypeScript | Não; gerado por `npm run build` | Sim, no pacote de execução |
@@ -153,7 +154,7 @@ As entregas acumuladas no histórico público do GitHub foram agrupadas abaixo p
 
 Migrar o histórico e o código-fonte, mantendo:
 
-- `src/`, `desktop/`, `public/`, `runtime/`, `scripts/`, `tests/`, `docs/`, `website/`, `licenses/`;
+- `src/`, `desktop/`, `public/`, `runtime/`, `scripts/`, `tests/`, `docs/`, `website/`, `catalog/`, `licenses/`;
 - `package.json`, `package-lock.json`, `tsconfig.json`, `.gitignore`, `subscription-config.json`;
 - workflows e arquivos de release que estiverem no repositório de origem;
 - o histórico Git, para preservar decisões, versões e auditoria técnica.
@@ -226,8 +227,8 @@ npm start                      # servidor local em 127.0.0.1:4317
 node scripts/open.mjs          # abre uma sessão local autenticada
 npm run desktop                # app Electron
 npm run package                # build e pacote desktop
-npm run site                 # gera website/guide.html e website/compare-lm-studio.html
-node --test tests/website.test.mjs
+# O site público muda por pull request contra a branch gh-pages.
+# website/ em main só tem o README. O catálogo fica em catalog/.
 ```
 
 Os pesos de modelos, runtimes e caches não devem ser incluídos no clone. Use os scripts `fetch-runtime.py`, `fetch-mlx.py` e `fetch-tools.py` com o alvo da plataforma. A narração não tem runtime próprio: usa a voz do sistema.

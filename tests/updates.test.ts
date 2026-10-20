@@ -123,7 +123,7 @@ test('Manifesto excessivo ou inválido não produz link de instalação',async()
 });
 
 test('O feed gerado do catálogo único é aceito e não avisa Mac só com o Linux 0.27',async()=>{
- const release=releaseManifest(JSON.parse(readFileSync(new URL('../../website/releases.json',import.meta.url),'utf8')));
+ const release=releaseManifest(JSON.parse(readFileSync(new URL('../../catalog/releases.json',import.meta.url),'utf8')));
  assert.equal(platformOffer(release,linuxTarget)?.filename,'LocalNeuron-Linux-x64.deb');
  assert.equal(platformOffer(release,macTarget)?.version,'0.26.0');
  const parent=mkdtempSync(join(tmpdir(),'neuron-updates-feed-'));

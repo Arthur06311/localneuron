@@ -1,13 +1,13 @@
-// Generate website/downloads.json and website/releases.json from one catalog.
+// Generate catalog/downloads.json and catalog/releases.json from one catalog.
 import {createHash} from 'node:crypto';
 import {readFileSync,statSync,writeFileSync} from 'node:fs';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-const sourcePath=resolve(root,'website/release-source.json');
-const downloadsPath=resolve(root,'website/downloads.json');
-const releasesPath=resolve(root,'website/releases.json');
+const sourcePath=resolve(root,'catalog/release-source.json');
+const downloadsPath=resolve(root,'catalog/downloads.json');
+const releasesPath=resolve(root,'catalog/releases.json');
 const HOST='https://github.com/Arthur06311/localneuron/releases/download/';
 const WORKFLOW_FILES={
  'LocalNeuron-macOS-arm64.dmg':{id:'mac',arch:'arm64',format:'DMG',role:'primary'},
@@ -109,7 +109,7 @@ function parseArgs(argv){
 function writeOrCheck(path,contents,check){
  if(!check){writeFileSync(path,contents);return;}
  const current=canonicalText(readFileSync(path,'utf8'));
- if(current!==canonicalText(contents))throw new Error(`${path} não bate com website/release-source.json. Rode node scripts/build-release-manifest.mjs.`);
+ if(current!==canonicalText(contents))throw new Error(`${path} não bate com catalog/release-source.json. Rode node scripts/build-release-manifest.mjs.`);
 }
 
 function main(){
@@ -126,7 +126,7 @@ function main(){
  const built=manifestsFromSource(source);
  writeOrCheck(downloadsPath,stable(built.downloads),args.check);
  writeOrCheck(releasesPath,stable(built.releases),args.check);
- console.log(args.check?'downloads.json e releases.json batem com o catálogo.':'Manifestos de release gerados a partir de website/release-source.json.');
+ console.log(args.check?'downloads.json e releases.json batem com o catálogo.':'Manifestos de release gerados a partir de catalog/release-source.json.');
 }
 
 const invokedDirectly=process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url);

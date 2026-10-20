@@ -7,7 +7,7 @@ O documento, as legendas sobrepostas e o texto alternativo estão em **pt-BR**, 
 | Versão | Duração | Onde | Formato |
 |---|---|---|---|
 | **A: GIF do README** | cerca de 20 s (planos 1, 3, 5, 6 e 7; o 6 sai se passar do tamanho) | `README.md`, logo abaixo do título | GIF, 960 px de largura, 12 fps, sem áudio |
-| **B: vídeo do site** | cerca de 40 s (todos os planos) | `website/index.html`, no lugar ou ao lado de `product.png` | MP4 H.264 e WebM VP9, 1280 × 800, 30 fps, sem áudio, com poster |
+| **B: vídeo do site** | cerca de 40 s (todos os planos) | `index.html` na branch `gh-pages`, no lugar ou ao lado de `product.png` | MP4 H.264 e WebM VP9, 1280 × 800, 30 fps, sem áudio, com poster |
 
 A mensagem a transmitir é esta: escolher um modelo, conversar offline, criar uma imagem e servir a mesma IA a outro app, tudo no próprio computador.
 
@@ -86,8 +86,8 @@ ffmpeg -ss 00:00:14 -i demo-site.mov -frames:v 1 -vf "scale=1280:-2" localneuron
 ```
 
 - Respeite `prefers-reduced-motion`: com essa preferência, mostre só o poster (CSS ou `app.js` faz `video.pause()`).
-- **Importante:** `tests/website.test.mjs` tem uma lista fechada dos arquivos de `website/`. Os arquivos novos (`localneuron-demo.mp4`, `.webm` e o poster) precisam entrar nessa lista, senão o teste falha. `.github/workflow-templates/pages.yml` é só um modelo; não há workflow de Pages ativo em `.github/workflows/`. `app.js` também define o `alt` de `.product-image` em 7 línguas; se a imagem for trocada por `<video>`, esse código precisa ser ajustado.
-- No README, o GIF pode ficar em `website/localneuron-demo.gif` (o que também obriga a atualizar a lista do teste) ou numa pasta nova `docs/media/`, fora do site, que não mexe no teste.
+- **Importante:** o site é editado na branch `gh-pages`. A pasta `website/` em `main` só tem o README, e `tests/website.test.mjs` recusa qualquer outro arquivo. Os arquivos novos (`localneuron-demo.mp4`, `.webm` e o poster) entram no pull request contra `gh-pages`. Não há workflow de Pages ativo em `.github/workflows/`. `app.js` nessa branch também define o `alt` de `.product-image` em 7 línguas; se a imagem for trocada por `<video>`, esse código precisa ser ajustado.
+- No README, o GIF fica numa pasta `docs/media/`, fora do site. Não coloque mídia em `website/` na `main`.
 
 ## Texto alternativo
 

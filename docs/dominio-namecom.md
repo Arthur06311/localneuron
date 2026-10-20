@@ -2,7 +2,7 @@
 
 O site do LocalNeuron está no GitHub Pages. Para usar seu próprio endereço, configure o domínio no GitHub e depois os registros DNS. É necessário saber o domínio completo, como `seu-dominio.com`; Name.com é o nome da empresa onde ele foi comprado.
 
-O domínio aprovado deste projeto é **`localneuron.ai`**, já registrado na configuração do GitHub Pages e em `website/CNAME`. `www.localneuron.ai` é o alias. Não use o exemplo `subdomain.localneuron.ai` como endereço do site.
+O domínio aprovado deste projeto é **`localneuron.ai`**, já registrado na configuração do GitHub Pages e no arquivo `CNAME` da branch `gh-pages`. `www.localneuron.ai` é o alias. Não use o exemplo `subdomain.localneuron.ai` como endereço do site.
 
 ## 1. Cadastrar no GitHub
 
@@ -28,7 +28,7 @@ Volte ao GitHub Pages, aguarde a validação e ative **Enforce HTTPS** quando di
 
 ## Para quem mantém o código
 
-O domínio confirmado deve estar também em `website/CNAME`, preservado ao publicar a pasta em `gh-pages`. A configuração feita pelo painel do GitHub pode criar um commit nessa branch; integre esse commit antes de reenviar o site, sem sobrescrever a configuração do domínio. Atualize a verificação de arquivos estáticos para admitir o CNAME real. Não crie um arquivo CNAME com exemplo ou domínio ainda não confirmado.
+O domínio confirmado fica no `CNAME` da branch `gh-pages`. Não recrie esse arquivo em `website/` na `main`: essa pasta está vazia de propósito. A configuração feita pelo painel do GitHub pode criar um commit em `gh-pages`; integre esse commit antes de reenviar o site, sem sobrescrever a configuração do domínio. Não crie um arquivo CNAME com exemplo ou domínio ainda não confirmado.
 
 A partir da 0.27, o app consulta versões em `raw.githubusercontent.com/Arthur06311/localneuron/gh-pages/releases.json`. Esse endereço continua independente do domínio personalizado. Os instaladores permanecem nos assets de GitHub Releases.
 
