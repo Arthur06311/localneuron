@@ -61,4 +61,28 @@ async function migrateDeviceVault({ origin, token, dataDirectory, safeStorage, n
   }
 }
 
-module.exports = { openDeviceVault, migrateDeviceVault };
+async function freshDeviceVault({ origin, token, dataDirectory, safeStorage, nonce, warn = console.warn }) {
+  const vaultFile = join(dataDirectory, 'vault.enc.json');
+  if (!existsSync(vaultFile)) throw new Error('Não há cofre antigo para guardar.');
+  if (loadKey({ directory: dataDirectory, safeStorage })) throw new Error('O cofre deste computador já tem chave.');
+  const secret = createSecret();
+  const before = readFileSync(vaultFile);
+  storeKey({ directory: dataDirectory, secret, safeStorage, warn });
+  try {
+    await request(origin, token, 'vault/device-fresh', { secret }, nonce);
+    return { ok: true };
+  } catch (error) {
+    const current = existsSync(vaultFile) ? readFileSync(vaultFile) : null;
+    if (!current || current.equals(before)) removeKey(dataDirectory);
+    throw error;
+  }
+}
+
+async function importLegacyDeviceVault({ origin, token, dataDirectory, safeStorage, nonce, name, password }) {
+  const secret = loadKey({ directory: dataDirectory, safeStorage });
+  if (!secret) throw new Error('A chave deste computador não está disponível.');
+  await request(origin, token, 'vault/device-import', { name, password, secret }, nonce);
+  return { ok: true };
+}
+
+module.exports = { openDeviceVault, migrateDeviceVault, freshDeviceVault, importLegacyDeviceVault };

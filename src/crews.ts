@@ -63,6 +63,8 @@ export class Crews {
     private machine: () => CrewMachine,
   ) {}
 
+  bindDatabase(db: Sql) { this.db = db; }
+
   private async settings() {
     const result = await this.db.query<{ max_rounds: number; max_tokens: number }>('SELECT max_rounds, max_tokens FROM crew_settings WHERE id = 1');
     const row = result.rows[0];

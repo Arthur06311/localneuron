@@ -39,6 +39,7 @@ import { Chats } from './chat.js';
 import { Core } from './core.js';
 import { adoptDeviceVault, openCoreWithSecret } from './vault-device.js';
 import { abortVaultMigration, commitVaultMigration, discardUnkeyedMigration, migrationPath, prepareVaultMigration, resumeVaultMigration } from './vault-migration.js';
+import { beginFreshDeviceSpace, importLegacyVault, listLegacyBackups, vaultAccepts } from './vault-fresh.js';
 import { exportSpace } from './space-archive.js';
 import { ServerMode } from './server-mode.js';
 import { ServerGateway } from './server-gateway.js';
@@ -51,9 +52,10 @@ import { verifyPackage } from '../scripts/protocol.mjs';
 import { z } from 'zod';
 
 const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as { legacyEnv: (suffix: string) => string | undefined };
-const { createSecret, hasKey, removeKey, removeLegacyAccess, storeKey } = createRequire(import.meta.url)('../../desktop/vault-key.cjs') as {
+const { createSecret, hasKey, loadKey, removeKey, removeLegacyAccess, storeKey } = createRequire(import.meta.url)('../../desktop/vault-key.cjs') as {
   createSecret: () => string;
   hasKey: (directory: string) => boolean;
+  loadKey: (input: { directory: string; safeStorage: null }) => string | null;
   removeKey: (directory: string) => void;
   removeLegacyAccess: (directory: string) => void;
   storeKey: (input: { directory: string; secret: string; safeStorage: null; warn?: (message: string) => void }) => string;
@@ -118,7 +120,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     if(experienceJobs.busy&&request.method!=='GET'&&!/^\/v1\/(experience\/(room|benchmark)\/stop|assistant\/approve|lock)$/.test(request.url))return reply.code(409).send({error:'Pare o teste ou a reunião antes de iniciar outra operação.'});
     if(pro.busy&&request.method==='POST'&&/^\/v1\/(experience\/bots\/.*\/run|chats\/.*\/send|model-library\/(load|unload|engine|import-mlx)|sharing\/start|tasks\/.*\/start|local-engines\/(generate|transcribe))$/.test(request.url))return reply.code(409).send({error:'Aguarde a tarefa Pro ou cancele-a na fila.'});
     if((aux.busy||proMedia.busy)&&request.method==='POST'&&/\/chats\/[^/]+\/send$/.test(request.url))return reply.code(409).send({error:'Aguarde o motor de voz ou imagem.'});
-    if (!['/v1/status','/v1/setup','/v1/unlock','/v1/session','/v1/vault/migrate','/v1/vault/device-open','/v1/vault/device-migrate','/v1/vault/device-commit','/v1/vault/device-abort'].includes(request.url.split('?')[0]) && core.vault.locked) return reply.code(423).send({ error: 'Desbloqueie o cofre para continuar.' });
+    if (!['/v1/status','/v1/setup','/v1/unlock','/v1/session','/v1/vault/migrate','/v1/vault/skip-legacy','/v1/vault/device-open','/v1/vault/device-migrate','/v1/vault/device-commit','/v1/vault/device-abort','/v1/vault/device-fresh'].includes(request.url.split('?')[0]) && core.vault.locked) return reply.code(423).send({ error: 'Desbloqueie o cofre para continuar.' });
   });
   app.addHook('preHandler',async(request)=>{const feature=requiredFeature(request.method,request.routeOptions.url||request.url.split('?')[0],request.body);if(feature)subscription.require(feature);});
   app.setErrorHandler((error, _request, reply) => {
@@ -243,6 +245,35 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     abortVaultMigration(core.vault);
     return { ok: true };
   });
+  app.post('/v1/vault/device-fresh', vaultLimit, async (request, reply) => {
+    if (!deviceHeader(request)) return reply.code(403).send({ error: 'Origem do dispositivo recusada' });
+    const { secret } = z.strictObject({ secret: z.string().min(12).max(1024) }).parse(body(request));
+    try {
+      await beginFreshDeviceSpace(core, secret);
+      crews.bindDatabase(core.store.db);
+      await chats.recover();
+      return { ok: true };
+    } catch (error) {
+      crews.bindDatabase(core.store.db);
+      throw error;
+    }
+  });
+  app.post('/v1/vault/device-import', vaultLimit, async (request, reply) => {
+    if (!deviceHeader(request)) return reply.code(403).send({ error: 'Origem do dispositivo recusada' });
+    if (Date.now() < retryAt) throw new Error('Aguarde antes de tentar outra senha');
+    const { name, password, secret } = z.strictObject({ name: z.string().min(1).max(80), password: z.string().min(1).max(1024), secret: z.string().min(12).max(1024) }).parse(body(request));
+    try {
+      await importLegacyVault(core, secret, name, password);
+      failedUnlocks = 0;
+      crews.bindDatabase(core.store.db);
+      await chats.recover();
+      return { ok: true };
+    } catch (error) {
+      crews.bindDatabase(core.store.db);
+      if ((error as Error).message.includes('incorreta')) rejectPassword();
+      throw error;
+    }
+  });
   app.post('/v1/vault/migrate', vaultLimit, async request => {
     if (deviceNonce) throw new Error('Abra o aplicativo para concluir esta etapa.');
     if (Date.now() < retryAt) throw new Error('Aguarde antes de tentar outra senha');
@@ -269,6 +300,43 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
         if (stored) removeKey(core.directory);
       }
       if (!prepared) rejectPassword();
+      throw error;
+    }
+  });
+  app.post('/v1/vault/skip-legacy', vaultLimit, async request => {
+    if (deviceNonce) throw new Error('Abra o aplicativo para concluir esta etapa.');
+    if (hasKey(core.directory)) throw new Error('O cofre deste computador já tem chave.');
+    const secret = createSecret();
+    let stored = false;
+    try {
+      storeKey({ directory: core.directory, secret, safeStorage: null, warn: message => console.warn(message) });
+      stored = true;
+      await beginFreshDeviceSpace(core, secret);
+      crews.bindDatabase(core.store.db);
+      await chats.recover();
+      return { ok: true };
+    } catch (error) {
+      crews.bindDatabase(core.store.db);
+      if (stored && !vaultAccepts(core.vault.path, secret)) removeKey(core.directory);
+      throw error;
+    }
+  });
+  app.get('/v1/vault/legacy', vaultLimit, async () => ({ backups: listLegacyBackups(core.directory).map(({ name, stamp, postgres }) => ({ name, stamp, postgres })) }));
+  app.post('/v1/vault/legacy/import', vaultLimit, async request => {
+    if (deviceNonce) throw new Error('Abra o aplicativo para concluir esta etapa.');
+    if (Date.now() < retryAt) throw new Error('Aguarde antes de tentar outra senha');
+    const { name, password } = z.strictObject({ name: z.string().min(1).max(80), password: z.string().min(1).max(1024) }).parse(body(request));
+    const secret = loadKey({ directory: core.directory, safeStorage: null });
+    if (!secret) throw new Error('A chave deste computador não está disponível.');
+    try {
+      await importLegacyVault(core, secret, name, password);
+      failedUnlocks = 0;
+      crews.bindDatabase(core.store.db);
+      await chats.recover();
+      return { ok: true };
+    } catch (error) {
+      crews.bindDatabase(core.store.db);
+      if ((error as Error).message.includes('incorreta')) rejectPassword();
       throw error;
     }
   });
