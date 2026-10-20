@@ -29,7 +29,7 @@ O ecrã **Modo servidor** pergunta como este computador vai participar. Fica des
 - **Gerenciar** pede `--force-master`. A opção **não rodar modelo aqui** acrescenta `--no-worker`. O EXO pode eleger outro master.
 - **Só usar** é o cliente, em qualquer sistema, e não inicia um nó.
 
-O mapa lê `GET /state` e desenha um círculo por computador, com a RAM. Uma ligação Thunderbolt ou RDMA sai mais grossa; a rede comum sai fina. Nesta fase o caminho é TCP. RDMA fica para uma fase posterior. **Escolher quais computadores** consulta `GET /instance/previews` e mostra a memória prevista em cada nó. Nada disso liga sozinho.
+O mapa lê `GET /state` e desenha um círculo por computador, com a RAM. Uma ligação Thunderbolt ou RDMA sai mais grossa; a rede comum sai fina. Nesta fase o caminho é TCP. RDMA fica para uma fase posterior. **Escolher quais computadores** consulta `GET /instance/previews` e mostra a memória prevista em cada nó. Nada disso liga sozinho. O pareamento usa um código de 6 dígitos que expira em um minuto e aceita poucas tentativas. Cada máquina fica com uma chave própria no cofre, revogável. Os outros computadores falam com o gateway do LocalNeuron, com limite por rota, e não com a porta 52415. Enquanto o EXO estiver ligado, a página avisa que a porta 52415 continua acessível na LAN, sem senha. O uso fica num registo local, sem telemetria. Bloquear ou fechar a app desliga o gateway. A escuta recusa IP público e `0.0.0.0`.
 
 ## Controle e privacidade
 
