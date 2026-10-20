@@ -1,4 +1,5 @@
 ; Instalador NSIS do LocalNeuron. Não assina o executável.
+; Comentário sem efeito: dispara só o empacotamento do commit 9a75ba4.
 ; Não chama signtool. A assinatura Authenticode fica para uma etapa posterior, a cargo do Arthur.
 !ifndef VERSION
   !error "Defina VERSION antes de incluir este script."
