@@ -17,7 +17,7 @@ import { homedir } from "node:os";
 import { inspectMlx, importMlx } from "./mlx-models.js";
 import { ggufSetBytes } from "./gguf-parts.js";
 import { CATALOG, type CatalogModel } from "./catalog.js";
-import { memoryStatus } from "./model.js";
+import { lmStudioPort, LM_STUDIO_DEFAULT_PORT, memoryStatus } from "./model.js";
 export type RuntimeModel = {
   type: string;
   key: string;
@@ -204,7 +204,9 @@ export class LocalRuntime {
         ? "motor MLX integrado da LocalNeuron, baseado nas bibliotecas MLX e MLX LM da Apple; independente de LM Studio; conexões externas bloqueadas no processo de inferência"
         : model.startsWith("gguf:")
           ? "motor integrado da LocalNeuron, baseado em llama.cpp"
-          : "servidor local compatível com OpenAI em 127.0.0.1:8080, integração externa",
+          : lmStudioPort() === LM_STUDIO_DEFAULT_PORT
+            ? "servidor local compatível com OpenAI em 127.0.0.1:1234, integração externa"
+            : `servidor local compatível com OpenAI em 127.0.0.1:${lmStudioPort()}; a detecção também procura o LM Studio na porta ${LM_STUDIO_DEFAULT_PORT}; integração externa`,
       model: this.loaded?.key === model ? this.loaded.display_name : model,
     };
   }

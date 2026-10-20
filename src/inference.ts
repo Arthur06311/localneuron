@@ -200,7 +200,7 @@ export async function inferenceStep(
     AbortSignal.timeout(20 * 60 * 1000),
   ]);
   const response = await fetch(
-    (backend?.endpoint || "http://127.0.0.1:8080") + "/v1/chat/completions",
+    (backend?.endpoint || status.endpoint) + "/v1/chat/completions",
     {
       method: "POST",
       redirect: "error",

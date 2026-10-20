@@ -1,9 +1,33 @@
 import { freemem } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import type { Task } from './types.js';
 
-const endpoint = 'http://127.0.0.1:8080';
+const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as {
+  legacyEnv: (suffix: string, env?: NodeJS.ProcessEnv, warn?: (message: string) => void) => string | undefined;
+};
+
+export const LM_STUDIO_PORT = 8080;
+export const LM_STUDIO_DEFAULT_PORT = 1234;
+
+const present = (value: string | undefined): value is string => typeof value === 'string' && value !== '';
+
+export function lmStudioPort(env: NodeJS.ProcessEnv = process.env, warn: (message: string) => void = console.warn) {
+  const raw = legacyEnv('LMSTUDIO_PORT', env, warn);
+  if (!present(raw)) return LM_STUDIO_PORT;
+  const name = present(env.LOCALNEURON_LMSTUDIO_PORT) ? 'LOCALNEURON_LMSTUDIO_PORT' : 'COLMEIA_LMSTUDIO_PORT';
+  if (!/^\d+$/.test(raw) || Number(raw) < 1 || Number(raw) > 65535) throw new Error(`${name} inválida. Use um número de 1 a 65535.`);
+  return Number(raw);
+}
+export function lmStudioEndpoint(port = lmStudioPort()) {
+  return `http://127.0.0.1:${port}`;
+}
+export function lmStudioEndpoints(env: NodeJS.ProcessEnv = process.env) {
+  const primary = lmStudioEndpoint(lmStudioPort(env));
+  const standard = lmStudioEndpoint(LM_STUDIO_DEFAULT_PORT);
+  return primary === standard ? [primary] : [primary, standard];
+}
 export function memoryStatus() {
   const free = freemem(); let available = free; let pressure: number | null = null;
   if (process.platform === 'darwin') {
@@ -21,21 +45,43 @@ export function memoryStatus() {
   }
   return { free_memory_bytes: free, available_memory_bytes: available, pressure_free_percent: pressure };
 }
-export async function localModels() {
+async function probeLmStudio(endpoint: string) {
   try {
     const native = await fetch(endpoint + '/api/v1/models', { signal: AbortSignal.timeout(2000), redirect: 'error' });
     if (native.ok) {
       const data = await native.json() as { models?: { type: string; key: string; loaded_instances?: { id: string; config?: { context_length?: number } }[]; capabilities?: { reasoning?: { allowed_options?: string[] } } }[] };
       if (Array.isArray(data.models)) {
         const loaded = data.models.filter(model => model.type === 'llm').flatMap(model => (model.loaded_instances ?? []).map(instance => ({ id: instance.id, key: model.key, context_length: instance.config?.context_length ?? null, reasoning_off: model.capabilities?.reasoning?.allowed_options?.includes('off') ?? false })));
-        return { available: true, endpoint, api: 'lmstudio', models: loaded.map(model => model.id), model_info: loaded, ...memoryStatus() };
+        return { available: true as const, endpoint, api: 'lmstudio' as const, models: loaded.map(model => model.id), model_info: loaded };
       }
     }
     const response = await fetch(endpoint + '/v1/models', { signal: AbortSignal.timeout(2000), redirect: 'error' });
-    if (!response.ok) throw new Error('Modelo indisponível');
+    if (!response.ok) return null;
     const json = await response.json() as { data?: { id: string }[] };
-    return { available: true, endpoint, api: 'compatible', models: (json.data ?? []).map(model => model.id).slice(0,30), model_info: [], ...memoryStatus() };
-  } catch { return { available: false, endpoint, api: 'unknown', models: [], model_info: [], ...memoryStatus() }; }
+    return { available: true as const, endpoint, api: 'compatible' as const, models: (json.data ?? []).map(model => model.id).slice(0,30), model_info: [] };
+  } catch { return null; }
+}
+export type EngineStatus = {
+  available: boolean;
+  endpoint: string;
+  api: string;
+  models: string[];
+  model_info: { id: string; key: string; context_length: number | null; reasoning_off: boolean }[];
+  free_memory_bytes: number;
+  available_memory_bytes: number;
+  pressure_free_percent: number | null;
+};
+export async function localModels(env: NodeJS.ProcessEnv = process.env): Promise<EngineStatus> {
+  const endpoints = lmStudioEndpoints(env);
+  let compatible: Awaited<ReturnType<typeof probeLmStudio>> = null;
+  for (const endpoint of endpoints) {
+    const found = await probeLmStudio(endpoint);
+    if (!found) continue;
+    if (found.api === 'lmstudio') return { ...found, ...memoryStatus() };
+    if (!compatible) compatible = found;
+  }
+  if (compatible) return { ...compatible, ...memoryStatus() };
+  return { available: false, endpoint: endpoints[0], api: 'unknown' as const, models: [], model_info: [], ...memoryStatus() };
 }
 export function template(task: Task) {
   return `# ${task.title}\n\nModo: estrutura editorial determinística, sem geração por IA.\n\n## Briefing original\n${task.brief}\n\n## Ideia\n[Descreva a ideia central com base no briefing.]\n\n## Roteiro\n[Escreva as falas aqui. A duração será estimada a 150 palavras por minuto e exige leitura humana.]\n\n## Cenas\n1. Abertura: [descrever]\n2. Desenvolvimento: [descrever]\n3. Encerramento: [descrever]\n\n## Requisitos da marca\n${task.requirements.map(r => '- ' + r + ' — [conferir no roteiro]').join('\n')}\n\n## Variações\nA: [redigir preservando valores e condições]\nB: [redigir preservando valores e condições]\n\n## Pendências\n- Preencher estrutura.\n- Conferir afirmações comerciais com fontes.\n- Fazer leitura cronometrada de ${task.duration_seconds} segundos.\n`;
@@ -50,7 +96,7 @@ export async function compose(task: Task, signal: AbortSignal): Promise<string> 
   const native = models.api === 'lmstudio';
   const nativeBody = { model: task.model, system_prompt: systemPrompt, input: prompt, integrations: [], store: false, stream: false, temperature: 0.4, max_output_tokens: 2048, ...(models.model_info.find(model => model.id === task.model)?.reasoning_off ? { reasoning: 'off' } : {}) };
   const compatibleBody = { model: task.model, temperature: 0.4, max_tokens: 2048, stream: false, chat_template_kwargs: { enable_thinking: false }, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: prompt }] };
-  const response = await fetch(endpoint + (native ? '/api/v1/chat' : '/v1/chat/completions'), {
+  const response = await fetch(models.endpoint + (native ? '/api/v1/chat' : '/v1/chat/completions'), {
     method: 'POST', redirect: 'error', signal: AbortSignal.any([signal, AbortSignal.timeout(120000)]), headers: { 'content-type': 'application/json' },
     body: JSON.stringify(native ? nativeBody : compatibleBody)
   });
