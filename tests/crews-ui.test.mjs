@@ -45,6 +45,10 @@ test('a ilha Equipes fica entre Trabalhar e Criar, em pt-BR, com o registo e o m
   assert.match(page, /#7aa2f7/);
   assert.match(page, /264px minmax\(0,1fr\) 300px/);
   assert.doesNotMatch(page, /--island-crews-soft/);
+  assert.doesNotMatch(page, /--crew-/);
+  assert.match(page, /\.crews-page\{\s*--bg:#f4f6f8;--panel:#fff;--panel2:#f3f4f6;--line:#e2e5e9;--ink:#1c1f24;--muted:#5c6570;--faint:#8b929b;\s*--accent:#7aa2f7;--ok:#2f8f62;--warn:#a07828;/);
+  assert.match(page, /html\[data-theme=dark\] \.crews-page\{\s*--bg:#0f1114;--panel:#15181c;--panel2:#1b1f24;--line:#262b31;--ink:#e6e8eb;--muted:#8b929b;--faint:#5d646d;\s*--accent:#7aa2f7;--ok:#5fb98a;--warn:#d6a652/);
+  assert.doesNotMatch(page, /:root/);
   assert.match(talk, /Você é \$\{coordinator\.name\}, coordenador da equipe\. Responda/);
   assert.doesNotMatch(talk, /És \$\{coordinator\.name\}/);
   assert.match(css, /data-nav-island-group="crews"/);
