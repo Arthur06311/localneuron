@@ -25,7 +25,7 @@ O wizard salva a conclusão ao chegar ao último passo. Para refazê-lo, use **M
 
 ## Avisos de novas versões
 
-A partir da 0.27, o aplicativo avisa quando encontra uma versão mais recente no manifesto público do GitHub (endereço independente do domínio do site). Consulte **Preferências → Atualizações** para verificar manualmente, ler novidades ou desativar a consulta automática. A consulta ocorre ao abrir e a cada seis horas, com cache, sem enviar conversas, arquivos ou identificadores do espaço. A hospedagem recebe a requisição de rede normal, incluindo IP. Falhas de conexão não bloqueiam o uso offline.
+A partir da 0.27, o aplicativo avisa quando encontra uma versão mais recente no manifesto público do GitHub (endereço independente do domínio do site). Consulte **Configurações → Atualizações** para verificar manualmente, ler novidades ou desativar a consulta automática. A consulta ocorre ao abrir e a cada seis horas, com cache, sem enviar conversas, arquivos ou identificadores do espaço. A hospedagem recebe a requisição de rede normal, incluindo IP. Falhas de conexão não bloqueiam o uso offline.
 
 **Agora não** dispensa o aviso daquela versão. Uma versão posterior volta a ser avisada. O instalador é baixado pelo link; não há instalação automática. Quem usa 0.26 ou anterior precisa instalar a 0.27 uma vez para receber os avisos futuros.
 
@@ -79,7 +79,7 @@ O assistente inicial também ajuda a montar bots pessoais e profissionais. Edite
 
 A sala permite colaboração sequencial de até seis bots, até três rodadas e dez minutos, com cancelamento. Ferramentas da sala permanecem desativadas nesta alfa.
 
-**Internet** habilita pesquisa/leitura web. **Esforço** ajusta o raciocínio quando suportado. **Parar** interrompe a geração. Em Preferências, **Usar a personalidade LocalNeuron** liga/desliga o estilo do aplicativo; começa desligado e preserva as instruções dos bots.
+**Internet** habilita pesquisa/leitura web. **Esforço** ajusta o raciocínio quando suportado. **Parar** interrompe a geração. Em Configurações, **Usar a personalidade LocalNeuron** liga/desliga o estilo do aplicativo; começa desligado e preserva as instruções dos bots.
 
 Ferramentas de computador, arquivos e terminal têm controles próprios. Escolha a pasta de trabalho e revise ações que alterem arquivos ou executem comandos. Controle nativo não equivale a automação visual universal de qualquer aplicativo.
 
@@ -181,7 +181,7 @@ Novas instalações usam as pastas de dados do sistema:
 
 Instalações antigas podem manter a pasta irmã `Colmeia-data/`. O nome legado é preservado para compatibilidade. Em desenvolvimento, o serviço usa `.data/` e o desktop `.desktop/`.
 
-Para restaurar um backup, o caminho principal no aplicativo desktop é o botão **Abrir uma pasta de dados existente**, em **Preferências** (e também na única tela de migração, se o cofre ainda usa senha). Selecione a pasta pai, a que contém `workspace/` (`workspace/vault.enc.json`). O app reabre esse espaço e deixa a pasta atual intacta. A variável `COLMEIA_DESKTOP_DATA_DIR`, se definida antes de abrir, aponta para essa mesma pasta pai e tem prioridade sobre a pasta escolhida no botão.
+Para restaurar um backup, o caminho principal no aplicativo desktop é o botão **Abrir uma pasta de dados existente**, em **Configurações** (e também na única tela de migração, se o cofre ainda usa senha). Selecione a pasta pai, a que contém `workspace/` (`workspace/vault.enc.json`). O app reabre esse espaço e deixa a pasta atual intacta. A variável `COLMEIA_DESKTOP_DATA_DIR`, se definida antes de abrir, aponta para essa mesma pasta pai e tem prioridade sobre a pasta escolhida no botão.
 
 No modo navegador o botão não aparece. Defina `COLMEIA_DATA_DIR` com a pasta que contém `vault.enc.json` diretamente: a `workspace` de um backup do desktop, ou a própria `.data` se o espaço nasceu no modo navegador. Não aponte para a pasta pai do desktop.
 

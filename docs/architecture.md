@@ -6,7 +6,7 @@ O Gateway injeta o backend de inferência correto e continua sem ferramentas. O 
 
 # Arquitetura
 
-A navegação atual contém Chat, Modelos, Minha API e Preferências. `model-library.ts` gerencia download verificado, importação e memória. `chat.ts` persiste conversas e delega inferência a `inference.ts`, que envia mensagens com papéis ao LM Studio em loopback. `gateway.ts` oferece somente inferência em listener separado, sob chave própria e host privado escolhido. A API inicia desligada e é encerrada ao bloquear, fechar ou revogar. Uma operação de geração por vez evita disputa entre chat e API.
+A navegação atual contém Chat, Modelos, Minha API e Configurações. `model-library.ts` gerencia download verificado, importação e memória. `chat.ts` persiste conversas e delega inferência a `inference.ts`, que envia mensagens com papéis ao LM Studio em loopback. `gateway.ts` oferece somente inferência em listener separado, sob chave própria e host privado escolhido. A API inicia desligada e é encerrada ao bloquear, fechar ou revogar. Uma operação de geração por vez evita disputa entre chat e API.
 
 O renderer sanitiza Markdown e nunca executa código recebido. O Electron permite escrita no clipboard somente à origem local principal; leitura, mídia e outras permissões continuam negadas. Downloads de exportações Blob da própria origem são permitidos.
 
