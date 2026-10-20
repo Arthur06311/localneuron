@@ -59,7 +59,7 @@ Para começar, prefira uma quantização Q4 de um modelo pequeno que caiba com f
 
 Não é preciso ter LM Studio aberto para os motores integrados. Depois da instalação dos motores e pesos, desative Internet no chat para usar inferência local sem pesquisa web. Downloads, conexões MCP e consulta de sites continuam dependendo de rede quando acionados.
 
-Se o pacote não trouxer o motor integrado da arquitetura, o app pode usar o LM Studio como motor externo. Essa integração usa somente `127.0.0.1:8080`: ao preparar o motor, o app executa `lms server start --port 8080 --bind 127.0.0.1`. Um servidor do LM Studio deixado na porta 1234 não é detectado. Se a porta 8080 já estiver ocupada por outro programa, a preparação é recusada.
+O LM Studio continua opcional. Se você iniciar o servidor dele, a detecção procura em `127.0.0.1` na porta configurada e também na porta padrão do LM Studio, **1234**. O padrão configurado é **8080**, que é a porta usada quando o LocalNeuron pede para o `lms` iniciar o servidor. Para mudar essa porta, defina `LOCALNEURON_LMSTUDIO_PORT`. `COLMEIA_LMSTUDIO_PORT` continua aceita; se as duas existirem, vale a `LOCALNEURON_LMSTUDIO_PORT`. Se só a antiga estiver definida, o processo avisa uma vez, sem mostrar o valor.
 
 ## Chat e bots
 

@@ -11,14 +11,13 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
 import { CATALOG, catalogFiles, modelUrl, type CatalogModel } from './catalog.js';
-import { localModels, memoryStatus } from './model.js';
+import { lmStudioEndpoint, lmStudioPort, localModels, memoryStatus } from './model.js';
 import { suggestStarterModel } from './starter-model.js';
 
 const exec = promisify(execFile);
 const GiB = 1024 ** 3;
 const modelFolder = (directory: string, model: CatalogModel) => model.parts ? join(directory, 'catalog-' + model.id) : directory;
 const modelPath = (directory: string, model: CatalogModel) => join(modelFolder(directory,model),model.file);
-const endpoint = 'http://127.0.0.1:8080';
 type Job = { id: string; state: 'downloading' | 'verifying' | 'downloaded' | 'importing' | 'indexing' | 'installed' | 'cancelled' | 'failed'; downloaded: number; total: number; error?: string; model_key?: string };
 type LocalModel = { type: string; key: string; display_name?: string; size_bytes?: number; format?: string; quantization?: { name: string }; loaded_instances?: { id: string; config?: { context_length?: number } }[] };
 type Audit = (type: string, data: unknown) => Promise<void>;
@@ -72,7 +71,9 @@ export class ModelLibrary {
   jobs: Record<string, Job> = {};
   active: { controller: AbortController; promise: Promise<void> } | null = null;
   busy = false;
-  constructor(directory: string, private audit: Audit, private lms = findLms(), private runtime?: LocalRuntime, private hfToken:()=>string|undefined=()=>undefined) {
+  private endpoint: string;
+  constructor(directory: string, private audit: Audit, private lms = findLms(), private runtime?: LocalRuntime, private hfToken:()=>string|undefined=()=>undefined, private env: NodeJS.ProcessEnv = process.env) {
+    this.endpoint = lmStudioEndpoint(lmStudioPort(env));
     this.directory = join(directory, 'models'); mkdirSync(this.directory, { recursive: true, mode: 0o700 });this.access=new CatalogAccess(this.directory,hfToken);
     try{const saved=JSON.parse(readFileSync(join(this.directory,'hub-catalog.json'),'utf8'));if(Array.isArray(saved))for(const m of saved.slice(0,2000)){if(validSavedModel(m)&&!this.catalog.some(c=>c.id===m.id))this.catalog.push(m);}}catch{}
     try { this.jobs = JSON.parse(readFileSync(join(this.directory, 'downloads.json'), 'utf8')); } catch { /* First use. */ }
@@ -94,15 +95,20 @@ export class ModelLibrary {
       throw new Error(failure.killed ? 'O LM Studio demorou para responder. Abra o motor e tente novamente.' : 'Não foi possível concluir no LM Studio. Confira se o motor está aberto e se há espaço na pasta de modelos.');
     }
   }
+  private async detected() {
+    const status = await localModels(this.env);
+    if (status.api === 'lmstudio') this.endpoint = status.endpoint;
+    return status;
+  }
   async native(path = '', body?: unknown, timeout = 5000) {
-    const response = await fetch(endpoint + '/api/v1/models' + path, { method: body === undefined ? 'GET' : 'POST', headers: { 'content-type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body), signal: AbortSignal.timeout(timeout), redirect: 'error' });
+    const response = await fetch(this.endpoint + '/api/v1/models' + path, { method: body === undefined ? 'GET' : 'POST', headers: { 'content-type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body), signal: AbortSignal.timeout(timeout), redirect: 'error' });
     if (!response.ok) throw new Error(`LM Studio retornou HTTP ${response.status}. Confira o servidor local e a autenticação no LM Studio.`);
     return response.json() as Promise<any>;
   }
   async inventory(): Promise<LocalModel[]> { const result = await this.native(); if (!Array.isArray(result.models)) throw new Error('API nativa do LM Studio indisponível'); return result.models.filter((m: LocalModel) => m.type === 'llm'); }
   async snapshot() {
     await this.runtime?.exo.refresh();
-    const status = await localModels();
+    const status = await this.detected();
     const nativeInstalled=this.runtime?this.runtime.inventory():[];
     const external=status.api === 'lmstudio' ? await this.inventory().catch(() => []) : [];
     const installed=[...nativeInstalled,...external];
@@ -114,12 +120,17 @@ export class ModelLibrary {
     if(this.runtime?.available)return {ok:true,engine:'integrated'};
     if (this.busy) throw new Error('Aguarde a operação atual'); this.busy = true;
     try {
-      const status = await localModels();
-      if (status.available) { if (status.api !== 'lmstudio') throw new Error('A porta 8080 já está ocupada por outro motor. Mantenha esse motor ou configure o LM Studio na porta 8080.'); return { ok: true }; }
-      await this.audit('model.engine.start_requested', { bind: '127.0.0.1', port: 8080 });
-      await this.cli(['server','start','--port','8080','--bind','127.0.0.1']);
-      if ((await localModels()).api !== 'lmstudio') throw new Error('Abra o LM Studio e tente conectar novamente.');
-      await this.audit('model.engine.started', { endpoint }); return { ok: true };
+      const status = await this.detected();
+      const port = lmStudioPort(this.env);
+      if (status.available) {
+        if (status.api !== 'lmstudio') throw new Error(`A porta ${new URL(status.endpoint).port} já está ocupada por outro motor. Mantenha esse motor ou configure o LM Studio na porta ${port}.`);
+        return { ok: true };
+      }
+      await this.audit('model.engine.start_requested', { bind: '127.0.0.1', port });
+      await this.cli(['server','start','--port',String(port),'--bind','127.0.0.1']);
+      const started = await this.detected();
+      if (started.api !== 'lmstudio') throw new Error('Abra o LM Studio e tente conectar novamente.');
+      await this.audit('model.engine.started', { endpoint: this.endpoint }); return { ok: true };
     } finally { this.busy = false; }
   }
   async download(id: string) {
@@ -205,6 +216,7 @@ export class ModelLibrary {
     if(this.runtime?.owns(key)){if(this.busy)throw new Error('Aguarde a operação atual');this.busy=true;try{return await this.runtime.load(key,context);}finally{this.busy=false;}}
     if (this.busy) throw new Error('Aguarde a operação atual'); this.busy = true;
     try {
+      await this.detected();
       const installed = (await this.inventory()).find(model => model.key === key);
       if (!installed) throw new Error('Modelo não encontrado neste computador');
       if (installed.loaded_instances?.length) return { instance_id: installed.loaded_instances[0].id, status: 'loaded', load_config: installed.loaded_instances[0].config };
@@ -232,6 +244,7 @@ export class ModelLibrary {
     if(this.runtime?.owns(instance))return this.runtime.unload(instance);
     if (this.busy) throw new Error('Aguarde a operação atual'); this.busy = true;
     try {
+      await this.detected();
       if (!(await this.inventory()).some(model => model.loaded_instances?.some(loaded => loaded.id === instance))) throw new Error('Modelo carregado não encontrado');
       await this.audit('model.unload.requested', { instance });
       await this.native('/unload', { instance_id: instance }, 30000);
