@@ -74,7 +74,7 @@ h3{font-size:15px;margin:0}
 .feature-bottom{margin-top:auto;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted)}
 
 .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);gap:16px;align-items:start}
-.facts{display:grid;gap:10px;margin:14px 0 0}
+.facts{display:grid;gap:10px;margin:14px 0 0;max-width:72ch}
 .facts div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px}
 .facts dt{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding-top:2px}
 .facts dd{margin:0}

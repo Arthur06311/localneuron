@@ -39,7 +39,7 @@
 <div><dt>Limite</dt><dd>Participar pede Mac Apple Silicon com macOS 26.2 ou mais recente. No Windows, só o modo de controlar está disponível. No Linux, o LocalNeuron não instala o motor. Quem quiser participar instala o EXO pelo projeto oficial.</dd></div>
 <div><dt>Garantia</dt><dd>Controlar não acrescenta a RAM desta máquina à rede.</dd></div>
 </dl>
-<p><strong>Em breve.</strong> Contribuir, Gerenciar e Só usar ainda não estão no instalador 0.28.1. Nesta versão, use Participar com este Mac ou Controlar um EXO existente.</p>
+<p><strong>A partir da próxima versão.</strong> Contribuir, Gerenciar e Só usar ainda não estão no instalador 0.28.1. Nesta versão, use Participar com este Mac ou Controlar um EXO existente.</p>
 
 <h2>Conectar os computadores</h2>
 <ol>
@@ -51,7 +51,7 @@
 </ol>
 <p>A primeira preparação precisa de internet para baixar o modelo. Depois, Iniciar sem internet usa modelos já baixados.</p>
 <p class="note">A identificação da rede (<code>neuron-</code> e 32 caracteres hexadecimais) só define quais nós se encontram. Não é senha e não cifra o tráfego.</p>
-<p><strong>Em breve.</strong> O pareamento por código de 6 dígitos ainda não está no instalador 0.28.1. Nesta versão, os Macs se encontram pela identificação da rede.</p>
+<p><strong>A partir da próxima versão.</strong> O pareamento por código de 6 dígitos ainda não está no instalador 0.28.1. Nesta versão, os Macs se encontram pela identificação da rede.</p>
 
 <h2>O que fica exposto na rede</h2>
 <p>Use somente uma rede privada confiável, ou VPN. Não encaminhe as portas no roteador.</p>
@@ -71,7 +71,7 @@
 </ul>
 
 <h2>Ligação entre os Macs</h2>
-<p>Estado: Wi-Fi ou Ethernet na mesma rede local é o caminho documentado para começar. Limite: mais RAM somada não garante mais velocidade. A ligação entre as máquinas pesa. Garantia: não é preciso um cabo especial só para um coordenador nesse caminho de rede comum.</p>
+<p>Estado: Wi-Fi ou Ethernet na mesma rede local é o caminho documentado para começar. Limite: mais RAM somada não garante mais velocidade. A ligação entre as máquinas pesa. Garantia: nesse caminho de rede comum, não é preciso um cabo especial só para um nó.</p>
 
 <h2>Esquemas de cabo para RDMA</h2>
 <p>Os desenhos abaixo são ilustração de cabeamento, não uma tela do aplicativo. RDMA requer macOS 26.2+ e Thunderbolt 5.</p>
@@ -102,14 +102,14 @@
 <text x="520" y="190" fill="#8b929b" font-size="11" font-family="Inter,sans-serif">TB5</text>
 </svg>
 <figcaption>
-<strong>Texto do esquema.</strong>
+<strong>Malha correta.</strong>
 2 Macs: um cabo, Mac A ligado a Mac B.
 3 Macs: três cabos, Mac A–B, Mac B–C e Mac A–C. Cada par tem cabo direto.
 </figcaption>
 </figure>
 <figure class="diagram">
 <svg role="img" aria-labelledby="star-title star-desc" viewBox="0 0 720 220">
-<title id="star-title">Exemplo errado para RDMA: estrela no coordenador</title>
+<title id="star-title">Exemplo errado para RDMA: estrela em um só Mac</title>
 <desc id="star-desc">Mac A no centro, ligado a Mac B e a Mac C. Não há cabo entre B e C. Essa estrela não forma a malha completa.</desc>
 <rect x="0" y="0" width="720" height="220" fill="#15181c"/>
 <text x="16" y="28" fill="#d6a652" font-size="12" font-family="Inter,sans-serif">Errado para RDMA: tudo ligado em um só Mac</text>
@@ -125,7 +125,7 @@
 <text x="360" y="160" fill="#d6a652" font-size="12" text-anchor="middle" font-family="Inter,sans-serif">falta cabo B–C</text>
 </svg>
 <figcaption>
-<strong>Texto do exemplo errado.</strong>
+<strong>Exemplo incompleto.</strong>
 Mac A ligado a Mac B e a Mac C. Não há cabo entre B e C. Para a malha de RDMA descrita acima, esse desenho está incompleto.
 </figcaption>
 </figure>
