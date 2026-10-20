@@ -10,7 +10,7 @@ import { open } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
-import { CATALOG, catalogModel, catalogFiles, modelUrl, type CatalogModel } from './catalog.js';
+import { CATALOG, catalogFiles, modelUrl, type CatalogModel } from './catalog.js';
 import { localModels, memoryStatus } from './model.js';
 import { embeddedEngine } from './embedded-engine.js';
 
