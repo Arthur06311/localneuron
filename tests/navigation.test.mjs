@@ -15,6 +15,9 @@ test('navigation is grouped into five discoverable islands',async()=>{
     assert.match(html,new RegExp(`id="nav-island-${island}"`));
   }
   assert.match(html,/navigation\.css/);
+  assert.match(html,/> Equipes</);
+  assert.match(html,/data-page="crews"/);
+  assert.doesNotMatch(html,/> Equipas</);
   assert.match(js,/navIslandForPage/);
   assert.match(js,/toggleNavIsland/);
   assert.match(css,/\.nav-island:not\(\[data-open="true"\]\) \.nav-island-menu\{display:none/);
@@ -22,7 +25,7 @@ test('navigation is grouped into five discoverable islands',async()=>{
 
 test('every former destination remains present inside an island',async()=>{
   const html=await readFile(resolve(root,'public/index.html'),'utf8');
-  for(const page of ['chat','team','models','crews','photo','studio','music','editor','connections','exo','sharing','pro','subscription','wizard','settings']){
+  for(const page of ['chat','team','models','crews','photo','studio','music','editor','connections','exo','server','sharing','pro','subscription','wizard','settings']){
     assert.match(html,new RegExp(`data-page="${page}"`),`Missing page ${page}`);
   }
 });

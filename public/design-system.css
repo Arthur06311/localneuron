@@ -453,6 +453,74 @@ dialog::backdrop { background: color-mix(in srgb, var(--bg) 35%, #000); }
 .pro-center-hero .pro-system-card { background: var(--panel2); border-color: var(--line); }
 .pro-member-welcome .primary, .pro-center-hero .primary { background: var(--ink) !important; color: var(--bg) !important; }
 
+/* Modo servidor */
+#server-mode, #server-pair {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+#server-mode fieldset {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  margin: 0 0 12px;
+  padding: 12px;
+}
+
+#server-mode legend {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 6px;
+}
+
+#server-mode .check-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  color: var(--ink);
+}
+
+#server-status, #server-code, #server-preview p, .server-map + p {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+#server-exo-warning {
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid color-mix(in srgb, var(--danger) 55%, var(--line));
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+#server-map > p, #server-pair > p { color: var(--muted); }
+
+#server-pair ul { list-style: none; margin: 8px 0 0; padding: 0; }
+
+#server-pair li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 32px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.server-node { fill: var(--panel2); stroke: var(--line); stroke-width: 1; }
+.server-node.master { stroke: var(--accent); stroke-width: 2; }
+.server-map text { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.server-link { stroke: var(--faint); }
+.server-link.tcp { stroke-width: 1; }
+.server-link.rdma { stroke: var(--accent); stroke-width: 3; }
+
 @media (max-width: 1100px) {
   .sidebar, body.chat-page .sidebar { width: 232px; }
   main { margin-left: 232px; }

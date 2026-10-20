@@ -40,4 +40,7 @@ test('a navegação visível fala português do Brasil', () => {
   assert.match(app, /Ajustes \/ Configurações/);
   assert.match(app, /Biblioteca \/ Modelos/);
   assert.match(app, /Conversas \/ Chat/);
+  assert.match(app, /Conectar \/ Modo servidor/);
+  assert.match(readFileSync('public/design-system.css', 'utf8'), /#server-mode/);
+  assert.match(html, /data-page="server"/);
 });
