@@ -244,7 +244,7 @@ Revalidação em 18/10/2026, sobre o commit `e5694ac` de `main` (a revisão da n
 Ainda precisam de validação em máquinas físicas antes de chamar o produto de pronto para consumo geral:
 
 1. execução nativa completa em Windows e Linux, incluindo motores e GPU;
-2. duas máquinas físicas no EXO;
+2. duas máquinas físicas no EXO — roteiro manual em [docs/testes/exo-2-macs.md](testes/exo-2-macs.md);
 3. notarização e atualização assinada no macOS;
 4. instalação real e edição no DaVinci Resolve Studio;
 5. cobrança Stripe em ambiente de produção com webhook real;
