@@ -90,10 +90,11 @@ Confira no modo **Claro** e no modo **Escuro** (botões no topo). Uma ferramenta
 | Ícone preenchido Conta | `#ffffff` | `#4a3f63` | 9,62:1 | 3:1 |
 | Ilha Equipes | `#1c3d66` | `#ffffff` | 11,00:1 | 4,5:1 |
 | Ilha Equipes | `#1c3d66` | `#e4eaf4` | 9,10:1 | 4,5:1 |
-| Texto secundário sobre Equipes aberta | `#5f656e` | `#e4eaf4` | 4,86:1 | 4,5:1 |
-| Foco sobre Equipes aberta | `#8a4b12` | `#e4eaf4` | 5,61:1 | 3:1 |
-| Ok da Equipes | `#0f6b45` | `#ffffff` | 6,54:1 | 4,5:1 |
-| Aviso da Equipes | `#7a4e12` | `#ffffff` | 7,18:1 | 4,5:1 |
+| Texto secundário sobre Equipes aberta | `#5c6570` | `#e4eaf4` | 4,89:1 | 4,5:1 |
+| Foco sobre Equipes aberta | `#2f5fbf` | `#e4eaf4` | 4,95:1 | 3:1 |
+| Ok da Equipes | `#1e7a4f` | `#ffffff` | 5,31:1 | 4,5:1 |
+| Aviso da Equipes | `#8a5b10` | `#ffffff` | 5,86:1 | 4,5:1 |
+| Terciário da Equipes | `#5e6772` | `#e8ebf0` | 4,80:1 | 4,5:1 |
 | Mascote Pronto | `#1b5c45` | `#e5f2ec` | 6,85:1 | 4,5:1 |
 | Mascote Pensando | `#1d3f72` | `#e4eaf6` | 8,67:1 | 4,5:1 |
 | Mascote Concluído | `#146338` | `#e3f5e8` | 6,44:1 | 4,5:1 |
