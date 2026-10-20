@@ -19,6 +19,7 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Alterado
 
+- O aplicativo abre direto no Chat, na primeira execução e na atualização. A confirmação da senha do cofre antigo deixa de aparecer: a cópia datada é guardada sozinha, sem pedir senha, código ou PIN, e pode ser importada depois em Configurações.
 - O aplicativo abre direto, sem tela de desbloqueio; a chave do cofre fica no armazenamento seguro do sistema. Quem ainda tem senha confirma uma vez, e a interface deixa de oferecer desbloqueio e senha (#50).
 - A ilha passa a se chamar Equipes, em pt-BR, com o visual grafite. Os identificadores internos continuam `crews` e `/v1/crews` (#58).
 - O download de Linux no site oferece o AppImage da 0.28.1, junto do DEB e do pacote Arch (#60).

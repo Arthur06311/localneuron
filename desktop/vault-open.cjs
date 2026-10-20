@@ -35,7 +35,7 @@ async function openDeviceVault({ origin, token, dataDirectory, safeStorage, nonc
     removeLegacyAccess(dataDirectory);
     return { ok: true };
   }
-  return { migration: true };
+  return freshDeviceVault({ origin, token, dataDirectory, safeStorage, nonce, warn });
 }
 
 async function migrateDeviceVault({ origin, token, dataDirectory, safeStorage, nonce, password, warn = console.warn }) {

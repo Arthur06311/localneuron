@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import type { Core } from './core.js';
 import { abortVaultMigration, discardUnkeyedMigration, migrationPath, resumeVaultMigration } from './vault-migration.js';
+import { beginFreshDeviceSpace, vaultAccepts } from './vault-fresh.js';
 
 type Warn = (message: string) => void;
 type VaultKeyModule = {
@@ -20,6 +21,16 @@ export async function openCoreWithSecret(core: Core, secret: string) {
   else if (core.vault.locked) await core.unlock(secret);
 }
 
+async function openFreshSpace(core: Core, directory: string, warn: Warn) {
+  const secret = vaultKey.createSecret();
+  vaultKey.storeKey({ directory, secret, safeStorage: null, warn });
+  try { await beginFreshDeviceSpace(core, secret); }
+  catch (error) {
+    if (!vaultAccepts(core.vault.path, secret)) vaultKey.removeKey(directory);
+    throw error;
+  }
+}
+
 export async function adoptDeviceVault(core: Core, warn: Warn = console.warn) {
   const directory = core.directory;
   if (!vaultKey.hasKey(directory)) discardUnkeyedMigration(core.vault);
@@ -30,7 +41,10 @@ export async function adoptDeviceVault(core: Core, warn: Warn = console.warn) {
     catch (error) { vaultKey.removeKey(directory); throw error; }
     return;
   }
-  if (!vaultKey.hasKey(directory)) return;
+  if (!vaultKey.hasKey(directory)) {
+    if (core.vault.exists && core.vault.locked) await openFreshSpace(core, directory, warn);
+    return;
+  }
   let secret: string | null;
   try { secret = vaultKey.loadKey({ directory, safeStorage: null }); }
   catch { return; }
