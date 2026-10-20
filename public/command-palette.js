@@ -1,32 +1,32 @@
 export const PALETTE_PAGES = [
   ['chat', 'Ir para o Chat'],
-  ['team', 'Ir para a minha equipa'],
+  ['team', 'Ir para a minha equipe'],
   ['models', 'Ir para os modelos'],
   ['photo', 'Ir para a imagem'],
   ['studio', 'Ir para o vídeo'],
   ['music', 'Ir para a música'],
   ['editor', 'Ir para o editor'],
-  ['connections', 'Ir para as ligações'],
+  ['connections', 'Ir para as conexões'],
   ['exo', 'Ir para a rede EXO'],
   ['sharing', 'Ir para a minha API'],
   ['pro', 'Ir para a Central Pro'],
   ['subscription', 'Ir para o meu plano'],
   ['wizard', 'Ir para a configuração guiada'],
-  ['settings', 'Ir para as preferências'],
+  ['settings', 'Ir para as configurações'],
 ];
 
 export function paletteCommands({ chats = [], models = [] } = {}) {
   return [
-    ...PALETTE_PAGES.map(([page, label]) => ({ id: `page:${page}`, group: 'Ecrãs', label, run: { type: 'page', page } })),
+    ...PALETTE_PAGES.map(([page, label]) => ({ id: `page:${page}`, group: 'Telas', label, run: { type: 'page', page } })),
     ...chats.slice(0, 8).map(chat => ({ id: `chat:${chat.id}`, group: 'Conversas recentes', label: chat.title || 'Conversa sem título', run: { type: 'chat', id: chat.id } })),
     ...models.slice(0, 12).map(model => ({ id: `model:${model.key}`, group: 'Mudar de modelo', label: model.display_name || model.key, run: { type: 'model', key: model.key } })),
   ];
 }
 
 export function filterCommands(commands, query) {
-  const text = query.trim().toLocaleLowerCase('pt-PT');
+  const text = query.trim().toLocaleLowerCase('pt-BR');
   if (!text) return commands;
-  return commands.filter(command => `${command.group} ${command.label}`.toLocaleLowerCase('pt-PT').includes(text));
+  return commands.filter(command => `${command.group} ${command.label}`.toLocaleLowerCase('pt-BR').includes(text));
 }
 
 export function reducePalette(state, event) {
@@ -61,8 +61,8 @@ export function mountCommandPalette(doc, { load, onRun }) {
   input.setAttribute('aria-expanded', 'false');
   input.setAttribute('aria-controls', 'command-palette-list');
   input.setAttribute('aria-autocomplete', 'list');
-  input.setAttribute('aria-label', 'Pesquisar ecrãs, conversas e modelos');
-  input.placeholder = 'Pesquisar ecrãs, conversas e modelos';
+  input.setAttribute('aria-label', 'Pesquisar telas, conversas e modelos');
+  input.placeholder = 'Pesquisar telas, conversas e modelos';
   const list = doc.createElement('div');
   list.id = 'command-palette-list';
   list.setAttribute('role', 'listbox');

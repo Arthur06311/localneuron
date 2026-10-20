@@ -3,16 +3,16 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PALETTE_PAGES, filterCommands, mountCommandPalette, paletteCommands, reducePalette } from '../public/command-palette.js';
 
-test('A paleta lista ecrãs, conversas recentes e modelos em português de Portugal', () => {
+test('A paleta lista telas, conversas recentes e modelos em português do Brasil', () => {
   const commands = paletteCommands({
     chats: [{ id: 'c1', title: 'Roteiro da feira' }, { id: 'c2', title: '' }],
     models: [{ key: 'gguf:qwen', display_name: 'Qwen local' }],
   });
-  assert.equal(commands.filter(command => command.group === 'Ecrãs').length, PALETTE_PAGES.length);
+  assert.equal(commands.filter(command => command.group === 'Telas').length, PALETTE_PAGES.length);
   assert.equal(commands.find(command => command.run.type === 'chat' && command.run.id === 'c1').label, 'Roteiro da feira');
   assert.equal(commands.find(command => command.run.id === 'c2').label, 'Conversa sem título');
   assert.equal(commands.find(command => command.run.type === 'model').label, 'Qwen local');
-  assert.deepEqual(filterCommands(commands, 'equipa').map(command => command.run.page), ['team']);
+  assert.deepEqual(filterCommands(commands, 'equipe').map(command => command.run.page), ['team']);
   assert.equal(filterCommands(commands, 'nãoexiste').length, 0);
   const app = readFileSync('public/app.js', 'utf8');
   const html = readFileSync('public/index.html', 'utf8');
@@ -65,7 +65,7 @@ test('Cmd-K e Ctrl-K abrem, as setas percorrem, Enter escolhe e Esc devolve o fo
   await Promise.resolve();
   assert.equal(palette.root.hidden, false);
   assert.equal(doc.activeElement, palette.input);
-  assert.equal(palette.input.getAttribute('aria-label'), 'Pesquisar ecrãs, conversas e modelos');
+  assert.equal(palette.input.getAttribute('aria-label'), 'Pesquisar telas, conversas e modelos');
   key({ key: 'ArrowDown' });
   assert.equal(doc.getElementById('command-palette-active').getAttribute('aria-selected'), 'true');
   key({ key: 'Tab' });

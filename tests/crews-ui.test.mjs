@@ -19,10 +19,10 @@ test('a ilha Equipas fica entre Trabalhar e Criar e o limite de tokens aparece n
   const create = html.indexOf('data-nav-island-group="create"');
   assert.ok(work >= 0 && work < crews && crews < create);
   assert.match(html, /data-page="crews"/);
-  assert.match(html, /> Equipas</);
+  assert.match(html, /> Equipes</);
   assert.match(html, /\/crews\.css/);
   assert.match(js, /crews:'crews'/);
-  assert.match(js, /crews:'Equipas'/);
+  assert.match(js, /crews:'Equipes \/ Equipes'/);
   assert.match(ui, /Limite de tokens por conversa/);
   assert.match(ui, /data-crew-token-limit/);
   assert.match(ui, /data-crew-round/);
