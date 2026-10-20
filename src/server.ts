@@ -5,6 +5,9 @@ import {ComputerControl} from './computer-control.js';
 import {Connections} from './connections.js';
 import { ExperienceJobs } from './experience-jobs.js';
 import { Experience, botTemplates } from './experience.js';
+import { Crews, registerCrewRoutes } from './crews.js';
+import { CrewSecrets } from './crew-secrets.js';
+import { crewCandidates, crewMachine } from './crew-models.js';
 import { recommendations, hardware } from './recommendations.js';
 import { MediaDownloads } from './media-downloads.js';
 import { Subscription, subscriptionConfig, ProRequired, requiredFeature } from './subscription.js';
@@ -56,6 +59,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const mediaDownloads=new MediaDownloads(core.directory,()=>hfAccount.token());
   const library = new ModelLibrary(core.directory, (type, data) => core.store.tx((state, entries) => { if (!state || core.vault.locked) throw new Error('Cofre bloqueado'); core.append(state, entries, type, data); }),undefined,runtime,()=>hfAccount.token());
   const experience=new Experience(core);
+  const crews=new Crews(core.store.db, new CrewSecrets(core.directory, core.vault), experience, () => crewCandidates(library.catalog, model => library.access.get(model), runtime.inventory()), () => crewMachine(core.directory));
   const updates=new Updates(core.directory,JSON.parse(readFileSync(join(core.root,'package.json'),'utf8')).version);
   const personality=async()=>Boolean((await experience.snapshot()).personality);
   const music=new Music(core.directory,core.root);
@@ -341,6 +345,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     for (const task of (await core.snapshot()).tasks.filter(t => t.state === 'running')) await core.pause(task.id);
     await Promise.allSettled([...core.jobs.values()].map(j => j.promise)); core.vault.lock(); return { ok: true };
   });});
+  registerCrewRoutes(app, crews);
   return { app, token, subscription };
 }
 
