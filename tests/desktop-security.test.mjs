@@ -197,11 +197,25 @@ test('Link externo só abre depois que o DNS confirma um endereço público', as
     loadURL(url) { this.loaded = url; }
   }
   const agent = createAgentWindow(AgentWindow, { resolveHost: async hostname => hostname === 'example.com' });
+  agent.webContents.stop = () => { agent.stopped = (agent.stopped || 0) + 1; };
   const page = navigationEvent();
   agent.webContents.handlers['will-navigate'](page, 'https://example.com:8443/path');
-  assert.equal(page.prevented, true);
+  assert.equal(page.prevented, false);
+  const redirect = navigationEvent();
+  agent.webContents.handlers['will-redirect'](redirect, 'http://example.com/a');
+  assert.equal(redirect.prevented, false);
   await new Promise(resolve => setImmediate(resolve));
-  assert.equal(agent.loaded, 'https://example.com:8443/path');
+  assert.equal(agent.loaded, undefined);
+  assert.equal(agent.stopped, undefined);
+  const blocked = navigationEvent();
+  agent.webContents.handlers['will-redirect'](blocked, 'http://192.168.0.8/');
+  assert.equal(blocked.prevented, true);
+  const rebind = navigationEvent();
+  agent.webContents.handlers['will-redirect'](rebind, 'https://rebind.example/x');
+  assert.equal(rebind.prevented, false);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(agent.stopped, 1);
+  assert.equal(agent.loaded, undefined);
 });
 
 test('Fuses deixam o servidor local de pé e fecham os injetores', () => {

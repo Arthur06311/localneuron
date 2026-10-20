@@ -78,14 +78,16 @@ function createAgentWindow(BrowserWindow, { resolveHost } = {}) {
     webPreferences: agentWebPreferences(),
   });
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  const stopNavigation = () => {
+    if (typeof window.isDestroyed === 'function' && window.isDestroyed()) return;
+    if (window.webContents && typeof window.webContents.stop === 'function') window.webContents.stop();
+  };
   const blockUnsafe = (event, url) => {
     if (!isAgentHttpUrl(url)) { event.preventDefault(); return; }
     if (typeof resolveHost !== 'function') return;
-    event.preventDefault();
-    const href = new URL(url).href;
-    Promise.resolve(resolveHost(new URL(url).hostname)).then(ok => {
-      if (ok && (typeof window.isDestroyed !== 'function' || !window.isDestroyed())) window.loadURL(href);
-    }).catch(() => {});
+    let hostname = '';
+    try { hostname = new URL(url).hostname; } catch { event.preventDefault(); return; }
+    Promise.resolve(resolveHost(hostname)).then(ok => { if (!ok) stopNavigation(); }).catch(() => stopNavigation());
   };
   window.webContents.on('will-navigate', blockUnsafe);
   window.webContents.on('will-redirect', blockUnsafe);

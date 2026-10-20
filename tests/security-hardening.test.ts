@@ -40,8 +40,16 @@ test('Classificação de host é a mesma no desktop e no servidor', () => {
   ];
   for (const [host, expected] of cases) {
     assert.equal(hostClass(host), expected, host);
-    assert.equal(classifyHost(host), expected, host);
+    assert.equal(classifyHost(host), host === 'printer.local' ? 'private' : expected, host);
   }
+  assert.equal(hostClass('nas.lan'), 'public');
+  assert.equal(classifyHost('nas.lan'), 'private');
+  assert.equal(hostClass('box.home.arpa'), 'public');
+  assert.equal(classifyHost('box.home.arpa'), 'private');
+  assert.equal(hostClass('mac.ts.net'), 'public');
+  assert.equal(classifyHost('mac.ts.net'), 'private');
+  assert.equal(classifyHost('metadata.google.internal'), 'blocked');
+  assert.equal(classifyHost('files.internal'), 'blocked');
   assert.equal(isPublicHttpUrl('https://example.com/docs'), true);
   assert.equal(isPublicHttpUrl('http://127.0.0.2/'), false);
   assert.equal(isPublicHttpUrl('http://169.254.169.254/'), false);

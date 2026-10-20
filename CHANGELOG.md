@@ -19,6 +19,9 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Alterado
 
+- Uma conexão MCP local deixa de aceitar um shell como comando (`/bin/bash`, `cmd.exe` e equivalentes). O comando precisa ser o caminho absoluto do programa, e os argumentos vão no campo separado. Uma conexão já salva que apontava para um shell falha no próximo teste até ser editada: aponte o comando para o programa e passe os argumentos à parte.
+- HTTPS de uma conexão MCP para IP privado ou VPN (Tailscale) só funciona se a conexão estiver marcada como rede confiável. A opção nasce desligada. Uma conexão antiga nessa situação precisa ser editada e marcada.
+
 - O aplicativo abre direto no Chat, na primeira execução e na atualização. A confirmação da senha do cofre antigo deixa de aparecer: a cópia datada é guardada sozinha, sem pedir senha, código ou PIN, e pode ser importada depois em Configurações.
 - O aplicativo abre direto, sem tela de desbloqueio; a chave do cofre fica no armazenamento seguro do sistema. Quem ainda tem senha confirma uma vez, e a interface deixa de oferecer desbloqueio e senha (#50).
 - A ilha passa a se chamar Equipes, em pt-BR, com o visual grafite. Os identificadores internos continuam `crews` e `/v1/crews` (#58).

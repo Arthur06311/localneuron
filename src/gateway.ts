@@ -27,6 +27,29 @@ export function networkAddresses() {
   return Object.entries(networkInterfaces()).flatMap(([name,values])=>(values||[]).filter(v=>v.family==='IPv4'&&!v.internal&&/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(v.address)).map(v=>({name,address:v.address})));
 }
 const digest=(key:string)=>createHash('sha256').update(key).digest('hex');
+function loopbackBound(host:string){const name=host.replace(/^\[|\]$/g,'').toLowerCase();return name==='127.0.0.1'||name==='::1'||name==='localhost';}
+function loopbackAlias(hostname:string){const name=hostname.replace(/^\[|\]$/g,'').toLowerCase();return name==='127.0.0.1'||name==='localhost'||name==='::1';}
+function splitHostPort(header:string):{hostname:string;port:string}|null{
+  const value=header.trim();
+  if(value.startsWith('[')){const end=value.indexOf(']');if(end<1)return null;const rest=value.slice(end+1);if(rest!==''&&!rest.startsWith(':'))return null;return {hostname:value.slice(1,end),port:rest.startsWith(':')?rest.slice(1):''};}
+  const colon=value.lastIndexOf(':');if(colon<=0)return null;return {hostname:value.slice(0,colon),port:value.slice(colon+1)};
+}
+/** Em loopback, 127.0.0.1, localhost e [::1] são o mesmo computador. host.docker.internal fica de fora: um contentor não pode apresentar-se como a API local. Na rede da casa só vale o endereço anunciado. */
+export function gatewayHostAllowed(header:string|undefined,boundHost:string,port:number){
+  if(!header||header!==header.trim()||/\s/.test(header))return false;
+  const parsed=splitHostPort(header);if(!parsed||parsed.port!==String(port))return false;
+  if(loopbackBound(boundHost))return loopbackAlias(parsed.hostname);
+  return parsed.hostname.toLowerCase()===boundHost.toLowerCase();
+}
+export function gatewayOriginAllowed(origin:string|undefined,boundHost:string,port:number){
+  if(!origin)return true;
+  let url:URL;try{url=new URL(origin);}catch{return false;}
+  if(url.protocol!=='http:'||url.username||url.password||url.pathname!=='/'||url.search||url.hash)return false;
+  if(url.port!==String(port))return false;
+  const hostname=url.hostname.replace(/^\[|\]$/g,'');
+  if(loopbackBound(boundHost))return loopbackAlias(hostname);
+  return hostname.toLowerCase()===boundHost.toLowerCase();
+}
 const requestSchema=z.strictObject({model:z.string().min(1).max(512),messages:z.array(z.strictObject({role:z.enum(['system','user','assistant']),content:z.string().max(131072)})).min(1).max(1000),stream:z.boolean().default(false),max_tokens:z.number().int().min(1).max(32768).optional(),max_completion_tokens:z.number().int().min(1).max(32768).optional(),temperature:z.number().min(0).max(2).optional(),top_p:z.number().min(.01).max(1).optional(),reasoning_effort:z.enum(['none','low','medium','high']).optional(),stream_options:z.strictObject({include_usage:z.boolean()}).optional()});
 type Runner=(model:string,messages:Message[],options:GenerationOptions,signal:AbortSignal,delta:(text:string,phase?:string)=>void)=>Promise<Generation>;
 export class Gateway {
@@ -66,7 +89,7 @@ export class Gateway {
     }}};
     app.addHook('preHandler',async(req,reply)=>{
       reply.header('Cache-Control','no-store').header('X-Content-Type-Options','nosniff').header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'");
-      if(req.headers.host!==`${this.host}:${this.port}`)return reply.code(403).send({error:{message:'Host recusado.',type:'origin_error'}});
+      if(!gatewayHostAllowed(typeof req.headers.host==='string'?req.headers.host:undefined,this.host,this.port))return reply.code(403).send({error:{message:'Host recusado.',type:'origin_error'}});
       if(req.headers['sec-fetch-site']==='cross-site')return reply.code(403).send({error:{message:'Origem externa recusada.',type:'origin_error'}});
       if(req.method==='GET'&&['/remote','/remote.js','/remote.css'].includes(req.url))return;
       if(this.closing)return reply.code(503).send({error:{message:'API desligando.',type:'unavailable'}});
@@ -77,7 +100,7 @@ export class Gateway {
         const now=Date.now(),previous=failures.get(req.ip);const entry=previous&&now-previous.at<60000?previous:{at:now,count:0};entry.count++;if(failures.size>1000)failures.clear();failures.set(req.ip,entry);
         return reply.code(entry.count>30?429:401).send({error:{message:'Chave de API inválida.',type:'authentication_error'}});
       }
-      if(req.headers.origin&&req.headers.origin!==`http://${this.host}:${this.port}`)return reply.code(403).send({error:{message:'Use a API no cliente ou backend do seu aplicativo; acesso direto pelo navegador não está habilitado.',type:'origin_error'}});
+      if(!gatewayOriginAllowed(typeof req.headers.origin==='string'?req.headers.origin:undefined,this.host,this.port))return reply.code(403).send({error:{message:'Use a API no cliente ou backend do seu aplicativo; acesso direto pelo navegador não está habilitado.',type:'origin_error'}});
     });
     app.setErrorHandler((error,_request,reply)=>{
       if((error as {statusCode?:number}).statusCode===429)return reply.code(429).send({error:{message:(error as Error).message,type:'rate_limit'}});

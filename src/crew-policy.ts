@@ -44,11 +44,13 @@ export function tokenHint(token: string) {
 
 export type HostClass = 'loopback' | 'private' | 'public' | 'blocked';
 
-const { hostClass } = createRequire(import.meta.url)('../../desktop/public-url.cjs') as {
+const { hostClass, isConfiguredLanName } = createRequire(import.meta.url)('../../desktop/public-url.cjs') as {
   hostClass: (hostname: string) => HostClass;
+  isConfiguredLanName: (hostname: string) => boolean;
 };
 
 export function classifyHost(hostname: string): HostClass {
+  if (isConfiguredLanName(hostname)) return 'private';
   return hostClass(hostname);
 }
 

@@ -1,6 +1,7 @@
 const ipaddr = require('ipaddr.js');
 
 const LOCAL_SUFFIXES = ['.local', '.localhost', '.localdomain', '.internal'];
+const CONFIGURED_LAN_SUFFIXES = ['.local', '.lan', '.home.arpa', '.ts.net'];
 const BLOCKED_NAMES = new Set([
   'metadata.google.internal',
   'metadata.google.com',
@@ -14,6 +15,12 @@ function stripHost(hostname) {
     .toLowerCase()
     .replace(/^\[|\]$/g, '')
     .replace(/\.$/, '');
+}
+
+function isConfiguredLanName(hostname) {
+  const host = stripHost(hostname);
+  if (!host || host === 'localhost' || host === 'localhost.localdomain') return false;
+  return CONFIGURED_LAN_SUFFIXES.some(suffix => host.length > suffix.length && host.endsWith(suffix));
 }
 
 function hostClass(hostname) {
@@ -78,6 +85,7 @@ async function resolvesPublic(hostname, lookup) {
 
 module.exports = {
   stripHost,
+  isConfiguredLanName,
   hostClass,
   isPublicHttpUrl,
   isAgentHttpUrl,
