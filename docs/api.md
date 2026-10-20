@@ -91,6 +91,23 @@ A API para outro aplicativo é um listener **separado**, com chave própria, por
 Atividades das ferramentas ficam na mensagem assinada e incluem estado, descrição e referências dos arquivos exportados. O conteúdo bruto de raciocínio não é exposto. IDs de modelos integrados começam com `gguf:`; a biblioteca carrega esses arquivos no runtime próprio. Todas essas rotas administrativas mantêm autenticação local, cofre, Host e Origin.
 
 
+## Equipas
+
+A ilha Equipas não cria outra lista de especialistas. `bot_id` aponta para um bot já existente em Minha equipe. Nome, papel, instruções, memória e modelo continuam nesse bot. A migração `equipas sobre os bots existentes` guarda o vínculo, o mascote, as mensagens, os limites (`max_rounds`, `max_tokens`) e os provedores.
+
+Rotas autenticadas, cofre aberto, com limite por rota (`global: false`): leitura 120/min e escrita 30/min. Acima do teto a resposta é 429.
+
+- `GET /v1/crews`: membros ligados, bots disponíveis, limites, provedores sem segredo e a sugestão de modelo.
+- `POST /v1/crews/link`: liga os bots de trabalho já existentes. Não chama a ativação da equipe e não duplica bots.
+- `POST /v1/crews/members`: `{bot_id, mascot?, coordinator?}`.
+- `PATCH /v1/crews/members/:id`: mascote, coordenador ou `provider_id`.
+- `POST /v1/crews/members/:id/model`: `{model}` e Idempotency-Key. Grava o modelo no bot. Um modelo de 70B ou mais, EXO, outro computador, Anthropic ou xAI só pode ficar no coordenador.
+- `GET|POST /v1/crews/members/:id/messages` e `GET /v1/crews/team/messages`.
+- `POST /v1/crews/settings`: `{max_rounds, max_tokens}`.
+- `POST|PATCH|DELETE /v1/crews/providers`: metadados do provedor. O token vai para o cofre cifrado e a resposta só devolve `has_token` e `token_hint`.
+
+A sugestão prefere um modelo local de 7B a 14B que caiba na RAM, com os mesmos tetos do início rápido (2, 4, 8 ou 12 GiB conforme a RAM total), 1,5 GiB de folga e 1 GiB de margem de disco. Não recomenda 70B ou mais. O EXO da equipa só aceita loopback. Esta API não abre a Minha API nem o EXO na rede.
+
 ### MLX
 
 `GET /v1/model-library` informa mlx_available e modelos com chave mlx:. `POST /v1/model-library/import-mlx` recebe `{"folder":"/caminho/absoluto"}` e copia os arquivos necessários para a pasta de modelos do LocalNeuron. Requer sessão local, cofre aberto e ausência de operação concorrente. Carga/descarga e Minha API aceitam chaves mlx: pelo mesmo contrato dos modelos integrados. Esse endpoint não fica disponível na API compartilhada.
