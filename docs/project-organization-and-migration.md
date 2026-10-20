@@ -87,6 +87,7 @@ O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes esp
 - `src/chat.ts` e `src/chat-context.ts`: conversas, anexos, histórico e contexto.
 - `src/agent.ts`: ciclo do assistente e personalidade opcional.
 - `src/experience.ts`, `src/experience-jobs.ts` e `src/bot-playbooks.ts`: wizard, perfis, bots pessoais/profissionais e salas de colaboração.
+- `src/crews.ts`: ilha Equipas. Reusa os bots de Minha equipe (nome, papel, instruções, memória e modelo). As tabelas novas guardam só o vínculo, o mascote, as não lidas, os limites e os provedores.
 - `src/web-tools.ts`: pesquisa e leitura web com validação de destino.
 - `src/connections.ts`: servidores MCP por HTTP/stdio, OAuth e revogação.
 - `src/computer-control.ts` e `desktop/computer.cjs`: controle de computador no desktop, quando habilitado.
