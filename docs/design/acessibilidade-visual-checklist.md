@@ -36,13 +36,13 @@ Reduza a janela para **390px** de largura (e, se puder, repita em 320px e 720px)
    - Como verificar: olhe Claro, Escuro e Sistema. Confira também o grupo no inspetor de acessibilidade.
    - Resultado esperado: os três nomes aparecem. Se a linha quebrar, os botões continuam clicáveis e não se sobrepõem ao miolo da página. O grupo expõe `role="group"` e o nome Aparência. O botão do tema ativo expõe `aria-pressed="true"`.
 
-5. **Bloquear aplicativo continua na barra estreita.**
-   - Como verificar: em 390px, procure “Bloquear aplicativo” e o indicador de RAM, abaixo das ilhas.
-   - Resultado esperado: os dois aparecem. O botão mostra o texto, tem pelo menos 40px de altura e entra na ordem de tabulação. A frase “Processamento neste computador.” pode ficar oculta para a linha caber.
+5. **O indicador de RAM continua na barra estreita.**
+   - Como verificar: em 390px, procure o indicador de RAM, abaixo das ilhas.
+   - Resultado esperado: a memória disponível aparece. A frase “Processamento neste computador.” pode ficar oculta para a linha caber. Não há botão de bloquear nem campo de senha.
 
 6. **Menus em 320px e com zoom de 200% no Electron.**
    - Como verificar: reduza a janela a 320px e abra Criar e Conta. No Electron, repita com o zoom do aplicativo em 200%.
-   - Resultado esperado: os quatro nomes das ilhas continuam visíveis. O menu aberto permanece dentro da janela, os itens têm pelo menos 40px de altura e dá para ler Imagem, Vídeo, Música, Editor e Configuração guiada. O item da página atual mostra a palavra Atual. Bloquear aplicativo continua alcançável.
+   - Resultado esperado: os quatro nomes das ilhas continuam visíveis. O menu aberto permanece dentro da janela, os itens têm pelo menos 40px de altura e dá para ler Imagem, Vídeo, Música, Editor e Configuração guiada. O item da página atual mostra a palavra Atual. O indicador de RAM continua alcançável.
 
 ## 2. Contraste
 
@@ -154,8 +154,8 @@ Use o teclado de verdade. Clique uma vez na página e depois só Tab, Shift+Tab,
 
 2. **A ordem segue o visual.**
    - Como verificar: a partir do topo, anote cada parada. Repita com a janela em 390px.
-   - Resultado esperado, janela larga, com Trabalhar aberta e as outras fechadas: marca LocalNeuron, gatilho Trabalhar, Chat, Minha equipe, Modelos, gatilho Criar, gatilho Conectar, gatilho Conta, em seguida os controles visíveis da barra (atalho Pro e Bloquear aplicativo) e só então Claro, Escuro e Sistema. Menus fechados não recebem foco.
-   - Resultado esperado, janela até 720px: a marca fica oculta pela regra antiga da barra, então a ordem começa no gatilho Trabalhar. Seguem os itens do menu aberto, os outros gatilhos, o atalho “Explorar meu Pro” quando o cartão estiver visível (ele some se a altura da janela for menor que 800px), Bloquear aplicativo e, no topo, o chip PRO, Claro, Escuro e Sistema. O bloqueio continua na ordem de tabulação. Menus fechados não recebem foco.
+   - Resultado esperado, janela larga, com Trabalhar aberta e as outras fechadas: marca LocalNeuron, gatilho Trabalhar, Chat, Minha equipe, Modelos, gatilho Criar, gatilho Conectar, gatilho Conta, em seguida o atalho Pro visível na barra e só então Claro, Escuro e Sistema. Menus fechados não recebem foco.
+   - Resultado esperado, janela até 720px: a marca fica oculta pela regra antiga da barra, então a ordem começa no gatilho Trabalhar. Seguem os itens do menu aberto, os outros gatilhos, o atalho “Explorar meu Pro” quando o cartão estiver visível (ele some se a altura da janela for menor que 800px) e, no topo, o chip PRO, Claro, Escuro e Sistema. Menus fechados não recebem foco.
 
 3. **Enter ou Espaço abre e fecha a ilha.**
    - Como verificar: foque Criar e pressione Enter. Tabule. Pressione Enter de novo.

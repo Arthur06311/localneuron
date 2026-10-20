@@ -6,16 +6,20 @@ LocalNeuron 0.27 · Alfa. Este guia explica o aplicativo instalado no seu comput
 
 1. Baixe o pacote do seu sistema em **Downloads**. No GitHub Releases, escolha um instalador em Assets; “Source code” é somente o código-fonte.
 2. No Mac, abra o DMG e arraste o app para Aplicativos. No Windows, extraia tudo e abra o executável na pasta. No Linux, extraia `LocalNeuron-Linux-x64-Instalar.zip`, aguarde terminar e dê dois cliques em **Instalar LocalNeuron** dentro da pasta; o app abre automaticamente depois de instalado. Os TAR.GZ antigos precisam terminar toda a extração antes de abrir o app.
-3. Abra o app e configure a proteção do espaço. Se você já tinha senha, use **entrar/desbloquear**, preservando seus dados.
+3. Abra o app. Ele entra direto no seu espaço. Se esta instalação já tinha senha, o app pede essa senha uma única vez, troca o cofre para uma chave deste computador e, nas próximas aberturas, entra direto.
 4. No assistente inicial, confira o computador, escolha seu perfil e revise as recomendações. Você pode voltar ao assistente depois sem recriar os mesmos bots.
 5. Em **Modelos**, escolha uma IA de texto pequena marcada como compatível com o motor disponível. Confira RAM, disco, licença e tamanho antes de baixar.
 6. Quando o download terminar, abra o Chat e selecione o modelo. O carregamento na RAM pode demorar na primeira vez.
 
-**Já instalou antes?** Feche o app antes de atualizar. Preserve a pasta de dados e substitua apenas o aplicativo. Não crie outra senha sobre uma instalação existente nem apague a pasta para “corrigir” o login.
+**Já instalou antes?** Feche o app antes de atualizar. Preserve a pasta de dados e substitua apenas o aplicativo. Não apague a pasta para recuperar o acesso.
 
-## Entrar sem digitar a senha toda vez
+## Abertura do aplicativo
 
-No login do aplicativo desktop, marque **Lembrar meu acesso neste computador**. A credencial é cifrada pelo armazenamento seguro do sistema; não é guardada no navegador. Quem usa sua sessão do computador poderá abrir o espaço. A opção é voluntária e pode ser desligada em **Preferências → Acesso neste computador**. O botão **Bloquear aplicativo** continua bloqueando a sessão atual.
+O LocalNeuron não pede senha para abrir. Uma chave aleatória, criada pelo aplicativo, protege o cofre com o mesmo AES-256-GCM e scrypt de antes. No aplicativo instalado, essa chave fica cifrada no armazenamento seguro do sistema: Keychain no macOS, DPAPI no Windows e libsecret no Linux. O processo principal lê a chave; ela não aparece na tela nem fica em texto claro.
+
+Se o armazenamento seguro não estiver disponível, a chave fica em um arquivo só do seu usuário, com permissão restrita, e o aplicativo registra um aviso local. Esse aviso não sai do computador.
+
+Quem já usava senha vê, uma vez, o pedido da senha atual. Se essa senha estiver errada, o cofre antigo permanece intacto. Não há senha opcional.
 
 O wizard salva a conclusão ao chegar ao último passo. Para refazê-lo, use **Minha equipe → Mais opções da equipe → Repetir configuração**. Isso preserva perfil, conversas e bots existentes, sem obrigar a refazer tudo na próxima abertura.
 
@@ -167,7 +171,7 @@ Pro não muda os pesos do modelo nem torna qualquer IA automaticamente mais inte
 
 ## Dados e backup
 
-A senha protege os segredos do cofre, mas **as conversas não são todas cifradas por ela**. Proteja também seu usuário do sistema e disco.
+A chave deste computador protege os segredos do cofre, mas **as conversas não são todas cifradas por ela**. Proteja também seu usuário do sistema e disco.
 
 Novas instalações usam as pastas de dados do sistema:
 
@@ -177,7 +181,7 @@ Novas instalações usam as pastas de dados do sistema:
 
 Instalações antigas podem manter a pasta irmã `Colmeia-data/`. O nome legado é preservado para compatibilidade. Em desenvolvimento, o serviço usa `.data/` e o desktop `.desktop/`.
 
-Para restaurar um backup, o caminho principal no aplicativo desktop é o botão **Abrir uma pasta de dados existente**, na tela de acesso. Selecione a pasta pai, a que contém `workspace/` (`workspace/vault.enc.json`). O app reabre esse espaço e deixa a pasta atual intacta. A variável `COLMEIA_DESKTOP_DATA_DIR`, se definida antes de abrir, aponta para essa mesma pasta pai e tem prioridade sobre a pasta escolhida no botão.
+Para restaurar um backup, o caminho principal no aplicativo desktop é o botão **Abrir uma pasta de dados existente**, em **Preferências** (e também na única tela de migração, se o cofre ainda usa senha). Selecione a pasta pai, a que contém `workspace/` (`workspace/vault.enc.json`). O app reabre esse espaço e deixa a pasta atual intacta. A variável `COLMEIA_DESKTOP_DATA_DIR`, se definida antes de abrir, aponta para essa mesma pasta pai e tem prioridade sobre a pasta escolhida no botão.
 
 No modo navegador o botão não aparece. Defina `COLMEIA_DATA_DIR` com a pasta que contém `vault.enc.json` diretamente: a `workspace` de um backup do desktop, ou a própria `.data` se o espaço nasceu no modo navegador. Não aponte para a pasta pai do desktop.
 
@@ -191,9 +195,9 @@ A exportação do espaço (`GET /v1/space/export`) gera um único arquivo, `loca
 
 O aplicativo tenta a próxima porta livre em `127.0.0.1` e mostra a mensagem “A porta … está em uso por outro programa”. A URL real fica em `session.json`; o desktop e o `scripts/open.mjs` usam essa URL. `LOCALNEURON_PORT` é a porta preferida do modo navegador; `COLMEIA_PORT` continua aceito. No desktop, a preferida é 4318, ou `LOCALNEURON_TEST_PORT` em testes.
 
-### O app só oferece criar senha
+### O app pede a senha de novo
 
-Confira se abriu a instalação correta e selecionou a pasta de dados existente. O primeiro uso de uma pasta vazia cria um novo espaço. Não apague o espaço antigo nem redefina a senha para tentar localizar seus dados.
+Isso só acontece uma vez, quando o cofre ainda foi criado com senha. Use a senha atual. Se ela não for aceita, nada é apagado. Confira se abriu a pasta de dados certa. O primeiro uso de uma pasta vazia cria um espaço novo e, nas vezes seguintes, abre direto.
 
 ### O modelo não baixa ou exige conta
 

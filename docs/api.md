@@ -59,7 +59,7 @@ Todas as rotas exigem sessão válida e cofre desbloqueado. POST usa esquema fec
 - `POST /v1/chats/:id/send`, corpo `{model, content, options?, retry?}` e Idempotency-Key: agenda resposta da instância local. Conteúdo de 1 a 131.072 caracteres, conversa de até 8 MiB serializados e 2.000 mensagens. A janela enviada à IA é limitada separadamente pelo contexto. Um job por vez. Retorna id da conversa e da resposta.
 - `POST /v1/chats/:id/stop`, corpo `{}`: cancela e aguarda o job.
 
-Mensagens têm papel user/assistant e status pending/complete/stopped/error. Falhas preservam a pergunta e eventual trecho parcial. Reenvio da mesma chave não cria outra mensagem ou inferência. Mensagens completas anteriores são contexto; trechos interrompidos não são reutilizados como respostas concluídas. O renderer mostra Markdown sanitizado por DOMPurify, com blocos de código copiáveis e sem execução de HTML recebido. Bloquear e fechar aguardam cancelamento dos jobs. O envio não concede ferramentas ao modelo e não usa o fluxo editorial avançado.
+Mensagens têm papel user/assistant e status pending/complete/stopped/error. Falhas preservam a pergunta e eventual trecho parcial. Reenvio da mesma chave não cria outra mensagem ou inferência. Mensagens completas anteriores são contexto; trechos interrompidos não são reutilizados como respostas concluídas. O renderer mostra Markdown sanitizado por DOMPurify, com blocos de código copiáveis e sem execução de HTML recebido. Fechar o aplicativo aguarda o cancelamento dos jobs. O envio não concede ferramentas ao modelo e não usa o fluxo editorial avançado.
 
 
 A interface não oferece mais tarefas ou fluxos. As rotas legadas acima preservam compatibilidade com dados antigos.
