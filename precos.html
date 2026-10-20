@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0f1114">
+<meta name="theme-color" content="#0f1114"><meta name="color-scheme" content="light dark">
 <title>Planos — LocalNeuron</title>
 <meta name="description" content="Plano Grátis do LocalNeuron a R$ 0. O Pro está em preparação, sem preço nesta página. Não há pagamento neste site.">
 <link rel="canonical" href="https://localneuron.ai/precos.html">
@@ -20,14 +20,16 @@
 <link rel="icon" href="./app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="stylesheet" href="./style.css">
-</head>
+<script>try{var t=localStorage.getItem("localneuron-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script></head>
 <body>
 <a class="skip" href="#main">Ir ao conteúdo</a>
 <header class="guide-header">
 <a class="brand" href="./"><img src="./app-icon.png" width="18" height="18" alt="">LocalNeuron</a>
 <nav aria-label="Navegação"><a href="./">Início</a><a href="./#download">Download</a><a href="./guide.html#pro">Pro no guia de configuração</a></nav>
+<div class="header-actions"><button type="button" class="theme-toggle" id="theme-toggle"></button></div>
 </header>
-<main class="guide-main prose" id="main" style="max-width:980px;margin:0 auto;padding:28px 20px 72px">
+<main class="guide-main prose doc" id="main">
+<section class="doc-block">
 <p class="eyebrow">Planos</p>
 <h1>Da conversa à entrega.</h1>
 <p>A assinatura é para quem quer organizar, revisar e produzir com as IAs locais. Baixar e rodar modelos locais compatíveis não exige pagamento.</p>
@@ -60,7 +62,8 @@
 </article>
 </div>
 <p class="note">A venda ainda não foi ativada nesta versão. Os botões de pagamento do aplicativo serão liberados quando o serviço de assinatura estiver configurado. Nenhuma cobrança foi criada. Não há compra por este site.</p>
-
+</section>
+<section class="doc-block">
 <h2>O que muda no dia a dia</h2>
 <div class="table-wrap"><table>
 <thead><tr><th>Recurso</th><th>Grátis</th><th>Pro mensal</th></tr></thead>
@@ -73,7 +76,8 @@
 <tr><th scope="row">Minha API</th><td>Uma chave de acesso</td><td>Até 100 chaves individuais, limites editáveis, pausa por chave e fila</td></tr>
 <tr><th scope="row">Seus arquivos</th><td>Leitura, edição manual, backups e exportação</td><td>Os mesmos direitos, inclusive após o cancelamento</td></tr>
 </tbody></table></div>
-
+</section>
+<section class="doc-block">
 <h2>Simples, inclusive ao cancelar.</h2>
 <div class="faq-list">
 <details open><summary>O Pro deixa qualquer IA mais inteligente?</summary><p>O Pro melhora a organização, o contexto e as ferramentas disponíveis. A capacidade do modelo e a velocidade continuam dependendo dos pesos da IA e do seu computador. Os motores do Grátis não têm redução artificial de desempenho.</p></details>
@@ -81,6 +85,7 @@
 <details><summary>O que acontece se eu cancelar?</summary><p>Ao cancelar a próxima renovação, você mantém o Pro até o fim do período pago. Depois, o aplicativo volta ao Grátis. Projetos existentes continuam disponíveis para leitura, edição manual e exportação. Novas tarefas premium ficam pausadas. Pagamentos pendentes exigem regularização no portal.</p></details>
 <details><summary>Preciso pagar por mensagem ou pelos motores?</summary><p>Não há cobrança por mensagem processada no computador. A assinatura dá acesso aos recursos Pro nesta instalação. Ela não inclui computadores na nuvem, APIs pagas de terceiros nem licenças comerciais dos modelos.</p></details>
 </div>
+</section>
 <p class="guide-top-links"><a href="./#download">Baixar</a><a href="./guide.html#pro">Pro no guia de configuração</a></p>
 </main>
 <footer>
@@ -89,5 +94,5 @@
 <a href="./#privacidade">Idioma e privacidade</a>
 <span>0.28.1 · Alfa</span>
 </footer>
-</body>
+<script src="./theme.js"></script></body>
 </html>

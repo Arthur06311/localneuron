@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0f1114">
+<meta name="theme-color" content="#0f1114"><meta name="color-scheme" content="light dark">
 <title>Primeiros passos — LocalNeuron</title>
 <meta name="description" content="Instale o LocalNeuron, baixe um modelo pequeno e faça a primeira conversa offline. Backup e atualização sem apagar seus dados.">
 <link rel="canonical" href="https://localneuron.ai/primeiros-passos.html">
@@ -20,18 +20,21 @@
 <link rel="icon" href="./app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="stylesheet" href="./style.css">
-</head>
+<script>try{var t=localStorage.getItem("localneuron-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script></head>
 <body>
 <a class="skip" href="#main">Ir ao conteúdo</a>
 <header class="guide-header">
 <a class="brand" href="./"><img src="./app-icon.png" width="18" height="18" alt="">LocalNeuron</a>
 <nav aria-label="Navegação"><a href="./">Início</a><a href="./#download">Download</a><a href="./requisitos.html">Requisitos</a><a href="./guide.html">Guia de configuração</a></nav>
+<div class="header-actions"><button type="button" class="theme-toggle" id="theme-toggle"></button></div>
 </header>
-<main class="guide-main prose" id="main" style="max-width:860px;margin:0 auto;padding:28px 20px 72px">
+<main class="guide-main prose doc" id="main">
+<section class="doc-block">
 <p class="eyebrow">Começar</p>
 <h1>Primeiros passos</h1>
 <p>Instale o app, baixe um modelo e converse. Os instaladores publicados aqui são da versão 0.28.1.</p>
-
+</section>
+<section class="doc-block">
 <h2>1. Baixar e instalar</h2>
 <p>Baixe o instalador em <a href="https://github.com/Arthur06311/localneuron/releases">Versões no GitHub</a>, na seção Assets. “Source code” é só o código, não o app. Os mesmos arquivos estão em <a href="./#download">Downloads</a>.</p>
 <div class="table-wrap"><table>
@@ -49,14 +52,16 @@
 <li>No Linux, abra o app com seu usuário normal, sem <code>sudo</code>.</li>
 <li>Por ser alfa, o sistema pode avisar ao abrir. A assinatura de distribuição ainda não existe. No Mac, a assinatura é ad hoc, sem notarização. Confira a origem e o SHA-256. Não desative o Gatekeeper.</li>
 </ul>
-
+</section>
+<section class="doc-block">
 <h2>2. Primeira abertura</h2>
 <ol>
 <li>Abra o LocalNeuron. No login do aplicativo desktop, marque <strong>Lembrar meu acesso neste computador</strong>. A credencial é cifrada pelo armazenamento seguro do sistema; não é guardada no navegador. Quem usa sua sessão do computador poderá abrir o espaço. A opção é voluntária e pode ser desligada em <strong>Preferências → Acesso neste computador</strong>. O botão <strong>Bloquear aplicativo</strong> continua bloqueando a sessão atual.</li>
 <li>Siga o assistente: confira a RAM e o disco, escolha o perfil e revise as recomendações.</li>
 <li>Para refazer depois: Minha equipe → Mais opções da equipe → Repetir configuração. Perfil, conversas e membros são preservados.</li>
 </ol>
-
+</section>
+<section class="doc-block">
 <h2>3. Escolher e baixar um modelo</h2>
 <ol>
 <li>Abra Modelos.</li>
@@ -66,15 +71,17 @@
 </ol>
 <p>Exemplo para começar: Qwen3 · Mini (0,64 GB, cerca de 2 GiB de RAM) ou Qwen3 · Equilibrado (2,50 GB, cerca de 5 GiB de RAM). As estimativas não substituem um teste.</p>
 <p class="note">Já tem GGUFs no LM Studio? O app encontra e reutiliza esses arquivos sem copiar.</p>
-
+</section>
+<section class="doc-block">
 <h2>4. Primeira conversa</h2>
 <ol>
 <li>Quando o download terminar, abra o Chat e selecione o modelo.</li>
 <li>Escreva a mensagem. Na primeira vez, carregar o modelo na memória pode demorar.</li>
-<li>Para garantir que nada sai do computador, ative Ferramentas → Usar offline: a internet e o terminal ficam desligados.</li>
+<li>Ative Ferramentas → Usar offline para desligar a internet e o terminal das ferramentas. O app avisa que o chat, o computador e os arquivos continuam locais. Esse botão não desliga os canais de Minha equipe: Anthropic e Grok (xAI) enviam o texto para o serviço, e outro computador envia o texto para fora quando o endereço não é deste computador. O EXO dessa equipe usa só o endereço deste computador (127.0.0.1).</li>
 <li>Use Parar para interromper uma resposta. Liberar memória tira o modelo da RAM sem apagá-lo do disco.</li>
 </ol>
-
+</section>
+<section class="doc-block">
 <h2>5. Onde ficam seus dados</h2>
 <ul>
 <li>macOS: <code>~/Library/Application Support/Colmeia/</code></li>
@@ -82,7 +89,8 @@
 <li>Linux: <code>~/.config/Colmeia/</code> ou <code>$XDG_CONFIG_HOME/Colmeia/</code></li>
 </ul>
 <p>Colmeia é o nome antigo, mantido por compatibilidade. Instalações antigas no Mac podem usar <code>Colmeia-data/</code>, ao lado do app. A pasta de trabalho das ferramentas fica fora dessa pasta. Inclua-a no backup.</p>
-
+</section>
+<section class="doc-block">
 <h2 id="backup-e-restauracao">6. Backup e restauração</h2>
 <h3>Fazer backup</h3>
 <ol>
@@ -98,9 +106,11 @@
 <li>O app reabre esse espaço. A pasta atual fica intacta.</li>
 </ol>
 <p class="note">Para apontar outra pasta antes de abrir, defina <code>LOCALNEURON_DESKTOP_DATA_DIR</code>. Esse nome tem prioridade sobre o botão. O nome antigo <code>COLMEIA_DESKTOP_DATA_DIR</code> ainda é aceito, mas está descontinuado: o app avisa para trocá-lo.</p>
-
+</section>
+<section class="doc-block">
 <h2>7. Atualizar</h2>
 <p>Feche o app, instale a versão nova e substitua só o aplicativo. Não apague a pasta de dados. Desde a 0.27, o app avisa em Preferências → Atualizações.</p>
+</section>
 <p class="guide-top-links"><a href="./#download">Baixar</a><a href="./#faq">Perguntas frequentes</a><a href="https://github.com/Arthur06311/localneuron/issues">Abrir uma issue</a></p>
 </main>
 <footer>
@@ -109,5 +119,5 @@
 <a href="./#privacidade">Idioma e privacidade</a>
 <span>0.28.1 · Alfa</span>
 </footer>
-</body>
+<script src="./theme.js"></script></body>
 </html>

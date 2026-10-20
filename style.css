@@ -1,4 +1,7 @@
-:root{color-scheme:dark;--bg:#0f1114;--panel:#15181c;--panel2:#1b1f24;--line:#262b31;--ink:#e6e8eb;--muted:#8b929b;--accent:#7aa2f7;--ok:#5fb98a;--warn:#d6a652;--font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-family:var(--font);font-size:14px;line-height:1.5;color:var(--ink);background:var(--bg);font-synthesis:none}
+:root{color-scheme:dark;--bg:#0f1114;--panel:#15181c;--panel2:#1b1f24;--line:#262b31;--ink:#e6e8eb;--muted:#8b929b;--accent:#7aa2f7;--ok:#5fb98a;--warn:#d6a652;--btn:#e6e8eb;--btn-ink:#0f1114;--btn-hover:#f3f5f7;--meta:#3c4248;--ghost-hover:#222830;--font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-family:var(--font);font-size:14px;line-height:1.5;color:var(--ink);background:var(--bg);font-synthesis:none}
+:root[data-theme="light"]{color-scheme:light;--bg:#f3f4f6;--panel:#fff;--panel2:#e7eaee;--line:#d0d5dc;--ink:#16181c;--muted:#3f4752;--accent:#1d4ed8;--ok:#0b7a45;--warn:#8a5a00;--btn:#16181c;--btn-ink:#f3f4f6;--btn-hover:#2c3138;--meta:#d7dbe1;--ghost-hover:#dfe3e8}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){color-scheme:light;--bg:#f3f4f6;--panel:#fff;--panel2:#e7eaee;--line:#d0d5dc;--ink:#16181c;--muted:#3f4752;--accent:#1d4ed8;--ok:#0b7a45;--warn:#8a5a00;--btn:#16181c;--btn-ink:#f3f4f6;--btn-hover:#2c3138;--meta:#d7dbe1;--ghost-hover:#dfe3e8}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f1114;--panel:#15181c;--panel2:#1b1f24;--line:#262b31;--ink:#e6e8eb;--muted:#8b929b;--accent:#7aa2f7;--ok:#5fb98a;--warn:#d6a652;--btn:#e6e8eb;--btn-ink:#0f1114;--btn-hover:#f3f5f7;--meta:#3c4248;--ghost-hover:#222830}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:72px}
 body{margin:0;overflow-x:clip}
@@ -31,11 +34,12 @@ nav a:hover,nav a[aria-current="page"]{color:var(--ink);background:var(--panel2)
 .language select{background:transparent;border:0;font-size:13px;max-width:118px;padding:6px 0}
 .language option{background:var(--panel)}
 
-.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:8px 12px;border-radius:6px;border:1px solid var(--ink);background:var(--ink);color:#0f1114;font-weight:600;font-size:13px;line-height:1.3}
-.button:hover{background:#f3f5f7}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:8px 12px;border-radius:6px;border:1px solid var(--btn);background:var(--btn);color:var(--btn-ink);font-weight:600;font-size:13px;line-height:1.3}
+.button:hover{background:var(--btn-hover)}
 .button.small{min-height:36px;padding:6px 10px;font-size:13px}
 .button.ghost{background:var(--panel2);color:var(--ink);border-color:var(--line);font-weight:500}
-.button.ghost:hover{background:#222830}
+.button.ghost:hover{background:var(--ghost-hover)}
+.theme-toggle{min-height:36px;padding:0 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font-size:13px;white-space:nowrap}
 .text-link{color:var(--muted);font-size:13px;display:inline-flex;gap:6px;align-items:center;min-height:40px}
 .text-link:hover{color:var(--ink)}
 
@@ -53,7 +57,7 @@ h3{font-size:15px;margin:0}
 .hero-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;align-items:center}
 .hero-downloads{display:flex;flex-wrap:wrap;gap:8px}
 .hero-downloads .button{min-width:168px;align-items:flex-start;flex-direction:column;gap:2px;padding:8px 12px}
-.btn-meta{font-weight:500;font-size:12px;color:#3c4248}
+.btn-meta{font-weight:500;font-size:12px;color:var(--meta)}
 .hero-visual{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:12px 12px 0;min-width:0}
 .visual-caption,.visual-footer{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px;font-family:var(--mono)}
 .visual-caption{margin-bottom:10px}
@@ -99,8 +103,8 @@ h3{font-size:15px;margin:0}
 .download-card p{margin:2px 0 0;color:var(--muted);font-size:13px}
 .os-icon{width:28px;height:28px;display:grid;place-items:center;color:var(--ink);border:1px solid var(--line);border-radius:6px;background:var(--panel2)}
 .os-icon svg{width:16px;height:16px}
-.download-action{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;background:var(--ink);color:#0f1114;font-weight:600}
-.download-action:hover{background:#f3f5f7}
+.download-action{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--btn);border-radius:6px;background:var(--btn);color:var(--btn-ink);font-weight:600}
+.download-action:hover{background:var(--btn-hover)}
 .unavailable{font-size:12px;color:var(--muted);max-width:12ch;text-align:right}
 .checksum{margin-top:8px;color:var(--muted);font-size:12px}
 .checksum summary{min-height:32px;display:flex;align-items:center}
@@ -139,10 +143,15 @@ dialog h2{font-size:18px}
 dialog p{color:var(--muted)}
 dialog>button{float:right;background:none;border:0;color:var(--ink);font-size:20px;width:36px;height:36px}
 
-.guide-shell{max-width:1120px;margin:0 auto;padding:24px 20px 64px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:28px}
-.guide-nav{position:sticky;top:64px;align-self:start;display:grid;gap:2px;max-height:calc(100vh - 88px);overflow:auto}
+.guide-shell{max-width:1120px;margin:0 auto;padding:24px 20px 64px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:20px;align-items:start}
+.guide-nav{position:sticky;top:64px;align-self:start;display:grid;gap:2px;max-height:calc(100vh - 88px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px}
 .guide-nav a{color:var(--muted);font-size:13px;padding:6px 8px;border-radius:6px}
 .guide-nav a:hover,.guide-nav a[aria-current]{color:var(--ink);background:var(--panel2)}
+.doc-toc summary{display:none}
+main.doc{max-width:980px;margin:0 auto;padding:28px 20px 72px}
+.guide-main section{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 16px 8px;margin:0 0 12px}
+.doc-block{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px 8px;margin:0 0 12px}
+.doc-block h2{margin-top:0}
 .guide-main h1{font-size:clamp(26px,3vw,34px);margin:0 0 12px}
 .guide-main h2{font-size:20px;margin:0 0 10px}
 .guide-main h3{margin:16px 0 8px}
@@ -164,16 +173,32 @@ html[lang=ja] h1,html[lang=zh-CN] h1{letter-spacing:0}
 
 @media(max-width:900px){
 .hero,.split,.download-section,.cards,.guide-shell,.page-grid{grid-template-columns:1fr}
-.guide-nav{position:static;max-height:none;display:flex;flex-wrap:wrap}
 .section-heading,.docs-banner,.closing{display:block}
 .docs-banner .button,.closing a{margin-top:12px}
 }
-@media(max-width:900px){
-header nav{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
-header nav a{white-space:nowrap}
+@media(max-width:720px){
+header,.guide-header,main,.guide-shell,.guide-main,main.doc,.doc-block,.table-wrap{min-width:0;max-width:100%}
+header nav,.guide-header nav,.guide-nav{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;min-width:0;max-width:100%}
+header nav a,.guide-header nav a,.guide-nav a{white-space:nowrap}
+.guide-nav{position:static;max-height:none;display:flex}
+.guide-header{position:sticky;top:0;z-index:6}
+.doc-toc summary{display:flex;align-items:center;min-height:40px;font-weight:600;cursor:pointer}
+.doc-toc:not([open]) .guide-nav{display:none}
+.table-wrap{max-width:100%;overflow-x:auto}
+table{min-width:34rem}
+.prose pre,.guide-main pre,pre{max-width:100%;overflow-x:auto}
+.prose code,.guide-main code,code{overflow-wrap:anywhere}
+main,.guide-shell,.guide-main,.doc{min-width:0}
+}
+@media(max-width:360px){
+header{grid-template-columns:1fr;grid-template-areas:"brand" "actions" "nav"}
+.guide-header{flex-direction:column;align-items:stretch}
+.guide-header .header-actions{margin-left:0}
+.header-actions{flex-wrap:wrap}
+table{min-width:28rem}
 }
 @media(max-width:640px){
-header,.guide-header,.wrap,.hero{padding-left:16px;padding-right:16px}
+header,.guide-header,.wrap,.hero,main.doc,.guide-shell{padding-left:16px;padding-right:16px}
 .hero-downloads,.hero-downloads .button{width:100%}
 .download-card{grid-template-columns:28px minmax(0,1fr);padding:10px}
 .download-card .download-action,.download-card .unavailable{grid-column:2}
