@@ -89,6 +89,22 @@ export const migrations: Migration[] = [
       await tx.exec('CREATE TABLE IF NOT EXISTS space_binding (id integer PRIMARY KEY CHECK (id = 1), space_id text NOT NULL)');
     },
   },
+  {
+    version: 4,
+    name: 'trechos locais dos anexos',
+    async up(tx) {
+      await tx.exec(`CREATE TABLE IF NOT EXISTS attachment_chunks (
+        id text PRIMARY KEY,
+        chat_id text NOT NULL,
+        attachment_id text NOT NULL,
+        name text NOT NULL,
+        location text NOT NULL,
+        chunk_index integer NOT NULL,
+        text text NOT NULL,
+        embedding jsonb
+      )`);
+    },
+  },
 ];
 
 export function futureSchemaMessage(found: number, known: number) {
