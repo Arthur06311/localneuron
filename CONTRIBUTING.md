@@ -4,7 +4,7 @@ Antes de propor uma alteração, confira o README, as limitações da alfa e a l
 
 ## Reportar problemas
 
-Inclua versão do app, sistema/arquitetura, modelo/motor, passos para reproduzir, resultado esperado e mensagem de erro. Remova chaves, tokens, e-mails pessoais, prompts privados e caminhos de usuário. Não anexe sua pasta de dados.
+Use o formulário [🐞 Relatar um bug](https://github.com/Arthur06311/localneuron/issues/new?template=bug_report.yml). Inclua versão do app, sistema/arquitetura, modelo/motor, passos para reproduzir, resultado esperado e mensagem de erro. Remova chaves, tokens, e-mails pessoais, prompts privados e caminhos de usuário. Não anexe sua pasta de dados. Vulnerabilidades de segurança não devem ser relatadas em issues abertas; use o canal privado descrito no [SECURITY.md](SECURITY.md).
 
 ## Desenvolvimento
 
