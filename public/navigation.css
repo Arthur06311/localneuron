@@ -1,7 +1,8 @@
 /* Navigation islands: each group has its own cue, label and selected state. */
 .sidebar nav{display:flex;flex-direction:column;gap:var(--space-2)}
 .nav-island{--island:var(--island-work);--island-soft:var(--island-work-soft);border:1px solid transparent;border-radius:var(--radius-md);background:transparent;position:relative;transition:border-color .18s,background .18s}
-.nav-island[data-nav-island-group="crews"]{--island:var(--island-crews);--island-soft:var(--island-crews-soft)}
+.nav-island[data-nav-island-group="teams"]{--island:var(--island-teams);--island-soft:var(--island-teams-soft);--island-on:#fff}
+html[data-theme=dark] .nav-island[data-nav-island-group="teams"]{--island-on:#14161b}
 .nav-island[data-nav-island-group="create"]{--island:var(--island-create);--island-soft:var(--island-create-soft)}
 .nav-island[data-nav-island-group="connect"]{--island:var(--island-connect);--island-soft:var(--island-connect-soft)}
 .nav-island[data-nav-island-group="account"]{--island:var(--island-account);--island-soft:var(--island-account-soft)}

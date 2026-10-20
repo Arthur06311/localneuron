@@ -25,6 +25,7 @@ const paths = {
  key: '<circle cx="8" cy="15" r="4"/><path d="m11.2 12.8 9.3-9.3M17 4h3.5V7.5"/>',
  compass: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 6-6 2 2-6z"/>',
  user: '<circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/>',
- users: '<circle cx="9" cy="8.5" r="2.8"/><path d="M3.8 19a5.2 5.2 0 0 1 10.4 0"/><circle cx="17" cy="9" r="2.2"/><path d="M16.2 19a4.6 4.6 0 0 1 4-4.4"/>'
+ users: '<circle cx="9" cy="8.5" r="2.8"/><path d="M3.8 19a5.2 5.2 0 0 1 10.4 0"/><circle cx="17" cy="9" r="2.2"/><path d="M16.2 19a4.6 4.6 0 0 1 4-4.4"/>',
+ teams: '<circle cx="8" cy="8" r="2.2"/><circle cx="16" cy="8" r="2.2"/><path d="M3.8 18.5a4.4 4.4 0 0 1 8.4-2.2"/><path d="M12.2 16.6a4.2 4.2 0 0 1 8 2"/>'
 };
 export const icon = name => `<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths[name] || paths.chat}</svg>`;

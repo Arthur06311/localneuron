@@ -10,13 +10,18 @@ test('navigation is grouped into five discoverable islands',async()=>{
   const html=await readFile(resolve(root,'public/index.html'),'utf8');
   const js=await readFile(resolve(root,'public/app.js'),'utf8');
   const css=await readFile(resolve(root,'public/navigation.css'),'utf8');
-  for(const island of ['work','crews','create','connect','account']){
+  for(const island of ['work','teams','create','connect','account']){
     assert.match(html,new RegExp(`data-nav-island-group="${island}"`));
     assert.match(html,new RegExp(`id="nav-island-${island}"`));
   }
   assert.match(html,/navigation\.css/);
-  assert.match(html,/> Equipes</);
-  assert.match(html,/data-page="crews"/);
+  assert.match(html,/>Equipes</);
+  assert.match(html,/Agentes no mesmo pedido/);
+  assert.match(html,/Visão da equipe/);
+  assert.match(html,/Conversas/);
+  assert.match(html,/data-page="equipes"/);
+  assert.match(html,/data-page="team"/);
+  assert.match(html,/Minha equipe/);
   assert.doesNotMatch(html,/> Equipas</);
   assert.match(js,/navIslandForPage/);
   assert.match(js,/toggleNavIsland/);
@@ -25,7 +30,7 @@ test('navigation is grouped into five discoverable islands',async()=>{
 
 test('every former destination remains present inside an island',async()=>{
   const html=await readFile(resolve(root,'public/index.html'),'utf8');
-  for(const page of ['chat','team','models','crews','photo','studio','music','editor','connections','exo','server','sharing','pro','subscription','wizard','settings']){
+  for(const page of ['chat','team','models','equipes','photo','studio','music','editor','connections','exo','server','sharing','pro','subscription','wizard','settings']){
     assert.match(html,new RegExp(`data-page="${page}"`),`Missing page ${page}`);
   }
 });

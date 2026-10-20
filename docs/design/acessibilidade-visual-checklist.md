@@ -20,9 +20,9 @@ Tokens de tipografia e espaçamento, em `public/polish.css`:
 
 Reduza a janela para **390px** de largura (e, se puder, repita em 320px e 720px). O modo Claro e o modo Escuro devem passar nos mesmos pontos.
 
-1. **Quatro ilhas continuam nomeadas.**
+1. **Cinco ilhas continuam nomeadas.**
    - Como verificar: olhe a barra no topo. Não role a página ainda.
-   - Resultado esperado: Trabalhar, Criar, Conectar e Conta aparecem na mesma faixa, cada uma com ícone, nome e seta. O nome não some e não é substituído por “•••”.
+   - Resultado esperado: Trabalhar, Equipes, Criar, Conectar e Conta aparecem na mesma faixa, cada uma com ícone, nome e seta. O nome não some e não é substituído por “•••”.
 
 2. **O menu aberto cabe na tela.**
    - Como verificar: ative Criar e depois Conta.
@@ -42,7 +42,7 @@ Reduza a janela para **390px** de largura (e, se puder, repita em 320px e 720px)
 
 6. **Menus em 320px e com zoom de 200% no Electron.**
    - Como verificar: reduza a janela a 320px e abra Criar e Conta. No Electron, repita com o zoom do aplicativo em 200%.
-   - Resultado esperado: os quatro nomes das ilhas continuam visíveis. O menu aberto permanece dentro da janela, os itens têm pelo menos 40px de altura e dá para ler Imagem, Vídeo, Música, Editor e Configuração guiada. O item da página atual mostra a palavra Atual. O indicador de RAM continua alcançável.
+   - Resultado esperado: os cinco nomes das ilhas continuam visíveis, incluindo Equipes. O menu aberto permanece dentro da janela, os itens têm pelo menos 40px de altura e dá para ler Imagem, Vídeo, Música, Editor e Configuração guiada. O item da página atual mostra a palavra Atual. O indicador de RAM continua alcançável.
 
 ## 2. Contraste
 
@@ -88,6 +88,13 @@ Confira no modo **Claro** e no modo **Escuro** (botões no topo). Uma ferramenta
 | Ícone preenchido Criar | `#ffffff` | `#7a4e12` | 7,18:1 | 3:1 |
 | Ícone preenchido Conectar | `#ffffff` | `#1a5568` | 8,26:1 | 3:1 |
 | Ícone preenchido Conta | `#ffffff` | `#4a3f63` | 9,62:1 | 3:1 |
+| Ilha Equipes | `#1c3d66` | `#ffffff` | 11,00:1 | 4,5:1 |
+| Ilha Equipes | `#1c3d66` | `#e4eaf4` | 9,10:1 | 4,5:1 |
+| Texto secundário sobre Equipes aberta | `#5c6570` | `#e4eaf4` | 4,89:1 | 4,5:1 |
+| Foco sobre Equipes aberta | `#2f5fbf` | `#e4eaf4` | 4,95:1 | 3:1 |
+| Ok da Equipes | `#1e7a4f` | `#ffffff` | 5,31:1 | 4,5:1 |
+| Aviso da Equipes | `#8a5b10` | `#ffffff` | 5,86:1 | 4,5:1 |
+| Terciário da Equipes | `#5e6772` | `#e8ebf0` | 4,80:1 | 4,5:1 |
 | Mascote Pronto | `#1b5c45` | `#e5f2ec` | 6,85:1 | 4,5:1 |
 | Mascote Pensando | `#1d3f72` | `#e4eaf6` | 8,67:1 | 4,5:1 |
 | Mascote Concluído | `#146338` | `#e3f5e8` | 6,44:1 | 4,5:1 |
@@ -127,13 +134,21 @@ Confira no modo **Claro** e no modo **Escuro** (botões no topo). Uma ferramenta
 | Ilha Conectar | `#8ec8d8` | `#14161b` | 9,83:1 | 4,5:1 |
 | Ilha Conta | `#c4b6e0` | `#14161b` | 9,58:1 | 4,5:1 |
 | Ícone preenchido sobre a cor da ilha | `#14161b` | a cor clara da ilha | 9,47:1 a 10,02:1 | 3:1 |
+| Ilha Equipes | `#7aa2f7` | `#1a2433` | 7,19:1 | 4,5:1 |
+| Ícone preenchido Equipes | `#14161b` | `#7aa2f7` | 7,19:1 | 3:1 |
+| Texto da Equipes | `#e6e8eb` | `#0f1114` | 15,40:1 | 4,5:1 |
+| Texto da Equipes | `#e6e8eb` | `#15181c` | 14,51:1 | 4,5:1 |
+| Secundário da Equipes | `#8b929b` | `#15181c` | 5,67:1 | 4,5:1 |
+| Terciário da Equipes | `#818a93` | `#1b1f24` | 4,72:1 | 4,5:1 |
+| Aviso da Equipes | `#d6a652` | `#1b1f24` | 7,44:1 | 4,5:1 |
+| Ok da Equipes | `#5fb98a` | `#15181c` | 7,46:1 | 4,5:1 |
 | Mascote Pronto | `#b7e4cf` | `#163028` | 10,09:1 | 4,5:1 |
 | Mascote Pensando | `#c5d4f5` | `#1c2740` | 9,98:1 | 4,5:1 |
 | Mascote Concluído | `#b7e7c4` | `#163228` | 10,02:1 | 4,5:1 |
 | Mascote Atenção | `#f0d3a4` | `#3a2e1c` | 9,17:1 | 4,5:1 |
 
 1. **Nomes das ilhas e dos destinos.**
-   - Como verificar: leia Trabalhar, Criar, Conectar, Conta e um item de cada menu, no claro e no escuro.
+   - Como verificar: leia Trabalhar, Equipes, Criar, Conectar, Conta e um item de cada menu, no claro e no escuro.
    - Resultado esperado: o nome está em `#24272e` (claro) ou `#e9ebef` (escuro). A descrição curta usa a cor secundária da tabela, inclusive sobre o fundo da ilha aberta. O menu de Criar mostra Imagem, Vídeo e Música, sem o inglês entre parênteses.
 
 2. **Placeholder.**

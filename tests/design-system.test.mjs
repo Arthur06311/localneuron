@@ -33,7 +33,7 @@ test('o shell usa a barra de 232px, foco visível e o registo do chat', () => {
 test('a navegação visível fala português do Brasil', () => {
   const html = readFileSync('public/index.html', 'utf8');
   const app = readFileSync('public/app.js', 'utf8');
-  assert.match(html, /> Equipes</);
+  assert.match(html, />Equipes</);
   assert.match(html, /> Configurações</);
   assert.doesNotMatch(html, /> Equipas</);
   assert.doesNotMatch(html, /> Preferências</);
