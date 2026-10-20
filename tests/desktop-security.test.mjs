@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import Module from 'node:module';
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 
 const require = createRequire(import.meta.url);
 const { createMainWindow, createAgentWindow } = require(resolve('desktop/window-policy.cjs'));
@@ -219,9 +219,9 @@ test('Fuses deixam o servidor local de pé e fecham os injetores', () => {
   assert.equal(config[FuseV1Options.LoadBrowserProcessSpecificV8Snapshot], false);
   assert.equal(config[FuseV1Options.GrantFileProtocolExtraPrivileges], false);
   assert.equal(DESIRED_FUSES.runAsNode, true);
-  assert.equal(electronBinary('/out', 'linux'), '/out/LocalNeuron');
-  assert.equal(electronBinary('/out', 'win32'), '/out/LocalNeuron.exe');
-  assert.equal(electronBinary('/out', 'darwin'), '/out/LocalNeuron.app/Contents/MacOS/LocalNeuron');
+  assert.equal(electronBinary('/out', 'linux'), join('/out', 'LocalNeuron'));
+  assert.equal(electronBinary('/out', 'win32'), join('/out', 'LocalNeuron.exe'));
+  assert.equal(electronBinary('/out', 'darwin'), join('/out', 'LocalNeuron.app', 'Contents', 'MacOS', 'LocalNeuron'));
   const main = readFileSync(resolve('desktop/main.cjs'), 'utf8');
   const packaging = readFileSync(resolve('scripts/package-desktop.mjs'), 'utf8');
   assert.match(main, /enableSandbox\(\)/);
