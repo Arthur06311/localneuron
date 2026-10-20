@@ -4,12 +4,8 @@ O LocalNeuron integra motores e bibliotecas independentes. Seus autores e licen�
 
 - llama.cpp e whisper.cpp: MIT, textos em runtime/LICENSE.llama.cpp e runtime/LICENSE.whisper.cpp. Código e versões fixadas nos manifests em runtime/.
 - MLX: motor e bibliotecas embarcados somente em macOS Apple Silicon; versões e origem em runtime/mlx-manifest.json. Licenças nos respectivos pacotes Python.
-- sherpa-onnx 1.13.8: Apache-2.0. Texto em licenses/sherpa-onnx-APACHE-2.0.txt. Código-fonte e instruções de compilação: https://github.com/k2-fsa/sherpa-onnx/tree/v1.13.8 ; arquivo-fonte: https://github.com/k2-fsa/sherpa-onnx/archive/refs/tags/v1.13.8.tar.gz . Os scripts CMake identificam as dependências usadas na compilação.
-- ONNX Runtime: MIT. Texto em licenses/onnxruntime-MIT.txt; código-fonte: https://github.com/microsoft/onnxruntime .
-- eSpeak NG, usado pela síntese VITS: GPL-3.0. Texto em licenses/espeak-ng-GPL-3.0.txt. Código-fonte e compilação: https://github.com/espeak-ng/espeak-ng ; integração e revisão usadas pelo sherpa: https://github.com/k2-fsa/sherpa-onnx/tree/v1.13.8/cmake . A licença do dataset da voz não substitui a licença do motor ou dos componentes.
-- Voz Faber em português brasileiro: model card original em licenses/faber-MODEL_CARD.txt, com dataset CC0, ajustes sobre lessac medium e referência ao projeto Piper. Origem: https://huggingface.co/rhasspy/piper-voices/tree/main/pt/pt_BR/faber/medium . A voz é baixada separadamente; tamanho e SHA-256 fixados em src/pro-media.ts.
-- PDF.js: Apache-2.0; docx: MIT; ExcelJS: MIT; PptxGenJS: MIT; fflate: MIT; tar: ISC; seek-bzip: MIT. Versões exatas em package-lock.json e licenças nos pacotes node_modules.
-- Node.js 24.14.1: runtime independente embarcado para o motor de voz; licença e avisos em runtime/voice-node-*/LICENSE. SHA-256 e origem em runtime/voice-node-manifest.json; código-fonte: https://nodejs.org/dist/v24.14.1/node-v24.14.1.tar.gz .
+- Narração: voz do sistema operacional (macOS `say`, Windows SAPI / System.Speech, Linux speech-dispatcher / `spd-say`). Nenhum motor de síntese, dado do eSpeak NG ou voz Faber é empacotado. A voz instalada no sistema permanece sob a licença do próprio sistema.
+- PDF.js: Apache-2.0; docx: MIT; ExcelJS: MIT; PptxGenJS: MIT; fflate: MIT. Versões exatas em package-lock.json e licenças nos pacotes node_modules.
 - Electron, Chromium e Node.js: veja LICENSE, LICENSES.chromium.html e demais avisos fornecidos pela distribuição Electron.
 
 Os modelos baixados possuem licenças próprias, indicadas em sua ficha. A inclusão no catálogo não transfere direitos sobre modelos, imagens, vozes ou dados de treinamento.
