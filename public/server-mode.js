@@ -31,10 +31,11 @@ export function createServerMode({ api, escape, toast, isVisible }) {
   }
   async function render() {
     state = await api('/server-mode');
+    const gateway = await api('/server-gateway');
     if (!isVisible()) return;
     const contribute = state.eligibility.allowed ? '' : 'disabled';
     const experimental = state.eligibility.experimental ? ' <span class="tag">experimental</span>' : '';
-    $('#content').innerHTML = `<div class="page-head"><div><span class="eyebrow">REDE LOCAL</span><h1>Modo servidor</h1><p class="subhead">Como este computador vai participar?</p></div></div><section class="panel" id="server-mode"><form id="server-role"><fieldset><legend>Como este computador vai participar?</legend><label class="check-line"><input type="radio" name="server-role" value="off" ${state.role === 'off' ? 'checked' : ''}> Desligado</label><label class="check-line"><input type="radio" name="server-role" value="contribute" ${contribute} ${state.role === 'contribute' ? 'checked' : ''}> Contribuir${experimental}</label><p>${escape(state.eligibility.reason)}</p><label class="check-line"><input type="radio" name="server-role" value="manage" ${state.role === 'manage' ? 'checked' : ''}> Gerenciar</label><label class="check-line"><input id="server-no-worker" type="checkbox" ${state.no_worker ? 'checked' : ''}> não rodar modelo aqui</label><p>O EXO pode eleger outro master. Gerenciar usa --force-master e, com a opção acima, --no-worker.</p><label class="check-line"><input type="radio" name="server-role" value="use" ${state.role === 'use' ? 'checked' : ''}> Só usar</label><p>Só usar funciona em qualquer sistema e não inicia um nó.</p></fieldset><label>Endereço do EXO na rede local<input id="server-endpoint" value="${escape(state.endpoint)}" maxlength="150"></label><div class="actions"><button type="submit" class="primary">Guardar papel</button><button type="button" class="secondary" data-server="map">Descobrir os nós</button></div></form><p id="server-status" role="status"></p><div id="server-map"></div><div id="server-pick"></div></section>`;
+    $('#content').innerHTML = `<div class="page-head"><div><span class="eyebrow">REDE LOCAL</span><h1>Modo servidor</h1><p class="subhead">Como este computador vai participar?</p></div></div><section class="panel" id="server-mode"><form id="server-role"><fieldset><legend>Como este computador vai participar?</legend><label class="check-line"><input type="radio" name="server-role" value="off" ${state.role === 'off' ? 'checked' : ''}> Desligado</label><label class="check-line"><input type="radio" name="server-role" value="contribute" ${contribute} ${state.role === 'contribute' ? 'checked' : ''}> Contribuir${experimental}</label><p>${escape(state.eligibility.reason)}</p><label class="check-line"><input type="radio" name="server-role" value="manage" ${state.role === 'manage' ? 'checked' : ''}> Gerenciar</label><label class="check-line"><input id="server-no-worker" type="checkbox" ${state.no_worker ? 'checked' : ''}> não rodar modelo aqui</label><p>O EXO pode eleger outro master. Gerenciar usa --force-master e, com a opção acima, --no-worker.</p><label class="check-line"><input type="radio" name="server-role" value="use" ${state.role === 'use' ? 'checked' : ''}> Só usar</label><p>Só usar funciona em qualquer sistema e não inicia um nó.</p></fieldset><label>Endereço do EXO na rede local<input id="server-endpoint" value="${escape(state.endpoint)}" maxlength="150"></label><div class="actions"><button type="submit" class="primary">Guardar papel</button><button type="button" class="secondary" data-server="map">Descobrir os nós</button></div></form><p id="server-status" role="status"></p><div id="server-map"></div><div id="server-pick"></div>${gateway.exo_warning ? `<p role="alert" id="server-exo-warning">${escape(gateway.exo_warning)}</p>` : ''}<section class="panel" id="server-pair"><h2>Parear um computador</h2><p>O código tem 6 dígitos e expira depressa. Cada máquina recebe uma chave própria, guardada no cofre. Só a rede local entra. Nada é aberto para a internet.</p><label>Endereço privado deste computador<input id="server-host" value="192.168.1.20" maxlength="80"></label><div class="actions"><button type="button" class="secondary" data-server="code">Gerar código</button><button type="button" class="secondary" data-server="open">Abrir o gateway na rede local</button><button type="button" class="quiet" data-server="stop">Desligar o gateway</button></div><p id="server-code" role="status"></p><ul>${(gateway.peers || []).map((peer) => `<li>${escape(peer.name)}${peer.revoked ? ' · revogada' : ` <button type="button" class="quiet" data-server="revoke" data-peer="${escape(peer.id)}">Revogar</button>`}</li>`).join('')}</ul><h3>Registo local</h3><ul>${(gateway.log || []).map((row) => `<li>${escape(row.machine_id)} · ${escape(row.path)}</li>`).join('') || '<li>Ainda não há uso registado.</li>'}</ul></section></section>`;
     $('#server-role').addEventListener('submit', (event) => {
       event.preventDefault();
       const role = $('#server-role').querySelector('input[name="server-role"]:checked')?.value || 'off';
@@ -49,6 +50,26 @@ export function createServerMode({ api, escape, toast, isVisible }) {
       if (!button?.dataset.server) return;
       return action(button, async () => {
         if (button.dataset.server === 'map') state = await api('/server-mode/map', { method: 'POST', body: {} });
+        if (button.dataset.server === 'code') {
+          const issued = await api('/server-gateway/code', { method: 'POST', body: {} });
+          $('#server-code').textContent = 'Código ' + issued.code + '. Ele expira depressa. Guarde-o só até a outra máquina entrar.';
+          return;
+        }
+        if (button.dataset.server === 'open') {
+          await api('/server-gateway/open', { method: 'POST', body: { host: $('#server-host').value } });
+          toast('Gateway aberto só na rede local.');
+          return;
+        }
+        if (button.dataset.server === 'stop') {
+          await api('/server-gateway/stop', { method: 'POST', body: {} });
+          toast('Gateway desligado.');
+          return;
+        }
+        if (button.dataset.server === 'revoke') {
+          await api('/server-gateway/revoke', { method: 'POST', body: { id: button.dataset.peer } });
+          await render();
+          return;
+        }
         if (button.dataset.server === 'preview') {
           const nodes = [...document.querySelectorAll('input[name="server-node"]:checked')].map((input) => input.value);
           const preview = await api('/server-mode/preview', { method: 'POST', body: { model_id: $('#server-model').value, nodes } });
