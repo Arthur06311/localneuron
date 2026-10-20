@@ -1,5 +1,7 @@
 # LocalNeuron 0.15 · Biblioteca e acesso
 
+Este guia descreve a 0.15. A narração atual usa a voz do sistema; a menção a sherpa-onnx/Piper abaixo registra aquela versão.
+
 A biblioteca passou de 579 para **661 versões GGUF** (660 repositórios, 987 arquivos). O contador inclui versões e quantizações, não famílias distintas. A pesquisa global permite encontrar outros modelos; há 51 publicadores no seletor e entrada direta de `publicador/repositório`.
 
 ## Para baixar
