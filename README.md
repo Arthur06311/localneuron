@@ -30,7 +30,7 @@
    | Windows x64 | `LocalNeuron-Windows-x64.zip` (0.26) | Use “Extrair tudo” e abra `LocalNeuron.exe` na pasta extraída |
    | Linux x64 | [DEB ou PKG.TAR.GZ (0.27)](https://github.com/Arthur06311/localneuron/releases/tag/v0.27.0-linux.3) | Ubuntu/Debian: abra o DEB. Arch/Omarchy: `sudo pacman -U ./LocalNeuron-Linux-x64.pkg.tar.gz` |
 
-2. **Abra e siga a configuração guiada.** Proteja seu espaço com a proteção do sistema ou uma senha local, informe seu perfil e confira a RAM e o disco do computador.
+2. **Abra e siga a configuração guiada.** O aplicativo entra direto, sem pedir senha. Informe seu perfil e confira a RAM e o disco do computador.
 3. **Baixe um modelo pequeno e converse.** Em **Modelos**, escolha um modelo de texto Q4 marcado como compatível com o motor integrado. Depois abra o **Chat**. Em **Ferramentas → Usar offline**, a internet e o terminal ficam desligados.
 
 Os modelos são baixados dentro do app, separadamente. O Mac ARM64 não roda em Mac Intel. Alguns motores têm requisitos próprios (por exemplo, imagem no Mac exige macOS 26+ e o EXO gerenciado exige macOS 26.2+). Veja os [requisitos por motor](docs/configuracao.md#requisitos) e o [guia Linux](docs/linux-installer.md).
@@ -80,13 +80,13 @@ A narração usa a voz do sistema e não baixa a voz Faber. Quando o sherpa-onnx
 
 **Qual modelo devo baixar primeiro?** Um modelo de texto pequeno em Q4 que caiba com folga na sua RAM. A ficha mostra a estimativa, mas ela não substitui um teste real.
 
-**Meus dados ficam protegidos?** Conversas e arquivos ficam no seu computador. A senha cifra os segredos do cofre, **não todas as conversas**. Proteja também a sua conta do sistema e faça backup da pasta de dados com o app fechado.
+**Meus dados ficam protegidos?** Conversas e arquivos ficam no seu computador. O cofre dos segredos é cifrado com uma chave aleatória guardada pelo sistema, **não todas as conversas**. Proteja também a sua conta do sistema e faça backup da pasta de dados com o app fechado.
 
 **Funciona no Mac Intel?** Não. O pacote Mac é só para Apple Silicon.
 
 **Por que o sistema mostra um aviso ao abrir?** Os pacotes da alfa ainda não têm assinatura de distribuição. O Mac tem assinatura ad hoc, sem notarização Apple. Confira a origem e o SHA-256 antes de abrir.
 
-**Onde mudo senha, modelos, API e conexões?** Dentro do aplicativo. O site público só explica as configurações e não recebe dados seus.
+**Onde mudo modelos, API e conexões?** Dentro do aplicativo. O site público só explica as configurações e não recebe dados seus. Não há senha do aplicativo para alterar.
 
 ## Privacidade e segurança
 
@@ -96,7 +96,7 @@ No site, a seleção automática de idioma consulta `country.is` pelo navegador,
 
 ## Status da alfa
 
-Na versão 0.28, `npm test` reúne **249 testes automatizados: 202 da suíte TypeScript do aplicativo e 47 em JavaScript**. Oito deles cobrem a narração pela voz do sistema. O mock de acesso local no Linux foi corrigido no PR #6, e o workflow de CI roda `npm test`; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Os pacotes públicos não contêm conversas, chaves privadas nem a licença Pro de teste do proprietário.
+Na versão 0.28, `npm test` reúne **258 testes automatizados: 206 da suíte TypeScript do aplicativo e 52 em JavaScript**.
 
 Ainda pendentes: notarização Apple, execução nativa de motores/GPU no Windows e no Linux, EXO com duas máquinas físicas e integração com uma instalação real do Resolve Studio. O aplicativo continua **alfa**, sem promessa de suporte universal a modelos ou hardware. Veja as [novidades da 0.27](docs/localneuron-0.27.md). Os guias antigos em `docs/localneuron-*` registram o estado de cada versão.
 
