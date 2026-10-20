@@ -6,6 +6,7 @@ import {Connections} from './connections.js';
 import { ExperienceJobs } from './experience-jobs.js';
 import { Experience, botTemplates } from './experience.js';
 import { Crews, registerCrewRoutes } from './crews.js';
+import { CrewTalk } from './crew-talk.js';
 import { CrewSecrets } from './crew-secrets.js';
 import { crewCandidates, crewMachine } from './crew-models.js';
 import { recommendations, hardware } from './recommendations.js';
@@ -67,10 +68,11 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const chats = new Chats(core,agentReply(runtime,toolbox,personality));
   if (!core.vault.locked) await chats.recover();
   let operationBusy=false;
+  let crewTalk: CrewTalk | undefined;
   let experienceJobs:ExperienceJobs;
   let pro:Pro;
 
-  const gateway=new Gateway(core.directory,()=>!music.busy&&!music.running&&!editor.busy&&!core.vault.locked&&!chats.busy&&!core.jobs.size&&!operationBusy&&!aux.busy&&!proMedia.busy&&!pro?.busy&&!experienceJobs?.busy,(model,messages,options,signal,delta)=>complete(model,messages,options,signal,delta,runtime.backend(model)),4320,core.root,()=>subscription.active);
+  const gateway=new Gateway(core.directory,()=>!music.busy&&!music.running&&!editor.busy&&!core.vault.locked&&!chats.busy&&!core.jobs.size&&!operationBusy&&!aux.busy&&!proMedia.busy&&!pro?.busy&&!experienceJobs?.busy&&!crewTalk?.busy,(model,messages,options,signal,delta)=>complete(model,messages,options,signal,delta,runtime.backend(model)),4320,core.root,()=>subscription.active);
   pro=new Pro(core.directory,{models:async()=>(await library.snapshot()).installed,canRun:()=>!music.busy&&!music.running&&!editor.busy&&!experienceJobs?.busy&&subscription.active&&!core.vault.locked&&!operationBusy&&!chats.busy&&!gateway.busy&&!aux.busy&&!proMedia.busy&&!core.jobs.size&&!library.busy,run:async(key,messages,options,signal,delta)=>exclusive(async()=>{signal.throwIfAborted();if(core.vault.locked||chats.busy||gateway.busy||aux.busy)throw Error('Aguarde o motor atual.');if(gateway.status().enabled&&gateway.status().local_model!==key)throw Error('Desligue Minha API antes de executar outra IA no Pro.');subscription.require('jobs');const model=await library.load(key,options.context);signal.throwIfAborted();const result=await agentReply(runtime,toolbox,personality)(model.instance_id,messages.filter(m=>m.role==='user'||m.role==='assistant').map((m,i)=>({id:String(i),role:m.role as 'user'|'assistant',content:m.content,at:Date.now(),status:'complete' as const})),signal,delta,{...options,system:messages.filter(m=>m.role==='system').map(m=>m.content).join('\n')||options.system},{chatId:'pro-job',access:{enabled:false},activity:()=>{}});return typeof result==='string'?result:result.text;})});
   experienceJobs=new ExperienceJobs(experience,async(key,prompt,options,signal,delta,bot)=>exclusive(async()=>{signal.throwIfAborted();if(core.vault.locked)throw Error('Cofre bloqueado');const model=await library.load(key,options.context);signal.throwIfAborted();return agentReply(runtime,toolbox,personality)(model.instance_id,[{id:'experience',role:'user',content:prompt,at:Date.now(),status:'complete'}],signal,delta,options,{chatId:'experience',privateContext:false,access:{enabled:false},activity:()=>{}});}),()=>!music.busy&&!music.running&&!editor.busy&&!core.vault.locked&&!operationBusy&&!chats.busy&&!pro.busy&&!gateway.status().enabled&&!gateway.busy&&!aux.busy&&!proMedia.busy&&!core.jobs.size&&!library.busy,core.directory);
   let modelGate = Promise.resolve();
@@ -104,6 +106,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.setErrorHandler((error, _request, reply) => {
     if(error instanceof ProRequired)return reply.code(402).send({error:error.message,code:'pro_required',feature:error.feature});
     if ((error as { statusCode?: number }).statusCode === 429) return reply.code(429).send({ error: 'Muitas consultas num curto intervalo. Aguarde e tente novamente.' });
+    if ((error as { statusCode?: number }).statusCode === 409) return reply.code(409).send({ error: (error as Error).message });
     const err = error as Error;
     const message = err instanceof z.ZodError ? 'Dados inválidos: ' + err.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ') : err.message;
     const conflict = /Conflito|Versão mudou|Idempotency-Key reutilizada|imutável/.test(message);
@@ -234,6 +237,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   });
   app.post('/v1/experience/bots/:id/run',async request=>exclusive(async()=>{
     const v=z.strictObject({objective:z.string().trim().min(1).max(12000)}).parse(body(request));
+    if(crewTalk?.busy)throw Error('Aguarde a conversa da equipa.');
     if(chats.busy||aux.busy||proMedia.busy||pro.busy||experienceJobs.busy||gateway.status().enabled||gateway.busy||core.jobs.size||library.busy||music.running||music.busy||editor.busy)throw Error('Aguarde a tarefa atual ou pare o outro motor antes de começar.');
     const requestKey=z.string().regex(/^[a-zA-Z0-9_-]{8,90}$/).parse(key(request));
     const bot=(await experience.snapshot()).bots.find(b=>b.id===id(request));if(!bot)throw Error('Bot não encontrado.');
@@ -250,7 +254,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/experience/bots',async request=>{if(chats.busy)throw Error('Pare a resposta antes de editar permissões.');return experience.bot(body(request),key(request));});
   app.delete('/v1/experience/bots/:id',async request=>experience.remove(id(request)));
   app.post('/v1/experience/recommendations',async request=>{const v=z.strictObject({kind:z.enum(['chat','image','video']),objective:z.string().max(2000).default('')}).parse(body(request));return recommendations(library,aux,core.directory,v.kind,v.objective);});
-  app.get('/v1/resources',async()=>({...memoryStatus(),total_memory_bytes:totalmem(),generation_busy:music.busy||editor.busy||chats.busy||gateway.busy||aux.busy,library_busy:library.busy,updated_at:Date.now()}));
+  app.get('/v1/resources',async()=>({...memoryStatus(),total_memory_bytes:totalmem(),generation_busy:music.busy||editor.busy||chats.busy||gateway.busy||aux.busy||Boolean(crewTalk?.busy),library_busy:library.busy,updated_at:Date.now()}));
   app.post('/v1/sharing/keys',async request=>gateway.addKey(body(request)));
   app.post('/v1/sharing/keys/:id',async request=>gateway.updateKey(id(request),body(request)));
   app.delete('/v1/sharing/keys/:id',async request=>gateway.removeKey(id(request)));
@@ -281,6 +285,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/chats', async request => { const metadata=z.strictObject({bot_id:z.string().uuid().optional(),preferred_model:z.string().max(512).optional()}).parse(body(request)); return chats.create(key(request),metadata); });
   app.post('/v1/chats/:id/send', {bodyLimit:2*1024**2}, async request => exclusive(async () => {
     const data = z.strictObject({ model: z.string().min(1).max(512), model_key:z.string().max(512).optional(), content: z.string().trim().min(1).max(131072), options:optionsSchema.optional(), retry:z.boolean().default(false),access:accessSchema.optional(),attachments:z.array(attachmentSchema).max(4).default([]) }).parse(body(request));
+    if(crewTalk?.busy)throw new Error('Aguarde a conversa da equipa.');
     if(aux.busy||proMedia.busy)throw new Error('Aguarde o motor de voz ou imagem.');
     if(gateway.busy)throw new Error('A IA está atendendo uma chamada da API. Tente em instantes.');
     return chats.send(id(request), data.model, data.content, key(request), data.options, data.retry,data.access,data.attachments,data.model_key);
@@ -344,7 +349,19 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     for (const task of (await core.snapshot()).tasks.filter(t => t.state === 'running')) await core.pause(task.id);
     await Promise.allSettled([...core.jobs.values()].map(j => j.promise)); core.vault.lock(); return { ok: true };
   });});
-  registerCrewRoutes(app, crews);
+  crewTalk = new CrewTalk(crews, async input => {
+    const loaded = await library.load(input.model, 4096);
+    const system = input.messages.filter(message => message.role === 'system').map(message => message.content).join('\n');
+    const dialogue = input.messages.filter(message => message.role !== 'system');
+    const options = optionsSchema.parse({ context: 4096, max_tokens: Math.min(1024, Math.max(1, input.maxTokens)), temperature: 0.2, reasoning: 'off', system });
+    const result = await complete(loaded.instance_id, dialogue, options, input.signal, () => {}, runtime.backend(loaded.instance_id));
+    return { text: result.text };
+  }, exclusive, () => {
+    if (core.vault.locked) return 'Desbloqueie o cofre para continuar.';
+    if (chats.busy || gateway.busy || gateway.status().enabled || aux.busy || pro.busy || proMedia.busy || experienceJobs.busy || music.running || music.busy || editor.busy || library.busy) return 'Aguarde a IA atual antes da conversa da equipa.';
+    return null;
+  });
+  registerCrewRoutes(app, crews, crewTalk);
   return { app, token, subscription };
 }
 

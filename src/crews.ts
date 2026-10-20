@@ -1,4 +1,5 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest } from 'fastify';
+import type { CrewTalk } from './crew-talk.js';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import type { Sql } from './migrations.js';
@@ -254,6 +255,18 @@ export class Crews {
     return this.messages(botId);
   }
 
+  async addTeamUserMessage(content: string, round: number) {
+    const tokens = estimateTokens(content);
+    await this.db.query('INSERT INTO crew_messages (id, scope, bot_id, author, content, tokens, round) VALUES ($1, \'team\', NULL, \'user\', $2, $3, $4)', [randomUUID(), content, tokens, round]);
+    return tokens;
+  }
+
+  async recordNotice(content: string, round: number) {
+    const tokens = estimateTokens(content);
+    await this.db.query('INSERT INTO crew_messages (id, scope, bot_id, author, content, tokens, round) VALUES ($1, \'team\', NULL, \'system\', $2, $3, $4)', [randomUUID(), content, tokens, round]);
+    return tokens;
+  }
+
   async recordIncoming(botId: string, author: 'agent' | 'coordinator', content: string, round: number) {
     await this.requireMember(botId);
     const tokens = estimateTokens(content);
@@ -262,6 +275,7 @@ export class Crews {
       await tx.query('INSERT INTO crew_messages (id, scope, bot_id, author, author_bot_id, content, tokens, round) VALUES ($1, \'team\', NULL, $2, $3, $4, $5, $6)', [randomUUID(), author, botId, content, tokens, round]);
       await tx.query('UPDATE crew_members SET unread = unread + 1, updated_at = now() WHERE bot_id = $1', [botId]);
     });
+    return tokens;
   }
 
   async updateSettings(input: unknown) {
@@ -342,7 +356,7 @@ export class Crews {
   }
 }
 
-export function registerCrewRoutes(app: FastifyInstance, crews: Crews) {
+export function registerCrewRoutes(app: FastifyInstance, crews: Crews, talk?: CrewTalk) {
   const body = (request: { body: unknown }) => request.body;
   const idOf = (request: { params: unknown }) => z.object({ id: z.string().min(1).max(80) }).parse(request.params).id;
   app.get('/v1/crews', readLimit, async () => crews.snapshot());
@@ -364,6 +378,20 @@ export function registerCrewRoutes(app: FastifyInstance, crews: Crews) {
   app.get('/v1/crews/members/:id/messages', readLimit, async request => crews.messages(idOf(request)));
   app.post('/v1/crews/members/:id/messages', writeLimit, async request => crews.addUserMessage(idOf(request), z.strictObject({ content: z.string().trim().min(1).max(16000) }).parse(body(request)).content));
   app.get('/v1/crews/team/messages', readLimit, async () => crews.teamMessages());
+  if (talk) {
+    app.post('/v1/crews/talk', writeLimit, async (request, reply) => {
+      const content = z.strictObject({ content: z.string().trim().min(1).max(16000) }).parse(body(request)).content;
+      const controller = new AbortController();
+      const socket = (request as FastifyRequest).raw.socket;
+      const stop = () => { if (!reply.sent) controller.abort(); };
+      socket.on('close', stop);
+      try {
+        return await talk.start(content, controller.signal);
+      } finally {
+        socket.off('close', stop);
+      }
+    });
+  }
   app.post('/v1/crews/providers', writeLimit, async request => crews.createProvider(body(request)));
   app.patch('/v1/crews/providers/:id', writeLimit, async request => crews.updateProvider(idOf(request), body(request)));
   app.delete('/v1/crews/providers/:id', writeLimit, async request => crews.removeProvider(idOf(request)));
