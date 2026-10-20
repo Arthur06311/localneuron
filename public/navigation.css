@@ -1,6 +1,7 @@
 /* Navigation islands: each group has its own cue, label and selected state. */
 .sidebar nav{display:flex;flex-direction:column;gap:var(--space-2)}
 .nav-island{--island:var(--island-work);--island-soft:var(--island-work-soft);border:1px solid transparent;border-radius:var(--radius-md);background:transparent;position:relative;transition:border-color .18s,background .18s}
+.nav-island[data-nav-island-group="crews"]{--island:var(--island-crews);--island-soft:var(--island-crews-soft)}
 .nav-island[data-nav-island-group="create"]{--island:var(--island-create);--island-soft:var(--island-create-soft)}
 .nav-island[data-nav-island-group="connect"]{--island:var(--island-connect);--island-soft:var(--island-connect-soft)}
 .nav-island[data-nav-island-group="account"]{--island:var(--island-account);--island-soft:var(--island-account-soft)}
@@ -36,7 +37,7 @@ body.chat-page .nav-island-trigger small{display:flex}
 body .sidebar nav .nav-island-menu button .ui-icon,
 body .sidebar nav .nav-island-icon .ui-icon{color:inherit}
 @media(max-width:720px){
- .sidebar nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;align-items:stretch}
+ .sidebar nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;align-items:stretch}
  .nav-island{min-width:0;border:1px solid color-mix(in srgb,var(--island) 40%,var(--border))!important;background:var(--surface)!important}
  .nav-island[data-open="true"]{background:var(--island-soft)!important}
  .nav-island-trigger{display:flex!important;flex-direction:column!important;justify-content:center;align-items:center;grid-template-columns:none;min-height:68px!important;padding:6px 2px!important;gap:2px;text-align:center!important}
@@ -46,7 +47,7 @@ body .sidebar nav .nav-island-icon .ui-icon{color:inherit}
  .nav-island-icon{width:22px;height:22px}
  .nav-island-chevron{font-size:12px;line-height:1}
  .nav-island-menu{position:absolute;z-index:40;top:calc(100% + 4px);left:0;width:min(230px,70vw);padding:8px;background:var(--surface);border:1px solid var(--island);border-radius:var(--radius-md);box-shadow:0 12px 30px #0003}
- .nav-island[data-nav-island-group="connect"] .nav-island-menu,.nav-island[data-nav-island-group="account"] .nav-island-menu{left:auto;right:0}
+ .nav-island[data-nav-island-group="create"] .nav-island-menu,.nav-island[data-nav-island-group="connect"] .nav-island-menu,.nav-island[data-nav-island-group="account"] .nav-island-menu{left:auto;right:0}
  .nav-island-menu button{min-height:40px!important;text-align:left!important}
 }
 @media(prefers-reduced-motion:reduce){.nav-island,.nav-island-chevron{transition:none}}
