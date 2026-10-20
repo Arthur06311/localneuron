@@ -1,0 +1,28 @@
+# O código já existente fica de fora deste PR.
+# Um PR futuro de formatação pode retirar estes caminhos e rodar Prettier no repositório.
+node_modules
+dist
+public
+website
+src
+tests
+desktop
+scripts
+docs
+runtime
+licenses
+workflows
+releases
+package.json
+package-lock.json
+tsconfig.json
+subscription-config.json
+*.md
+*.html
+*.css
+*.py
+*.yaml
+*.yml
+*.json
+!eslint.config.js
+!.prettierrc.json

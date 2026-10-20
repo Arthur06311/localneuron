@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { Core } from '../src/core.js';
 import { createApp } from '../src/server.js';
 import { judge, parseWorkflow, TOOLS } from '../src/policy.js';
-import { hash, verifyPackage, fingerprint } from '../scripts/protocol.mjs';
+import { verifyPackage, fingerprint } from '../scripts/protocol.mjs';
 import { template } from '../src/model.js';
 import { acquireProcessLock } from '../src/lock.js';
 import type { Task } from '../src/types.js';
@@ -43,7 +43,7 @@ test('Contrato local: integridade, autorização e entrega de ponta a ponta', as
       const source=readFileSync(join(root,'workflows/content-v1.yaml'),'utf8');
       assert.throws(()=>parseWorkflow(source.replace('content.compose','shell.exec'),TOOLS));
       assert.throws(()=>parseWorkflow(source.replace('version: 1','version: 2').replace('  - tool: content.compose','  - tool: files.commit_version'),TOOLS));
-      assert.throws(()=>parseWorkflow(source.replace(/  - human_review\r?\n/,''),TOOLS));
+      assert.throws(()=>parseWorkflow(source.replace(/ {2}- human_review\r?\n/,''),TOOLS));
       const task=(await core.snapshot()).tasks[0],agent=(await core.snapshot()).identities.find(i=>i.kind==='agent')!,human=(await core.snapshot()).identities.find(i=>i.kind==='human')!;
       assert.throws(()=>judge(task.action,null,agent,human,TOOLS,task.workflow,'wrong'),/Cossinatura/);
       assert.throws(()=>judge({...task.action,tool:'shell.exec'},null,agent,human,TOOLS,task.workflow,'wrong'));

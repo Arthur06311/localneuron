@@ -4,7 +4,6 @@ import {
   optionsSchema,
   type Message,
   type Generation,
-  type ToolCall,
 } from "./inference.js";
 import { accessSchema, type Activity } from "./agent-tools.js";
 import type { Toolbox } from "./agent-tools.js";
