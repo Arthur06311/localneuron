@@ -1,39 +1,78 @@
 {
-  "version": "0.27.0",
+  "version": "0.28.1",
+  "notes": "## [0.28.1] - 2026-10-19\n\n- A 0.28.0 não chegou a publicar binários. O empacotamento instala o `Electron.app` no macOS e entrega os caminhos do NSIS com barra invertida, gerando DMG, ZIP, Setup, AppImage, DEB, pacote Arch e `SHA256SUMS.txt` (#42).\n- A narração usa a voz do sistema e o instalador deixa de embutir o eSpeak (#11).\n- A primeira utilização sugere um único modelo de acordo com a RAM (#31).\n- Os restos visíveis de Colmeia passam a LocalNeuron (#15).\n- O formulário de bug em português acompanha os pacotes reais e deixa de citar RPM (#5).\n- A instalação guarda um backup offline, e os testes cobrem migrações e os aliases de ambiente (#34).\n- A biblioteca acompanha o download sem baixar o catálogo inteiro (#18).\n- Os testes aceitam a mensagem opcional do `assert` no TypeScript 7 (#40).\n- O CI ganha ESLint e Prettier (#10).\n- O SDK MCP sobe de versão e o OAuth deixa de aceitar qualquer host HTTPS (#13).",
   "files": [
     {
       "id": "mac",
       "arch": "arm64",
       "filename": "LocalNeuron-macOS-arm64.dmg",
-      "bytes": 396715179,
-      "sha256": "48e76767062b89c41447fa956763d61fee079135c6333109ad4f5cc5ec1511fb",
-      "available": false,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0/LocalNeuron-macOS-arm64.dmg",
-      "version": "0.27.0",
-      "releaseTag": "v0.27.0"
+      "bytes": 347033983,
+      "sha256": "06bba3d68653cdc64d1abb9cc78bdfc6c8a9f9b0942b6fc56adba6278e804795",
+      "available": true,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-macOS-arm64.dmg",
+      "version": "0.28.1",
+      "releaseTag": "v0.28.1",
+      "format": "DMG"
+    },
+    {
+      "id": "mac",
+      "arch": "arm64",
+      "filename": "LocalNeuron-macOS-arm64.zip",
+      "bytes": 350577867,
+      "sha256": "cb7c5f7ffd93cc76f1c9f837484bb03a74ad46c12d7d086aa868ef155a5a091e",
+      "available": true,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-macOS-arm64.zip",
+      "version": "0.28.1",
+      "releaseTag": "v0.28.1",
+      "format": "ZIP"
     },
     {
       "id": "windows",
       "arch": "x64",
-      "filename": "LocalNeuron-Windows-x64.zip",
-      "bytes": 314994433,
-      "sha256": "6c0c4ea491294208c055030a962e11dd5040539e8c013afb06e04762faefd556",
-      "available": false,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0/LocalNeuron-Windows-x64.zip",
-      "version": "0.27.0",
-      "releaseTag": "v0.27.0"
+      "filename": "LocalNeuron-Windows-x64-Setup.exe",
+      "bytes": 196823872,
+      "sha256": "414055771b7f2051e082f75b4992ec8a9a55ef0b789dffa15519d5bfadce26ac",
+      "available": true,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-Windows-x64-Setup.exe",
+      "version": "0.28.1",
+      "releaseTag": "v0.28.1",
+      "format": "NSIS"
     },
     {
       "id": "linux",
       "arch": "x64",
-      "filename": "LocalNeuron-Linux-x64.tar.gz",
-      "bytes": 288588474,
-      "sha256": "4dbeaf9dfe337416408efea306e816afc8e0a9b9351c9fe5346bd17e05624346",
-      "available": false,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0/LocalNeuron-Linux-x64.tar.gz",
-      "version": "0.27.0",
-      "releaseTag": "v0.27.0"
+      "filename": "LocalNeuron-Linux-x64.AppImage",
+      "bytes": 227981816,
+      "sha256": "cf0df79ff4ac379520587b4ad3b7328c4095eb01ea81c33e71ef8109d7089b8e",
+      "available": true,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-Linux-x64.AppImage",
+      "version": "0.28.1",
+      "releaseTag": "v0.28.1",
+      "format": "AppImage"
+    },
+    {
+      "id": "linux",
+      "arch": "x64",
+      "filename": "LocalNeuron-Linux-x64.deb",
+      "bytes": 259421438,
+      "sha256": "227149c25d9e14faccdded47e1a4a27c83a6fc999f99fc7168f0ad0f2da18693",
+      "available": true,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-Linux-x64.deb",
+      "version": "0.28.1",
+      "releaseTag": "v0.28.1",
+      "format": "DEB · Ubuntu / Debian"
+    },
+    {
+      "id": "linux",
+      "arch": "x64",
+      "filename": "LocalNeuron-Linux-x64.pkg.tar.gz",
+      "bytes": 259421654,
+      "sha256": "b640ee101722057d2ed2a0ed52f8e1410f77ca17f3c7d5b900575e8b774480cf",
+      "available": true,
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-Linux-x64.pkg.tar.gz",
+      "version": "0.28.1",
+      "releaseTag": "v0.28.1",
+      "format": "Arch"
     }
-  ],
-  "notes": "Acesso lembrado opcional, wizard que preserva a conclusão, equipes em um clique, tarefas por especialista, melhor uso do contexto e avisos de novas versões. Veja Preferências e Minha equipe. A atualização preserva os dados quando você mantém a pasta de dados existente."
+  ]
 }
