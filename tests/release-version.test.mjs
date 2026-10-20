@@ -21,8 +21,8 @@ test('A tag, o package.json e o changelog precisam ser a mesma versão',()=>{
  assert.equal(checkReleaseFiles({version:'0.27.0',changelog:changelog('0.27.0')}).tag,null);
 });
 
-test('O repositório atual passa na checagem da 0.28.0',()=>{
- const result=spawnSync(process.execPath,['scripts/check-release-version.mjs','--tag','v0.28.0'],{cwd:root,encoding:'utf8'});
+test('O repositório atual passa na checagem da 0.28.1',()=>{
+ const result=spawnSync(process.execPath,['scripts/check-release-version.mjs','--tag','v0.28.1'],{cwd:root,encoding:'utf8'});
  assert.equal(result.status,0,result.stderr);
  const wrong=spawnSync(process.execPath,['scripts/check-release-version.mjs','--tag','v9.9.9'],{cwd:root,encoding:'utf8'});
  assert.notEqual(wrong.status,0);
