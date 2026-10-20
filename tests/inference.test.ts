@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { contextWindow, optionsSchema, complete, type Message } from '../src/inference.js';
+import { contextWindow, optionsSchema, complete, engineTokensPerSecond, type Message } from '../src/inference.js';
 import { Core } from '../src/core.js';
 import { Chats } from '../src/chat.js';
 import { mkdtempSync, rmSync } from 'node:fs';
@@ -31,6 +31,22 @@ test('Resposta cortada mantém o trecho recebido e não é tratada como concluí
  const original=globalThis.fetch;const deltas:string[]=[];
  globalThis.fetch=async(url)=>String(url).endsWith('/models')?Response.json({models:[{type:'llm',key:'mini',loaded_instances:[{id:'loaded'}]}]}):new Response('data: '+JSON.stringify({choices:[{delta:{content:'Um trecho útil'},finish_reason:null}]})+'\n\n');
  try{await assert.rejects(complete('loaded',[{role:'user',content:'Oi'}],optionsSchema.parse({}),new AbortController().signal,t=>deltas.push(t)),/interrompida/);assert.deepEqual(deltas,['Um trecho útil']);}finally{globalThis.fetch=original;}
+});
+
+test('Velocidade informada pelo motor fica na resposta e valor inválido é ignorado', async () => {
+  assert.equal(engineTokensPerSecond({ timings: { predicted_per_second: 12.5 } }), 12.5);
+  assert.equal(engineTokensPerSecond({ usage: { completion_tokens_per_second: -1 }, timings: { predicted_per_second: 0 } }), undefined);
+  assert.equal(engineTokensPerSecond({ tokens_per_second: 9 }), undefined);
+  const original = globalThis.fetch;
+  globalThis.fetch = async (url) => String(url).endsWith('/models')
+    ? Response.json({ models: [{ type: 'llm', key: 'mini', loaded_instances: [{ id: 'loaded' }] }] })
+    : new Response('data: ' + JSON.stringify({ choices: [{ delta: { content: 'Olá' }, finish_reason: 'stop' }], usage: { prompt_tokens: 3, completion_tokens: 4 }, timings: { predicted_per_second: 12.5 } }) + '\n\ndata: [DONE]\n\n');
+  try {
+    const result = await complete('loaded', [{ role: 'user', content: 'Oi' }], optionsSchema.parse({}), new AbortController().signal, () => {});
+    assert.equal(result.completion_tokens, 4);
+    assert.equal(result.prompt_tokens, 3);
+    assert.equal(result.tokens_per_second, 12.5);
+  } finally { globalThis.fetch = original; }
 });
 
 test('Contexto pequeno reduz reserva de saída sem remover instruções nem a última pergunta',()=>{const messages:Message[]=[{role:'system',content:'Regra importante. '.repeat(200)},{role:'user',content:'Prepare um anúncio curto.'}];const result=contextWindow(messages,optionsSchema.parse({context:8192,max_tokens:2048}),2048,50);assert.deepEqual(result.messages,messages);assert.ok(result.max_tokens>0&&result.max_tokens<1024);assert.equal(result.context,2048);});
