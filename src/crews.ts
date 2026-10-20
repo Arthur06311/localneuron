@@ -255,6 +255,11 @@ export class Crews {
     return this.messages(botId);
   }
 
+  tokenFor(providerId: string) {
+    if (providerId === 'local') return null;
+    return this.secrets.get(providerId);
+  }
+
   async addTeamUserMessage(content: string, round: number) {
     const tokens = estimateTokens(content);
     await this.db.query('INSERT INTO crew_messages (id, scope, bot_id, author, content, tokens, round) VALUES ($1, \'team\', NULL, \'user\', $2, $3, $4)', [randomUUID(), content, tokens, round]);

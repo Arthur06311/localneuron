@@ -133,7 +133,7 @@ test('a conversa para no máximo de rondas, nos tokens, no próprio coordenador 
   }
 });
 
-test('EXO e outro computador não são chamados nesta fase, e a rota exige um modelo local', async () => {
+test('o coordenador pode usar Anthropic e um colega não sai deste computador', async () => {
   const fx = await open();
   try {
     const missing = await fx.app.inject({ method: 'POST', url: '/v1/crews/talk', headers: fx.headers, payload: { content: 'olá' } });
@@ -145,13 +145,19 @@ test('EXO e outro computador não são chamados nesta fase, e a rota exige um mo
     assert.match(noModel.json().error, /modelo/);
 
     await model(fx, coordinator.bot_id, 'exo:cluster');
-    await assert.rejects(() => runCrewTalk(fx.crews, async () => { throw new Error('não chamar'); }, 'remoto', new AbortController().signal), /neste computador/);
+    await assert.rejects(() => runCrewTalk(fx.crews, async () => { throw new Error('não chamar'); }, 'remoto', new AbortController().signal), /loopback/);
 
     await model(fx, coordinator.bot_id, 'qwen35-9b');
     await model(fx, colleague.bot_id, 'qwen35-9b');
-    const cloud = await fx.crews.createProvider({ kind: 'anthropic', label: 'Claude', acknowledged: true, confirm_remote: true, token: 'crew-test-token-aaaa' });
+    const cloud = await fx.crews.createProvider({ kind: 'anthropic', label: 'Claude', model: 'claude-test', acknowledged: true, confirm_remote: true, token: 'crew-test-token-aaaa' });
     await fx.crews.updateMember(coordinator.bot_id, { provider_id: cloud.id });
-    await assert.rejects(() => runCrewTalk(fx.crews, async () => { throw new Error('não chamar'); }, 'nuvem', new AbortController().signal), /neste computador/);
+    const cloudTalk = await runCrewTalk(fx.crews, async input => {
+      assert.equal(input.providerId, cloud.id);
+      assert.equal(input.model, 'claude-test');
+      return { text: 'FIM: resposta do coordenador na nuvem.' };
+    }, 'nuvem', new AbortController().signal);
+    assert.equal(cloudTalk.stopped, 'done');
+    assert.equal(JSON.stringify(cloudTalk).includes('crew-test-token-aaaa'), false);
     await fx.crews.updateMember(coordinator.bot_id, { provider_id: 'local' });
     const loopback = await fx.crews.createProvider({ kind: 'openai', label: 'Loopback', endpoint: 'http://127.0.0.1:8080/v1' });
     await fx.crews.updateMember(colleague.bot_id, { provider_id: loopback.id });
