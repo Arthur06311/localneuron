@@ -1,15 +1,15 @@
 {
-  "version": "0.27.0",
+  "version": "0.28.1",
   "files": [
     {
       "id": "mac",
       "filename": "LocalNeuron-macOS-arm64.dmg",
-      "bytes": 396865340,
-      "sha256": "6fa74c9dbe4333cbc20c60cbf08e364bc1c4188bd2fb0642d37ca78b488fab22",
+      "bytes": 347033983,
+      "sha256": "06bba3d68653cdc64d1abb9cc78bdfc6c8a9f9b0942b6fc56adba6278e804795",
       "available": true,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.26.0/LocalNeuron-macOS-arm64.dmg",
-      "version": "0.26.0",
-      "releaseTag": "v0.26.0"
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-macOS-arm64.dmg",
+      "version": "0.28.1",
+      "releaseTag": "v0.28.1"
     },
     {
       "id": "windows",
@@ -24,22 +24,22 @@
     {
       "id": "linux",
       "filename": "LocalNeuron-Linux-x64.deb",
-      "bytes": 288573090,
-      "sha256": "3eb57d8da0e596f6e63f31885e0d4ebad58e8b55fd8c8cdf501fd86ca6724792",
+      "bytes": 259421438,
+      "sha256": "227149c25d9e14faccdded47e1a4a27c83a6fc999f99fc7168f0ad0f2da18693",
       "available": true,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0-linux.3/LocalNeuron-Linux-x64.deb",
-      "version": "0.27.0",
-      "releaseTag": "v0.27.0-linux.3",
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-Linux-x64.deb",
+      "version": "0.28.1",
+      "releaseTag": "v0.28.1",
       "format": "DEB \u00b7 Ubuntu / Debian",
       "alternatives": [
         {
           "filename": "LocalNeuron-Linux-x64.pkg.tar.gz",
-          "bytes": 288572728,
-          "sha256": "06573cc56a4213f211b274096e67e8067fb4da4a0a037bc016d1f8c791137ddd",
+          "bytes": 259421654,
+          "sha256": "b640ee101722057d2ed2a0ed52f8e1410f77ca17f3c7d5b900575e8b774480cf",
           "available": true,
-          "version": "0.27.0",
-          "releaseTag": "v0.27.0-linux.3",
-          "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.27.0-linux.3/LocalNeuron-Linux-x64.pkg.tar.gz",
+          "version": "0.28.1",
+          "releaseTag": "v0.28.1",
+          "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-Linux-x64.pkg.tar.gz",
           "label": "Arch / Omarchy"
         }
       ]
