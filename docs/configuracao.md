@@ -59,7 +59,7 @@ Para começar, prefira uma quantização Q4 de um modelo pequeno que caiba com f
 
 Não é preciso ter LM Studio aberto para os motores integrados. Depois da instalação dos motores e pesos, desative Internet no chat para usar inferência local sem pesquisa web. Downloads, conexões MCP e consulta de sites continuam dependendo de rede quando acionados.
 
-Se o pacote não trouxer o motor integrado da arquitetura, o app pode usar o LM Studio como motor externo. Essa integração usa somente `127.0.0.1:8080`: ao preparar o motor, o app executa `lms server start --port 8080 --bind 127.0.0.1`. Um servidor do LM Studio deixado na porta 1234 não é detectado. Se a porta 8080 já estiver ocupada por outro programa, a preparação é recusada.
+O LM Studio continua opcional. Se você iniciar o servidor dele, a detecção procura em `127.0.0.1` na porta configurada e também na porta padrão do LM Studio, **1234**. O padrão configurado é **8080**, que é a porta usada quando o LocalNeuron pede para o `lms` iniciar o servidor. Para mudar essa porta, defina `LOCALNEURON_LMSTUDIO_PORT`. `COLMEIA_LMSTUDIO_PORT` continua aceita; se as duas existirem, vale a `LOCALNEURON_LMSTUDIO_PORT`. Se só a antiga estiver definida, o processo avisa uma vez, sem mostrar o valor.
 
 ## Chat e bots
 
@@ -183,7 +183,13 @@ No modo navegador o botão não aparece. Defina `COLMEIA_DATA_DIR` com a pasta q
 
 Para backup completo, feche o app e copie a pasta pai inteira no desktop. No modo navegador, copie a pasta de dados inteira. O backup somente do cofre não inclui conversas, projetos e modelos. Use a exportação de conversas e de projetos quando quiser compartilhar um trabalho específico. Não publique sua pasta de dados no GitHub.
 
+A exportação do espaço (`GET /v1/space/export`) gera um único arquivo, `localneuron-espaco.zip`, com a base PGlite, o cofre cifrado e o workspace. Os motores são parados e a base entra em quiesce antes da cópia. O arquivo não acrescenta segredos em texto simples além do que o cofre já guarda cifrado. Ao abrir um espaço, o cofre e a base precisam corresponder. Se não corresponderem, a abertura é recusada com a mensagem: “O cofre e a base de dados não correspondem. A abertura deste espaço foi recusada.”
+
 ## Solução de problemas
+
+### A porta 4317 ou 4318 está em uso
+
+O aplicativo tenta a próxima porta livre em `127.0.0.1` e mostra a mensagem “A porta … está em uso por outro programa”. A URL real fica em `session.json`; o desktop e o `scripts/open.mjs` usam essa URL. `LOCALNEURON_PORT` é a porta preferida do modo navegador; `COLMEIA_PORT` continua aceito. No desktop, a preferida é 4318, ou `LOCALNEURON_TEST_PORT` em testes.
 
 ### O app só oferece criar senha
 

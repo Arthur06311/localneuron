@@ -76,12 +76,12 @@ export function createCrews({ api, escape: E, toast, navigate, isVisible = () =>
         <div class="crews-main">
           <h2>${selected ? E(selected.name || 'Agente') : 'Conversa da equipa'}</h2>
           <p class="muted" data-crew-usage>${over ? 'Esta conversa já passou o limite.' : 'Dentro do limite.'} ${tokens(used)} de ${tokens(settings.max_tokens)} tokens.</p>
-          <div class="crews-thread" role="log">${messages.map(message => `<article class="crews-bubble" data-author="${E(message.author)}"><header><strong>${E(authorLabel(message))}</strong><span>${tokens(message.tokens)} tokens</span></header><p>${E(message.content)}</p></article>`).join('') || '<p class="muted">Sem mensagens nesta conversa.</p>'}</div>
+          <div class="crews-thread" role="log">${messages.map(message => `<article class="crews-bubble" data-author="${E(message.author)}" data-crew-round="${message.round || 0}"><header><strong>${E(authorLabel(message))}</strong><span>${message.round ? `Ronda ${message.round} · ` : ''}${tokens(message.tokens)} tokens</span></header><p>${E(message.content)}</p></article>`).join('') || '<p class="muted">Sem mensagens nesta conversa.</p>'}</div>
           ${selected ? `<form id="crew-compose" class="crews-compose"><label>Mensagem para ${E(selected.name || 'este agente')}<textarea name="content" maxlength="16000" required placeholder="Escreva o que este agente deve ver."></textarea></label><p class="muted" id="crew-draft-tokens">Esta mensagem: 0 tokens. O limite da conversa é ${tokens(settings.max_tokens)}.</p><button class="primary" type="submit">Enviar</button></form>
             <div class="crews-model"><label>Modelo deste agente<select id="crew-model"><option value="">Sem modelo escolhido</option>${[['Modelos menores', choices.filter(choice => !choice.advanced)], ['70B ou mais · só o coordenador', choices.filter(choice => choice.advanced)]].filter(([, group]) => group.length).map(([label, group]) => `<optgroup label="${E(label)}">${group.map(choice => `<option value="${E(choice.key)}" ${choice.disabled ? 'disabled' : ''} ${choice.key === selected.model ? 'selected' : ''}>${E(modelOptionLabel(choice))}</option>`).join('')}</optgroup>`).join('')}</select></label><p class="muted">${selected.coordinator ? 'O coordenador pode usar um modelo maior.' : 'Este agente fica com um modelo menor. 70B, EXO, outro computador e nuvem são só do coordenador.'}</p>${suggestion ? `<button type="button" class="secondary" id="crew-suggest">Usar sugestão neste agente</button>` : ''}
             <label>Mascote<select id="crew-mascot">${CREW_MASCOTS.map(id => `<option value="${id}" ${id === selected.mascot ? 'selected' : ''}>${CREW_MASCOT_LABELS[id]}</option>`).join('')}</select></label>
             <p class="muted">Motor: ${E(provider?.label || 'Neste computador')}${provider?.leaves_computer ? ' · sai deste computador' : ''}</p>
-            <div class="crews-actions">${selected.coordinator ? '' : '<button type="button" class="secondary" id="crew-coordinator">Tornar coordenador</button>'}<button type="button" class="quiet" id="crew-remove">Retirar da equipa</button></div></div>` : '<p class="muted">Escolha um agente para escrever. Aqui vê a conversa completa.</p>'}
+            <div class="crews-actions">${selected.coordinator ? '' : '<button type="button" class="secondary" id="crew-coordinator">Tornar coordenador</button>'}<button type="button" class="quiet" id="crew-remove">Retirar da equipa</button></div></div>` : `<form id="crew-talk" class="crews-compose"><label>Pedido à equipa<textarea name="content" maxlength="16000" required placeholder="O coordenador divide este pedido pelos colegas, dentro das rondas e dos tokens."></textarea></label><p class="muted" id="crew-draft-tokens">Esta mensagem: 0 tokens. O limite da conversa é ${tokens(settings.max_tokens)}. Cada pedido usa no máximo ${tokens(settings.max_rounds)} rondas.</p><button class="primary" type="submit" ${crew.members.some(member => member.coordinator) ? '' : 'disabled'}>Pedir à equipa</button></form>`}
         </div>
       </div>
     </section>`;
@@ -114,17 +114,32 @@ export function createCrews({ api, escape: E, toast, navigate, isVisible = () =>
     if (model) model.onchange = () => { if (model.value === (crew.members.find(member => member.bot_id === view)?.model || '')) return; post(`/crews/members/${view}/model`, { model: model.value }).then(() => open()).catch(error => toast(error.message)); };
     const mascot = $('#crew-mascot');
     if (mascot) mascot.onchange = () => api(`/crews/members/${view}`, { method: 'PATCH', body: { mascot: mascot.value } }).then(() => open()).catch(error => toast(error.message));
-    const compose = $('#crew-compose');
-    if (compose) {
-      const draft = compose.querySelector('textarea');
-      draft.oninput = () => { $('#crew-draft-tokens').textContent = `Esta mensagem: ${tokens(estimateTokens(draft.value))} tokens. O limite da conversa é ${tokens(crew.settings.max_tokens)}.`; };
-      compose.onsubmit = event => {
+    const draftForm = $('#crew-compose') || $('#crew-talk');
+    if (draftForm) {
+      const draft = draftForm.querySelector('textarea');
+      const team = draftForm.id === 'crew-talk';
+      draft.oninput = () => { $('#crew-draft-tokens').textContent = `Esta mensagem: ${tokens(estimateTokens(draft.value))} tokens. O limite da conversa é ${tokens(crew.settings.max_tokens)}.${team ? ` Cada pedido usa no máximo ${tokens(crew.settings.max_rounds)} rondas.` : ''}`; };
+      draftForm.onsubmit = event => {
         event.preventDefault();
-        const button = compose.querySelector('[type="submit"]');
+        const button = draftForm.querySelector('[type="submit"]');
         button.disabled = true;
-        post(`/crews/members/${view}/messages`, { content: draft.value }).then(() => open()).catch(error => toast(error.message)).finally(() => { if (button.isConnected) button.disabled = false; });
+        const request = team ? post('/crews/talk', { content: draft.value }) : post(`/crews/members/${view}/messages`, { content: draft.value });
+        request.then(result => { if (team && result?.stopped) toast(talkNote(result.stopped)); return open(); }).catch(error => toast(error.message)).finally(() => { if (button.isConnected) button.disabled = false; });
       };
     }
+  }
+
+  function talkNote(stopped) {
+    const notes = {
+      done: 'A equipa respondeu dentro dos limites.',
+      rounds: 'A conversa parou no máximo de rondas.',
+      tokens: 'A conversa parou no limite de tokens.',
+      abort: 'A conversa foi interrompida.',
+      self: 'O coordenador não se pede a si próprio.',
+      local: 'Esta fase fala só com o modelo deste computador.',
+      model: 'Falta um modelo local num destes agentes.',
+    };
+    return notes[stopped] || 'A conversa da equipa terminou.';
   }
 
   return { render: () => open().catch(error => toast(error.message)) };

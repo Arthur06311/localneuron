@@ -8,6 +8,7 @@ import { TOOLS, parseWorkflow, judge } from './policy.js';
 import { compose, validate } from './model.js';
 import { hash, signature, validSignature, fingerprint, verifyPackage } from '../scripts/protocol.mjs';
 import type { Action, Entry, Grant, Identity, State, Task } from './types.js';
+import { SPACE_MISMATCH } from './space.js';
 
 const taskInput = z.strictObject({ title: z.string().trim().min(3).max(140), brief: z.string().trim().min(10).max(16000), requirements: z.array(z.string().trim().min(1).max(500)).min(1).max(40), duration_seconds: z.number().int().min(10).max(3600), workflow_id: z.string(), mode: z.enum(['template','model']), model: z.string().max(200).default(''), budget_minor: z.number().int().nonnegative().max(1000000).default(0) });
 const requireState = (state: State | null): State => { if (!state) throw new Error('Configure o espaço de trabalho'); return state; };
@@ -26,7 +27,12 @@ export class Core {
     };
     this.store.sealState = (state, entries) => { state.seal = signature(sealBody(state, entries), this.vault.key('organization')); };
   }
-  async init() { await this.store.init(); }
+  async init() {
+    await this.store.init();
+    if (!this.vault.exists) return;
+    const vaultId = this.vault.spaceId, dbId = await this.store.binding();
+    if (vaultId && dbId && vaultId !== dbId) throw new Error(SPACE_MISMATCH);
+  }
   actor(state: State, kind: Identity['kind']) { const actor = state.identities.find(i => i.kind === kind); if (!actor) throw new Error('Identidade ausente'); return actor; }
   append(state: State, entries: Entry[], type: string, payload: unknown, authorId = 'human', taskId = '', action: Action | null = null, grant: Grant | null = null) {
     const actor = state.identities.find(i => i.id === authorId);
@@ -45,6 +51,7 @@ export class Core {
     const state: State = { log_id: randomUUID(), identities, agent: { id: 'agent', scope: [...TOOLS], cap_minor: 0, epoch: 0 }, workflows: [workflow], tasks: [], reservations: [], idempotency: {} };
     await this.store.bootstrap(state);
     await this.store.tx((s, entries) => this.append(requireState(s), entries, 'workspace.created', { log_id: state.log_id, identities }));
+    await this.bindSpace();
   }
   async unlock(password: string) {
     this.vault.unlock(password);
@@ -52,6 +59,18 @@ export class Core {
       const state = requireState(s);
       for (const task of state.tasks.filter(t => t.state === 'running')) { task.state = 'paused'; task.generation++; task.grants = {}; task.error = 'Execução interrompida. Revise e autorize uma nova tentativa.'; this.releaseLocalReservations(state, entries, task); this.append(state, entries, 'task.recovered', { id: task.id, state: task.state }, 'service', task.id); }
     });
+    await this.bindSpace();
+  }
+  async bindSpace() {
+    if (!this.vault.exists) return;
+    const vaultId = this.vault.spaceId, dbId = await this.store.binding();
+    if (vaultId && dbId && vaultId !== dbId) throw new Error(SPACE_MISMATCH);
+    if (vaultId && dbId) return;
+    if (!vaultId && !dbId) this.vault.attachSpace(randomUUID());
+    else if (!vaultId) this.vault.attachSpace(dbId!);
+    const id = this.vault.spaceId;
+    if (!id || (dbId && dbId !== id)) throw new Error(SPACE_MISMATCH);
+    if (!dbId) await this.store.bind(id);
   }
   async status() { const initialized=Boolean(await this.store.read()), vault_exists=this.vault.exists; return { initialized, locked: this.vault.locked, vault_exists, access_state: initialized ? "existing" : vault_exists ? "recovery" : "new" }; }
   async snapshot() { if (this.vault.locked) throw new Error('Cofre bloqueado'); const s = requireState(await this.store.read()); return { ...s, idempotency: undefined, root_fingerprint: fingerprint(createPublicKey(this.vault.key('organization')).export({ type: 'spki', format: 'pem' }).toString()) }; }

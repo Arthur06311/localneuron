@@ -22,6 +22,7 @@
 .crews-bubble header{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:var(--text-xs);color:var(--muted)}
 .crews-bubble p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .crews-bubble[data-author="user"]{background:var(--island-crews-soft)}
+.crews-bubble[data-author="system"]{background:transparent;color:var(--muted)}
 .crews-compose label{display:grid;gap:6px}
 .crews-compose textarea{min-height:88px;resize:vertical}
 .crews-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
