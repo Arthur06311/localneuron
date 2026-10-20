@@ -2,11 +2,24 @@
 
 As mudanças notáveis do LocalNeuron estão neste arquivo, no estilo [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
-Cada entrada vem de uma fonte conferível: notas em `docs/localneuron-*.md`, a revisão `docs/release-readiness.md`, tags Git, `website/downloads.json`, `website/releases.json` ou `package.json` (versão atual `0.28.0`). Não há notas separadas da 0.22 à 0.26. As notas da 0.8 à 0.21 entraram no Git juntas no commit `26d2165` (14/09/2026); a data de criação do arquivo não é a data de cada versão, e por isso essas versões ficam sem data.
+Cada entrada vem de uma fonte conferível: notas em `docs/localneuron-*.md`, a revisão `docs/release-readiness.md`, tags Git, `website/downloads.json`, `website/releases.json` ou `package.json` (versão atual `0.28.1`). Não há notas separadas da 0.22 à 0.26. As notas da 0.8 à 0.21 entraram no Git juntas no commit `26d2165` (14/09/2026); a data de criação do arquivo não é a data de cada versão, e por isso essas versões ficam sem data.
 
 O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`, o campo `version` de `package.json` e a seção datada `## [X.Y.Z]` deste arquivo. A data pode usar hífen ou travessão.
 
 ## [Não publicado]
+
+## [0.28.1] - 2026-10-19
+
+- A 0.28.0 não chegou a publicar binários. O empacotamento instala o `Electron.app` no macOS e entrega os caminhos do NSIS com barra invertida, gerando DMG, ZIP, Setup, AppImage, DEB, pacote Arch e `SHA256SUMS.txt` (#42).
+- A narração usa a voz do sistema e o instalador deixa de embutir o eSpeak (#11).
+- A primeira utilização sugere um único modelo de acordo com a RAM (#31).
+- Os restos visíveis de Colmeia passam a LocalNeuron (#15).
+- O formulário de bug em português acompanha os pacotes reais e deixa de citar RPM (#5).
+- A instalação guarda um backup offline, e os testes cobrem migrações e os aliases de ambiente (#34).
+- A biblioteca acompanha o download sem baixar o catálogo inteiro (#18).
+- Os testes aceitam a mensagem opcional do `assert` no TypeScript 7 (#40).
+- O CI ganha ESLint e Prettier (#10).
+- O SDK MCP sobe de versão e o OAuth deixa de aceitar qualquer host HTTPS (#13).
 
 ## [0.28.0] - 2026-10-19
 
