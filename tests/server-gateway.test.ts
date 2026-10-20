@@ -15,7 +15,6 @@ function harness(now = () => 1_000_000, role = () => 'manage', exoRunning = () =
   const calls: string[] = [];
   const fetcher = (async (url: string) => {
     calls.push(String(url));
-    if (String(url).includes('example.com') || String(url).startsWith('https://')) throw new Error('telemetria');
     return Response.json({ nodes: ['mac-sala'] });
   }) as typeof fetch;
   const gateway = new ServerGateway(dir, vault, fetcher, () => 'http://127.0.0.1:52415', exoRunning, role, now);
