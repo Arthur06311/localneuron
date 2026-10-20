@@ -89,6 +89,8 @@ test('Servidor grava a porta real e CSP, Minha API e EXO seguem essa origem', as
     assert.equal(wrongOrigin.statusCode, 403);
     assert.match(wrongOrigin.json().error, /Origem recusada/);
     const headers = { host, origin, authorization: 'Bearer ' + token };
+    assert.equal(started.core.vault.locked, false);
+    started.core.vault.lock();
     for (const url of ['/v1/sharing', '/v1/exo']) {
       assert.equal((await app.inject({ method: 'GET', url, headers })).statusCode, 423);
       assert.equal((await app.inject({ method: 'GET', url, headers: { ...headers, host: `127.0.0.1:${blocker.port}`, origin: `http://127.0.0.1:${blocker.port}` } })).statusCode, 403);

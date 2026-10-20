@@ -37,6 +37,8 @@ import { memoryStatus } from './model.js';
 import { totalmem, tmpdir } from 'node:os';
 import { Chats } from './chat.js';
 import { Core } from './core.js';
+import { adoptDeviceVault, openCoreWithSecret } from './vault-device.js';
+import { abortVaultMigration, commitVaultMigration, discardUnkeyedMigration, migrationPath, prepareVaultMigration, resumeVaultMigration } from './vault-migration.js';
 import { exportSpace } from './space-archive.js';
 import { localModels } from './model.js';
 import { libraryRevision } from './library-progress.js';
@@ -47,9 +49,16 @@ import { verifyPackage } from '../scripts/protocol.mjs';
 import { z } from 'zod';
 
 const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as { legacyEnv: (suffix: string) => string | undefined };
+const { createSecret, hasKey, removeKey, removeLegacyAccess, storeKey } = createRequire(import.meta.url)('../../desktop/vault-key.cjs') as {
+  createSecret: () => string;
+  hasKey: (directory: string) => boolean;
+  removeKey: (directory: string) => void;
+  removeLegacyAccess: (directory: string) => void;
+  storeKey: (input: { directory: string; secret: string; safeStorage: null; warn?: (message: string) => void }) => string;
+};
 
 const equal = (a: string, b: string) => { const left = Buffer.from(a), right = Buffer.from(b); return left.length === right.length && timingSafeEqual(left,right); };
-export async function createApp(core: Core, token = randomBytes(32).toString('hex'), initialOrigin = 'http://127.0.0.1:4317', runtime = new LocalRuntime(core.directory,core.root), planConfig = subscriptionConfig(core.root)) {
+export async function createApp(core: Core, token = randomBytes(32).toString('hex'), initialOrigin = 'http://127.0.0.1:4317', runtime = new LocalRuntime(core.directory,core.root), planConfig = subscriptionConfig(core.root), deviceNonce = '') {
   let origin = initialOrigin;
   const app = Fastify({ logger: false, bodyLimit: 2 * 1024 * 1024, ajv: { customOptions: { removeAdditional: false } } });
   // Limite só na rota nova, que lê o disco. global:false deixa as outras rotas livres para o limite global por IP do servidor local.
@@ -104,7 +113,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     if(experienceJobs.busy&&request.method!=='GET'&&!/^\/v1\/(experience\/(room|benchmark)\/stop|assistant\/approve|lock)$/.test(request.url))return reply.code(409).send({error:'Pare o teste ou a reunião antes de iniciar outra operação.'});
     if(pro.busy&&request.method==='POST'&&/^\/v1\/(experience\/bots\/.*\/run|chats\/.*\/send|model-library\/(load|unload|engine|import-mlx)|sharing\/start|tasks\/.*\/start|local-engines\/(generate|transcribe))$/.test(request.url))return reply.code(409).send({error:'Aguarde a tarefa Pro ou cancele-a na fila.'});
     if((aux.busy||proMedia.busy)&&request.method==='POST'&&/\/chats\/[^/]+\/send$/.test(request.url))return reply.code(409).send({error:'Aguarde o motor de voz ou imagem.'});
-    if (!['/v1/status','/v1/setup','/v1/unlock','/v1/session'].includes(request.url) && core.vault.locked) return reply.code(423).send({ error: 'Desbloqueie o cofre para continuar.' });
+    if (!['/v1/status','/v1/setup','/v1/unlock','/v1/session','/v1/vault/migrate','/v1/vault/device-open','/v1/vault/device-migrate','/v1/vault/device-commit','/v1/vault/device-abort'].includes(request.url.split('?')[0]) && core.vault.locked) return reply.code(423).send({ error: 'Desbloqueie o cofre para continuar.' });
   });
   app.addHook('preHandler',async(request)=>{const feature=requiredFeature(request.method,request.routeOptions.url||request.url.split('?')[0],request.body);if(feature)subscription.require(feature);});
   app.setErrorHandler((error, _request, reply) => {
@@ -189,7 +198,66 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/local-engines/generate',async request=>exclusive(async()=>{if(core.vault.locked||core.jobs.size||chats.busy||gateway.busy||runtime.busy)throw new Error('Aguarde a IA terminar antes de gerar mídia.');const {model,prompt,steps,...options}=z.strictObject({model:z.string().max(100),prompt:z.string().trim().min(1).max(4000),steps:z.number().int().min(4).max(40).default(20),seed:z.number().int().min(0).max(2147483646).optional(),negative:z.string().max(2000).optional(),aspect:z.enum(['1:1','16:9','9:16']).default('1:1')}).parse(body(request));return aux.generate(model,prompt,steps,options);}));
   app.get('/v1/local-engines/artifacts/:id',async(request,reply)=>{const artifact=aux.artifact(String((request.params as any).id));return reply.type(artifact.type).header('Content-Disposition','inline').send(readFileSync(artifact.file));});
   app.post('/v1/session', async (_request, reply) => reply.header('Set-Cookie', `colmeia=${token}; HttpOnly; SameSite=Strict; Path=/`).send({ ok: true }));
-  app.get('/v1/status', async () => core.status());
+  app.get('/v1/status', async () => { const status = await core.status(); return { ...status, needs_migration: status.vault_exists && status.locked && !hasKey(core.directory) }; });
+  const vaultLimit = { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } };
+  const deviceHeader = (request: { headers: Record<string, string | string[] | undefined> }) => { const header = request.headers['x-localneuron-device']; const presented = Array.isArray(header) ? header[0] : header ?? ''; return Boolean(deviceNonce) && equal(presented, deviceNonce); };
+  const rejectPassword = () => { failedUnlocks++; if (failedUnlocks >= 3) retryAt = Date.now() + 30000; };
+  app.post('/v1/vault/device-open', vaultLimit, async (request, reply) => {
+    if (!deviceHeader(request)) return reply.code(403).send({ error: 'Origem do dispositivo recusada' });
+    const { secret } = z.strictObject({ secret: z.string().min(12).max(1024) }).parse(body(request));
+    if (!hasKey(core.directory)) discardUnkeyedMigration(core.vault);
+    if (existsSync(migrationPath(core.vault.path)) && !resumeVaultMigration(core.vault, secret)) abortVaultMigration(core.vault);
+    await openCoreWithSecret(core, secret);
+    await chats.recover();
+    return { ok: true };
+  });
+  app.post('/v1/vault/device-migrate', vaultLimit, async (request, reply) => {
+    if (!deviceHeader(request)) return reply.code(403).send({ error: 'Origem do dispositivo recusada' });
+    if (Date.now() < retryAt) throw new Error('Aguarde antes de tentar outra senha');
+    const { password, secret } = z.strictObject({ password: z.string().min(1).max(1024), secret: z.string().min(12).max(1024) }).parse(body(request));
+    if (hasKey(core.directory)) throw new Error('O cofre deste computador já tem chave.');
+    try { prepareVaultMigration(core.vault, password, secret); failedUnlocks = 0; return { prepared: true }; }
+    catch (error) { rejectPassword(); throw error; }
+  });
+  app.post('/v1/vault/device-commit', vaultLimit, async (request, reply) => {
+    if (!deviceHeader(request)) return reply.code(403).send({ error: 'Origem do dispositivo recusada' });
+    commitVaultMigration(core.vault);
+    return { ok: true };
+  });
+  app.post('/v1/vault/device-abort', vaultLimit, async (request, reply) => {
+    if (!deviceHeader(request)) return reply.code(403).send({ error: 'Origem do dispositivo recusada' });
+    abortVaultMigration(core.vault);
+    return { ok: true };
+  });
+  app.post('/v1/vault/migrate', vaultLimit, async request => {
+    if (deviceNonce) throw new Error('Abra o aplicativo para concluir esta etapa.');
+    if (Date.now() < retryAt) throw new Error('Aguarde antes de tentar outra senha');
+    const { password } = z.strictObject({ password: z.string().min(1).max(1024) }).parse(body(request));
+    if (hasKey(core.directory)) throw new Error('O cofre deste computador já tem chave.');
+    if (!core.vault.exists) throw new Error('Cofre ausente');
+    const secret = createSecret();
+    let prepared = false, stored = false, committed = false;
+    try {
+      prepareVaultMigration(core.vault, password, secret);
+      prepared = true;
+      storeKey({ directory: core.directory, secret, safeStorage: null, warn: message => console.warn(message) });
+      stored = true;
+      commitVaultMigration(core.vault);
+      committed = true;
+      await openCoreWithSecret(core, secret);
+      await chats.recover();
+      removeLegacyAccess(core.directory);
+      failedUnlocks = 0;
+      return { ok: true };
+    } catch (error) {
+      if (!committed) {
+        abortVaultMigration(core.vault);
+        if (stored) removeKey(core.directory);
+      }
+      if (!prepared) rejectPassword();
+      throw error;
+    }
+  });
   for (const route of ['setup','unlock'] as const) app.post('/v1/' + route, async request => {
     if (Date.now() < retryAt) throw new Error('Aguarde antes de tentar outra senha');
     const { password } = z.strictObject({ password: z.string().min(1).max(1024) }).parse(body(request));
@@ -413,7 +481,11 @@ export async function openLocalServer(directory: string, root: string, env: Node
   let app: Awaited<ReturnType<typeof createApp>>['app'] | undefined;
   try {
     await core.init();
-    const created = await createApp(core, undefined, `http://127.0.0.1:${preferred}`);
+    if (env.ELECTRON_RUN_AS_NODE !== '1') {
+      try { await adoptDeviceVault(core); }
+      catch (error) { console.warn(error instanceof Error ? error.message : 'Não foi possível abrir o cofre.'); }
+    }
+    const created = await createApp(core, undefined, `http://127.0.0.1:${preferred}`, undefined, undefined, String(env.LOCALNEURON_DEVICE_NONCE || ''));
     app = created.app;
     const bound = await listenWithFallback(preferred, async port => {
       created.setOrigin(`http://127.0.0.1:${port}`);

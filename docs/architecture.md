@@ -45,7 +45,7 @@ O controlador confiável assina em nome do humano após sua ação autenticada. 
 
 ## Persistência e privacidade
 
-As chaves ficam em `vault.enc.json`, AES-256-GCM com chave derivada por scrypt e salt aleatório. O arquivo tem modo 0600 e a pasta é criada em 0700. O cofre fica bloqueado após reinício. Senha não aparece em logs nem na exportação. Não há recuperação administrativa nem integração safeStorage/Keychain implementada.
+As chaves ficam em `vault.enc.json`, AES-256-GCM com chave derivada por scrypt e salt aleatório. O arquivo tem modo 0600 e a pasta é criada em 0700. O segredo desse algoritmo é uma chave aleatória gerada pelo aplicativo. No desktop, ela fica cifrada com safeStorage (Keychain no macOS, DPAPI no Windows, libsecret no Linux) e só o processo principal a lê. Se o safeStorage não está disponível, a chave fica em um arquivo 0600 e um aviso local é registrado, sem telemetria. Quem já tinha senha informa essa senha uma vez; o cofre é recifrado e o material antigo da senha só é apagado depois da troca. Uma migração que falha deixa o cofre anterior intacto. A chave não aparece em logs nem na exportação. Não há recuperação administrativa.
 
 Briefings, versões e saídas ficam no PostgreSQL local sem criptografia de aplicação. Para proteção em repouso do dispositivo, a Alfa depende da proteção do sistema/volume. Isso é exibido no onboarding. A exclusão de conversa remove a projeção ativa, sem prometer apagamento físico de backups ou WAL; a política jurídica de retenção ainda deve ser definida.
 

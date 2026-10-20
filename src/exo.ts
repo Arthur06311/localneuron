@@ -249,8 +249,8 @@ export class ExoRuntime {
   private lanWarning() {
     if (!this.installer.running || !this.installer.exposed) return "";
     if (this.installer.unrestricted)
-      return "Este EXO não permite bind em loopback: a versão 1.0.71 fixa a API em 0.0.0.0 e não tem --api-host. A porta 52415 está acessível em todas as interfaces IPv4, sem autenticação e sem cifra, enquanto o nó estiver em execução. Bloquear o aplicativo encerra o nó.";
-    return "A API nativa do EXO está aberta na rede local, sem autenticação. Qualquer dispositivo nesta rede pode criar ou remover instâncias, forçar downloads e ler respostas. Desligue a exposição quando terminar. Bloquear o aplicativo também encerra essa exposição.";
+      return "Este EXO não permite bind em loopback: a versão 1.0.71 fixa a API em 0.0.0.0 e não tem --api-host. A porta 52415 está acessível em todas as interfaces IPv4, sem autenticação e sem cifra, enquanto o nó estiver em execução. Fechar o aplicativo encerra o nó.";
+    return "A API nativa do EXO está aberta na rede local, sem autenticação. Qualquer dispositivo nesta rede pode criar ou remover instâncias, forçar downloads e ler respostas. Desligue a exposição quando terminar. Fechar o aplicativo também encerra essa exposição.";
   }
   async request(
     path: string,

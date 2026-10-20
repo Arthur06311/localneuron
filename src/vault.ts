@@ -23,12 +23,13 @@ export class Vault {
     }
     this.save(password); return publics;
   }
-  unlock(password: string) {
-    const envelope = JSON.parse(readFileSync(this.path, 'utf8'));
+  unlock(password: string) { this.keys = Vault.openSealed(this.path, password); }
+  static openSealed(file: string, password: string) {
+    const envelope = JSON.parse(readFileSync(file, 'utf8'));
     const key = scryptSync(password, Buffer.from(envelope.salt, 'hex'), 32);
     const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(envelope.iv, 'hex'));
     decipher.setAuthTag(Buffer.from(envelope.tag, 'hex'));
-    try { this.keys = JSON.parse(Buffer.concat([decipher.update(Buffer.from(envelope.data, 'base64')), decipher.final()]).toString()); }
+    try { return JSON.parse(Buffer.concat([decipher.update(Buffer.from(envelope.data, 'base64')), decipher.final()]).toString()) as Record<string, string>; }
     catch { throw new Error('Senha incorreta ou cofre danificado'); }
   }
   get spaceId() {
@@ -49,13 +50,15 @@ export class Vault {
     renameSync(this.path + '.tmp', this.path);
     this.boundId = id;
   }
-  save(password: string) {
+  save(password: string) { this.writeSealed(this.path, password); }
+  writeSealed(target: string, password: string) {
+    if (!this.keys) throw new Error('Cofre bloqueado');
     const salt = randomBytes(16), iv = randomBytes(12);
     const cipher = createCipheriv('aes-256-gcm', scryptSync(password, salt, 32), iv);
     const data = Buffer.concat([cipher.update(JSON.stringify(this.keys)), cipher.final()]);
     const space_id = this.boundId ?? this.spaceId;
-    writeFileSync(this.path + '.tmp', JSON.stringify({ version: 1, ...(space_id ? { space_id } : {}), salt: salt.toString('hex'), iv: iv.toString('hex'), tag: cipher.getAuthTag().toString('hex'), data: data.toString('base64') }), { mode: 0o600 });
-    renameSync(this.path + '.tmp', this.path);
+    writeFileSync(target + '.tmp', JSON.stringify({ version: 1, ...(space_id ? { space_id } : {}), salt: salt.toString('hex'), iv: iv.toString('hex'), tag: cipher.getAuthTag().toString('hex'), data: data.toString('base64') }), { mode: 0o600 });
+    renameSync(target + '.tmp', target);
   }
   key(id: string) { const key = this.keys?.[id]; if (!key) throw new Error('Cofre bloqueado'); return key; }
   lock() { this.keys = null; }
