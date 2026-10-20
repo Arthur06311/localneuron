@@ -25,7 +25,7 @@ test('navigation is grouped into five discoverable islands',async()=>{
 
 test('every former destination remains present inside an island',async()=>{
   const html=await readFile(resolve(root,'public/index.html'),'utf8');
-  for(const page of ['chat','team','models','crews','photo','studio','music','editor','connections','exo','sharing','pro','subscription','wizard','settings']){
+  for(const page of ['chat','team','models','crews','photo','studio','music','editor','connections','exo','server','sharing','pro','subscription','wizard','settings']){
     assert.match(html,new RegExp(`data-page="${page}"`),`Missing page ${page}`);
   }
 });

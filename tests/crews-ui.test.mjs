@@ -25,7 +25,7 @@ test('a ilha Equipes fica entre Trabalhar e Criar, em pt-BR, com o registo e o m
   assert.doesNotMatch(html, /> Equipas</);
   assert.match(html, /\/crews\.css/);
   assert.match(js, /crews:'crews'/);
-  assert.match(js, /crews:'Equipes'/);
+  assert.match(js, /crews:'Equipes \/ Equipes'/);
   assert.match(ui, /Limite de tokens por conversa/);
   assert.match(ui, /data-crew-token-limit/);
   assert.match(ui, /data-crew-round/);

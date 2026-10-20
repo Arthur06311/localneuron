@@ -10,7 +10,7 @@ test('O pareamento avisa a porta 52415 e não abre a internet', () => {
   assert.match(ui, /expira depressa/);
   assert.match(ui, /chave própria, guardada no cofre/);
   assert.match(ui, /Nada é aberto para a internet/);
-  assert.match(ui, /Registo local/);
+  assert.match(ui, /Registro local/);
   assert.match(ui, /id="server-exo-warning"/);
   assert.match(source, /A porta 52415 continua acessível na LAN enquanto o EXO estiver ligado/);
   assert.match(source, /global: false/);
