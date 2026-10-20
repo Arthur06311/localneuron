@@ -185,6 +185,10 @@ Para backup completo, feche o app e copie a pasta pai inteira no desktop. No mod
 
 ## Solução de problemas
 
+### A porta 4317 ou 4318 está em uso
+
+O aplicativo tenta a próxima porta livre em `127.0.0.1` e mostra a mensagem “A porta … está em uso por outro programa”. A URL real fica em `session.json`; o desktop e o `scripts/open.mjs` usam essa URL. `LOCALNEURON_PORT` é a porta preferida do modo navegador; `COLMEIA_PORT` continua aceito. No desktop, a preferida é 4318, ou `LOCALNEURON_TEST_PORT` em testes.
+
 ### O app só oferece criar senha
 
 Confira se abriu a instalação correta e selecionou a pasta de dados existente. O primeiro uso de uma pasta vazia cria um novo espaço. Não apague o espaço antigo nem redefina a senha para tentar localizar seus dados.
