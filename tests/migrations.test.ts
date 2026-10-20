@@ -88,3 +88,40 @@ test('Versão futura do esquema recusa abrir e não altera a base', async () => 
     await db.close();
   }
 });
+
+test('Lista fora de ordem e esquema incompleto são recusados sem gravar versão', async () => {
+  const skipped = new PGlite();
+  const partial = new PGlite();
+  try {
+    const list: Migration[] = [
+      { version: 1, name: 'ok', up: async () => {} },
+      { version: 3, name: 'salto', up: async () => { throw new Error('não devia correr'); } },
+    ];
+    await assert.rejects(() => applyMigrations(skipped, list), /fora da ordem/);
+    assert.equal((await skipped.query<{ name: string | null }>(`SELECT to_regclass('public.schema_migrations') AS name`)).rows[0].name, null);
+    await partial.exec('CREATE TABLE workspace_state (id integer PRIMARY KEY, document jsonb NOT NULL)');
+    await assert.rejects(() => applyMigrations(partial), /incompleto/);
+    assert.equal((await partial.query<{ name: string | null }>(`SELECT to_regclass('public.schema_migrations') AS name`)).rows[0].name, null);
+    assert.equal((await partial.query<{ name: string | null }>(`SELECT to_regclass('public.event_log') AS name`)).rows[0].name, null);
+  } finally {
+    await skipped.close();
+    await partial.close();
+  }
+});
+
+test('Versão já registada recebe só a seguinte e a repetição não duplica linhas', async () => {
+  const db = new PGlite();
+  try {
+    const list: Migration[] = [
+      { version: 1, name: 'base', up: async tx => { await tx.exec('CREATE TABLE items (id integer PRIMARY KEY); INSERT INTO items VALUES (1);'); } },
+      { version: 2, name: 'label', up: async tx => { await tx.exec(`ALTER TABLE items ADD COLUMN label text NOT NULL DEFAULT 'ok'; INSERT INTO items (id) VALUES (2);`); } },
+    ];
+    await applyMigrations(db, [list[0]]);
+    await applyMigrations(db, list);
+    await applyMigrations(db, list);
+    assert.deepEqual((await db.query('SELECT id, label FROM items ORDER BY id')).rows, [{ id: 1, label: 'ok' }, { id: 2, label: 'ok' }]);
+    assert.deepEqual((await db.query('SELECT version, name FROM schema_migrations ORDER BY version')).rows, [{ version: 1, name: 'base' }, { version: 2, name: 'label' }]);
+  } finally {
+    await db.close();
+  }
+});
