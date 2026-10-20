@@ -50,11 +50,39 @@ export type Generation = {
   finish_reason: "stop" | "length";
   prompt_tokens?: number;
   completion_tokens?: number;
+  tokens_per_second?: number;
   elapsed_ms: number;
   review_ms?: number;
   omitted_messages: number;
   context: number;
 };
+export function engineTokensPerSecond(event: unknown) {
+  if (!event || typeof event !== "object") return undefined;
+  const record = event as {
+    timings?: { predicted_per_second?: unknown };
+    usage?: {
+      tokens_per_second?: unknown;
+      completion_tokens_per_second?: unknown;
+      timings?: { predicted_per_second?: unknown };
+    };
+  };
+  const candidates = [
+    record.timings?.predicted_per_second,
+    record.usage?.tokens_per_second,
+    record.usage?.completion_tokens_per_second,
+    record.usage?.timings?.predicted_per_second,
+  ];
+  for (const value of candidates) {
+    if (
+      typeof value === "number" &&
+      Number.isFinite(value) &&
+      value > 0 &&
+      value <= 100000
+    )
+      return value;
+  }
+  return undefined;
+}
 export const estimateTokens = (text: string) =>
   Math.ceil(Buffer.byteLength(text, "utf8") / 3) + 8;
 export function contextWindow(
@@ -199,7 +227,8 @@ export async function inferenceStep(
     bytes = 0,
     done = false,
     finish: "stop" | "length" | "tool_calls" | null = null,
-    usage: any = {};
+    usage: any = {},
+    tokensPerSecond: number | undefined;
   const calls = new Map<number, ToolCall>();
   try {
     for (;;) {
@@ -231,6 +260,8 @@ export async function inferenceStep(
             "O motor interrompeu a resposta. Tente reduzir o contexto.",
           );
         if (event.usage) usage = event.usage;
+        const rate = engineTokensPerSecond(event);
+        if (rate) tokensPerSecond = rate;
         const choice = event.choices?.[0];
         if (!choice) continue;
         if (choice.delta?.reasoning_content || choice.delta?.reasoning)
@@ -316,6 +347,7 @@ export async function inferenceStep(
       usage.completion_tokens >= 0
         ? { completion_tokens: usage.completion_tokens }
         : {}),
+      ...(tokensPerSecond ? { tokens_per_second: tokensPerSecond } : {}),
     };
   } finally {
     await reader.cancel().catch(() => {});
