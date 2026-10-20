@@ -13,13 +13,14 @@
     },
     {
       "id": "windows",
-      "filename": "LocalNeuron-Windows-x64.zip",
-      "bytes": 314979101,
-      "sha256": "f2da0d8dd191c9276e0ea93f23b2358d7531316668ba88d0c59c76cc54204a5a",
+      "filename": "LocalNeuron-Windows-x64-Setup.exe",
+      "bytes": 196823872,
+      "sha256": "414055771b7f2051e082f75b4992ec8a9a55ef0b789dffa15519d5bfadce26ac",
       "available": true,
-      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.26.0/LocalNeuron-Windows-x64.zip",
-      "version": "0.26.0",
-      "releaseTag": "v0.26.0"
+      "href": "https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-Windows-x64-Setup.exe",
+      "version": "0.28.1",
+      "releaseTag": "v0.28.1",
+      "format": "Setup"
     },
     {
       "id": "linux",
