@@ -15,6 +15,9 @@ test('navigation is grouped into five discoverable islands',async()=>{
     assert.match(html,new RegExp(`id="nav-island-${island}"`));
   }
   assert.match(html,/navigation\.css/);
+  assert.match(html,/> Equipes</);
+  assert.match(html,/data-page="crews"/);
+  assert.doesNotMatch(html,/> Equipas</);
   assert.match(js,/navIslandForPage/);
   assert.match(js,/toggleNavIsland/);
   assert.match(css,/\.nav-island:not\(\[data-open="true"\]\) \.nav-island-menu\{display:none/);
