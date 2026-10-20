@@ -11,6 +11,7 @@
   const order = ['auto', 'light', 'dark'];
   const button = document.getElementById('theme-toggle');
   function language() {
+    if (!document.getElementById('language')) return 'pt';
     let pref = 'pt';
     try { pref = localStorage.getItem('localneuron-language') || document.documentElement.lang || 'pt'; } catch {}
     pref = String(pref).toLowerCase().slice(0, 2);

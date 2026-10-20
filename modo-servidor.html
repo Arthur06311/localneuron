@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0f1114">
+<meta name="theme-color" content="#0f1114"><meta name="color-scheme" content="light dark">
 <title>Modo servidor e Rede EXO — LocalNeuron</title>
 <meta name="description" content="O Modo servidor do LocalNeuron usa o EXO 1.0.71 para dividir um modelo de texto entre Macs. Minha API é uma função separada.">
 <link rel="canonical" href="https://localneuron.ai/modo-servidor.html">
@@ -87,9 +87,7 @@
 <h2 data-i18n="srvRdmaH">Esquemas de cabo para RDMA</h2>
 <p data-i18n="rdmaDiagram">Os desenhos abaixo são ilustração de cabeamento, não uma tela do aplicativo. RDMA não faz parte da 0.28.1. RDMA requer macOS 26.2+ e Thunderbolt 5.</p>
 <figure class="diagram">
-<svg role="img" aria-labelledby="mesh-title mesh-desc" viewBox="0 0 720 280">
-<title id="mesh-title" data-i18n="meshTitle">Malha completa com Thunderbolt 5</title>
-<desc id="mesh-desc" data-i18n="meshDesc">Dois Macs ligados por um cabo. Três Macs em triângulo, com um cabo entre cada par: A com B, B com C e A com C.</desc>
+<svg aria-hidden="true" viewBox="0 0 720 280">
 <rect x="0" y="0" width="720" height="280" fill="var(--bg)"/>
 <text x="16" y="28" fill="var(--muted)" font-size="12" font-family="Inter,sans-serif" data-i18n="meshTwo">2 Macs · 1 cabo</text>
 <rect x="24" y="70" width="88" height="36" rx="6" fill="var(--panel2)" stroke="var(--line)"/>
@@ -119,11 +117,8 @@
 </figcaption>
 </figure>
 <figure class="diagram">
-<svg role="img" aria-labelledby="star-title star-desc" viewBox="0 0 720 220">
-<title id="star-title" data-i18n="starTitle">Exemplo errado para RDMA: estrela em um só Mac</title>
-<desc id="star-desc" data-i18n="starDesc">Mac A no centro, ligado a Mac B e a Mac C. Não há cabo entre B e C. Essa estrela não forma a malha completa.</desc>
+<svg aria-hidden="true" viewBox="0 0 720 220">
 <rect x="0" y="0" width="720" height="220" fill="var(--bg)"/>
-<text x="16" y="28" fill="var(--warn)" font-size="12" font-family="Inter,sans-serif" data-i18n="starLabel">Errado para RDMA: tudo ligado em um só Mac</text>
 <rect x="300" y="48" width="140" height="36" rx="6" fill="var(--panel2)" stroke="var(--ink)"/>
 <text x="370" y="71" fill="var(--ink)" font-size="13" text-anchor="middle" font-family="Inter,sans-serif">Mac A</text>
 <rect x="80" y="150" width="88" height="36" rx="6" fill="var(--panel2)" stroke="var(--line)"/>

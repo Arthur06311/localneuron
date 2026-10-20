@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0f1114">
+<meta name="theme-color" content="#0f1114"><meta name="color-scheme" content="light dark">
 <title>LocalNeuron — Sua IA. Seu computador.</title>
 <meta name="description" content="Converse, programe e crie imagens, vídeos e músicas com modelos de IA que rodam no seu computador. LocalNeuron para macOS Apple Silicon, Windows e Linux.">
 <link rel="canonical" href="https://localneuron.ai/">
@@ -95,7 +95,7 @@
 <p data-i18n="experienceDescription">A configuração guiada confere a RAM e o disco do seu computador, recomenda modelos compatíveis e monta sua equipe de bots pessoais e profissionais.</p>
 </div>
 <div class="cards">
-<article><span class="feature-number">01</span><h3 data-i18n="feature1Title">Privado e offline.</h3><p data-i18n="feature1Description">Escolha entre Qwen, DeepSeek, Gemma e outras famílias, vendo RAM estimada, tamanho e licença antes de baixar. Depois de instalados, os modelos rodam com llama.cpp ou MLX, e suas conversas ficam no seu computador. Nas Equipes, se você escolher um backend em nuvem (Anthropic ou Grok, da xAI), o texto é enviado para esse serviço.</p><div class="model-names"><span>Qwen</span><span>DeepSeek</span><span>Gemma</span><span>gpt-oss</span></div></article>
+<article><span class="feature-number">01</span><h3 data-i18n="feature1Title">Privado e offline.</h3><p data-i18n="feature1Description">Escolha entre Qwen, DeepSeek, Gemma e outras famílias, vendo RAM estimada, tamanho e licença antes de baixar. Depois de instalados, os modelos rodam com llama.cpp ou MLX, e suas conversas ficam no seu computador. Em Minha equipe, Anthropic e Grok (xAI) enviam o texto para o serviço. Outro computador também envia o texto para fora quando o endereço não é deste computador. O EXO dessa equipe fica só neste computador. Em Equipes, a partir da próxima versão, os canais são os mesmos.</p><div class="model-names"><span>Qwen</span><span>DeepSeek</span><span>Gemma</span><span>gpt-oss</span></div></article>
 <article><span class="feature-number">02</span><h3 data-i18n="feature2Title">Crie além do texto.</h3><p data-i18n="feature2Description">Gere imagens e vídeos com stable-diffusion.cpp, músicas com ACE-Step e transcreva sua voz com Whisper, tudo localmente. No Editor, a IA propõe cortes para o DaVinci Resolve Studio, e você revisa antes de aplicar.</p><div class="feature-bottom" data-i18n="creativeTools">IMAGEM / VÍDEO / MÚSICA / VOZ</div></article>
 <article><span class="feature-number">03</span><h3 data-i18n="feature3Title">Conecte do seu jeito.</h3><p data-i18n="feature3Description">Sirva seu modelo a outros apps pela Minha API, compatível com OpenAI Chat Completions, com uma chave por cliente. Conecte ferramentas MCP com permissões por bot. Divida um modelo entre Macs com a rede EXO.</p><div class="feature-bottom" data-i18n="offlineTools">MINHA API / MCP / EXO</div></article>
 </div>
@@ -105,7 +105,7 @@
 <div>
 <p class="eyebrow" data-i18n="chatEyebrow">Chat</p>
 <h2 data-i18n="chatTitle">A conversa fica neste computador.</h2>
-<p class="note" data-i18n="cloudCaveat">Nas Equipes, se você escolher um backend em nuvem (Anthropic ou Grok, da xAI), o texto é enviado para esse serviço.</p>
+<p class="note" data-i18n="cloudCaveat">Em Minha equipe, Anthropic e Grok (xAI) enviam o texto para o serviço. Outro computador também envia o texto para fora quando o endereço não é deste computador. O EXO dessa equipe fica só neste computador. Em Equipes, a partir da próxima versão, os canais são os mesmos.</p>
 <dl class="facts">
 <div><dt data-i18n="factState">Estado</dt><dd data-i18n="chatState">O Chat usa o modelo que você escolheu. Há histórico, anexos e resposta em fluxo.</dd></div>
 <div><dt data-i18n="factLimit">Limite</dt><dd data-i18n="chatLimit">A qualidade depende do modelo e do hardware. A primeira carga na memória pode demorar.</dd></div>
@@ -164,7 +164,7 @@
 <p class="eyebrow" data-i18n="privacyLocalEyebrow">Privacidade local</p>
 <h2 data-i18n="privacyLocalTitle">O padrão é ficar no computador.</h2>
 <dl class="facts">
-<div><dt data-i18n="factState">Estado</dt><dd data-i18n="privacyLocalState">Conversas e arquivos ficam no seu computador. Os segredos do cofre usam AES-256-GCM. A chave fica no sistema: Keychain, DPAPI ou libsecret. Nas Equipes, se você escolher um backend em nuvem (Anthropic ou Grok, da xAI), o texto é enviado para esse serviço.</dd></div>
+<div><dt data-i18n="factState">Estado</dt><dd data-i18n="privacyLocalState">Conversas e arquivos ficam no seu computador. Os segredos do cofre usam AES-256-GCM. A chave fica no sistema: Keychain, DPAPI ou libsecret. Em Minha equipe, Anthropic e Grok (xAI) enviam o texto para o serviço. Outro computador também envia o texto para fora quando o endereço não é deste computador. O EXO dessa equipe fica só neste computador. Em Equipes, a partir da próxima versão, os canais são os mesmos.</dd></div>
 <div><dt data-i18n="factLimit">Limite</dt><dd data-i18n="privacyLocalLimit">Essa chave não cifra todas as conversas. Internet, MCP e APIs externas só entram quando você liga, e só falam com os serviços que você escolhe.</dd></div>
 <div><dt data-i18n="factGuarantee">Garantia</dt><dd data-i18n="privacyLocalGuarantee">Este site não recebe suas configurações. Proteja também a conta do sistema e o disco.</dd></div>
 </dl>
@@ -219,7 +219,7 @@
 <p class="lede" data-i18n="faqLede">LocalNeuron está em versão alfa. Funciona hoje para uso pessoal e testes. Algumas validações ainda estão pendentes.</p>
 <div class="faq-list">
 <details><summary data-i18n="faqWhatQ">O que é o LocalNeuron?</summary><p data-i18n="faqWhatA">Um aplicativo para conversar, criar imagens, vídeos e músicas e conectar ferramentas com modelos que rodam no seu computador. Não exige conta. Depois que modelos e motores estão instalados, não exige internet.</p></details>
-<details><summary data-i18n="faqLeaveQ">Minhas conversas saem do meu computador?</summary><p data-i18n="faqLeaveA">Não. Conversas e arquivos ficam no seu computador. Internet, conexões MCP e APIs externas só entram quando você liga essas opções. Nas Equipes, se você escolher um backend em nuvem (Anthropic ou Grok, da xAI), o texto é enviado para esse serviço.</p><p data-i18n="faqLeaveA2">Os segredos ficam em um cofre cifrado com AES-256-GCM. A chave fica no sistema: Keychain no macOS, DPAPI no Windows, libsecret no Linux. Nem todas as conversas são cifradas por essa chave. Proteja também a conta do sistema e o disco.</p></details>
+<details><summary data-i18n="faqLeaveQ">Minhas conversas saem do meu computador?</summary><p data-i18n="faqLeaveA">Por padrão, não. Conversas e arquivos ficam no seu computador. Internet, conexões MCP e APIs externas só entram quando você liga essas opções. Em Minha equipe, Anthropic e Grok (xAI) enviam o texto para o serviço. Outro computador também envia o texto para fora quando o endereço não é deste computador. O EXO dessa equipe fica só neste computador. Em Equipes, a partir da próxima versão, os canais são os mesmos.</p><p data-i18n="faqLeaveA2">Os segredos ficam em um cofre cifrado com AES-256-GCM. A chave fica no sistema: Keychain no macOS, DPAPI no Windows, libsecret no Linux. Nem todas as conversas são cifradas por essa chave. Proteja também a conta do sistema e o disco.</p></details>
 <details><summary data-i18n="faqOffQ">Funciona sem internet?</summary><p data-i18n="faqOffA">Sim, depois da instalação. A internet é necessária para baixar o app, os modelos e os motores. No Chat, ative Ferramentas → Usar offline: a internet e o terminal ficam desligados.</p></details>
 <details><summary data-i18n="faqModQ">Quais modelos posso usar?</summary><p data-i18n="faqModA">A biblioteca tem mais de mil entradas, com variantes, e pesquisa no Hugging Face. Para texto, o app inclui llama.cpp (GGUF) e, no Mac Apple Silicon, MLX. A ficha mostra RAM estimada, tamanho, licença e motor.</p><p data-i18n="faqModA2">Nem todo modelo do catálogo roda no motor integrado. Confira se a ficha diz integrado. Para começar, escolha um modelo de texto pequeno em Q4 que caiba com folga na RAM.</p></details>
 <details><summary data-i18n="faqLmQ">Preciso do LM Studio?</summary><p data-i18n="faqLmA">Não. O LocalNeuron tem motores próprios. Se você já tem GGUFs na pasta do LM Studio, eles são reutilizados sem cópia. <a href="./compare-lm-studio.html">Veja a comparação</a>.</p></details>
