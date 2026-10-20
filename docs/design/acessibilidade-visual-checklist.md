@@ -185,7 +185,7 @@ Use o teclado de verdade. Clique uma vez na página e depois só Tab, Shift+Tab,
 Ative “reduzir movimento” no sistema, ou no DevTools: `prefers-reduced-motion: reduce`. Recarregue a página.
 
 1. **O mascote Pensando não pulsa.**
-   - Como verificar: provoque uma resposta pendente no Chat ou inspecione a figura Pensando em Preferências.
+   - Como verificar: provoque uma resposta pendente no Chat ou inspecione a figura Pensando em Configurações.
    - Resultado esperado: o anel fica estático. Não há pulso, salto nem opacidade animada. O estado continua reconhecível pelo rosto, pelas reticências e pela palavra Pensando.
 
 2. **A tela de boas-vindas não desliza.**
@@ -198,7 +198,7 @@ Ative “reduzir movimento” no sistema, ou no DevTools: `prefers-reduced-motio
 
 ## 5. Estados do mascote
 
-Abra Preferências e role até “Um mascote, várias expressões”. Repita no modo Escuro. Os quatro estados precisam ser distinguíveis sem depender só da cor: expressão do desenho, símbolo e nome.
+Abra Configurações e role até “Um mascote, várias expressões”. Repita no modo Escuro. Os quatro estados precisam ser distinguíveis sem depender só da cor: expressão do desenho, símbolo e nome.
 
 | Estado | Onde aparece | Expressão | Símbolo | Nome visível |
 | --- | --- | --- | --- | --- |
