@@ -1,8 +1,12 @@
+import { readFileSync } from "node:fs";
 import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
 import { lookup } from "node:dns/promises";
 import ipaddr from "ipaddr.js";
 import { load } from "cheerio";
+const productVersion = JSON.parse(
+  readFileSync(new URL("../../package.json", import.meta.url), "utf8"),
+).version as string;
 export function publicAddress(address: string) {
   try {
     return ipaddr.process(address).range() === "unicast";
@@ -48,7 +52,7 @@ export async function publicPage(
           lookup: ((_hostname: any, _options: any, cb: any) =>
             cb(null, chosen.address, chosen.family)) as any,
           headers: {
-            "User-Agent": "Colmeia/0.5 (+local AI; read-only)",
+            "User-Agent": `LocalNeuron/${productVersion} (+local AI; read-only)`,
             Accept: "text/html,text/plain,application/json",
             "Accept-Encoding": "identity",
           },

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "🔒 Relatar vulnerabilidade de segurança (privado)"
+    url: https://github.com/Arthur06311/localneuron/security/advisories/new
+    about: "Não publique vulnerabilidades em issues abertas. Use o canal privado (veja o SECURITY.md)."
+  - name: "📖 Guia e documentação"
+    url: https://Arthur06311.github.io/localneuron/
+    about: "Instalação, plataformas, motores e perguntas frequentes."
+  - name: "🐧 Diagnóstico do instalador Linux"
+    url: https://github.com/Arthur06311/localneuron/blob/main/docs/linux-installer.md
+    about: "Execute o diagnóstico antes de relatar problemas de inicialização no Linux."
