@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f1114">
+<title>Modo servidor e Rede EXO — LocalNeuron</title>
+<meta name="description" content="O Modo servidor do LocalNeuron usa o EXO 1.0.71 para dividir um modelo de texto entre Macs. Minha API é uma função separada.">
+<link rel="canonical" href="https://localneuron.ai/modo-servidor.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="LocalNeuron">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://localneuron.ai/modo-servidor.html">
+<meta property="og:title" content="Modo servidor e Rede EXO — LocalNeuron">
+<meta property="og:description" content="Participe com este Mac ou controle um EXO existente. A identificação da rede não é senha.">
+<meta property="og:image" content="https://localneuron.ai/product.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://localneuron.ai/product.png">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" href="./app-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<a class="skip" href="#main">Ir ao conteúdo</a>
+<header class="guide-header">
+<a class="brand" href="./"><img src="./app-icon.png" width="18" height="18" alt="">LocalNeuron</a>
+<nav aria-label="Navegação"><a href="./">Início</a><a href="./#minha-api">Minha API</a><a href="./requisitos.html">Requisitos</a><a href="./guide.html#rede-exo">Guia</a></nav>
+</header>
+<main class="guide-main prose" id="main" style="max-width:860px;margin:0 auto;padding:28px 20px 72px">
+<p class="eyebrow">Modo servidor</p>
+<h1>Modo servidor e Rede EXO</h1>
+<p>Junte a memória de vários Macs para rodar um modelo de texto maior do que caberia em um só. O LocalNeuron usa o motor EXO 1.0.71.</p>
+<p class="note">Alfa. O fluxo foi validado com uma rede simulada. A execução em duas máquinas físicas ainda está em teste. Minha API é outra função.</p>
+
+<h2>Como cada computador participa</h2>
+<dl class="facts">
+<div><dt>Estado</dt><dd>Há dois modos. Participar com este Mac empresta RAM e GPU ao modelo. Controlar um EXO existente só comanda a rede, pelo endereço privado na porta 52415, e não soma RAM.</dd></div>
+<div><dt>Limite</dt><dd>Participar pede Mac Apple Silicon com macOS 26.2 ou mais recente. No Windows, só o modo de controlar está disponível. No Linux, o LocalNeuron não instala o motor. Quem quiser participar instala o EXO pelo projeto oficial.</dd></div>
+<div><dt>Garantia</dt><dd>Controlar não acrescenta a RAM desta máquina à rede.</dd></div>
+</dl>
+<p><strong>A partir da próxima versão.</strong> Contribuir, Gerenciar e Só usar ainda não estão no instalador 0.28.1. Nesta versão, use Participar com este Mac ou Controlar um EXO existente.</p>
+
+<h2>Conectar os computadores</h2>
+<ol>
+<li>Nos dois Macs, abra Rede EXO e clique em Instalar motor EXO. O instalador indica cerca de 394 MiB e confere o SHA-256.</li>
+<li>No primeiro Mac, clique em Copiar identificação. No segundo, cole em Identificação da rede. Use a mesma versão do EXO e a mesma rede local.</li>
+<li>Marque Expor a API na rede local e clique em Iniciar neste Mac nos dois. Se o macOS pedir acesso à rede local, permita.</li>
+<li>Quando as duas máquinas aparecerem, escolha um modelo, mantenha Mínimo de máquinas em 2 e clique em Preparar na rede.</li>
+<li>Espere a instância ficar pronta para conversar e clique em Conversar.</li>
+</ol>
+<p>A primeira preparação precisa de internet para baixar o modelo. Depois, Iniciar sem internet usa modelos já baixados.</p>
+<p class="note">A identificação da rede (<code>neuron-</code> e 32 caracteres hexadecimais) só define quais nós se encontram. Não é senha e não cifra o tráfego.</p>
+<p><strong>A partir da próxima versão.</strong> O pareamento por código de 6 dígitos ainda não está no instalador 0.28.1. Nesta versão, os Macs se encontram pela identificação da rede.</p>
+
+<h2>O que fica exposto na rede</h2>
+<p>Use somente uma rede privada confiável, ou VPN. Não encaminhe as portas no roteador.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>O quê</th><th>Porta</th><th>Exposição</th></tr></thead>
+<tbody>
+<tr><td>API e painel do EXO</td><td>52415</td><td>No EXO 1.0.71, ao iniciar o nó, fica aberta em todas as interfaces IPv4, sem senha e sem cifra, enquanto o nó estiver ligado. O app mostra um aviso durante esse tempo.</td></tr>
+<tr><td>Descoberta entre nós</td><td>automática na rede local</td><td>No EXO 1.0.71, os Macs se encontram na mesma rede.</td></tr>
+<tr><td>Mensagens e partes do modelo</td><td>—</td><td>Circulam entre os nós da rede.</td></tr>
+<tr><td>Painel do LocalNeuron</td><td>4318 no desktop</td><td>Apenas 127.0.0.1, com sessão.</td></tr>
+<tr><td>Minha API</td><td>4320</td><td>Desligada por padrão. Separada do EXO.</td></tr>
+</tbody></table></div>
+<ul>
+<li>Bloquear o aplicativo desliga a exposição e encerra o nó se ele estava acessível pela rede.</li>
+<li>Desconectar encerra o EXO iniciado pelo LocalNeuron. Liberar modelo tira a instância da rede, sem apagar os arquivos, e afeta quem estiver usando nos outros Macs.</li>
+<li>O EXO não dá controle de tela, arquivos, desligamento nem instalação remota.</li>
+</ul>
+
+<h2>Ligação entre os Macs</h2>
+<p>Estado: Wi-Fi ou Ethernet na mesma rede local é o caminho documentado para começar. Limite: mais RAM somada não garante mais velocidade. A ligação entre as máquinas pesa. Garantia: nesse caminho de rede comum, não é preciso um cabo especial só para um nó.</p>
+
+<h2>Esquemas de cabo para RDMA</h2>
+<p data-i18n="rdmaDiagram">Os desenhos abaixo são ilustração de cabeamento, não uma tela do aplicativo. RDMA não faz parte da 0.28.1. RDMA requer macOS 26.2+ e Thunderbolt 5.</p>
+<figure class="diagram">
+<svg role="img" aria-labelledby="mesh-title mesh-desc" viewBox="0 0 720 280">
+<title id="mesh-title">Malha completa com Thunderbolt 5</title>
+<desc id="mesh-desc">Dois Macs ligados por um cabo. Três Macs em triângulo, com um cabo entre cada par: A com B, B com C e A com C.</desc>
+<rect x="0" y="0" width="720" height="280" fill="#15181c"/>
+<text x="16" y="28" fill="#8b929b" font-size="12" font-family="Inter,sans-serif">2 Macs · 1 cabo</text>
+<rect x="24" y="70" width="88" height="36" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="68" y="93" fill="#e6e8eb" font-size="13" text-anchor="middle" font-family="Inter,sans-serif">Mac A</text>
+<rect x="196" y="70" width="88" height="36" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="240" y="93" fill="#e6e8eb" font-size="13" text-anchor="middle" font-family="Inter,sans-serif">Mac B</text>
+<line x1="112" y1="88" x2="196" y2="88" stroke="#7aa2f7" stroke-width="2"/>
+<text x="154" y="78" fill="#8b929b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">TB5</text>
+<text x="380" y="28" fill="#8b929b" font-size="12" font-family="Inter,sans-serif">3 Macs · 3 cabos</text>
+<rect x="470" y="48" width="88" height="36" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="514" y="71" fill="#e6e8eb" font-size="13" text-anchor="middle" font-family="Inter,sans-serif">Mac A</text>
+<rect x="390" y="180" width="88" height="36" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="434" y="203" fill="#e6e8eb" font-size="13" text-anchor="middle" font-family="Inter,sans-serif">Mac B</text>
+<rect x="590" y="180" width="88" height="36" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="634" y="203" fill="#e6e8eb" font-size="13" text-anchor="middle" font-family="Inter,sans-serif">Mac C</text>
+<line x1="500" y1="84" x2="450" y2="180" stroke="#7aa2f7" stroke-width="2"/>
+<line x1="540" y1="84" x2="620" y2="180" stroke="#7aa2f7" stroke-width="2"/>
+<line x1="478" y1="198" x2="590" y2="198" stroke="#7aa2f7" stroke-width="2"/>
+<text x="430" y="140" fill="#8b929b" font-size="11" font-family="Inter,sans-serif">TB5</text>
+<text x="590" y="140" fill="#8b929b" font-size="11" font-family="Inter,sans-serif">TB5</text>
+<text x="520" y="190" fill="#8b929b" font-size="11" font-family="Inter,sans-serif">TB5</text>
+</svg>
+<figcaption>
+<strong>Malha correta.</strong>
+2 Macs: um cabo, Mac A ligado a Mac B.
+3 Macs: três cabos, Mac A–B, Mac B–C e Mac A–C. Cada par tem cabo direto.
+</figcaption>
+</figure>
+<figure class="diagram">
+<svg role="img" aria-labelledby="star-title star-desc" viewBox="0 0 720 220">
+<title id="star-title">Exemplo errado para RDMA: estrela em um só Mac</title>
+<desc id="star-desc">Mac A no centro, ligado a Mac B e a Mac C. Não há cabo entre B e C. Essa estrela não forma a malha completa.</desc>
+<rect x="0" y="0" width="720" height="220" fill="#15181c"/>
+<text x="16" y="28" fill="#d6a652" font-size="12" font-family="Inter,sans-serif">Errado para RDMA: tudo ligado em um só Mac</text>
+<rect x="300" y="48" width="140" height="36" rx="6" fill="#1b1f24" stroke="#e6e8eb"/>
+<text x="370" y="71" fill="#e6e8eb" font-size="13" text-anchor="middle" font-family="Inter,sans-serif">Mac A</text>
+<rect x="80" y="150" width="88" height="36" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="124" y="173" fill="#e6e8eb" font-size="13" text-anchor="middle" font-family="Inter,sans-serif">Mac B</text>
+<rect x="540" y="150" width="88" height="36" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="584" y="173" fill="#e6e8eb" font-size="13" text-anchor="middle" font-family="Inter,sans-serif">Mac C</text>
+<line x1="330" y1="84" x2="140" y2="150" stroke="#7aa2f7" stroke-width="2"/>
+<line x1="410" y1="84" x2="568" y2="150" stroke="#7aa2f7" stroke-width="2"/>
+<line x1="168" y1="168" x2="540" y2="168" stroke="#d6a652" stroke-width="1.6" stroke-dasharray="4 4"/>
+<text x="360" y="160" fill="#d6a652" font-size="12" text-anchor="middle" font-family="Inter,sans-serif">falta cabo B–C</text>
+</svg>
+<figcaption>
+<strong>Exemplo incompleto.</strong>
+Mac A ligado a Mac B e a Mac C. Não há cabo entre B e C. Para a malha de RDMA descrita acima, esse desenho está incompleto.
+</figcaption>
+</figure>
+
+<h2>Rodar modelos grandes</h2>
+<p>A soma da memória livre define que modelo cabe. O EXO confere memória e ligações e divide o modelo por camadas, no padrão, ou por tensores, só quando o modelo declara suporte. Em Máquinas para esta IA você escolhe os computadores, ou deixa o EXO escolher.</p>
+<p>A integração EXO não exige o plano Pro.</p>
+<p class="guide-top-links"><a href="./#download">Baixar</a><a href="./requisitos.html">Requisitos</a><a href="./guide.html#rede-exo">Guia da Rede EXO</a></p>
+</main>
+<footer>
+<a class="brand" href="./"><img src="./app-icon.png" alt="" width="18" height="18">LocalNeuron</a>
+<p>Sua IA. Seu computador.</p>
+<a href="./#privacidade">Idioma e privacidade</a>
+<span>0.28.1 · Alfa</span>
+</footer>
+<script type="module" src="./doc-notes.js"></script>
+</body>
+</html>

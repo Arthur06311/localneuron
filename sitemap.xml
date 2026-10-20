@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://localneuron.ai/</loc>
-  </url>
-  <url>
-    <loc>https://localneuron.ai/guide.html</loc>
-  </url>
-  <url>
-    <loc>https://localneuron.ai/compare-lm-studio.html</loc>
-  </url>
+  <url><loc>https://localneuron.ai/</loc></url>
+  <url><loc>https://localneuron.ai/guide.html</loc></url>
+  <url><loc>https://localneuron.ai/compare-lm-studio.html</loc></url>
+  <url><loc>https://localneuron.ai/requisitos.html</loc></url>
+  <url><loc>https://localneuron.ai/primeiros-passos.html</loc></url>
+  <url><loc>https://localneuron.ai/modo-servidor.html</loc></url>
+  <url><loc>https://localneuron.ai/precos.html</loc></url>
 </urlset>

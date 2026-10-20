@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f1114">
+<title>Primeiros passos — LocalNeuron</title>
+<meta name="description" content="Instale o LocalNeuron, baixe um modelo pequeno e faça a primeira conversa offline. Backup e atualização sem apagar seus dados.">
+<link rel="canonical" href="https://localneuron.ai/primeiros-passos.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="LocalNeuron">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://localneuron.ai/primeiros-passos.html">
+<meta property="og:title" content="Primeiros passos — LocalNeuron">
+<meta property="og:description" content="Do download à primeira conversa no LocalNeuron.">
+<meta property="og:image" content="https://localneuron.ai/product.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://localneuron.ai/product.png">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" href="./app-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<a class="skip" href="#main">Ir ao conteúdo</a>
+<header class="guide-header">
+<a class="brand" href="./"><img src="./app-icon.png" width="18" height="18" alt="">LocalNeuron</a>
+<nav aria-label="Navegação"><a href="./">Início</a><a href="./#download">Download</a><a href="./requisitos.html">Requisitos</a><a href="./guide.html">Guia de configuração</a></nav>
+</header>
+<main class="guide-main prose" id="main" style="max-width:860px;margin:0 auto;padding:28px 20px 72px">
+<p class="eyebrow">Começar</p>
+<h1>Primeiros passos</h1>
+<p>Instale o app, baixe um modelo e converse. Os instaladores publicados aqui são da versão 0.28.1.</p>
+
+<h2>1. Baixar e instalar</h2>
+<p>Baixe o instalador em <a href="https://github.com/Arthur06311/localneuron/releases">Versões no GitHub</a>, na seção Assets. “Source code” é só o código, não o app. Os mesmos arquivos estão em <a href="./#download">Downloads</a>.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Sistema</th><th>Arquivo</th><th>Como instalar</th></tr></thead>
+<tbody>
+<tr><td>macOS Apple Silicon</td><td><code>LocalNeuron-macOS-arm64.dmg</code></td><td>Abra o DMG e arraste o LocalNeuron para Aplicativos.</td></tr>
+<tr><td>Windows x64</td><td><code>LocalNeuron-Windows-x64-Setup.exe</code></td><td>Execute o instalador. Não há ZIP para extrair.</td></tr>
+<tr><td>Ubuntu / Debian</td><td><code>LocalNeuron-Linux-x64.deb</code></td><td>Abra no instalador de aplicativos, ou rode <code>sudo apt install ./LocalNeuron-Linux-x64.deb</code>.</td></tr>
+<tr><td>AppImage</td><td><code>LocalNeuron-Linux-x64.AppImage</code></td><td>Marque como executável e abra: <code>chmod +x ./LocalNeuron-Linux-x64.AppImage &amp;&amp; ./LocalNeuron-Linux-x64.AppImage</code>.</td></tr>
+<tr><td>Arch / Omarchy</td><td>pacote Arch da mesma versão</td><td><code>sudo pacman -U</code> no arquivo baixado. Não extraia à mão.</td></tr>
+</tbody></table></div>
+<ul>
+<li>O pacote Mac não roda em Mac Intel.</li>
+<li>No Windows, se os motores pedirem, instale o <a href="https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist">Microsoft Visual C++ Redistributable x64</a>.</li>
+<li>No Linux, abra o app com seu usuário normal, sem <code>sudo</code>.</li>
+<li>Por ser alfa, o sistema pode avisar ao abrir. A assinatura de distribuição ainda não existe. No Mac, a assinatura é ad hoc, sem notarização. Confira a origem e o SHA-256. Não desative o Gatekeeper.</li>
+</ul>
+
+<h2>2. Primeira abertura</h2>
+<ol>
+<li>Abra o LocalNeuron. No login do aplicativo desktop, marque <strong>Lembrar meu acesso neste computador</strong>. A credencial é cifrada pelo armazenamento seguro do sistema; não é guardada no navegador. Quem usa sua sessão do computador poderá abrir o espaço. A opção é voluntária e pode ser desligada em <strong>Preferências → Acesso neste computador</strong>. O botão <strong>Bloquear aplicativo</strong> continua bloqueando a sessão atual.</li>
+<li>Siga o assistente: confira a RAM e o disco, escolha o perfil e revise as recomendações.</li>
+<li>Para refazer depois: Minha equipe → Mais opções da equipe → Repetir configuração. Perfil, conversas e membros são preservados.</li>
+</ol>
+
+<h2>3. Escolher e baixar um modelo</h2>
+<ol>
+<li>Abra Modelos.</li>
+<li>Escolha um modelo de texto pequeno em Q4 marcado como compatível com o motor integrado. O filtro Para este PC ajuda a achar o porte certo.</li>
+<li>Na ficha, confira RAM estimada, tamanho, licença e motor.</li>
+<li>Baixe. O download pode ser retomado. O app confere o tamanho e o SHA-256.</li>
+</ol>
+<p>Exemplo para começar: Qwen3 · Mini (0,64 GB, cerca de 2 GiB de RAM) ou Qwen3 · Equilibrado (2,50 GB, cerca de 5 GiB de RAM). As estimativas não substituem um teste.</p>
+<p class="note">Já tem GGUFs no LM Studio? O app encontra e reutiliza esses arquivos sem copiar.</p>
+
+<h2>4. Primeira conversa</h2>
+<ol>
+<li>Quando o download terminar, abra o Chat e selecione o modelo.</li>
+<li>Escreva a mensagem. Na primeira vez, carregar o modelo na memória pode demorar.</li>
+<li>Para garantir que nada sai do computador, ative Ferramentas → Usar offline: a internet e o terminal ficam desligados.</li>
+<li>Use Parar para interromper uma resposta. Liberar memória tira o modelo da RAM sem apagá-lo do disco.</li>
+</ol>
+
+<h2>5. Onde ficam seus dados</h2>
+<ul>
+<li>macOS: <code>~/Library/Application Support/Colmeia/</code></li>
+<li>Windows: <code>%APPDATA%/Colmeia/</code></li>
+<li>Linux: <code>~/.config/Colmeia/</code> ou <code>$XDG_CONFIG_HOME/Colmeia/</code></li>
+</ul>
+<p>Colmeia é o nome antigo, mantido por compatibilidade. Instalações antigas no Mac podem usar <code>Colmeia-data/</code>, ao lado do app. A pasta de trabalho das ferramentas fica fora dessa pasta. Inclua-a no backup.</p>
+
+<h2 id="backup-e-restauracao">6. Backup e restauração</h2>
+<h3>Fazer backup</h3>
+<ol>
+<li>Pause tarefas em andamento e feche o app.</li>
+<li>Copie a pasta inteira de dados, a que contém <code>workspace/</code>. Ela também guarda <code>browser/</code>, <code>session/</code> e <code>logs/</code>.</li>
+<li>Guarde a cópia em outro lugar. O backup só do cofre não inclui conversas, projetos nem modelos.</li>
+</ol>
+<h3>Restaurar</h3>
+<ol>
+<li>Abra o LocalNeuron e vá em Preferências.</li>
+<li>Clique em Abrir uma pasta de dados existente.</li>
+<li>Selecione a pasta que contém <code>workspace/</code>. O app procura <code>workspace/vault.enc.json</code>.</li>
+<li>O app reabre esse espaço. A pasta atual fica intacta.</li>
+</ol>
+<p class="note">Para apontar outra pasta antes de abrir, defina <code>LOCALNEURON_DESKTOP_DATA_DIR</code>. Esse nome tem prioridade sobre o botão. O nome antigo <code>COLMEIA_DESKTOP_DATA_DIR</code> ainda é aceito, mas está descontinuado: o app avisa para trocá-lo.</p>
+
+<h2>7. Atualizar</h2>
+<p>Feche o app, instale a versão nova e substitua só o aplicativo. Não apague a pasta de dados. Desde a 0.27, o app avisa em Preferências → Atualizações.</p>
+<p class="guide-top-links"><a href="./#download">Baixar</a><a href="./#faq">Perguntas frequentes</a><a href="https://github.com/Arthur06311/localneuron/issues">Abrir uma issue</a></p>
+</main>
+<footer>
+<a class="brand" href="./"><img src="./app-icon.png" alt="" width="18" height="18">LocalNeuron</a>
+<p>Sua IA. Seu computador.</p>
+<a href="./#privacidade">Idioma e privacidade</a>
+<span>0.28.1 · Alfa</span>
+</footer>
+</body>
+</html>
