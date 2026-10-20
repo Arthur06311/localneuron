@@ -44,7 +44,7 @@ Os modelos são baixados dentro do app, separadamente. O Mac ARM64 não roda em 
 | Minha equipe | Bots pessoais e profissionais com instruções e permissões, equipe ativada em um clique e sala de colaboração | Os bots só trabalham quando você dá uma tarefa; não substituem serviços profissionais |
 | Imagem / Vídeo | Perfis locais, recomendações, projetos, cenas, cortes, áudio e exportação | Hardware e codecs limitam a execução; muitos modelos visuais do catálogo são só referência |
 | Música | ACE-Step 1.5 opcional: prompt ou letra, instrumental, BPM, biblioteca WAV, recorte e fades | Instalação separada (25 GiB livres); geração real verificada no Mac Apple Silicon |
-| Voz | Transcrição local com Whisper; narração (Pro) com voz em português | Precisa de modelo instalado e permissão do microfone |
+| Voz | Transcrição local com Whisper; narração (Pro) com a voz do sistema em português brasileiro | Transcrição precisa de modelo e permissão do microfone. Narração precisa de uma voz pt-BR instalada no sistema |
 | Editor | A IA propõe cortes por metadados e cria uma nova timeline no DaVinci Resolve Studio depois da sua revisão | Requer Resolve Studio; não analisa o conteúdo dos vídeos; testado com SDK simulado |
 | Minha API | Chaves, cotas e endpoint compatível com Chat Completions para texto | Máquina anfitriã ligada; rede privada/VPN; não implementa toda a API OpenAI |
 | Rede EXO | Nó local no Mac, descoberta, escolha de máquinas e preparação distribuída | Só modelos suportados pelo EXO; teste com duas máquinas físicas pendente |
@@ -60,13 +60,15 @@ Os modelos são baixados dentro do app, separadamente. O Mac ARM64 não roda em 
 | llama.cpp (b10809) | Texto GGUF | Mac (Metal), Windows e Linux (CPU nos pacotes incluídos) |
 | MLX + MLX LM | Texto em Apple Silicon, processo sem acesso à rede | Mac Apple Silicon, macOS 14+ |
 | whisper.cpp | Transcrição de voz | Mac, Windows, Linux |
-| sherpa-onnx / Piper | Síntese de voz em português (voz Faber, baixada à parte) | Mac, Windows, Linux |
+| Voz do sistema | Narração em português brasileiro (`say` no Mac, SAPI no Windows, `spd-say` no Linux) | Mac, Windows e Linux com speech-dispatcher. Sem voz pt-BR, a narração fica desativada |
 | stable-diffusion.cpp | Imagem (SD 1.5) e vídeo (Wan 2.1) em perfis integrados | macOS 26+, Windows x64, Linux compatível |
 | ACE-Step 1.5 | Música, instalado à parte | Validado no Mac Apple Silicon |
 | EXO 1.0.71 | Dividir um modelo de texto entre computadores | Nó gerenciado em Mac com macOS 26.2+; outros sistemas controlam um EXO existente |
 | DaVinci Resolve SDK | Ponte local com o Editor | Requer Resolve Studio instalado (não incluído) |
 
 Versões, origens e hashes estão em `runtime/*manifest.json`. Veja também os [componentes e licenças de terceiros](THIRD_PARTY.md). Cada modelo tem sua própria licença. ChatGPT não é um modelo para baixar; gpt-oss é uma família de pesos abertos diferente.
+
+A narração usa a voz do sistema e não baixa a voz Faber. Quando o sherpa-onnx 2.0.0 publicar um build sem eSpeak NG, a voz neural pode voltar; o acompanhamento está em [k2-fsa/sherpa-onnx#3731](https://github.com/k2-fsa/sherpa-onnx/issues/3731).
 
 ## Perguntas frequentes
 
@@ -94,7 +96,7 @@ No site, a seleção automática de idioma consulta `country.is` pelo navegador,
 
 ## Status da alfa
 
-Na versão 0.27, `npm test` reúne **153 testes automatizados: 131 da suíte TypeScript do aplicativo e 22 em JavaScript, 5 deles do site**. O mock de acesso local no Linux foi corrigido no PR #6, e o workflow de CI roda `npm test`; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Os pacotes públicos não contêm conversas, chaves privadas nem a licença Pro de teste do proprietário.
+Na versão 0.28, `npm test` reúne **182 testes automatizados: 148 da suíte TypeScript do aplicativo e 34 em JavaScript**. Oito deles cobrem a narração pela voz do sistema. O mock de acesso local no Linux foi corrigido no PR #6, e o workflow de CI roda `npm test`; veja o [estado de validação](docs/project-organization-and-migration.md#8-estado-de-validação-e-riscos). A interface foi conferida no Mac em tamanhos de desktop e compacto, incluindo uma tarefa real com modelo local. Os pacotes públicos não contêm conversas, chaves privadas nem a licença Pro de teste do proprietário.
 
 Ainda pendentes: notarização Apple, execução nativa de motores/GPU no Windows e no Linux, EXO com duas máquinas físicas e integração com uma instalação real do Resolve Studio. O aplicativo continua **alfa**, sem promessa de suporte universal a modelos ou hardware. Veja as [novidades da 0.27](docs/localneuron-0.27.md). Os guias antigos em `docs/localneuron-*` registram o estado de cada versão.
 
@@ -132,7 +134,6 @@ Prepare os motores antes da primeira inferência. Exemplo no Mac Apple Silicon:
 python3 scripts/fetch-runtime.py darwin-arm64
 python3 scripts/fetch-mlx.py
 python3 scripts/fetch-tools.py darwin-arm64
-python3 scripts/fetch-voice-node.py darwin-arm64
 npm run desktop
 ```
 

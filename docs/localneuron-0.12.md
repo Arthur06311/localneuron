@@ -1,5 +1,7 @@
 # LocalNeuron 0.12 — Pro e Estúdio
 
+Este guia descreve a 0.12. A narração atual usa a voz do sistema, não a voz Faber citada abaixo.
+
 Esta alfa implementa as 20 funções selecionadas como primeiras versões utilizáveis. Todas estão liberadas no aplicativo de desenvolvimento; não existe cobrança, assinatura ou ativação comercial nesta entrega. O ícone e os dados antigos são preservados.
 
 ## Começar

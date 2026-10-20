@@ -88,7 +88,29 @@ export function createStudioPro({
     if (!body) return;
     if (name === "voice") {
       const s = await api("/pro/media");
-      body.innerHTML = `<h3>Narração no seu computador</h3><p>Voz Faber · português brasileiro · 22.050 Hz. <a href="${s.voice.source}" target="_blank" rel="noreferrer">Licença e origem</a></p>${s.voice.installed ? `<label>Texto da narração<textarea id="studio-voice-text" rows="5" maxlength="4000" placeholder="Escreva a narração…"></textarea></label><label>Velocidade<input id="studio-voice-speed" type="range" min="0.5" max="2" step="0.1" value="1"></label><button class="primary" data-pro-media="narrate">Gerar e adicionar ao vídeo</button>` : `<p>Baixe ${(s.voice.bytes / 1024 ** 2).toFixed(1)} MiB uma vez. Depois a voz funciona offline.</p><button class="primary" data-pro-media="install-voice">Instalar voz Faber</button>`}`;
+      const v = s.voice;
+      const remembered = localStorage.getItem("localneuron-tts-voice");
+      const selected =
+        remembered &&
+        remembered !== "faber-pt-br" &&
+        v.voices.some((voice) => voice.id === remembered)
+          ? remembered
+          : v.id;
+      if (remembered === "faber-pt-br" && selected)
+        localStorage.setItem("localneuron-tts-voice", selected);
+      const note = v.notice ? `<p>${E(v.notice)}</p>` : "";
+      if (!v.ready) {
+        body.innerHTML = `<h3>Narração no seu computador</h3><p>${E(v.message || "A narração por voz do sistema não está disponível.")}</p>${note}`;
+      } else {
+        const options = [...v.voices]
+          .sort((a, b) => Number(b.brazilian) - Number(a.brazilian))
+          .map(
+            (voice) =>
+              `<option value="${E(voice.id)}" ${voice.id === selected ? "selected" : ""}>${E(voice.name)} · ${E(voice.language)}</option>`,
+          )
+          .join("");
+        body.innerHTML = `<h3>Narração no seu computador</h3><p>Voz do sistema${v.portuguese ? " · português brasileiro" : ""}. Nada é baixado pelo LocalNeuron.</p>${note}<label>Voz<select id="studio-voice-id">${options}</select></label><label>Texto da narração<textarea id="studio-voice-text" rows="5" maxlength="4000" placeholder="Escreva a narração…"></textarea></label><label>Velocidade<input id="studio-voice-speed" type="range" min="0.5" max="2" step="0.1" value="1"></label><button class="primary" data-pro-media="narrate">Gerar e adicionar ao vídeo</button>`;
+      }
     }
     if (name === "captions")
       body.innerHTML = `<h3>Legendas sincronizadas automaticamente</h3><p>Escolha o áudio ou vídeo que contém a fala. Whisper cria os intervalos; você pode revisar cada legenda na linha do tempo.</p><label>Mídia com fala<select id="studio-caption-source">${assetOptions("audio")}</select></label><label>Modelo Whisper<select id="studio-caption-model"></select></label><label>Idioma<select id="studio-caption-language"><option value="pt">Português</option><option value="en">Inglês</option><option value="es">Espanhol</option><option value="auto">Automático</option></select></label><div class="actions"><button class="primary" data-pro-media="caption">Transcrever e criar legendas</button><button class="secondary" data-pro-media="srt">Baixar legendas SRT</button></div><p>Até 5 minutos de fala por operação. Estilo e texto continuam editáveis.</p>`;
@@ -146,7 +168,7 @@ export function createStudioPro({
             null,
             2,
           ),
-      )}</textarea></label><label>Visual<select id="studio-story-model"><option value="sd15">Imagens · Stable Diffusion 1.5</option><option value="wan21">Clipes curtos · Wan 2.1 experimental</option></select></label><label class="studio-check"><input type="checkbox" id="studio-story-voice"> Incluir narração Faber (voz instalada)</label><button class="primary" data-pro-media="story-generate">Gerar cenas e montar no projeto</button><p>A montagem será adicionada ao projeto atual; depois revise e exporte.</p>`;
+      )}</textarea></label><label>Visual<select id="studio-story-model"><option value="sd15">Imagens · Stable Diffusion 1.5</option><option value="wan21">Clipes curtos · Wan 2.1 experimental</option></select></label><label class="studio-check"><input type="checkbox" id="studio-story-voice"> Incluir narração com a voz do sistema</label><button class="primary" data-pro-media="story-generate">Gerar cenas e montar no projeto</button><p>A montagem será adicionada ao projeto atual; depois revise e exporte.</p>`;
     }
   }
   async function run(fn) {
@@ -208,16 +230,23 @@ export function createStudioPro({
     }
     throw Error("A geração excedeu o tempo esperado.");
   }
-  async function narrate(text, speed = 1, start = time()) {
-    status("Gerando narração local…");
+  async function narrate(text, speed = 1, start = time(), voice) {
+    status("Gerando narração com a voz do sistema…");
+    const remembered = localStorage.getItem("localneuron-tts-voice");
     const result = await api("/pro/media/speak", {
       method: "POST",
-      body: { text, speed },
+      body: {
+        text,
+        speed,
+        voice:
+          voice ||
+          (remembered && remembered !== "faber-pt-br" ? remembered : undefined),
+      },
     });
     check();
     const r = await fetch(result.file);
     if (!r.ok) throw Error("Não foi possível abrir o áudio gerado.");
-    const meta = await addBlob(await r.blob(), "Narração Faber.wav");
+    const meta = await addBlob(await r.blob(), "Narração.wav");
     change(() =>
       project().audios.push({
         id: uid(),
@@ -478,6 +507,12 @@ export function createStudioPro({
   document.addEventListener("change", (e) => {
     if (e.target.id === "studio-inpaint-source")
       loadMask().catch((e) => toast(e.message));
+    if (e.target.id === "studio-voice-id") {
+      localStorage.setItem("localneuron-tts-voice", e.target.value);
+      api("/pro/media/voice", { method: "POST", body: { id: e.target.value } }).catch(
+        (error) => toast(error.message),
+      );
+    }
   });
   document.addEventListener("click", async (e) => {
     const b = e.target.closest("button");
@@ -504,28 +539,24 @@ export function createStudioPro({
     void run(async () => {
       if (!["srt","install-voice"].includes(action)) await api("/subscription/studio",{method:"POST",body:{}});
       if (action === "install-voice") {
-        await api("/pro/media/install-voice", { method: "POST", body: {} });
-        while (true) {
-          check();
-          const s = await api("/pro/media");
-          status(
-            `Instalando voz · ${Math.round(((s.download?.bytes || 0) / s.voice.bytes) * 100)}%`,
-          );
-          if (s.voice.installed) {
-            status("Voz instalada. Abra Narração para usar.");
-            break;
-          }
-          if (["failed", "cancelled"].includes(s.download?.state))
-            throw Error(s.download.error || "Download cancelado.");
-          await new Promise((r) => setTimeout(r, 1000));
-        }
+        const s = await api("/pro/media");
+        status(
+          s.voice.ready
+            ? "A narração usa a voz do sistema e não precisa de download."
+            : s.voice.message ||
+                "A narração por voz do sistema não está disponível.",
+        );
       }
       if (action === "narrate") {
         if (!project().clips.length)
           throw Error("Adicione cenas antes de inserir a narração.");
+        const chosen = $("#studio-voice-id")?.value;
+        if (chosen) localStorage.setItem("localneuron-tts-voice", chosen);
         await narrate(
           $("#studio-voice-text").value,
           Number($("#studio-voice-speed").value),
+          undefined,
+          chosen,
         );
         status("Narração adicionada em uma faixa própria.");
       }
@@ -760,8 +791,14 @@ export function createStudioPro({
         const available = await api("/local-engines");
         if (!available.models.find((m) => m.id === model && m.installed))
           throw Error("Instale o modelo visual escolhido primeiro.");
-        if (voice && !(await api("/pro/media")).voice.installed)
-          throw Error("Instale a voz Faber antes de incluir narração.");
+        if (voice) {
+          const speech = await api("/pro/media");
+          if (!speech.voice.ready)
+            throw Error(
+              speech.voice.message ||
+                "Não há voz em português brasileiro neste sistema.",
+            );
+        }
         const start = duration(project());
         for (let i = 0; i < story.scenes.length; i++) {
           check();
