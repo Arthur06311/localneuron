@@ -1,4 +1,121 @@
-import test from 'node:test';import assert from 'node:assert/strict';import{createRequire}from'node:module';import{mkdtempSync,existsSync,readFileSync,rmSync}from'node:fs';import{tmpdir}from'node:os';import{join}from'node:path';
-const require=createRequire(import.meta.url),{registerLocalAccess}=require('../desktop/local-access.cjs');
-test('Acesso pelo sistema não revela senha ao renderer nem substitui cofre existente',async()=>{const dir=mkdtempSync(join(tmpdir(),'neuron-device-'));const original=globalThis.fetch;let handler,initialized=false,vault=false,password,setupCalls=0;const frame={url:'http://127.0.0.1:4318/'},window={webContents:{mainFrame:frame}};globalThis.fetch=async(url,options)=>{if(url.endsWith('/status'))return Response.json({initialized,vault_exists:vault});const body=JSON.parse(options.body);if(url.endsWith('/setup')){setupCalls++;password=body.password;initialized=true;vault=true;}else assert.equal(body.password,password);return Response.json({ok:true});};registerLocalAccess({ipcMain:{handle:(_name,fn)=>handler=fn},safeStorage:{isEncryptionAvailable:()=>true,getSelectedStorageBackend:()=>'gnome_libsecret',encryptString:v=>Buffer.from('encrypted:'+v),decryptString:v=>v.toString().slice(10)},dialog:{showMessageBox:async()=>({response:0})},getWindow:()=>window,origin:'http://127.0.0.1:4318',dataDirectory:dir,token:'fixture'});try{await assert.rejects(handler({senderFrame:{url:frame.url}},'create'),/Origem/);assert.deepEqual(await handler({senderFrame:frame},'create'),{ok:true});assert.equal(setupCalls,1);assert.ok(existsSync(join(dir,'device-access.bin')));await assert.rejects(handler({senderFrame:frame},'create'),/Já existe/);assert.equal(setupCalls,1);assert.deepEqual(await handler({senderFrame:frame},'unlock'),{ok:true});}finally{globalThis.fetch=original;rmSync(dir,{recursive:true,force:true});}});
-test('Lembrar acesso é opt-in, cifrado e respeita bloqueio manual até reiniciar',async()=>{const dir=mkdtempSync(join(tmpdir(),'neuron-remember-')),original=globalThis.fetch;let handler,locked=true,unlocks=0;const frame={url:'http://127.0.0.1:4318/'},window={webContents:{mainFrame:frame}},event={senderFrame:frame};globalThis.fetch=async(url,options)=>{if(url.endsWith('/status'))return Response.json({initialized:true,vault_exists:true,locked});if(JSON.parse(options.body).password!=='senha-fixture')return Response.json({error:'Senha incorreta'},{status:400});unlocks++;locked=false;return Response.json({ok:true});};const register=()=>registerLocalAccess({ipcMain:{handle:(_name,fn)=>handler=fn},safeStorage:{isEncryptionAvailable:()=>true,getSelectedStorageBackend:()=>'gnome_libsecret',encryptString:v=>Buffer.from(v).map(n=>n^127),decryptString:v=>v.map(n=>n^127).toString()},dialog:{},getWindow:()=>window,origin:'http://127.0.0.1:4318',dataDirectory:dir,token:'fixture'});try{register();assert.equal((await handler(event,'status')).automatic,false);assert.deepEqual(await handler(event,'auto-unlock'),{cancelled:true});await assert.rejects(handler(event,{action:'remember',password:'errada'}),/incorreta/);assert.equal(existsSync(join(dir,'device-access.bin')),false);await handler(event,{action:'remember',password:'senha-fixture'});assert.equal((await handler(event,'status')).automatic,true);assert.ok(!readFileSync(join(dir,'device-access.bin')).includes('senha-fixture'));await handler(event,'suspend');locked=true;const before=unlocks;assert.deepEqual(await handler(event,'auto-unlock'),{cancelled:true});assert.equal(unlocks,before);register();assert.deepEqual(await handler(event,'auto-unlock'),{ok:true});assert.equal(locked,false);await handler(event,{action:'automatic',enabled:false});register();assert.deepEqual(await handler(event,'auto-unlock'),{cancelled:true});assert.equal((await handler(event,'status')).configured,true);}finally{globalThis.fetch=original;rmSync(dir,{recursive:true,force:true});}});
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const { registerLocalAccess } = createRequire(import.meta.url)('../desktop/local-access.cjs');
+
+function simulatedElectron() {
+  return {
+    isEncryptionAvailable: () => true,
+    getSelectedStorageBackend: () => 'gnome_libsecret',
+    encryptString(value) { return Buffer.from('sealed:' + Buffer.from(value).toString('hex')); },
+    decryptString(value) { return Buffer.from(String(value).slice('sealed:'.length), 'hex').toString(); },
+  };
+}
+
+function register(dir, fetchImpl) {
+  let handler;
+  const frame = { url: 'http://127.0.0.1:4318/' };
+  const window = { webContents: { mainFrame: frame } };
+  const original = globalThis.fetch;
+  globalThis.fetch = fetchImpl;
+  registerLocalAccess({
+    ipcMain: { handle(_name, fn) { handler = fn; } },
+    safeStorage: simulatedElectron(),
+    getWindow: () => window,
+    origin: 'http://127.0.0.1:4318',
+    dataDirectory: dir,
+    token: 'fixture',
+    nonce: 'nonce-teste',
+    warn() {},
+  });
+  return {
+    handler,
+    event: { senderFrame: frame },
+    restore() { globalThis.fetch = original; },
+  };
+}
+
+test('abertura pelo sistema não revela a chave ao renderer', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'neuron-open-'));
+  let secret = '';
+  const harness = register(dir, async (url, options) => {
+    const body = JSON.parse(options.body);
+    assert.equal(url.endsWith('/v1/vault/device-open'), true);
+    secret = body.secret;
+    return Response.json({ ok: true });
+  });
+  try {
+    await assert.rejects(harness.handler({ senderFrame: { url: 'http://evil.example/' } }, 'open'), /Origem/);
+    const result = await harness.handler(harness.event, 'open');
+    assert.deepEqual(result, { ok: true });
+    assert.equal(secret.length >= 12, true);
+    assert.equal(JSON.stringify(result).includes(secret), false);
+    const stored = readFileSync(join(dir, 'vault-device-key.bin'));
+    assert.equal(stored.includes(Buffer.from(secret)), false);
+    assert.equal(existsSync(join(dir, 'vault.enc.json')), false);
+  } finally { harness.restore(); rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('cofre antigo pede migração e senha errada não substitui o arquivo', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'neuron-migrate-'));
+  const vault = join(dir, 'vault.enc.json');
+  writeFileSync(vault, 'cofre-original');
+  writeFileSync(join(dir, 'device-access.bin'), 'senha-antiga-cifrada');
+  let calls = 0;
+  const harness = register(dir, async (url) => {
+    calls += 1;
+    assert.equal(String(url).endsWith('/v1/vault/device-migrate'), true);
+    return Response.json({ error: 'Senha incorreta ou cofre danificado' }, { status: 400 });
+  });
+  try {
+    const pending = await harness.handler(harness.event, 'open');
+    assert.deepEqual(pending, { migration: true });
+    assert.equal(calls, 0);
+    await assert.rejects(harness.handler(harness.event, { action: 'migrate', password: 'senha-errada' }), /incorreta/);
+    assert.equal(readFileSync(vault, 'utf8'), 'cofre-original');
+    assert.equal(existsSync(vault + '.next'), false);
+    assert.equal(existsSync(join(dir, 'vault-device-key.bin')), false);
+    assert.equal(existsSync(join(dir, 'device-access.bin')), true);
+  } finally { harness.restore(); rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('migração bem sucedida apaga o material antigo e não devolve a chave', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'neuron-migrate-ok-'));
+  const vault = join(dir, 'vault.enc.json');
+  writeFileSync(vault, 'cofre-original');
+  writeFileSync(join(dir, 'device-access.bin'), 'senha-antiga-cifrada');
+  writeFileSync(join(dir, 'device-access-settings.json'), '{"automatic":true}');
+  let secret = '';
+  const harness = register(dir, async (url, options) => {
+    const body = options.body ? JSON.parse(options.body) : {};
+    if (String(url).endsWith('/v1/vault/device-migrate')) {
+      secret = body.secret;
+      assert.equal(body.password, 'senha-antiga');
+      return Response.json({ prepared: true });
+    }
+    if (String(url).endsWith('/v1/vault/device-commit')) {
+      writeFileSync(vault, 'cofre-novo');
+      return Response.json({ ok: true });
+    }
+    if (String(url).endsWith('/v1/vault/device-open')) {
+      assert.equal(body.secret, secret);
+      return Response.json({ ok: true });
+    }
+    return Response.json({ error: 'rota inesperada' }, { status: 500 });
+  });
+  try {
+    const result = await harness.handler(harness.event, { action: 'migrate', password: 'senha-antiga' });
+    assert.deepEqual(result, { ok: true });
+    assert.equal(JSON.stringify(result).includes(secret), false);
+    assert.equal(JSON.stringify(result).includes('senha-antiga'), false);
+    const stored = readFileSync(join(dir, 'vault-device-key.bin'));
+    assert.equal(stored.includes(Buffer.from(secret)), false);
+    assert.equal(readFileSync(vault, 'utf8'), 'cofre-novo');
+    assert.equal(existsSync(join(dir, 'device-access.bin')), false);
+    assert.equal(existsSync(join(dir, 'device-access-settings.json')), false);
+  } finally { harness.restore(); rmSync(dir, { recursive: true, force: true }); }
+});
