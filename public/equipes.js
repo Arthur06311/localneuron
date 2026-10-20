@@ -553,20 +553,21 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
 
   function closeDialog() {
     $('#eq-dialog')?.close();
-    dialogOpener?.focus?.();
   }
 
   function options() {
     return [...document.querySelectorAll('.eq-listbox [role="option"], .eq-listbox .eq-section')];
   }
 
-  function selectOption(id, confirm) {
+  function selectOption(id, confirm, opener) {
+    const member = id === 'team' ? null : crew.members.find(item => item.bot_id === id);
+    if (confirm && member && !member.model) {
+      openDialog('edit', opener || document.activeElement);
+      return;
+    }
     focus = id;
     restoreFocus = true;
-    const narrow = window.matchMedia('(max-width: 720px)').matches;
-    if (confirm && narrow) pane = 'conversa';
-    const member = crew.members.find(item => item.bot_id === id);
-    if (member && !member.model) { openDialog('edit', document.activeElement); return; }
+    if (confirm && window.matchMedia('(max-width: 720px)').matches) pane = 'conversa';
     open().catch(error => toast(error.message));
   }
 
@@ -588,7 +589,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
       const item = current[index] || current[0];
       if (!item) return;
       if (item.classList.contains('eq-section')) { item.click(); return; }
-      selectOption(item.dataset.eqId, true);
+      selectOption(item.dataset.eqId, true, item);
       return;
     }
     if (key.length === 1 && /\S/.test(key) && event.target.closest('.eq-listbox')) {
@@ -597,9 +598,10 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
       const start = index < 0 ? 0 : index + 1;
       const found = [...names.slice(start), ...names.slice(0, start)].findIndex(name => name.toLocaleLowerCase('pt-BR').startsWith(letter));
       if (found >= 0) {
-        const absolute = (start + found) % current.length;
+        const item = current[(start + found) % current.length];
         event.preventDefault();
-        selectOption(current[absolute].dataset.eqId, false);
+        if (item.classList.contains('eq-section')) { item.focus(); return; }
+        selectOption(item.dataset.eqId, false);
       }
     }
   }
@@ -641,7 +643,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
           return;
         }
         const item = event.target.closest('[role="option"]');
-        if (item) selectOption(item.dataset.eqId, true);
+        if (item) selectOption(item.dataset.eqId, true, item);
       };
     }
     const compose = $('#eq-compose');
@@ -697,8 +699,10 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
     };
     const dialog = $('#eq-dialog');
     if (dialog) {
-      dialog.addEventListener('close', () => dialogOpener?.focus?.());
-      dialog.addEventListener('cancel', () => dialogOpener?.focus?.());
+      dialog.onclose = () => {
+        const opener = dialogOpener;
+        setTimeout(() => opener?.focus?.(), 0);
+      };
       $('#eq-cancel').onclick = () => closeDialog();
       $('#eq-new-section').onclick = () => {
         const name = window.prompt('Nova seção');

@@ -39,6 +39,7 @@ test('a ilha Equipes segue a especificação: navegação, conversa, teclado e t
   assert.match(page, /--eq-faint:#818a93/);
   assert.match(page, /--eq-accent:#7aa2f7/);
   assert.match(page, /248px minmax\(0,1fr\) 280px/);
+  assert.match(page, /data-pane="lista"\] \.eq-back/);
   assert.match(page, /max-width:720px/);
   assert.match(page, /max-width:360px/);
   assert.match(page, /prefers-reduced-motion:reduce/);
@@ -66,6 +67,7 @@ test('a ilha Equipes segue a especificação: navegação, conversa, teclado e t
   assert.equal(testBackend({ kind: 'anthropic', lead: true, hasKey: true, refused: true }).error, 'key-invalid');
   assert.equal(testBackend({ kind: 'exo', lead: true, endpoint: 'http://10.0.0.8:52415' }).error, 'exo-offline');
   assert.equal(testBackend({ kind: 'local', lead: true, modelKey: 'gguf:small', installed: true }).ok, true);
+  assert.match(ui, /if \(confirm && member && !member\.model\)/);
 });
 
 test('um colega não pode escolher 70B ou EXO; o coordenador pode', () => {

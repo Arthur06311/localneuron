@@ -99,7 +99,7 @@ html[data-theme=dark] .equipes{
   .eq-fold{display:block}
 }
 @media(min-width:721px){.eq-back{display:none}}
-.equipes[data-view="visao"] .eq-back{display:none}
+.equipes[data-view="visao"] .eq-back,.equipes[data-pane="lista"] .eq-back{display:none}
 @media(max-width:360px){
   .eq-compose{grid-template-columns:1fr}
   .eq-compose button{width:100%;min-height:40px}
