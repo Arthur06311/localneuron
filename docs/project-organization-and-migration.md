@@ -16,11 +16,12 @@ O que foi acrescentado nesta revisão:
 - Este relatório, com o mapa técnico, a estratégia de migração e a lista de pendências.
 - Links para o índice e o relatório no README principal.
 
-A navegação da interface também já está organizada em quatro ilhas, implementadas em `public/index.html`, `public/navigation.css` e `public/app.js`:
+A navegação da interface também já está organizada em cinco ilhas, implementadas em `public/index.html`, `public/navigation.css` e `public/app.js`:
 
 | Ilha | Páginas |
 |---|---|
 | Trabalhar | Chat, Minha equipe, Modelos |
+| Equipas | Equipas |
 | Criar | Imagem, Vídeo, Música, Editor |
 | Conectar | Conexões, Rede EXO, Minha API |
 | Conta | Central Pro, Meu plano, Configuração guiada, Preferências |
@@ -124,7 +125,7 @@ As entregas acumuladas no histórico público do GitHub foram agrupadas abaixo p
 - Studio para Photo, Video, Música, voz, transcrição e Editor.
 - Mascote 2D com diferentes estados.
 - Pro com projetos, fila, modelos, templates, documentos, exportação, backups e diagnóstico.
-- Navegação atual por quatro ilhas clicáveis.
+- Navegação atual por cinco ilhas clicáveis. Equipas reusa os bots de Minha equipe.
 
 ### Motores e integrações
 
