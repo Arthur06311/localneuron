@@ -152,11 +152,11 @@ async function ask(complete: TalkComplete, seat: Seat, messages: TalkMessage[], 
 function coordinatorPrompt(coordinator: Seat, colleagues: Seat[], heard: string[]): TalkMessage[] {
   const roster = colleagues.length
     ? colleagues.map(seat => `- ${seat.botId} ${seat.name} — ${seat.role || 'colega'}`).join('\n')
-    : '- Nenhum colega ligado.';
+    : '- Nenhum colega conectado.';
   return [
     {
       role: 'system',
-      content: `És ${coordinator.name}, coordenador da equipa. Responde só com um bloco.\nPARA: <id de um colega>\nPEDIDO: <uma tarefa>\nou\nFIM: <resposta final>\nPede um colega por resposta. Não te peças a ti próprio. Não inventes ids.\nColegas:\n${roster}`,
+      content: `Você é ${coordinator.name}, coordenador da equipe. Responda só com um bloco.\nPARA: <id de um colega>\nPEDIDO: <uma tarefa>\nou\nFIM: <resposta final>\nPeça um colega por resposta. Não peça a si mesmo. Não invente ids.\nColegas:\n${roster}`,
     },
     { role: 'user', content: heard.join('\n').slice(0, 6000) },
   ];
