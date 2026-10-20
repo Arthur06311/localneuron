@@ -35,6 +35,6 @@ Fontes oficiais: https://github.com/ACE-Step/ACE-Step-1.5 e docs/en/API.md na me
 
 ## Personalidade
 
-Preferências → **Usar a personalidade LocalNeuron**. Desligado por padrão; persistido no estado assinado do espaço. Afeta respostas seguintes. Instruções, memória e permissões dos bots são preservadas. Dados técnicos do motor continuam disponíveis quando relevantes, sem transformar o nome do aplicativo na identidade da IA.
+Configurações → **Usar a personalidade LocalNeuron**. Desligado por padrão; persistido no estado assinado do espaço. Afeta respostas seguintes. Instruções, memória e permissões dos bots são preservadas. Dados técnicos do motor continuam disponíveis quando relevantes, sem transformar o nome do aplicativo na identidade da IA.
 
 Validação adicional 0.26: pesos Turbo, Qwen3-Embedding e VAE conferidos integralmente por SHA-256. Motor ACE-Step iniciado no Mac Apple Silicon, inventário autenticado consultado, geração real de 10 segundos concluída e WAV salvo na biblioteca; processo gerenciado encerrado após o teste. Não representa validação nativa em Windows/Linux.

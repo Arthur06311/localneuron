@@ -39,7 +39,14 @@ const MARK_FILE = { pronto: 'pronto', trabalhando: 'pensando', concluido: 'concl
 
 export function handoffLine(origin, targets) {
   const list = Array.isArray(targets) ? targets.filter(Boolean).join(', ') : String(targets || '');
-  return `Entre agentes · ${origin} passou para ${list}`;
+  return `Entre membros · ${origin} passou para ${list}`;
+}
+
+export function planMemberSave({ mode, botId, members, tested, kind, acknowledged, confirmRemote }) {
+  if (!tested?.ok) return { save: false, reason: 'test', error: tested?.error || '' };
+  if (kind !== 'local' && (!acknowledged || !confirmRemote)) return { save: false, reason: 'confirm' };
+  const existing = Array.isArray(members) && members.some(member => member.bot_id === botId);
+  return { save: true, action: mode === 'add' && !existing ? 'create' : 'update', botId };
 }
 
 export function agoLabel(elapsedMs) {
@@ -146,6 +153,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
   let dialogOpener = null;
   let dialogMode = 'edit';
   let tested = null;
+  let saving = false;
   let restoreFocus = false;
   const sessionStatus = new Map();
   const post = (url, body) => api(url, { method: 'POST', body });
@@ -216,7 +224,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
   }
 
   function accessible(member, state, unread) {
-    const parts = [member.name || 'Agente', member.role || '', STATUS_WORD[state.status] || ''];
+    const parts = [member.name || 'Membro', member.role || '', STATUS_WORD[state.status] || ''];
     if (state.attention) parts.push(SHORT_REASON[state.attention] || '');
     if (unread > 0) parts.push(`${unread} novas`);
     return parts.filter(Boolean).join(', ');
@@ -234,7 +242,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
     const unread = Number(member.unread || 0);
     const selected = member.bot_id === focus;
     const file = MARK_FILE[state.status] || 'pronto';
-    return `<div role="option" class="eq-option" data-eq-id="${E(member.bot_id)}" aria-selected="${selected ? 'true' : 'false'}" aria-label="${E(accessible(member, state, unread))}" tabindex="${selected ? '0' : '-1'}"><img src="/mascotes/${markOf(member)}-${file}.svg" alt="" width="28" height="28"><span><strong>${E(member.name || 'Agente')}</strong><small data-state="${state.status}">${E(subtitle(member, state))}</small></span>${unread ? `<span class="eq-unread">${unreadLabel(unread)}</span>` : ''}</div>`;
+    return `<div role="option" class="eq-option" data-eq-id="${E(member.bot_id)}" aria-selected="${selected ? 'true' : 'false'}" aria-label="${E(accessible(member, state, unread))}" tabindex="${selected ? '0' : '-1'}"><img src="/mascotes/${markOf(member)}-${file}.svg" alt="" width="28" height="28"><span><strong>${E(member.name || 'Membro')}</strong><small data-state="${state.status}">${E(subtitle(member, state))}</small></span>${unread ? `<span class="eq-unread">${unreadLabel(unread)}</span>` : ''}</div>`;
   }
 
   function filteredMembers() {
@@ -248,8 +256,8 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
     const teamSelected = focus === 'team';
     const teamUnread = crew.members.reduce((sum, member) => sum + Number(member.unread || 0), 0);
     let html = `<div role="option" class="eq-option" data-eq-id="team" aria-selected="${teamSelected ? 'true' : 'false'}" aria-label="Conversa da equipe, Todas as mensagens${teamUnread ? `, ${teamUnread} novas` : ''}" tabindex="${teamSelected ? '0' : '-1'}"><img src="/mascotes/norte-pronto.svg" alt="" width="28" height="28"><span><strong>Conversa da equipe</strong><small>Todas as mensagens</small></span>${teamUnread ? `<span class="eq-unread">${unreadLabel(teamUnread)}</span>` : ''}</div>`;
-    if (!crew.members.length) return html + '<p class="eq-empty">Esta equipe ainda não tem agentes.</p>';
-    if (query.trim() && !members.length) return html + '<p class="eq-empty">Nenhum agente com esse nome.</p>';
+    if (!crew.members.length) return html + '<p class="eq-empty">Esta equipe ainda não tem membros.</p>';
+    if (query.trim() && !members.length) return html + '<p class="eq-empty">Nenhum membro com esse nome.</p>';
     const sections = data.sections.filter(section => section?.id && section.name);
     const grouped = new Set();
     for (const section of sections) {
@@ -292,7 +300,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
       if (message.author === 'coordinator' && String(message.content).startsWith('Peço a ')) {
         const target = String(message.content).slice('Peço a '.length).split(':')[0].trim();
         const from = crew.members.find(item => item.bot_id === message.author_bot_id)?.name || coordinatorOf()?.name || 'Coordenador';
-        html += `<p class="eq-pass">${E(handoffLine(from, target || 'um colega'))}</p>`;
+        html += `<p class="eq-pass">${E(handoffLine(from, target || 'um membro'))}</p>`;
         continue;
       }
       if (message.author === 'system') {
@@ -301,7 +309,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
       }
       const member = crew.members.find(item => item.bot_id === (message.author_bot_id || message.bot_id));
       const you = message.author === 'user';
-      const name = you ? 'Você' : (member?.name || 'Agente');
+      const name = you ? 'Você' : (member?.name || 'Membro');
       const lead = !you && member?.coordinator;
       const state = member ? statusOf(member) : { status: 'pronto' };
       const file = MARK_FILE[state.status] || 'pronto';
@@ -327,7 +335,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
       <div class="eq-stat"><span>Estado</span><b>${E(subtitle(selected || { role: '' }, state))}</b></div>
       <div class="eq-actions">${selected ? '<button type="button" data-eq-edit>Editar</button>' : ''}${selected && !selected.model ? '<button type="button" data-eq-edit>Escolher modelo</button>' : ''}</div>
       <h2 class="eq-kicker">Equipe</h2>
-      <div class="eq-stat"><span>Agentes</span><b>${tokens(crew.members.length)}</b></div>
+      <div class="eq-stat"><span>Membros</span><b>${tokens(crew.members.length)}</b></div>
       <div class="eq-stat"><span>Modelos</span><b>${mixed() ? 'Misto' : 'Local, o menor'}</b></div>
       <div class="eq-stat"><span>Avançado</span><b>${mixed() ? 'Ligado' : 'Desligado'}</b></div>
       ${mixed() ? '' : '<p class="eq-note">Modelos grandes — EXO, API em outro computador, Anthropic e Grok — ficam em Avançado e não estão em uso.</p>'}`;
@@ -335,12 +343,12 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
 
   function overview() {
     if (!crew.members.length) {
-      return `<section class="eq-empty"><h2>Nenhuma equipe</h2><p>Crie uma equipe para dividir um pedido entre agentes. O modelo inicial é o menor modelo local. Modelos grandes ficam em Avançado.</p><button type="button" class="primary" id="eq-create">Criar equipe</button></section>`;
+      return `<section class="eq-empty"><h2>Nenhuma equipe</h2><p>Crie uma equipe para dividir um pedido entre membros. O modelo inicial é o menor modelo local. Modelos grandes ficam em Avançado.</p><button type="button" class="primary" id="eq-create">Criar equipe</button></section>`;
     }
     const info = runtime();
     const states = crew.members.map(statusOf);
     const state = states.some(item => item.status === 'atencao') ? 'atencao' : states.some(item => item.status === 'trabalhando') ? 'trabalhando' : states.every(item => item.status === 'concluido') ? 'concluido' : 'pronto';
-    return `<div class="eq-actions"><button type="button" class="primary" id="eq-create">Nova equipe</button></div><div class="eq-cards"><button type="button" class="eq-card" data-eq-open="conversas" aria-current="true"><strong>Equipe</strong><span>${tokens(crew.members.length)} agentes</span><span>${E(info.model)}</span><span>${STATUS_MARK[state]} ${STATUS_WORD[state]}</span></button></div>${mixed() ? '' : '<p class="eq-note">Modelos grandes — EXO, API em outro computador, Anthropic e Grok — ficam em Avançado e não estão em uso.</p>'}`;
+    return `<div class="eq-actions"><button type="button" class="primary" id="eq-create">Nova equipe</button></div><div class="eq-cards"><button type="button" class="eq-card" data-eq-open="conversas" aria-current="true"><strong>Equipe</strong><span>${tokens(crew.members.length)} membros</span><span>${E(info.model)}</span><span>${STATUS_MARK[state]} ${STATUS_WORD[state]}</span></button></div>${mixed() ? '' : '<p class="eq-note">Modelos grandes — EXO, API em outro computador, Anthropic e Grok — ficam em Avançado e não estão em uso.</p>'}`;
   }
 
   function paint(messages) {
@@ -379,13 +387,13 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
       ${alert}
       ${mode === 'visao' ? overview() : `<div class="eq-shell">
         <aside class="eq-list" aria-label="Equipe">
-          <label class="eq-search">Buscar agente<input id="eq-search" type="search" value="${E(query)}" autocomplete="off"></label>
+          <label class="eq-search">Buscar membro<input id="eq-search" type="search" value="${E(query)}" autocomplete="off"></label>
           <p id="eq-search-status" class="visually-hidden" role="status"></p>
-          <div class="eq-listbox" role="listbox" aria-orientation="vertical" aria-label="Agentes">${listHtml()}</div>
-          <div class="eq-actions"><button type="button" class="primary" id="eq-add">Adicionar agente</button></div>
+          <div class="eq-listbox" role="listbox" aria-orientation="vertical" aria-label="Membros">${listHtml()}</div>
+          <div class="eq-actions"><button type="button" class="primary" id="eq-add">Adicionar membro</button></div>
         </aside>
         <section class="eq-main">
-          <div class="eq-log" role="log" aria-relevant="additions" aria-atomic="false" aria-busy="true">${focus === 'team' || crew.members.some(member => member.bot_id === focus) ? thread(messages) : '<p class="eq-empty">Esta equipe ainda não tem agentes.</p>'}</div>
+          <div class="eq-log" role="log" aria-relevant="additions" aria-atomic="false" aria-busy="true">${focus === 'team' || crew.members.some(member => member.bot_id === focus) ? thread(messages) : '<p class="eq-empty">Esta equipe ainda não tem membros.</p>'}</div>
           <details class="eq-fold"><summary>Detalhes</summary><div class="eq-fold-body">${side}</div></details>
           ${composer()}
         </section>
@@ -406,8 +414,8 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
 
   function composer() {
     const selected = focus === 'team' ? null : crew.members.find(member => member.bot_id === focus);
-    if (selected && !selected.model) return '<p class="eq-leave">Escolher modelo abre o diálogo. A conversa deste agente espera um modelo local.</p>';
-    return `<form id="eq-compose" class="eq-compose"><p class="eq-hint">${focus === 'team' ? 'O coordenador divide o pedido · até 3 rodadas · Enter envia' : 'Enter envia · Shift+Enter quebra a linha'}</p><label class="visually-hidden">${focus === 'team' ? 'Pedido para a equipe' : `Mensagem para ${E(selected?.name || 'o agente')}`}</label><textarea name="content" maxlength="16000" required placeholder="${focus === 'team' ? 'Pedido para a equipe' : 'Escreva para o agente'}"></textarea><button class="primary" type="submit">Enviar</button></form>${talking ? '<p class="eq-leave">Você pode sair desta conversa. A rodada continua.</p>' : ''}`;
+    if (selected && !selected.model) return '<p class="eq-leave">Escolher modelo abre o diálogo. A conversa deste membro espera um modelo local.</p>';
+    return `<form id="eq-compose" class="eq-compose"><p class="eq-hint">${focus === 'team' ? 'O coordenador divide o pedido · até 3 rodadas · Enter envia' : 'Enter envia · Shift+Enter quebra a linha'}</p><label class="visually-hidden">${focus === 'team' ? 'Pedido para a equipe' : `Mensagem para ${E(selected?.name || 'o membro')}`}</label><textarea name="content" maxlength="16000" required placeholder="${focus === 'team' ? 'Pedido para a equipe' : 'Escreva para o membro'}"></textarea><button class="primary" type="submit">Enviar</button></form>${talking ? '<p class="eq-leave">Você pode sair desta conversa. A rodada continua.</p>' : ''}`;
   }
 
   function dialogHtml() {
@@ -418,7 +426,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
       <fieldset class="eq-marks"><legend class="eq-kicker">Marca</legend>${MARKS.map(([id, label]) => `<label><input type="radio" name="mark" value="${id}"><img src="/mascotes/${id}-pronto.svg" alt="" width="28" height="28">${label}</label>`).join('')}</fieldset>
       <label>Seção<select name="section"><option value="">Sem seção</option></select></label>
       <div class="eq-actions"><button type="button" id="eq-new-section">Nova seção</button><button type="button" id="eq-drop-section">Apagar seção</button></div>
-      <fieldset><legend class="eq-kicker">Onde este agente roda</legend>
+      <fieldset><legend class="eq-kicker">Onde este membro roda</legend>
         <label class="eq-check"><input type="radio" name="where" value="local" checked>Este computador</label>
         <p class="eq-note">Recomendado. O menor modelo local pronto.</p>
         <label>Modelo local<select name="localModel"></select></label>
@@ -447,7 +455,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
   function fillDialog(member) {
     const form = $('#eq-agent');
     const lead = dialogMode === 'add' ? !coordinatorOf() : Boolean(member?.coordinator);
-    $('#eq-dialog-title').textContent = dialogMode === 'add' ? 'Novo agente' : 'Editar';
+    $('#eq-dialog-title').textContent = dialogMode === 'add' ? 'Novo membro' : 'Editar';
     form.name.value = member?.name || '';
     form.role.value = member?.role || '';
     const mark = member ? markOf(member) : 'norte';
@@ -489,7 +497,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
       if (!picker) {
         picker = document.createElement('label');
         picker.id = 'eq-bot-picker';
-        picker.innerHTML = `Agente de Minha equipe<select name="bot">${work.map(bot => `<option value="${E(bot.id)}">${E(bot.name)}</option>`).join('') || '<option value="">Nenhum bot livre</option>'}</select>`;
+        picker.innerHTML = `Membro de Minha equipe<select name="bot">${work.map(bot => `<option value="${E(bot.id)}">${E(bot.name)}</option>`).join('') || '<option value="">Nenhum bot livre</option>'}</select>`;
         form.insertBefore(picker, form.name.parentElement);
       }
       picker.querySelector('select').onchange = () => {
@@ -624,7 +632,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
         pending = setTimeout(() => {
           const status = $('#eq-search-status');
           const count = filteredMembers().length;
-          if (status) status.textContent = `${count} agentes`;
+          if (status) status.textContent = `${count} membros`;
         }, 150);
       };
       search.addEventListener('keydown', event => { if (event.key === 'Enter') event.preventDefault(); });
@@ -762,20 +770,26 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
   }
 
   async function saveDialog() {
+    if (saving) return;
     const form = $('#eq-agent');
     const draft = draftFromForm();
     const result = tested?.ok ? tested : await probe(draft);
-    if (!result.ok) { raise(result.error); return; }
+    const botId = dialogMode === 'add' ? form.querySelector('[name="bot"]')?.value : (crew.members.find(item => item.bot_id === focus)?.bot_id || focus);
+    if (dialogMode === 'add' && !botId) { toast('Ative a equipe de trabalho em Minha equipe.'); return; }
+    const plan = planMemberSave({ mode: dialogMode, botId, members: crew.members, tested: result, kind: draft.kind, acknowledged: form.acknowledged.checked, confirmRemote: form.confirm_remote.checked });
+    if (!plan.save) {
+      if (plan.reason === 'confirm') toast('Confirme o aviso antes de salvar.');
+      else if (plan.error) raise(plan.error);
+      return;
+    }
     const data = store();
     const mark = form.querySelector('input[name="mark"]:checked')?.value || 'grade';
-    if (dialogMode === 'add') {
-      const botId = form.querySelector('[name="bot"]')?.value;
-      if (!botId) { toast('Ative a equipe de trabalho em Minha equipe.'); return; }
+    saving = true;
+    try {
+    if (plan.action === 'create') {
       crew = await post('/crews/members', { bot_id: botId, mascot: MASCOT_BY_MARK[mark] || 'codigo', coordinator: !coordinatorOf() });
       focus = botId;
     }
-    const member = crew.members.find(item => item.bot_id === focus) || { bot_id: form.querySelector('[name="bot"]')?.value };
-    const botId = member.bot_id;
     data.marks[botId] = mark;
     if (form.section.value) data.byBot[botId] = form.section.value;
     else delete data.byBot[botId];
@@ -783,7 +797,6 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
     await api(`/crews/members/${botId}`, { method: 'PATCH', body: { mascot: MASCOT_BY_MARK[mark] || 'codigo' } });
     if (draft.kind === 'local' && draft.modelKey) await post(`/crews/members/${botId}/model`, { model: draft.modelKey });
     if (draft.kind !== 'local') {
-      if (!form.acknowledged.checked || !form.confirm_remote.checked) { toast('Confirme o aviso antes de salvar.'); return; }
       const kind = draft.kind === 'grok' ? 'xai' : draft.kind === 'remote' ? 'openai' : draft.kind;
       const payload = { kind, label: kind === 'xai' ? 'Grok' : kind === 'openai' ? 'Outro computador' : kind === 'exo' ? 'Rede EXO' : 'Anthropic', model: form.remoteModel.value.trim(), acknowledged: true, confirm_remote: true, trusted_network: form.trusted_network.checked };
       if (form.endpoint.value.trim()) payload.endpoint = form.endpoint.value.trim();
@@ -799,10 +812,13 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
     form.token.value = '';
     closeDialog();
     await open();
+    } finally {
+      saving = false;
+    }
   }
 
   function talkNote(stopped) {
-    const notes = { done: 'A equipe respondeu dentro dos limites.', rounds: 'A conversa parou no máximo de rodadas.', tokens: 'A conversa parou no limite de tokens.', abort: 'A conversa foi interrompida.', self: 'O coordenador não pede a si mesmo.', local: 'Os colegas ficam no modelo deste computador.', model: 'Falta um modelo local neste agente.' };
+    const notes = { done: 'A equipe respondeu dentro dos limites.', rounds: 'A conversa parou no máximo de rodadas.', tokens: 'A conversa parou no limite de tokens.', abort: 'A conversa foi interrompida.', self: 'O coordenador não pede a si mesmo.', local: 'Os membros ficam no modelo deste computador.', model: 'Falta um modelo local neste membro.' };
     return notes[stopped] || 'A conversa da equipe terminou.';
   }
 

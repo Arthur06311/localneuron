@@ -1,6 +1,6 @@
 # LocalNeuron 0.20 — Mascote 2D e expressões
 
-O mascote passa a ter ilustração 2D, contornos definidos e quatro expressões. A galeria em **Preferências → Um mascote, várias expressões** apresenta todas elas.
+O mascote passa a ter ilustração 2D, contornos definidos e quatro expressões. A galeria em **Configurações → Um mascote, várias expressões** apresenta todas elas.
 
 | Expressão | Arquivo em `public/` | Uso |
 | --- | --- | --- |

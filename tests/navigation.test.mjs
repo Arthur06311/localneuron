@@ -16,7 +16,7 @@ test('navigation is grouped into five discoverable islands',async()=>{
   }
   assert.match(html,/navigation\.css/);
   assert.match(html,/>Equipes</);
-  assert.match(html,/Agentes no mesmo pedido/);
+  assert.match(html,/Membros no mesmo pedido/);
   assert.match(html,/Visão da equipe/);
   assert.match(html,/Conversas/);
   assert.match(html,/data-page="equipes"/);

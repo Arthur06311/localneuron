@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { crewModelChoices, initials, isAdvancedModel, memberCaption, modelOptionLabel } from '../public/crew-mascots.js';
-import { agoLabel, handoffLine, localModels, testBackend, unreadLabel } from '../public/equipes.js';
+import { agoLabel, handoffLine, localModels, planMemberSave, testBackend, unreadLabel } from '../public/equipes.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 
@@ -30,7 +30,9 @@ test('a ilha Equipes segue a especificação: navegação, conversa, teclado e t
   assert.match(html, /\/equipes\.css/);
   assert.match(html, /\/tokens\.css/);
   assert.match(js, /equipes:'teams'/);
-  assert.match(js, /equipes:'Equipes \/ Equipes'/);
+  assert.match(js, /Equipes \/ Visão da equipe/);
+  assert.match(js, /Equipes \/ Conversas/);
+  assert.doesNotMatch(js, /Equipes \/ Equipes/);
   assert.ok(html.includes('Visão da equipe'));
   for (const text of ['Conversa da equipe', 'Pedido para a equipe', 'Nenhuma equipe', 'Modelos grandes', 'Nada fica público por padrão', '← Equipes', 'role="log"', 'role="listbox"', 'role="alert"', 'aria-atomic="false"', 'alt=""', 'type="password"', 'autocomplete="off"', "toLocaleString('pt-BR')", '/crews/talk', 'ArrowDown', 'Home', 'End', 'shiftKey']) assert.ok(ui.includes(text), text);
   assert.match(page, /var\(--bg\)/);
@@ -58,7 +60,7 @@ test('a ilha Equipes segue a especificação: navegação, conversa, teclado e t
   assert.match(css, /repeat\(5,minmax\(0,1fr\)\)/);
   assert.match(a11y, /repeat\(5,minmax\(0,1fr\)\)/);
   for (const file of ['/equipes.js', '/equipes.css', '/crew-mascots.js']) assert.match(server, new RegExp(`'${file}'`));
-  assert.equal(handoffLine('CEO', ['Release', 'Segurança']), 'Entre agentes · CEO passou para Release, Segurança');
+  assert.equal(handoffLine('CEO', ['Release', 'Segurança']), 'Entre membros · CEO passou para Release, Segurança');
   assert.equal(unreadLabel(10), '9+');
   assert.equal(agoLabel(1000), 'há menos de 1 min');
   assert.equal(agoLabel(4 * 60000), 'há 4 min');
@@ -97,4 +99,25 @@ test('um colega não pode escolher 70B ou EXO; o coordenador pode', () => {
   assert.equal(memberCaption({ name: 'Release', role: 'Código', mascot: 'codigo', coordinator: false }), 'Código');
   assert.equal(initials('Quality Assurance'), 'QA');
   assert.equal(Number(3120).toLocaleString('pt-BR'), '3.120');
+});
+
+test('salvar um membro espera o aviso e o teste, e repetir não duplica', () => {
+  const remote = { mode: 'add', botId: 'bot-1', members: [], kind: 'anthropic' };
+  const cancelled = planMemberSave({ ...remote, tested: { ok: true }, acknowledged: false, confirmRemote: false });
+  assert.equal(cancelled.save, false);
+  assert.equal(cancelled.reason, 'confirm');
+  const failed = planMemberSave({ ...remote, tested: { ok: false, error: 'key-missing' }, acknowledged: true, confirmRemote: true });
+  assert.equal(failed.save, false);
+  assert.equal(failed.reason, 'test');
+  assert.equal(failed.error, 'key-missing');
+  const first = planMemberSave({ ...remote, tested: { ok: true }, acknowledged: true, confirmRemote: true });
+  assert.deepEqual(first, { save: true, action: 'create', botId: 'bot-1' });
+  const again = planMemberSave({ ...remote, members: [{ bot_id: 'bot-1' }], tested: { ok: true }, acknowledged: true, confirmRemote: true });
+  assert.equal(again.save, true);
+  assert.equal(again.action, 'update');
+  const saved = [first, cancelled, failed, again].reduce((members, plan) => {
+    if (!plan.save || plan.action !== 'create' || members.some(member => member.bot_id === plan.botId)) return members;
+    return [...members, { bot_id: plan.botId }];
+  }, []);
+  assert.equal(saved.length, 1);
 });

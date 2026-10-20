@@ -8,6 +8,21 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ## [Não publicado]
 
+- Anexos de texto e PDF passam a ser indexados no computador e consultados na conversa. Sem um modelo de embeddings, os trechos ficam guardados e a busca semântica avisa que não está disponível (#46).
+- O aplicativo abre direto, com a chave do cofre no armazenamento seguro do sistema. Quem ainda tem senha confirma uma vez; a interface deixa de oferecer desbloqueio e senha (#50).
+- O Modo servidor começa desligado e distingue Contribuir, Gerenciar e Só usar. O mapa lê o estado do EXO. RDMA permanece só como caminho futuro; a ligação desta fase é TCP (#57).
+- A ilha passa a se chamar Equipes, em pt-BR, com o visual grafite. Os identificadores internos continuam `crews` e `/v1/crews` (#58).
+- O gateway do Modo servidor escuta só na rede local, na porta 52416, com pareamento por código de seis dígitos e chave por máquina. Enquanto o EXO está ligado, a porta 52415 continua sem senha (#59).
+- O download de Linux no site oferece o AppImage da 0.28.1, junto do DEB e do pacote Arch (#60).
+- Os tokens da Equipes passam a usar os mesmos nomes do mockup (#61).
+- O site ganha SEO, página 404 e o idioma do navegador (#62).
+- O aplicativo passa ao visual grafite partilhado (`public/tokens.css`) e a tela de ajustes passa a se chamar Configurações (#63).
+- A pasta `website/` em main fica vazia de propósito. O site publicado mora na branch `gh-pages` (#64).
+- O site em `gh-pages` adota o visual sóbrio e corrige o guia de instalação do Linux, sem Instalar.zip (#65).
+- A especificação da ilha Equipes entra em `docs/design/equipes/`, com marcas e mockup. Minha equipe permanece (#66).
+- A ilha Equipes segue essa especificação: visão, conversas, marcas e modelos grandes só para o coordenador, em Avançado (#67).
+- Quem ainda tem cofre com senha pode começar sem ele. O cofre antigo fica numa cópia datada e pode ser importado depois, nas Configurações, com a senha (#69).
+
 ## [0.28.1] - 2026-10-19
 
 - A 0.28.0 não chegou a publicar binários. O empacotamento instala o `Electron.app` no macOS e entrega os caminhos do NSIS com barra invertida, gerando DMG, ZIP, Setup, AppImage, DEB, pacote Arch e `SHA256SUMS.txt` (#42).

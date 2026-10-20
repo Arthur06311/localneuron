@@ -14,7 +14,7 @@ Desfazer/refazer guarda até 40 alterações. A geração em andamento aparece n
 
 ## Projetos e arquivos
 
-A edição é salva automaticamente no armazenamento do aplicativo/navegador deste dispositivo, incluindo cópias das mídias importadas. **Projetos** permite abrir, criar ou excluir uma edição. **Baixar projeto** gera um arquivo `.localneuron.json` com a montagem e as mídias para importar em outro dispositivo. Faça esse backup antes de limpar dados do navegador ou trocar de instalação. A exportação do chat em Preferências não inclui estes projetos.
+A edição é salva automaticamente no armazenamento do aplicativo/navegador deste dispositivo, incluindo cópias das mídias importadas. **Projetos** permite abrir, criar ou excluir uma edição. **Baixar projeto** gera um arquivo `.localneuron.json` com a montagem e as mídias para importar em outro dispositivo. Faça esse backup antes de limpar dados do navegador ou trocar de instalação. A exportação do chat em Configurações não inclui estes projetos.
 
 Cada projeto aceita até 5 minutos, 100 cenas, 60 mídias, 60 textos e 100 MiB de arquivos. Há uma sequência principal de cenas e uma trilha de música, além do áudio original dos vídeos. Textos são inseridos manualmente; não há legendagem automática, múltiplas camadas de vídeo ou animação avançada por keyframes nesta versão.
 

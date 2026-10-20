@@ -1,6 +1,6 @@
 # LocalNeuron 0.21 — Interface profissional
 
-A interface recebe um acabamento comum para chat, catálogo, Estúdio, API e Preferências. Superfícies neutras, bordas discretas, tipografia consistente e espaçamento mais regular ajudam a separar navegação, conteúdo e controles.
+A interface recebe um acabamento comum para chat, catálogo, Estúdio, API e Configurações. Superfícies neutras, bordas discretas, tipografia consistente e espaçamento mais regular ajudam a separar navegação, conteúdo e controles.
 
 ## Pro
 

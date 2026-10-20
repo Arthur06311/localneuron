@@ -24,7 +24,7 @@ A navegação da interface também já está organizada em cinco ilhas, implemen
 | Equipas | Equipas |
 | Criar | Imagem, Vídeo, Música, Editor |
 | Conectar | Conexões, Rede EXO, Minha API |
-| Conta | Central Pro, Meu plano, Configuração guiada, Preferências |
+| Conta | Central Pro, Meu plano, Configuração guiada, Configurações |
 
 ## 2. Mapa de diretórios
 
