@@ -1,7 +1,7 @@
-import { homeCopy } from './home-copy.js';
+import { docCopy } from './doc-copy.js';
 let pref = 'pt';
 try { pref = localStorage.getItem('localneuron-language') || 'pt'; } catch {}
-const copy = homeCopy[pref];
+const copy = docCopy[pref];
 if (copy) {
   const lang = pref === 'zh' ? 'zh-CN' : pref;
   for (const el of document.querySelectorAll('[data-i18n]')) {

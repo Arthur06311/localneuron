@@ -11,12 +11,13 @@
 <link rel="icon" href="./app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="stylesheet" href="./style.css">
-</head>
+<script>try{var t=localStorage.getItem("localneuron-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script></head>
 <body>
 <a class="skip" href="#main">Ir ao conteúdo</a>
 <header class="guide-header">
 <a class="brand" href="./"><img src="./app-icon.png" width="18" height="18" alt="">LocalNeuron</a>
 <nav aria-label="Navegação"><a href="./">Início</a><a href="./guide.html">Guia de configuração</a><a href="./#download">Download</a></nav>
+<div class="header-actions"><button type="button" class="theme-toggle" id="theme-toggle"></button></div>
 </header>
 <main class="guide-main" id="main" style="max-width:720px;margin:0 auto;padding:48px 20px 80px">
 <p class="eyebrow">404</p>
@@ -24,5 +25,5 @@
 <p class="lede">Esse endereço não existe. Volte ao início, abra o guia ou baixe o app.</p>
 <p class="hero-actions"><a class="button" href="./">Ir para o início</a><a class="button ghost" href="./guide.html">Abrir o guia</a><a class="button ghost" href="./#download">Download</a></p>
 </main>
-</body>
+<script src="./theme.js"></script></body>
 </html>
