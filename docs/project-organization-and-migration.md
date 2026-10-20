@@ -118,7 +118,7 @@ As entregas acumuladas no histórico público do GitHub foram agrupadas abaixo p
 
 ### Produto e experiência
 
-- Onboarding com senha, wizard repetível, perfil e recomendações.
+- Onboarding com abertura direta, wizard repetível, perfil e recomendações.
 - Chat local com streaming, Markdown, anexos, histórico, ramificações, memória revisável, esforço e internet opcional.
 - Bots pessoais e de trabalho, templates por especialidade, tarefas e colaboração entre bots.
 - Catálogo amplo com busca Hugging Face, finalidade, licença, RAM estimada, tamanho, revisão e hashes.
@@ -171,7 +171,7 @@ Não migrar pelo Git:
 3. Instale Node.js 24+ apenas se for executar o modo de desenvolvimento; instaladores prontos não precisam dele.
 4. Reinstale o pacote para a plataforma correta.
 5. Restaure a pasta de dados em um local novo e defina `LOCALNEURON_DESKTOP_DATA_DIR` ou `LOCALNEURON_DATA_DIR` quando necessário. `COLMEIA_DESKTOP_DATA_DIR` e `COLMEIA_DATA_DIR` continuam aceitos.
-6. Abra com a mesma senha; não copie somente `vault.enc.json` sem o banco correspondente.
+6. Abra o aplicativo; não copie somente `vault.enc.json` sem o banco correspondente. Instalações antigas com senha pedem essa senha uma única vez.
 7. Refaça os downloads de runtime específicos da plataforma e valide os hashes.
 
 ### Para um servidor de produção
