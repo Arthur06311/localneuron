@@ -19,13 +19,22 @@ export class Core {
   vault: Vault;
   jobs = new Map<string, { controller: AbortController; promise: Promise<void> }>();
   constructor(public directory: string, public root: string, public composer = compose) {
-    this.store = new Store(join(directory, 'postgres')); this.vault = new Vault(directory);
+    this.vault = new Vault(directory);
+    this.store = new Store(join(directory, 'postgres'));
+    this.attachStore(this.store);
+  }
+  private attachStore(store: Store) {
     const sealBody = (state: State, entries: Entry[]) => { const { seal, ...document } = state; return { state_hash: hash(document), log_hash: hash(entries) }; };
-    this.store.assertIntegrity = (state, entries) => {
+    store.assertIntegrity = (state, entries) => {
       if (this.vault.locked) return;
       if (!state.seal || !validSignature(sealBody(state, entries), state.seal, createPublicKey(this.vault.key('organization')))) throw new Error('Integridade do armazenamento divergente. Restaure um backup confiável.');
     };
-    this.store.sealState = (state, entries) => { state.seal = signature(sealBody(state, entries), this.vault.key('organization')); };
+    store.sealState = (state, entries) => { state.seal = signature(sealBody(state, entries), this.vault.key('organization')); };
+    this.store = store;
+  }
+  async reopenStore() {
+    this.attachStore(new Store(join(this.directory, 'postgres')));
+    await this.store.init();
   }
   async init() {
     await this.store.init();

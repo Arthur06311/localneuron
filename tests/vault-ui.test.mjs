@@ -20,9 +20,18 @@ test('a interface não oferece senha, lembrete nem bloqueio', () => {
   assert.equal(html.includes('id="lock"'), false);
   assert.match(app, /id="migrate-password"/);
   assert.match(app, /Senha atual/);
+  assert.match(app, /id="skip-legacy"/);
+  assert.match(app, /Começar sem o cofre antigo/);
+  assert.match(app, /action:'fresh'/);
+  assert.match(app, /\/vault\/skip-legacy/);
   assert.match(app, /localAccess\('open'\)/);
   assert.match(app, /action:'migrate'/);
   assert.match(app, /\/vault\/migrate/);
+  assert.match(app, /needs_migration/);
+  assert.match(ux, /Há uma cópia do cofre antigo/);
+  assert.match(ux, /Importar cópia com a senha/);
+  assert.match(ux, /\/vault\/legacy/);
+  assert.match(ux, /import-legacy/);
   assert.match(main, /LOCALNEURON_DEVICE_NONCE/);
   assert.match(main, /openDeviceVault/);
   assert.match(read('desktop/env.cjs'), /COLMEIA_/);

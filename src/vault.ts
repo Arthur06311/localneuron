@@ -62,4 +62,5 @@ export class Vault {
   }
   key(id: string) { const key = this.keys?.[id]; if (!key) throw new Error('Cofre bloqueado'); return key; }
   lock() { this.keys = null; }
+  abandon() { this.keys = null; this.boundId = null; }
 }

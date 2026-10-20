@@ -1,4 +1,4 @@
-const { migrateDeviceVault, openDeviceVault } = require('./vault-open.cjs');
+const { freshDeviceVault, importLegacyDeviceVault, migrateDeviceVault, openDeviceVault } = require('./vault-open.cjs');
 
 function registerLocalAccess({ ipcMain, safeStorage, getWindow, origin, dataDirectory, token, nonce, warn }) {
   let pending = false;
@@ -20,6 +20,16 @@ function registerLocalAccess({ ipcMain, safeStorage, getWindow, origin, dataDire
       if (action === 'migrate') {
         if (typeof data.password !== 'string' || data.password.length < 1 || data.password.length > 1024) throw new Error('Senha inválida.');
         await migrateDeviceVault({ origin, token, dataDirectory, safeStorage, nonce, password: data.password, warn });
+        return { ok: true };
+      }
+      if (action === 'fresh') {
+        await freshDeviceVault({ origin, token, dataDirectory, safeStorage, nonce, warn });
+        return { ok: true };
+      }
+      if (action === 'import-legacy') {
+        if (typeof data.password !== 'string' || data.password.length < 1 || data.password.length > 1024) throw new Error('Senha inválida.');
+        if (typeof data.name !== 'string' || !/^vault\.enc\.json\.legacy-\d{8}T\d{9}Z-[0-9a-f]{4}$/.test(data.name)) throw new Error('Cópia inválida.');
+        await importLegacyDeviceVault({ origin, token, dataDirectory, safeStorage, nonce, name: data.name, password: data.password });
         return { ok: true };
       }
       throw new Error('Ação inválida');
