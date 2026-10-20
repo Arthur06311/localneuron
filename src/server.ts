@@ -26,27 +26,30 @@ import { complete } from './inference.js';
 import Fastify from 'fastify';
 import rateLimit from '@fastify/rate-limit';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statfsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, rmSync, statfsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { Gateway } from './gateway.js';
 import { optionsSchema } from './inference.js';
 import { memoryStatus } from './model.js';
-import { totalmem } from 'node:os';
+import { totalmem, tmpdir } from 'node:os';
 import { Chats } from './chat.js';
 import { Core } from './core.js';
+import { exportSpace } from './space-archive.js';
 import { localModels } from './model.js';
 import { libraryRevision } from './library-progress.js';
 import { ModelLibrary } from './model-library.js';
 import { acquireProcessLock } from './lock.js';
+import { listenWithFallback, preferredPort } from './local-port.js';
 import { verifyPackage } from '../scripts/protocol.mjs';
 import { z } from 'zod';
 
 const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as { legacyEnv: (suffix: string) => string | undefined };
 
 const equal = (a: string, b: string) => { const left = Buffer.from(a), right = Buffer.from(b); return left.length === right.length && timingSafeEqual(left,right); };
-export async function createApp(core: Core, token = randomBytes(32).toString('hex'), origin = 'http://127.0.0.1:4317', runtime = new LocalRuntime(core.directory,core.root), planConfig = subscriptionConfig(core.root)) {
+export async function createApp(core: Core, token = randomBytes(32).toString('hex'), initialOrigin = 'http://127.0.0.1:4317', runtime = new LocalRuntime(core.directory,core.root), planConfig = subscriptionConfig(core.root)) {
+  let origin = initialOrigin;
   const app = Fastify({ logger: false, bodyLimit: 2 * 1024 * 1024, ajv: { customOptions: { removeAdditional: false } } });
   // Limite só na rota nova, que lê o disco. global:false deixa as outras rotas livres para o limite global por IP do servidor local.
   await app.register(rateLimit, { global: false });
@@ -55,7 +58,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const proMedia=new ProMedia(core.directory,core.root);
   const toolbox=new Toolbox(core.directory);
   const computerControl=new ComputerControl();toolbox.computerControl=computerControl;
-  const connections=new Connections(core.directory,core.vault,origin);toolbox.connections=connections;
+  const connections=new Connections(core.directory,core.vault,()=>origin);toolbox.connections=connections;
   const hfAccount=new HFAccount(core.directory,core.vault);
   const mediaDownloads=new MediaDownloads(core.directory,()=>hfAccount.token());
   const library = new ModelLibrary(core.directory, (type, data) => core.store.tx((state, entries) => { if (!state || core.vault.locked) throw new Error('Cofre bloqueado'); core.append(state, entries, type, data); }),undefined,runtime,()=>hfAccount.token());
@@ -105,8 +108,13 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.addHook('preHandler',async(request)=>{const feature=requiredFeature(request.method,request.routeOptions.url||request.url.split('?')[0],request.body);if(feature)subscription.require(feature);});
   app.setErrorHandler((error, _request, reply) => {
     if(error instanceof ProRequired)return reply.code(402).send({error:error.message,code:'pro_required',feature:error.feature});
-    if ((error as { statusCode?: number }).statusCode === 429) return reply.code(429).send({ error: 'Muitas consultas num curto intervalo. Aguarde e tente novamente.' });
-    if ((error as { statusCode?: number }).statusCode === 409) return reply.code(409).send({ error: (error as Error).message });
+    const statusCode = (error as { statusCode?: number }).statusCode;
+    if (statusCode === 429) {
+      const message = (error as { message?: string }).message || '';
+      const errorText = message && !message.startsWith('Rate limit exceeded') ? message : 'Muitas consultas num curto intervalo. Aguarde e tente novamente.';
+      return reply.code(429).send({ error: errorText });
+    }
+    if (statusCode === 409) return reply.code(409).send({ error: (error as Error).message });
     const err = error as Error;
     const message = err instanceof z.ZodError ? 'Dados inválidos: ' + err.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ') : err.message;
     const conflict = /Conflito|Versão mudou|Idempotency-Key reutilizada|imutável/.test(message);
@@ -341,10 +349,24 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.get('/v1/tasks/:id/download', async (request, reply) => { const state = await core.snapshot(), task = state.tasks.find(t => t.id === id(request)); const version = task?.versions.at(-1); if (!version) throw new Error('Entrega sem arquivo'); return reply.header('Content-Disposition', `attachment; filename="conteudo-${task!.id}.md"`).type('text/markdown; charset=utf-8').send(version.body); });
   app.post('/v1/agents/agent/revoke', async () => { await core.revokeAgent(); return { ok: true }; });
   app.post('/v1/workflows', async request => { const { source } = z.strictObject({ source: z.string().max(32768) }).parse(body(request)); return core.registerWorkflow(source); });
-  app.get('/v1/log', async request => { const { from } = z.object({ from: z.coerce.number().int().min(0).default(0) }).parse(request.query); return (await core.store.entries()).filter(entry => entry.seq > from); });
-  app.get('/v1/log/export', async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-auditoria.json"').send(await core.export()));
-  app.post('/v1/log/verify', async request => { const data = z.strictObject({ bundle: z.unknown(), trusted_fingerprint: z.string().regex(/^[0-9a-f]{64}$/) }).parse(body(request)); return verifyPackage(data.bundle, data.trusted_fingerprint); });
+  app.get('/v1/log', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async request => { const { from } = z.object({ from: z.coerce.number().int().min(0).default(0) }).parse(request.query); return (await core.store.entries()).filter(entry => entry.seq > from); });
+  app.get('/v1/log/export', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-auditoria.json"').send(await core.export()));
+  app.post('/v1/log/verify', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async request => { const data = z.strictObject({ bundle: z.unknown(), trusted_fingerprint: z.string().regex(/^[0-9a-f]{64}$/) }).parse(body(request)); return verifyPackage(data.bundle, data.trusted_fingerprint); });
   app.get('/v1/vault/backup', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async (_request, reply) => reply.header('Content-Disposition','attachment; filename="localneuron-cofre-cifrado.json"').type('application/json').send(readFileSync(core.vault.path)));
+  app.get('/v1/space/export', { config: { rateLimit: { max: 4, timeWindow: '1 minute', errorResponseBuilder: () => ({ statusCode: 429, error: 'Too Many Requests', message: 'Aguarde antes de exportar o espaço novamente.' }) } } }, async (_request, reply) => {
+    if (core.vault.locked) throw new Error('Cofre bloqueado');
+    const file = join(tmpdir(), `localneuron-espaco-${randomBytes(8).toString('hex')}.zip`);
+    try {
+      await exportSpace(core, file, async () => {
+        await editor.close(); await music.stop(); await computerControl.stop(); await connections.close();
+        await experienceJobs.stop(); await mediaDownloads.pause(); await pro.pause(); await proMedia.close(); await aux.close();
+        await gateway.stop(); await chats.close();
+        if (library.busy) throw new Error('Aguarde o carregamento ou a instalação terminar antes de exportar o espaço.');
+        await library.stop();
+      });
+      return reply.header('Content-Disposition', 'attachment; filename="localneuron-espaco.zip"').type('application/zip').send(readFileSync(file));
+    } finally { rmSync(file, { force: true }); }
+  });
   app.post('/v1/lock', async () => {await editor.close();await music.stop();await computerControl.stop();await connections.close();await experienceJobs.stop();await mediaDownloads.pause();await pro.pause();await proMedia.close();await aux.close();return exclusive(async () => {
     await aux.close(); await gateway.stop(); await chats.close(); await library.stop(); await runtime.exo.restrictLan();
     for (const task of (await core.snapshot()).tasks.filter(t => t.state === 'running')) await core.pause(task.id);
@@ -363,22 +385,46 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     return null;
   });
   registerCrewRoutes(app, crews, crewTalk);
-  return { app, token, subscription };
+  return { app, token, subscription, setOrigin(next: string) { origin = next; } };
+}
+
+export async function openLocalServer(directory: string, root: string, env: NodeJS.ProcessEnv = process.env) {
+  const preferred = preferredPort(env);
+  mkdirSync(directory, { recursive: true, mode: 0o700 });
+  const releaseLock = acquireProcessLock(directory);
+  const core = new Core(directory, root);
+  let app: Awaited<ReturnType<typeof createApp>>['app'] | undefined;
+  try {
+    await core.init();
+    const created = await createApp(core, undefined, `http://127.0.0.1:${preferred}`);
+    app = created.app;
+    const bound = await listenWithFallback(preferred, async port => {
+      created.setOrigin(`http://127.0.0.1:${port}`);
+      await created.app.listen({ host: '127.0.0.1', port });
+    });
+    const session = { url: `${bound.origin}/#session=${created.token}`, port: bound.port, preferred_port: preferred, fallback: bound.fallback, ...(bound.message ? { message: bound.message } : {}), started_at: Date.now() };
+    writeFileSync(join(directory, 'session.json'), JSON.stringify(session), { mode: 0o600 });
+    return { app: created.app, core, token: created.token, releaseLock, session, bound };
+  } catch (error) {
+    await app?.close().catch(() => {});
+    await core.close().catch(() => {});
+    releaseLock();
+    throw error;
+  }
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const root = process.cwd();
   const directory = resolve(legacyEnv('DATA_DIR') || join(root, '.data'));
-  const port = Number(legacyEnv('PORT') || 4317);
-  mkdirSync(directory, { recursive: true, mode: 0o700 });
-  const releaseLock = acquireProcessLock(directory);
-  const core = new Core(directory, root); await core.init();
-  const origin = `http://127.0.0.1:${port}`;
-  const { app, token } = await createApp(core, undefined, origin);
-  await app.listen({ host: '127.0.0.1', port });
-  writeFileSync(join(directory,'session.json'), JSON.stringify({ url: `${origin}/#session=${token}`, port, started_at: Date.now() }), { mode: 0o600 });
-  console.log(`LocalNeuron local: ${origin} — sessão no iniciador scripts/open.mjs`);
-  const close = async () => { await app.close(); await core.close(); releaseLock(); process.exit(0); };
-  process.on('exit', releaseLock);
-  process.on('SIGINT', close); process.on('SIGTERM', close);
+  try {
+    const started = await openLocalServer(directory, root);
+    console.log(`LocalNeuron local: ${started.bound.origin} — sessão no iniciador scripts/open.mjs`);
+    if (started.bound.message) console.log(started.bound.message);
+    const close = async () => { await started.app.close(); await started.core.close(); started.releaseLock(); process.exit(0); };
+    process.on('exit', started.releaseLock);
+    process.on('SIGINT', close); process.on('SIGTERM', close);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : 'O serviço local não iniciou.');
+    process.exit(1);
+  }
 }

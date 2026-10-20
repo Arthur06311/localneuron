@@ -183,7 +183,13 @@ No modo navegador o botão não aparece. Defina `COLMEIA_DATA_DIR` com a pasta q
 
 Para backup completo, feche o app e copie a pasta pai inteira no desktop. No modo navegador, copie a pasta de dados inteira. O backup somente do cofre não inclui conversas, projetos e modelos. Use a exportação de conversas e de projetos quando quiser compartilhar um trabalho específico. Não publique sua pasta de dados no GitHub.
 
+A exportação do espaço (`GET /v1/space/export`) gera um único arquivo, `localneuron-espaco.zip`, com a base PGlite, o cofre cifrado e o workspace. Os motores são parados e a base entra em quiesce antes da cópia. O arquivo não acrescenta segredos em texto simples além do que o cofre já guarda cifrado. Ao abrir um espaço, o cofre e a base precisam corresponder. Se não corresponderem, a abertura é recusada com a mensagem: “O cofre e a base de dados não correspondem. A abertura deste espaço foi recusada.”
+
 ## Solução de problemas
+
+### A porta 4317 ou 4318 está em uso
+
+O aplicativo tenta a próxima porta livre em `127.0.0.1` e mostra a mensagem “A porta … está em uso por outro programa”. A URL real fica em `session.json`; o desktop e o `scripts/open.mjs` usam essa URL. `LOCALNEURON_PORT` é a porta preferida do modo navegador; `COLMEIA_PORT` continua aceito. No desktop, a preferida é 4318, ou `LOCALNEURON_TEST_PORT` em testes.
 
 ### O app só oferece criar senha
 
