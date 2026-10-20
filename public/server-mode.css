@@ -1,0 +1,33 @@
+.server-map {
+  width: 100%;
+  max-width: 760px;
+  height: auto;
+  margin: 12px 0;
+}
+.server-node {
+  fill: var(--panel, #f4f1ea);
+  stroke: var(--ink, #241f1a);
+  stroke-width: 1.5;
+}
+.server-node.master {
+  stroke-width: 3;
+}
+.server-map text {
+  fill: var(--ink, #241f1a);
+  font-size: 12px;
+}
+.server-link {
+  stroke: var(--ink, #241f1a);
+}
+.server-link.tcp {
+  stroke-width: 1.5;
+}
+.server-link.rdma {
+  stroke-width: 6;
+}
+#server-mode .check-line {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+}
