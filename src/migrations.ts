@@ -33,6 +33,57 @@ export const migrations: Migration[] = [
   },
   {
     version: 2,
+    name: 'equipas sobre os bots existentes',
+    async up(tx) {
+      await tx.exec(`CREATE TABLE crew_providers (
+          id text PRIMARY KEY,
+          kind text NOT NULL CHECK (kind IN ('local','exo','openai','anthropic','xai')),
+          label text NOT NULL CHECK (char_length(label) BETWEEN 1 AND 80),
+          endpoint text NOT NULL DEFAULT '',
+          model text NOT NULL DEFAULT '',
+          leaves_computer boolean NOT NULL DEFAULT false,
+          trusted_network boolean NOT NULL DEFAULT false,
+          acknowledged boolean NOT NULL DEFAULT false,
+          confirm_remote boolean NOT NULL DEFAULT false,
+          token_hint text NOT NULL DEFAULT '',
+          enabled boolean NOT NULL DEFAULT false,
+          created_at timestamptz NOT NULL DEFAULT now()
+        );
+        INSERT INTO crew_providers (id, kind, label, enabled) VALUES ('local', 'local', 'Neste computador', true);
+        CREATE TABLE crew_settings (
+          id integer PRIMARY KEY CHECK (id = 1),
+          max_rounds integer NOT NULL DEFAULT 4 CHECK (max_rounds BETWEEN 1 AND 8),
+          max_tokens integer NOT NULL DEFAULT 4096 CHECK (max_tokens BETWEEN 256 AND 32768)
+        );
+        INSERT INTO crew_settings (id) VALUES (1);
+        CREATE TABLE crew_members (
+          bot_id text PRIMARY KEY,
+          mascot text NOT NULL,
+          coordinator boolean NOT NULL DEFAULT false,
+          unread integer NOT NULL DEFAULT 0 CHECK (unread >= 0),
+          provider_id text NOT NULL DEFAULT 'local' REFERENCES crew_providers (id),
+          created_at timestamptz NOT NULL DEFAULT now(),
+          updated_at timestamptz NOT NULL DEFAULT now()
+        );
+        CREATE UNIQUE INDEX crew_one_coordinator ON crew_members (coordinator) WHERE coordinator;
+        CREATE TABLE crew_messages (
+          id text PRIMARY KEY,
+          scope text NOT NULL CHECK (scope IN ('agent','team')),
+          bot_id text REFERENCES crew_members (bot_id) ON DELETE CASCADE,
+          author text NOT NULL CHECK (author IN ('user','agent','coordinator','system')),
+          author_bot_id text,
+          content text NOT NULL,
+          tokens integer NOT NULL DEFAULT 0 CHECK (tokens >= 0 AND tokens <= 1000000),
+          round integer NOT NULL DEFAULT 0 CHECK (round >= 0 AND round <= 100),
+          created_at timestamptz NOT NULL DEFAULT now(),
+          CHECK ((scope = 'team' AND bot_id IS NULL) OR (scope = 'agent' AND bot_id IS NOT NULL))
+        );
+        CREATE INDEX crew_messages_bot_idx ON crew_messages (bot_id, created_at);
+        CREATE INDEX crew_messages_scope_idx ON crew_messages (scope, created_at);`);
+    },
+  },
+  {
+    version: 3,
     name: 'vínculo do espaço',
     async up(tx) {
       await tx.exec('CREATE TABLE IF NOT EXISTS space_binding (id integer PRIMARY KEY CHECK (id = 1), space_id text NOT NULL)');
