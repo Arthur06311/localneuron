@@ -10,23 +10,24 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Adicionado
 
-- Anexos de texto e PDF passam a ser divididos em trechos, indexados no computador e consultados na conversa (#46).
-- O Modo servidor ganha os papéis Contribuir, Gerenciar e Só usar, e o mapa dos computadores (#57).
-- O Modo servidor ganha pareamento por código e um gateway só para a rede local (#59).
+- Anexos de texto e PDF passam a ser divididos em trechos, indexados no computador e consultados na conversa. Sem um modelo de embeddings, os trechos ficam guardados e a busca semântica avisa que não está disponível (#46).
+- O Modo servidor começa desligado e distingue Contribuir, Gerenciar e Só usar. O mapa lê o estado do EXO. RDMA permanece só como caminho futuro; a ligação desta fase é TCP (#57).
+- O gateway do Modo servidor escuta só na rede local, na porta 52416, com pareamento por código de seis dígitos e chave por máquina. Enquanto o EXO está ligado, a porta 52415 continua sem senha (#59).
 - O site ganha SEO, página 404 e a escolha do idioma pelo navegador (#62).
-- A ilha Equipes ganha especificação, mockup e marcas em `docs/design/equipes` (#66).
-- Na migração, **Começar sem o cofre antigo** guarda uma cópia datada e abre o Chat com a chave da máquina (#69).
+- A especificação da ilha Equipes entra em `docs/design/equipes/`, com marcas e mockup. Minha equipe permanece (#66).
+- Quem ainda tem cofre com senha pode **Começar sem o cofre antigo**. A cópia datada fica guardada, o Chat abre com a chave da máquina, e a cópia pode ser importada depois, nas Configurações, com a senha (#69).
 
 ### Alterado
 
-- O aplicativo abre direto, sem tela de desbloqueio; a chave do cofre fica no armazenamento seguro do sistema (#50).
-- A ilha passa a se chamar Equipes, em pt-BR, com o visual grafite (#58).
-- O download do Linux no site passa a oferecer o AppImage da 0.28.1 (#60).
-- Os tokens de cor da página Equipes passam a usar os nomes do mockup (#61).
-- O aplicativo passa a usar o visual grafite do design system (#63).
-- A pasta `website/` em main deixa de ser o site; a fonte publicada fica na branch `gh-pages` (#64).
-- O site em `gh-pages` passa ao visual sóbrio e o guia de instalação do Linux deixa de citar o ZIP antigo (#65).
-- A ilha Equipes segue a especificação visual: lista, conversa, painel e o menor modelo local primeiro (#67).
+- O aplicativo abre direto, sem tela de desbloqueio; a chave do cofre fica no armazenamento seguro do sistema. Quem ainda tem senha confirma uma vez, e a interface deixa de oferecer desbloqueio e senha (#50).
+- A ilha passa a se chamar Equipes, em pt-BR, com o visual grafite. Os identificadores internos continuam `crews` e `/v1/crews` (#58).
+- O download de Linux no site oferece o AppImage da 0.28.1, junto do DEB e do pacote Arch (#60).
+- Os tokens de cor da página Equipes passam a usar os mesmos nomes do mockup (#61).
+- O aplicativo passa ao visual grafite partilhado (`public/tokens.css`) e a tela de ajustes passa a se chamar Configurações (#63).
+- A pasta `website/` em main fica vazia de propósito e deixa de ser o site. O site publicado mora na branch `gh-pages` (#64).
+- O site em `gh-pages` adota o visual sóbrio e o guia de instalação do Linux deixa de citar o ZIP antigo (`Instalar.zip`) (#65).
+- A ilha Equipes segue a especificação visual: visão, lista, conversa, painel e marcas. O menor modelo local vem primeiro, e modelos grandes ficam só para o coordenador, em Avançado (#67).
+- Os guias passam a chamar a tela de ajustes de Configurações, e esta seção registra os PRs já na main (#74).
 
 ## [0.28.1] - 2026-10-19
 

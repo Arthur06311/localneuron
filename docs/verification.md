@@ -182,7 +182,7 @@ Pacotes 0.7: os arquivos de frontend/backend foram comparados byte a byte nas tr
 
 - `npm test`: 58 testes Node passaram, sem falhas. O redesenho não altera os motores Python.
 - Cinco páginas verificadas em 1440×900, 900×700, 390×844 e 320×650: sem rolagem horizontal do documento nem controles fora da largura da tela.
-- Inspeção visual dos temas claro e escuro, chat vazio e conversa de teste, biblioteca, comparação, Estúdio, API, Preferências e ajustes do chat.
+- Inspeção visual dos temas claro e escuro, chat vazio e conversa de teste, biblioteca, comparação, Estúdio, API, Configurações e ajustes do chat.
 - Internet ligada/desligada e slider de esforço atualizam os estados; histórico abre/fecha; favorito acionado pelo SVG funciona; comparação com dois modelos abre; gravação de áudio sintético pode ser iniciada e descartada, liberando Enviar. Nenhuma medição nova de precisão da transcrição.
 - Mensagens do usuário alinhadas à direita; respostas mantêm a área de leitura. Ícones, CSS e tipografia não dependem de rede.
 - Registro sem dados pessoais em `examples/localneuron-010-teste.json`.

@@ -2,7 +2,7 @@
 
 Esta versão corrige os problemas do primeiro acesso e simplifica a ativação dos especialistas.
 
-- **Lembrar o acesso:** opção no login desktop para guardar a credencial cifrada pelo armazenamento seguro do sistema. É opcional. Bloquear aplicativo mantém a sessão bloqueada, inclusive após recarregar a janela. Pode ser desativado em Preferências. No navegador, a entrada continua usando senha.
+- **Lembrar o acesso:** opção no login desktop para guardar a credencial cifrada pelo armazenamento seguro do sistema. É opcional. Bloquear aplicativo mantém a sessão bloqueada, inclusive após recarregar a janela. Pode ser desativado em Configurações. No navegador, a entrada continua usando senha.
 - **Wizard persistente:** chegar ao final salva a conclusão. Repetir a configuração preserva essa conclusão, o perfil anterior, as conversas e os bots. Instalações que estavam no último passo da versão anterior são reconhecidas como configuradas.
 - **Equipe em um clique:** ative os seis especialistas de trabalho, os quatro auxiliares pessoais ou os dez juntos. Uma IA instalada é compartilhada. A seleção automática usa as recomendações de memória e prioriza o maior modelo instalado elegível; não baixa modelos sem escolha do usuário. Bots personalizados mantêm seus modelos e configurações.
 - **Tarefas de verdade no chat:** cada especialista possui três sugestões e um método de trabalho. Dar uma tarefa prepara a IA, cria uma conversa do bot e inicia a execução pelo mesmo agente do chat, com acompanhamento, parada e revisão de ferramentas. Escrever um rascunho não depende de autorização para publicá-lo.

@@ -11,11 +11,11 @@ O conteúdo de cada área já tem boas páginas específicas, mas faltava uma hi
 - **Trabalhar:** Chat, Minha equipe e Modelos.
 - **Criar:** Imagem, Vídeo, Música e Editor.
 - **Conectar:** Conexões, Rede EXO e Minha API.
-- **Conta:** Central Pro, Meu plano, Configuração guiada e Preferências.
+- **Conta:** Central Pro, Meu plano, Configuração guiada e Configurações.
 
 Cada ilha é um botão acessível, com nome e descrição curta. O clique abre ou fecha as opções. A ilha da página atual abre automaticamente; a preferência de uma ilha aberta é preservada neste dispositivo. No modo Chat e em telas pequenas, as ilhas continuam compactas e mostram o submenu em uma superfície flutuante para não reduzir a área de leitura.
 
-Também atualizei a descrição de Preferências para refletir que a abertura básica de Windows e Linux já foi validada. Isso não promete desempenho igual em todas as GPUs, modelos, microfones ou integrações.
+Também atualizei a descrição de Configurações para refletir que a abertura básica de Windows e Linux já foi validada. Isso não promete desempenho igual em todas as GPUs, modelos, microfones ou integrações.
 
 ## Verificação
 

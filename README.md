@@ -51,7 +51,7 @@ Os modelos são baixados dentro do app, separadamente. O Mac ARM64 não roda em 
 | Conexões MCP | Servidores HTTP/stdio, OAuth quando suportado, permissões por bot e revisão | Cada serviço precisa da sua autorização; nada conecta sozinho ao Gmail ou Drive |
 | Pro | Projetos, entregas, fila, revisão e recursos avançados com licença assinada | Cobrança pública ainda não ativada; não é preciso Pro para rodar modelos locais |
 
-**Personalidade opcional:** em Preferências, a opção “Usar a personalidade LocalNeuron” começa desligada. As instruções dos seus bots são preservadas.
+**Personalidade opcional:** em Configurações, a opção “Usar a personalidade LocalNeuron” começa desligada. As instruções dos seus bots são preservadas.
 
 ## Motores locais
 

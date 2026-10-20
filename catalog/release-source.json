@@ -1,6 +1,6 @@
 {
   "version": "0.27.0",
-  "notes": "Acesso lembrado opcional, wizard que preserva a conclusão, equipes em um clique, tarefas por especialista, melhor uso do contexto e avisos de novas versões. Veja Preferências e Minha equipe. A atualização preserva os dados quando você mantém a pasta de dados existente.",
+  "notes": "Acesso lembrado opcional, wizard que preserva a conclusão, equipes em um clique, tarefas por especialista, melhor uso do contexto e avisos de novas versões. Veja Configurações e Minha equipe. A atualização preserva os dados quando você mantém a pasta de dados existente.",
   "files": [
     {
       "id": "mac",

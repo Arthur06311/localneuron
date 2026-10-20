@@ -14,7 +14,7 @@ Faça a lista nos dois Macs antes de medir qualquer coisa.
 
 1. Os dois são Mac com Apple Silicon. O botão **Instalar motor EXO** só habilita nesse caso, com macOS 26.2 ou posterior.
 2. Menu Apple → **Sobre Este Mac**. Anote o texto inteiro da versão. Se o número do build não aparecer, clique no número da versão ou abra **Ajustes do Sistema → Geral → Sobre** e copie a mesma linha nos dois. A fase 2 exige a mesma versão, inclusive o beta.
-3. Abra o LocalNeuron. **Conta → Preferências → Atualizações** mostra “Você está no LocalNeuron …”. Anote esse número nos dois. Use a mesma versão.
+3. Abra o LocalNeuron. **Conta → Configurações → Atualizações** mostra “Você está no LocalNeuron …”. Anote esse número nos dois. Use a mesma versão.
 4. **Conectar → Rede EXO**. Se o motor não estiver instalado, clique em **Instalar motor EXO** nos dois e espere “Motor EXO … instalado neste computador”. Anote essa linha. O pacote deste app é o 1.0.71. Se o número for outro, pare e anote.
 5. Escolha um modelo pequeno que apareça no seletor **Modelo** depois que a rede conectar. Se a lista tiver Qwen3 pequeno, use esse: uma consulta anterior neste projeto viu `Qwen3-0.6B-8bit` com divisão por camadas. Se não estiver na lista, use o menor modelo de texto do seletor. A linha embaixo do seletor mostra o id (`id · arquivos: …`). Anote esse id e use o mesmo nas duas fases.
 6. Rede confiável, só local. No EXO 1.0.71 a opção **Expor a API na rede local** é obrigatória para **Iniciar neste Mac**: a porta 52415 fica aberta em todas as interfaces IPv4, sem senha. Não encaminhe essa porta no roteador.
