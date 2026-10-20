@@ -95,7 +95,8 @@ test("Agente usa ferramenta real, reenvia resultado com papel tool e persiste at
     );
     await Promise.all([...chats.jobs.values()].map((j) => j.promise));
     const result = (await chats.list())[0].messages.at(-1)!;
-    assert.equal(result.status, "complete", result.error);
+    if (result.error === undefined) assert.equal(result.status, "complete");
+    else assert.equal(result.status, "complete", result.error);
     assert.equal(result.content, "Consultei a memória real.");
     assert.equal(result.activities?.[0].status, "complete");
     assert.equal(calls, 2);
