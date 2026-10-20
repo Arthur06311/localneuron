@@ -810,6 +810,7 @@ export function createChatUI({
   return {
     render,
     openConversation: id => {current=id;},
+    selectModel: id => { preferred = id; localStorage.setItem('colmeia-model', id); },
     stopVoice: () => {
       assist.close();
       return voice.stop();
