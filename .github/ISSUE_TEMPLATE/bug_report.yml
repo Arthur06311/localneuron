@@ -1,0 +1,162 @@
+name: "🐞 Relatar um bug"
+description: "Algo não funciona como deveria no LocalNeuron (antigo Colmeia)."
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por relatar! Quanto mais completo for o seu relato, mais rápido conseguimos reproduzir e corrigir o problema.
+
+        > [!WARNING]
+        > **Não cole tokens, chaves de API, senhas, conteúdo do cofre, ativações Pro, e-mails pessoais, prompts/conversas privados nem caminhos de arquivo com o seu nome de usuário.**
+        > Não anexe sua pasta de dados (`Colmeia/`, `Colmeia-data/`). Revise e anonimize os logs antes de colar.
+        > Vulnerabilidades de segurança **não** devem ser relatadas aqui: use **Security → Report a vulnerability**.
+
+  - type: input
+    id: versao
+    attributes:
+      label: Versão do LocalNeuron
+      description: "Você encontra a versão em Preferências → Atualizações ou no nome do pacote baixado (ex.: 0.27.0, 0.27.0-linux.3)."
+      placeholder: "0.27.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sistema
+    attributes:
+      label: Sistema operacional
+      options:
+        - macOS (Apple Silicon)
+        - macOS (Intel) (não suportado)
+        - Windows x64
+        - Windows ARM64 (não suportado)
+        - Linux x64
+        - Linux ARM64 (não suportado)
+        - Outro
+    validations:
+      required: true
+
+  - type: input
+    id: sistema-versao
+    attributes:
+      label: Versão do sistema e detalhes
+      description: "Versão do sistema operacional, distribuição e ambiente gráfico (no Linux) e hardware relevante (chip, GPU, memória RAM)."
+      placeholder: "macOS 26.1, M3 Pro 36 GB / Ubuntu 24.04 Wayland, RTX 4070 / Windows 11 24H2"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: instalacao
+    attributes:
+      label: Como você instalou
+      options:
+        - DMG (macOS)
+        - ZIP portátil (Windows)
+        - Instalador Linux (.run / ZIP com interface)
+        - Pacote nativo Linux (DEB ou Arch .pkg.tar.gz)
+        - Pelo código-fonte (npm)
+        - Outro / não sei
+    validations:
+      required: false
+
+  - type: dropdown
+    id: motor
+    attributes:
+      label: Motor / backend usado
+      description: "Qual motor estava em execução quando o problema aconteceu?"
+      multiple: true
+      options:
+        - GGUF / llama.cpp (embutido)
+        - MLX / Metal (embutido, Mac)
+        - LM Studio
+        - EXO (cluster)
+        - Minha API (outro computador)
+        - Whisper (voz para texto)
+        - Voz / TTS
+        - stable-diffusion.cpp / estúdio criativo
+        - MCP / ferramentas do agente
+        - Não se aplica / não sei
+    validations:
+      required: true
+
+  - type: input
+    id: modelo
+    attributes:
+      label: Modelo usado
+      description: "Nome exato do modelo e quantização/arquivo, se for o caso."
+      placeholder: "Qwen3-8B-Instruct Q4_K_M (GGUF)"
+    validations:
+      required: false
+
+  - type: textarea
+    id: passos
+    attributes:
+      label: Passos para reproduzir
+      description: "Descreva o passo a passo, começando com o aplicativo já aberto."
+      placeholder: |
+        1. Abrir a biblioteca de modelos
+        2. Baixar o modelo X
+        3. Iniciar um chat e enviar "..."
+        4. Ver o erro
+    validations:
+      required: true
+
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Comportamento esperado
+      placeholder: "O modelo deveria responder em poucos segundos."
+    validations:
+      required: true
+
+  - type: textarea
+    id: atual
+    attributes:
+      label: Comportamento atual
+      placeholder: "A resposta nunca chega e aparece o aviso '...'."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequencia
+    attributes:
+      label: Com que frequência isso acontece?
+      options:
+        - Sempre
+        - Às vezes
+        - Aconteceu uma vez
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Mensagem de erro / logs
+      description: |
+        Cole a mensagem de erro e o trecho relevante dos logs **já anonimizados**.
+        No Linux, nos pacotes nativos (DEB ou Arch): execute `/opt/localneuron/launch.sh --diagnose`. No instalador antigo por usuário: `"${XDG_DATA_HOME:-$HOME/.local/share}/localneuron/start" --diagnose`. Os logs ficam em `${XDG_STATE_HOME:-~/.local/state}/localneuron/`.
+        O conteúdo será formatado automaticamente como código.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Contexto adicional
+      description: "Capturas de tela (sem dados privados), se funcionava em uma versão anterior etc."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmacoes
+    attributes:
+      label: Confirmações
+      options:
+        - label: "Confirmo que **não** colei tokens, chaves de API, senhas, conteúdo do cofre nem dados pessoais/privados neste relato."
+          required: true
+        - label: "Pesquisei nas issues existentes e não encontrei um relato igual."
+          required: true
+        - label: "Testei na versão mais recente disponível (ou expliquei acima por que não testei)."
+          required: false
