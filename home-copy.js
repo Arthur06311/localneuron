@@ -1,5 +1,8 @@
 export const homeCopy = {
 en: {
+linuxPackages: "Linux: DEB, AppImage and Arch",
+rdmaReq: "Cabling illustration on the Modo servidor page. RDMA is not part of 0.28.1. RDMA requires macOS 26.2+ and Thunderbolt 5.",
+rdmaDiagram: "The drawings below are a cabling illustration, not a screen of the app. RDMA is not part of 0.28.1. RDMA requires macOS 26.2+ and Thunderbolt 5.",
 navTeams: "Equipes",
 navServer: "Modo servidor",
 navApi: "Minha API",
@@ -88,6 +91,9 @@ faqOssQ: "Is LocalNeuron open source?",
 faqOssA: "No. It is proprietary, closed-source software, all rights reserved (© 2026 Arthur Pinheiro Kriger). Third-party components and models keep their own licenses."
 },
 es: {
+linuxPackages: "Linux: DEB, AppImage y Arch",
+rdmaReq: "Ilustración de cableado en la página Modo servidor. RDMA no forma parte de la 0.28.1. RDMA requiere macOS 26.2+ y Thunderbolt 5.",
+rdmaDiagram: "Los dibujos de abajo son una ilustración de cableado, no una pantalla de la app. RDMA no forma parte de la 0.28.1. RDMA requiere macOS 26.2+ y Thunderbolt 5.",
 navTeams: "Equipes",
 navServer: "Modo servidor",
 navApi: "Minha API",
@@ -176,6 +182,9 @@ faqOssQ: "¿LocalNeuron es de código abierto?",
 faqOssA: "No. Es software propietario, de código cerrado, con todos los derechos reservados (© 2026 Arthur Pinheiro Kriger). Los componentes de terceros y los modelos mantienen sus propias licencias."
 },
 fr: {
+linuxPackages: "Linux : DEB, AppImage et Arch",
+rdmaReq: "Illustration de câblage sur la page Modo servidor. RDMA ne fait pas partie de la 0.28.1. RDMA exige macOS 26.2+ et Thunderbolt 5.",
+rdmaDiagram: "Les dessins ci-dessous illustrent le câblage, pas un écran de l’app. RDMA ne fait pas partie de la 0.28.1. RDMA exige macOS 26.2+ et Thunderbolt 5.",
 navTeams: "Equipes",
 navServer: "Modo servidor",
 navApi: "Minha API",
@@ -264,6 +273,9 @@ faqOssQ: "LocalNeuron est-il open source ?",
 faqOssA: "Non. C’est un logiciel propriétaire, à code fermé, tous droits réservés (© 2026 Arthur Pinheiro Kriger). Les composants tiers et les modèles conservent leurs propres licences."
 },
 de: {
+linuxPackages: "Linux: DEB, AppImage und Arch",
+rdmaReq: "Verkabelungszeichnung auf der Seite Modo servidor. RDMA gehört nicht zu 0.28.1. RDMA braucht macOS 26.2+ und Thunderbolt 5.",
+rdmaDiagram: "Die Zeichnungen unten zeigen die Verkabelung, nicht einen Bildschirm der App. RDMA gehört nicht zu 0.28.1. RDMA braucht macOS 26.2+ und Thunderbolt 5.",
 navTeams: "Equipes",
 navServer: "Modo servidor",
 navApi: "Minha API",
@@ -352,6 +364,9 @@ faqOssQ: "Ist LocalNeuron Open Source?",
 faqOssA: "Nein. Es ist proprietäre Software mit geschlossenem Quelltext, alle Rechte vorbehalten (© 2026 Arthur Pinheiro Kriger). Komponenten Dritter und Modelle behalten ihre eigenen Lizenzen."
 },
 ja: {
+linuxPackages: "Linux: DEB、AppImage、Arch",
+rdmaReq: "Modo servidor のページにある配線図です。RDMA は 0.28.1 には含まれません。RDMA には macOS 26.2 以降と Thunderbolt 5 が必要です。",
+rdmaDiagram: "下の図は配線の説明であり、アプリの画面ではありません。RDMA は 0.28.1 には含まれません。RDMA には macOS 26.2 以降と Thunderbolt 5 が必要です。",
 navTeams: "Equipes",
 navServer: "Modo servidor",
 navApi: "Minha API",
@@ -440,6 +455,9 @@ faqOssQ: "LocalNeuron はオープンソースですか？",
 faqOssA: "いいえ。プロプライエタリで、ソースは非公開です。無断転載を禁じます（© 2026 Arthur Pinheiro Kriger）。第三者の部品とモデルは、それぞれのライセンスに従います。"
 },
 zh: {
+linuxPackages: "Linux：DEB、AppImage 和 Arch",
+rdmaReq: "Modo servidor 页面上的布线图。RDMA 不属于 0.28.1。RDMA 需要 macOS 26.2 或更高版本以及 Thunderbolt 5。",
+rdmaDiagram: "下面的图是布线示意，不是应用界面。RDMA 不属于 0.28.1。RDMA 需要 macOS 26.2 或更高版本以及 Thunderbolt 5。",
 navTeams: "Equipes",
 navServer: "Modo servidor",
 navApi: "Minha API",

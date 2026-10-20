@@ -75,7 +75,7 @@
 
 <h2>Disco dos modelos</h2>
 <p>O tamanho do aplicativo não inclui os modelos. Cada modelo é baixado na biblioteca, e a ficha mostra o tamanho antes do download.</p>
-<p>Música (ACE-Step 1.5) é instalação separada: 25 GiB livres para preparar o ambiente, e cerca de 6,32 GB de pesos mais dependências. A geração real foi verificada no Mac Apple Silicon.</p>
+<p>Música (ACE-Step 1.5) é instalação separada: 25 GiB livres para preparar o ambiente. Os pesos e as dependências ocupam cerca de 5,89 GiB (6,32 GB na ficha). A geração real foi verificada no Mac Apple Silicon.</p>
 
 <h2>Requisitos por recurso</h2>
 <div class="table-wrap"><table>
@@ -84,11 +84,11 @@
 <tr><td>Texto GGUF</td><td>llama.cpp incluído. Metal no Mac. CPU no Windows e no Linux.</td></tr>
 <tr><td>MLX</td><td>Apple Silicon, macOS 14 ou mais recente.</td></tr>
 <tr><td>Imagem e Vídeo</td><td>No Mac, macOS 26 ou mais recente. Também há binário para Windows x64 e Linux Ubuntu 24.04 ou compatível.</td></tr>
-<tr><td>Música (ACE-Step 1.5)</td><td>Instalação separada. 25 GiB livres para preparar o ambiente, e cerca de 6,32 GB de pesos mais dependências. Validado no Mac Apple Silicon.</td></tr>
+<tr><td>Música (ACE-Step 1.5)</td><td>Instalação separada. 25 GiB livres para preparar o ambiente. Os pesos e as dependências ocupam cerca de 5,89 GiB (6,32 GB na ficha). Validado no Mac Apple Silicon.</td></tr>
 <tr><td>Voz</td><td>Transcrição: permissão do microfone e modelo Whisper. Narração: voz pt-BR do sistema. Sem essa voz, a narração fica desativada.</td></tr>
 <tr><td>Editor</td><td>DaVinci Resolve Studio e SDK Python. Não vêm no pacote.</td></tr>
 <tr><td>Rede EXO (nó)</td><td>Mac Apple Silicon com macOS 26.2 ou mais recente, na mesma rede confiável.</td></tr>
-<tr><td>RDMA</td><td>Ilustração de cabeamento na página Modo servidor. RDMA requer macOS 26.2+ e Thunderbolt 5.</td></tr>
+<tr><td>RDMA</td><td data-i18n="rdmaReq">Ilustração de cabeamento na página Modo servidor. RDMA não faz parte da 0.28.1. RDMA requer macOS 26.2+ e Thunderbolt 5.</td></tr>
 </tbody></table></div>
 <p class="guide-top-links"><a href="./#download">Baixar</a><a href="./primeiros-passos.html">Primeiros passos</a><a href="./modo-servidor.html">Modo servidor</a><a href="./">Início</a></p>
 </main>
@@ -98,5 +98,6 @@
 <a href="./#privacidade">Idioma e privacidade</a>
 <span>0.28.1 · Alfa</span>
 </footer>
+<script type="module" src="./doc-notes.js"></script>
 </body>
 </html>
