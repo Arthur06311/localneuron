@@ -1,4 +1,4 @@
-import { t } from "./i18n.js";
+import { format, t } from "./i18n.js";
 const presets = [
   [
     "Resumir documento",
@@ -115,17 +115,36 @@ export function createChatAssist({
     const list = attachments();
     const el = $("#chat-attachment-drafts");
     el.hidden = !list.length && !uploading;
-    const html =
-      list
-        .map(
-          (a) =>
-            `<span class="chat-attachment-chip" title="${E(a.truncated ? t("assist.partialTitle") : t("assist.chunksTitle", { count: a.pages.length }))}" >${E(a.name)}${a.truncated ? t("assist.partial") : ""}<button type="button" data-remove-attachment="${a.id}" aria-label="${t("assist.remove", { name: E(a.name) })}">×</button></span>`,
-        )
-        .join("") +
-      (uploading
-        ? `<span role="status">${t("assist.reading")}</span>`
-        : "");
-    if (el.innerHTML !== html) el.innerHTML = html;
+    const signature = JSON.stringify([
+      uploading,
+      list.map((a) => [a.id, a.name, a.truncated, a.pages.length]),
+    ]);
+    if (el.dataset.signature !== signature) {
+      el.dataset.signature = signature;
+      const frag = document.createDocumentFragment();
+      for (const a of list) {
+        const chip = document.createElement("span");
+        chip.className = "chat-attachment-chip";
+        chip.title = a.truncated
+          ? t("assist.partialTitle")
+          : format("assist.chunksTitle", { count: a.pages.length });
+        chip.append(document.createTextNode(a.name + (a.truncated ? t("assist.partial") : "")));
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.removeAttachment = a.id;
+        button.setAttribute("aria-label", format("assist.remove", { name: a.name }));
+        button.textContent = "×";
+        chip.append(button);
+        frag.append(chip);
+      }
+      if (uploading) {
+        const status = document.createElement("span");
+        status.setAttribute("role", "status");
+        status.textContent = t("assist.reading");
+        frag.append(status);
+      }
+      el.replaceChildren(frag);
+    }
     const access = getAccess();
     const matching = Object.entries(profiles).find(([, v]) =>
       Object.entries(v).every(([k, value]) => access[k] === value),

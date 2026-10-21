@@ -81,12 +81,38 @@ function catalogText(key) {
   return typeof fallback === 'string' ? fallback : '';
 }
 
-export function t(key, vars) {
-  let text = catalogText(key);
-  if (vars) {
-    for (const [name, value] of Object.entries(vars)) text = text.replaceAll(`{${name}}`, String(value ?? ''));
+function textParts(key, vars) {
+  const text = catalogText(key);
+  if (!vars) return [text];
+  const parts = [];
+  let last = 0;
+  for (const match of text.matchAll(/\{([A-Za-z0-9_]+)\}/g)) {
+    const name = match[1];
+    if (!Object.hasOwn(vars, name)) continue;
+    parts.push(text.slice(last, match.index));
+    parts.push(String(vars[name] ?? ''));
+    last = match.index + match[0].length;
   }
-  return text;
+  parts.push(text.slice(last));
+  return parts;
+}
+
+export function t(key) {
+  return catalogText(key);
+}
+
+export function format(key, vars) {
+  return textParts(key, vars).join('');
+}
+
+export function setText(node, key, vars) {
+  const parts = textParts(key, vars);
+  const doc = node?.ownerDocument;
+  if (typeof node?.replaceChildren === 'function' && typeof doc?.createTextNode === 'function') {
+    node.replaceChildren(...parts.map(part => doc.createTextNode(part)));
+    return;
+  }
+  if (node) node.textContent = parts.join('');
 }
 
 export function applyDocument(doc = typeof document === 'undefined' ? undefined : document) {

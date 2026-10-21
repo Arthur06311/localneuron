@@ -4,7 +4,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import ptBR from '../public/i18n/pt-BR.js';
 import en from '../public/i18n/en.js';
-import { applyDocument, localeFromLanguage, resolveLocale, t, useLocale } from '../public/i18n.js';
+import { applyDocument, format, localeFromLanguage, resolveLocale, setText, t, useLocale } from '../public/i18n.js';
 
 test('pt vira pt-BR e qualquer outro idioma vira inglês', () => {
   assert.equal(localeFromLanguage('pt-BR'), 'pt-BR');
@@ -40,7 +40,7 @@ test('chave ausente em inglês volta ao português e o Chat em pt-BR não muda',
     assert.equal(t('chat.welcome.eyebrow'), 'YOUR LOCAL ASSISTANT');
     assert.equal(t('nav.work'), 'Work');
     assert.equal(t('nav.account'), 'Account');
-    assert.equal(t('chat.internet.on', { unused: 'x' }), 'Internet on');
+    assert.equal(format('chat.internet.on', { unused: 'x' }), 'Internet on');
   } finally {
     useLocale('pt-BR');
   }
@@ -50,7 +50,32 @@ test('chave ausente em inglês volta ao português e o Chat em pt-BR não muda',
   assert.equal(t('chat.internet.off'), 'Internet desligada');
   assert.equal(t('nav.work'), 'Trabalhar');
   assert.equal(t('nav.account'), 'Conta');
-  assert.equal(t('settings.updatesAvailable', { version: '0.28.1' }), 'Versão 0.28.1 disponível.');
+  assert.equal(format('settings.updatesAvailable', { version: '0.28.1' }), 'Versão 0.28.1 disponível.');
+});
+
+test('um valor interpolado com HTML é desenhado como texto', () => {
+  const nodes = [];
+  const el = {
+    ownerDocument: {
+      createTextNode(data) {
+        return { nodeType: 3, data: String(data) };
+      },
+    },
+    replaceChildren(...children) {
+      nodes.splice(0, nodes.length, ...children);
+    },
+    get textContent() {
+      return nodes.map(node => node.data).join('');
+    },
+  };
+  const payload = '<img src=x onerror=alert(1)><b>1</b>';
+  setText(el, 'settings.updatesAvailable', { version: payload });
+  assert.equal(el.textContent, `Versão ${payload} disponível.`);
+  assert.deepEqual(
+    nodes.map(node => node.data),
+    ['Versão ', payload, ' disponível.'],
+  );
+  assert.equal(nodes.every(node => node.nodeType === 3), true);
 });
 
 test('o documento recebe lang e o HTML não fixa pt-BR', () => {
@@ -92,7 +117,7 @@ test('as chaves usadas existem e o inglês cobre o português, salvo a prova de 
   const used = new Set();
   for (const file of files) {
     const source = readFileSync(file, 'utf8');
-    for (const match of source.matchAll(/\bt\(\s*['"]([a-zA-Z0-9_.]+)['"]/g)) used.add(match[1]);
+    for (const match of source.matchAll(/\b(?:t|format|setText)\(\s*(?:[^)'"]*,\s*)?['"]([a-zA-Z0-9_.]+)['"]/g)) used.add(match[1]);
     for (const match of source.matchAll(/data-i18n(?:-aria|-title|-placeholder|-strong)?="([a-zA-Z0-9_.]+)"/g)) used.add(match[1]);
   }
   const missingPt = [...used].filter(key => !(key in ptBR)).sort();
@@ -102,6 +127,8 @@ test('as chaves usadas existem e o inglês cobre o português, salvo a prova de 
   assert.deepEqual(onlyPt, []);
   assert.deepEqual(onlyEn, []);
   assert.equal(en['i18n.fallbackProbe'], undefined);
+  const markup = [...Object.values(ptBR), ...Object.values(en)].filter(value => /[<>]/.test(value));
+  assert.deepEqual(markup, []);
 });
 
 test('o caminho Trabalhar / Conta sai dos nomes da ilha e esses nomes traduzem', () => {
