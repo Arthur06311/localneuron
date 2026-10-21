@@ -22,6 +22,7 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Alterado
 
+- As mensagens ao abrir um espaço dizem “banco de dados”.
 - No Chat, o seletor de modelo e o nome da IA na mensagem traduzem os sufixos curtos integrado, MLX integrado, pasta externa e Rede EXO. Em inglês, integrado fica built-in.
 - Uma conexão MCP pode ser editada em Conexões. Dá para corrigir o comando, os argumentos e a opção rede confiável. A validação é a mesma de uma conexão nova. O token permanece se o campo ficar vazio e o endereço não mudar de origem. Trocar a origem sem um token novo apaga o antigo. Remover token apaga o token guardado. A lista de conexões não devolve comando nem argumentos; eles só aparecem ao editar.
 - O navegador da IA aplica a mesma política de endereço público ao WebSocket (`ws` e `wss`).

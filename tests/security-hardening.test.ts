@@ -87,7 +87,7 @@ test('OAuth externo não alcança metadados, rede privada nem loopback de um MCP
   assert.deepEqual(decideOAuthOrigin(new URL('https://auth.example/authorize'), local), { pin: 'https://auth.example' });
 });
 
-test('Mensagens de arranque e registros ocultam segredo e caminho pessoal', () => {
+test('Mensagens de inicialização e registros ocultam segredo e caminho pessoal', () => {
   const disk = Object.assign(new Error('cheio'), { code: 'ENOSPC' });
   assert.equal(startupMessage(disk), 'Não há espaço em disco para abrir o LocalNeuron.');
   const leaked = startupMessage(new Error('falha sk-abcdefghijklmnopqrst em /home/ada/vault'));

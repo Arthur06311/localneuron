@@ -45,7 +45,7 @@ export function initials(name) {
   return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
 }
 
-/** Um rótulo só. Evita «Coordenador · Coordenador» e «Colega · Código». */
+/** Um rótulo só. Evita “Coordenador · Coordenador” e “Colega · Código”. */
 export function memberCaption(member) {
   const name = String(member?.name || '').trim().toLowerCase();
   const role = String(member?.role || '').trim();

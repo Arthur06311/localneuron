@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-test('os tokens grafite e o tema claro ficam num arquivo partilhado', () => {
+test('os tokens grafite e o tema claro ficam num arquivo compartilhado', () => {
   const tokens = readFileSync('public/tokens.css', 'utf8');
   const html = readFileSync('public/index.html', 'utf8');
   const server = readFileSync('src/server.ts', 'utf8');

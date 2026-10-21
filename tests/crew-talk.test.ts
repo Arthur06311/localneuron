@@ -17,7 +17,7 @@ async function open() {
   const dir = await mkdtemp(join(tmpdir(), 'neuron-talk-'));
   const core = new Core(dir, process.cwd());
   await core.init();
-  await core.setup('senha-ficticia-equipas');
+  await core.setup('senha-ficticia-equipes');
   const { app } = await createApp(core, 'crews-fixture');
   const headers = { host: '127.0.0.1:4317', authorization: 'Bearer crews-fixture', 'idempotency-key': randomUUID() };
   const crews = new Crews(core.store.db, new CrewSecrets(core.directory, core.vault), new Experience(core), () => [], () => MACHINE);

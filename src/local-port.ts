@@ -27,9 +27,11 @@ export function preferredPort(env: NodeJS.ProcessEnv = process.env, fallback = B
   return Number(raw);
 }
 
-function isAddrInUse(error: unknown) {
+function isPortUnavailable(error: unknown) {
+  // No Windows, uma porta de excludedportrange (Hyper-V/WinNAT) falha com EACCES.
   const err = error as { code?: string; cause?: { code?: string }; message?: string };
-  return err?.code === 'EADDRINUSE' || err?.cause?.code === 'EADDRINUSE' || /EADDRINUSE/.test(err?.message ?? '');
+  const code = err?.code || err?.cause?.code;
+  return code === 'EADDRINUSE' || code === 'EACCES' || /EADDRINUSE|EACCES/.test(err?.message ?? '');
 }
 
 export type BoundPort = {
@@ -50,7 +52,7 @@ export async function listenWithFallback(preferred: number, listen: (port: numbe
       const fallback = port !== preferred;
       return { port, origin: `http://127.0.0.1:${port}`, preferred, fallback, message: fallback ? portFallbackMessage(preferred, port) : null };
     } catch (error) {
-      if (!isAddrInUse(error)) throw error;
+      if (!isPortUnavailable(error)) throw error;
     }
   }
   throw new Error(portInUseMessage(preferred));

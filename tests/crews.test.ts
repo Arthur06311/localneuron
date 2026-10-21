@@ -16,13 +16,13 @@ async function open() {
   const dir = await mkdtemp(join(tmpdir(), 'neuron-crews-'));
   const core = new Core(dir, process.cwd());
   await core.init();
-  await core.setup('senha-ficticia-equipas');
+  await core.setup('senha-ficticia-equipes');
   const { app } = await createApp(core, 'crews-fixture');
   const headers = { host: '127.0.0.1:4317', authorization: 'Bearer crews-fixture', 'idempotency-key': randomUUID() };
   return { dir, core, app, headers };
 }
 
-test('Equipas liga os bots existentes e não cria uma segunda lista', async () => {
+test('Equipes liga os bots existentes e não cria uma segunda lista', async () => {
   const fx = await open();
   try {
     assert.equal((await fx.app.inject({ url: '/v1/crews', headers: { host: fx.headers.host } })).statusCode, 401);
@@ -88,8 +88,8 @@ test('Cada agente pode ter um modelo menor e só o coordenador aceita 70B ou nuv
     const settings = await fx.app.inject({ method: 'POST', url: '/v1/crews/settings', headers: fx.headers, payload: { max_rounds: 2, max_tokens: 1024 } });
     assert.equal(settings.json().settings.max_tokens, 1024);
     assert.equal((await fx.app.inject({ method: 'POST', url: '/v1/crews/settings', headers: fx.headers, payload: { max_rounds: 9, max_tokens: 1024 } })).statusCode, 400);
-    const sent = await fx.app.inject({ method: 'POST', url: `/v1/crews/members/${colleague.bot_id}/messages`, headers: fx.headers, payload: { content: 'Olá da equipa' } });
-    assert.equal(sent.json().at(-1).content, 'Olá da equipa');
+    const sent = await fx.app.inject({ method: 'POST', url: `/v1/crews/members/${colleague.bot_id}/messages`, headers: fx.headers, payload: { content: 'Olá da equipe' } });
+    assert.equal(sent.json().at(-1).content, 'Olá da equipe');
     assert.equal(sent.json().at(-1).tokens > 0, true);
     assert.equal((await fx.app.inject({ url: '/v1/crews', headers: fx.headers })).json().members.find((member: { bot_id: string }) => member.bot_id === colleague.bot_id).unread, 0);
     const direct = new Crews(fx.core.store.db, new CrewSecrets(fx.dir, fx.core.vault), new Experience(fx.core), () => [], () => ({ totalMemoryBytes: 1, availableMemoryBytes: 1, diskFreeBytes: 1, platform: 'linux', architecture: 'x64' }));

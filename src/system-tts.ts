@@ -360,7 +360,7 @@ export function chooseVoice(
     return {
       id: brazilian.id,
       legacyId,
-      notice: `A voz «${saved.id}» não está neste sistema. A narração passou a usar «${brazilian.name}».`,
+      notice: `A voz “${saved.id}” não está neste sistema. A narração passou a usar “${brazilian.name}”.`,
     };
   }
   if (brazilian) {

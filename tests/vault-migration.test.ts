@@ -208,7 +208,7 @@ test('data de cópia repetida não substitui o cofre antigo', async () => {
   }
 });
 
-test('começar sem o cofre antigo guarda a cópia, abre o cofre novo e o segundo arranque não pede senha', async () => {
+test('começar sem o cofre antigo guarda a cópia, abre o cofre novo e a segunda inicialização não pede senha', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'vault-skip-'));
   const core = new Core(dir, process.cwd());
   await core.init();
