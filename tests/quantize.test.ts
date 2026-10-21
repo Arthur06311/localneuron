@@ -13,6 +13,7 @@ import {
   openSync,
   readFileSync,
   readdirSync,
+  realpathSync,
   rmSync,
   symlinkSync,
   writeFileSync,
@@ -206,19 +207,20 @@ test('Metadados GGUF identificam a origem e o nome não substitui um tipo já qu
 test('Caminhos permanecem na pasta de modelos', () => {
   const { dir, models } = layout();
   try {
+    const root = realpathSync(models);
     const inside = join(models, 'modelo-F16.gguf');
     writeGguf(inside, 1);
-    assert.equal(assertInsideModels(models, inside), inside);
+    assert.equal(assertInsideModels(models, inside), realpathSync(inside));
     const outside = join(dir, 'fora.gguf');
     writeGguf(outside, 1);
     assert.throws(() => assertInsideModels(models, outside), /pasta de modelos/);
     assert.throws(() => assertInsideModels(models, join(models, '..', 'fora.gguf')), /pasta de modelos/);
     const kept = destinationInside(models, '.partial-abc.gguf');
     assert.equal(basename(kept).startsWith('.partial-'), true);
-    assert.equal(relative(models, kept).split(/[/\\]/).includes('..'), false);
+    assert.equal(relative(root, kept).split(/[/\\]/).includes('..'), false);
     const escaped = destinationInside(models, '../segredo.gguf');
-    assert.equal(relative(models, escaped).startsWith('..'), false);
-    assert.equal(escaped.startsWith(models), true);
+    assert.equal(relative(root, escaped).startsWith('..'), false);
+    assert.equal(escaped.startsWith(root), true);
     assert.throws(() => destinationInside(models, 'foo/../../etc'), /inválido|saída/);
     const link = join(models, 'atalho.gguf');
     try { symlinkSync(outside, link); }
