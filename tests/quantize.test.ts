@@ -20,7 +20,9 @@ import {
 import { tmpdir } from 'node:os';
 import { basename, join, relative, resolve } from 'node:path';
 import { Core } from '../src/core.js';
-import { createApp } from '../src/server.js';
+import { ModelLibrary } from '../src/model-library.js';
+import { LocalRuntime, type RuntimeModel } from '../src/runtime.js';
+import { otherAiBlocksQuantize, createApp } from '../src/server.js';
 import { mergeLibraryProgress } from '../public/library-progress.js';
 import {
   GGUF_BPW,
@@ -34,6 +36,7 @@ import {
   mlxBitsPerWeight,
   modelsRoot,
   readGgufFileType,
+  releaseQuantizeChildren,
   toolBeside,
   type ProcessLauncher,
   type QuantJob,
@@ -447,7 +450,7 @@ test('A interface e a rota autenticada expõem a quantização', async () => {
   }
 });
 
-test('A amostra local e a comparação estão no repositório', () => {
+test('A amostra local e a comparação estão no repositório e no pacote', () => {
   const sample = readFileSync(resolve('runtime/quantize-calibration.txt'), 'utf8');
   assert.ok(sample.length > 8000);
   assert.match(sample, /calibração|quantização/i);
@@ -455,5 +458,292 @@ test('A amostra local e a comparação estão no repositório', () => {
   assert.match(doc, /Q4_K_M/);
   assert.match(doc, /mixed_4_6/);
   assert.match(doc, /llama-quantize/);
+  assert.match(doc, /salvar o resultado/);
+  assert.equal(doc.includes('guardar o resultado'), false);
+  const desktop = readFileSync(resolve('scripts/package-desktop.mjs'), 'utf8');
+  const mac = readFileSync(resolve('scripts/package-macos.py'), 'utf8');
+  assert.match(desktop, /quantize-calibration\.txt/);
+  assert.match(mac, /quantize-calibration\.txt/);
   assert.equal(createHash('sha256').update(sample).digest('hex').length, 64);
+});
+
+function stubbornLauncher(signals: string[], dieOnKill: boolean) {
+  const launch: ProcessLauncher = (command, args, options) => {
+    assert.equal(options.shell, false);
+    const events = new EventEmitter();
+    const partial = args.find(arg => basename(arg).startsWith('.partial-'));
+    if (partial) writeFileSync(partial, Buffer.from('quantized-fixture'));
+    if (args.includes('--mlx-path')) {
+      const dir = args[args.indexOf('--mlx-path') + 1];
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(join(dir, 'model.safetensors'), Buffer.from('safetensors-fixture'));
+    }
+    return {
+      stdout: new EventEmitter(),
+      stderr: new EventEmitter(),
+      on: events.on.bind(events),
+      kill(signal: NodeJS.Signals = 'SIGTERM') {
+        signals.push(signal);
+        if (dieOnKill && signal === 'SIGKILL') events.emit('exit', null, 'SIGKILL');
+        return true;
+      },
+    } as unknown as QuantProcess;
+  };
+  return launch;
+}
+
+test('A RAM é medida de novo antes de cada processo', async () => {
+  const { dir, models, tool } = layout();
+  const harness = mockLauncher();
+  let reads = 0;
+  const quantizer = new Quantizer(models, tool, {
+    launch: harness.launch,
+    memoryAvailable: () => {
+      reads += 1;
+      return reads < 3 ? 32 * GiB : 1024;
+    },
+    diskFree: () => 32 * GiB,
+  });
+  writeGguf(join(models, 'modelo-F16.gguf'), 1, 8192);
+  try {
+    quantizer.start(target(models, 'modelo-F16.gguf'), 'equilibrado');
+    assert.equal(harness.calls.length, 1);
+    assert.match(basename(harness.calls[0].command), /^llama-imatrix/);
+    harness.pending[0].exit(0);
+    const failed = await until(quantizer, job => job?.state === 'failed');
+    assert.match(failed?.error || '', /RAM livre insuficiente/);
+    assert.equal(harness.calls.length, 1);
+    assert.ok(reads >= 3);
+    assert.equal(existsSync(join(models, 'modelo-F16.gguf')), true);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('Queda de RAM antes da primeira etapa não cria processo', async () => {
+  const { dir, models, tool } = layout();
+  const harness = mockLauncher();
+  let reads = 0;
+  const quantizer = new Quantizer(models, tool, {
+    launch: harness.launch,
+    memoryAvailable: () => {
+      reads += 1;
+      return reads === 1 ? 32 * GiB : 1024;
+    },
+    diskFree: () => 32 * GiB,
+  });
+  writeGguf(join(models, 'modelo-F16.gguf'), 1, 8192);
+  try {
+    quantizer.start(target(models, 'modelo-F16.gguf'), 'equilibrado');
+    const failed = await until(quantizer, job => job?.state === 'failed');
+    assert.match(failed?.error || '', /RAM livre insuficiente/);
+    assert.equal(harness.calls.length, 0);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('O erro do job oculta caminho pessoal vindo do quantizador', async () => {
+  const { dir, models, tool } = layout();
+  const harness = mockLauncher();
+  const quantizer = new Quantizer(models, tool, { launch: harness.launch, memoryAvailable: () => 32 * GiB, diskFree: () => 32 * GiB });
+  writeGguf(join(models, 'modelo-F16.gguf'), 1, 8192);
+  try {
+    quantizer.start(target(models, 'modelo-F16.gguf'), 'qualidade');
+    harness.pending[0].emitErr('falha ao abrir /home/ada/modelos/secreto.gguf');
+    harness.pending[0].exit(1);
+    const failed = await until(quantizer, job => job?.state === 'failed');
+    assert.match(failed?.error || '', /não foi concluída/);
+    assert.match(failed?.error || '', /~\/…/);
+    assert.doesNotMatch(failed?.error || '', /\/home\/ada/);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('Cancelar envia SIGTERM e, no prazo, SIGKILL, e não fica pendurado', async () => {
+  const { dir, models, tool } = layout();
+  const signals: string[] = [];
+  const quantizer = new Quantizer(models, tool, {
+    launch: stubbornLauncher(signals, true),
+    memoryAvailable: () => 32 * GiB,
+    diskFree: () => 32 * GiB,
+    termGraceMs: 20,
+    killGraceMs: 20,
+  });
+  writeGguf(join(models, 'modelo-F16.gguf'), 1, 8192);
+  try {
+    quantizer.start(target(models, 'modelo-F16.gguf'), 'qualidade');
+    const raced = await Promise.race([
+      quantizer.cancel().then(job => job?.state ?? 'vazio'),
+      new Promise<string>(resolve => setTimeout(() => resolve('pendurado'), 1000)),
+    ]);
+    assert.equal(raced, 'cancelled');
+    assert.equal(signals[0], 'SIGTERM');
+    assert.equal(signals.includes('SIGKILL'), true);
+    assert.equal(quantizer.running, false);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('Cancelar retorna mesmo se o processo ignorar SIGKILL', async () => {
+  const { dir, models, tool } = layout();
+  const signals: string[] = [];
+  const quantizer = new Quantizer(models, tool, {
+    launch: stubbornLauncher(signals, false),
+    memoryAvailable: () => 32 * GiB,
+    diskFree: () => 32 * GiB,
+    termGraceMs: 15,
+    killGraceMs: 15,
+  });
+  writeGguf(join(models, 'modelo-F16.gguf'), 1, 8192);
+  try {
+    quantizer.start(target(models, 'modelo-F16.gguf'), 'qualidade');
+    const raced = await Promise.race([
+      quantizer.cancel().then(job => job?.state ?? 'vazio'),
+      new Promise<string>(resolve => setTimeout(() => resolve('pendurado'), 1000)),
+    ]);
+    assert.equal(raced, 'cancelled');
+    assert.equal(signals.includes('SIGTERM'), true);
+    assert.equal(signals.includes('SIGKILL'), true);
+    releaseQuantizeChildren();
+    assert.equal(signals.at(-1), 'SIGKILL');
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('Sair do processo mata o quantizador que ainda estiver vivo', async () => {
+  const { dir, models, tool } = layout();
+  const signals: string[] = [];
+  const quantizer = new Quantizer(models, tool, {
+    launch: stubbornLauncher(signals, true),
+    memoryAvailable: () => 32 * GiB,
+    diskFree: () => 32 * GiB,
+    termGraceMs: 5000,
+    killGraceMs: 5000,
+  });
+  writeGguf(join(models, 'modelo-F16.gguf'), 1, 8192);
+  try {
+    quantizer.start(target(models, 'modelo-F16.gguf'), 'qualidade');
+    assert.equal(quantizer.running, true);
+    releaseQuantizeChildren();
+    assert.equal(signals.includes('SIGKILL'), true);
+    const stopped = await until(quantizer, job => job?.state === 'failed' || job?.state === 'cancelled');
+    assert.equal(quantizer.running, false);
+    assert.equal(existsSync(join(models, 'modelo-F16.gguf')), true);
+    assert.equal(stopped?.state === 'failed' || stopped?.state === 'cancelled', true);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('Instalar, importar e parar respeitam a quantização em andamento', async () => {
+  const data = mkdtempSync(join(tmpdir(), 'quantize-lib-'));
+  const bin = join(data, 'bin');
+  mkdirSync(bin, { recursive: true });
+  writeFileSync(join(bin, 'llama-server'), '');
+  writeFileSync(join(bin, 'llama-quantize'), '');
+  writeFileSync(join(bin, 'llama-imatrix'), '');
+  mkdirSync(join(data, 'runtime'), { recursive: true });
+  writeFileSync(join(data, 'runtime', 'quantize-calibration.txt'), 'amostra');
+  mkdirSync(join(data, 'models'), { recursive: true });
+  const source = join(data, 'models', 'modelo-F16.gguf');
+  writeGguf(source, 1, 8192);
+  const signals: string[] = [];
+  const runtime = {
+    binary: join(bin, 'llama-server'),
+    mlxPython: join(bin, 'python3'),
+    mlxAvailable: false,
+    root: data,
+    inventory: () => [{ key: 'gguf:teste', format: 'GGUF', path: source, loaded_instances: [] }],
+    setCatalog() {},
+    async close() {},
+  } as unknown as LocalRuntime;
+  const library = new ModelLibrary(data, async () => {}, null, runtime, () => undefined, process.env, {
+    launch: stubbornLauncher(signals, true),
+    memoryAvailable: () => 32 * GiB,
+    diskFree: () => 32 * GiB,
+    termGraceMs: 20,
+    killGraceMs: 20,
+  });
+  try {
+    library.quantizeModel('gguf:teste', 'qualidade');
+    assert.equal(library.quantizer.running, true);
+    await assert.rejects(() => library.install('ausente'), /quantização/);
+    await assert.rejects(() => library.download('ausente'), /quantização/);
+    library.assertQuantizeIdle();
+  } catch (error) {
+    assert.match((error as Error).message, /quantização/);
+  }
+  try {
+    const raced = await Promise.race([
+      library.stop().then(() => 'parou'),
+      new Promise<string>(resolve => setTimeout(() => resolve('pendurado'), 1000)),
+    ]);
+    assert.equal(raced, 'parou');
+    assert.equal(signals[0], 'SIGTERM');
+    assert.equal(signals.includes('SIGKILL'), true);
+    assert.equal(library.quantizer.running, false);
+    await assert.rejects(() => library.install('ausente'), /catálogo/);
+  } finally { rmSync(data, { recursive: true, force: true }); }
+});
+
+test('A quantização espera a outra IA, o cofre e o limite local, e o 409 de música não a bloqueia', async () => {
+  const idle = { chats: false, api: false, apiBusy: false, aux: false, pro: false, jobs: 0 };
+  assert.equal(otherAiBlocksQuantize(idle), '');
+  for (const busy of [
+    { chats: true },
+    { api: true },
+    { apiBusy: true },
+    { aux: true },
+    { pro: true },
+    { jobs: 2 },
+  ]) assert.match(otherAiBlocksQuantize({ ...idle, ...busy }), /Aguarde a conversa, a Minha API ou a outra IA terminar antes de quantizar/);
+
+  const server = readFileSync(resolve('src/server.ts'), 'utf8');
+  const blockers = server.split('\n').filter(line => line.includes('model-library\\/(load|unload|engine|import-mlx)'));
+  assert.equal(blockers.length, 2);
+  for (const line of blockers) assert.equal(line.includes('quantize'), false);
+  assert.match(server, /app\.post\('\/v1\/model-library\/quantize', async request => exclusive/);
+  assert.match(server, /otherAiBlocksQuantize\(\{ chats: chats\.busy/);
+  assert.match(server, /app\.post\('\/v1\/model-library\/import-mlx'[\s\S]*?library\.assertQuantizeIdle\(\)/);
+  assert.match(server, /quantize\/estimate', async request => \{ if \(core\.vault\.locked\) throw new Error\('Cofre bloqueado'\)/);
+  assert.match(server, /quantize\/cancel', async request => \{ if \(core\.vault\.locked\)/);
+  assert.doesNotMatch(server, /quantize\/cancel', async request => exclusive/);
+
+  const dir = mkdtempSync(join(tmpdir(), 'quantize-guard-'));
+  const core = new Core(dir, resolve('.'));
+  await core.init();
+  await core.setup('senha-fixture-quantizar');
+  class LeakyRuntime extends LocalRuntime {
+    override inventory(): RuntimeModel[] { throw new Error('não abriu /home/ada/modelos/secreto.gguf'); }
+  }
+  const { app } = await createApp(core, 'quantize-guard', 'http://127.0.0.1:4317', new LeakyRuntime(dir, resolve('.')));
+  const headers = { host: '127.0.0.1:4317', authorization: 'Bearer quantize-guard' };
+  try {
+    assert.equal((await app.inject({ method: 'GET', url: '/v1/model-library/quantize', headers, remoteAddress: '8.8.8.8' })).statusCode, 403);
+    assert.equal((await app.inject({ method: 'POST', url: '/v1/model-library/quantize/cancel', headers, remoteAddress: '8.8.8.8', payload: {} })).statusCode, 403);
+    const leaked = await app.inject({ method: 'POST', url: '/v1/model-library/quantize/estimate', headers, payload: { key: 'gguf:teste', preset: 'equilibrado' } });
+    assert.equal(leaked.statusCode, 400);
+    assert.match(leaked.json().error, /~\/…/);
+    assert.doesNotMatch(leaked.json().error, /\/home\/ada/);
+    core.vault.lock();
+    const locked = await app.inject({ method: 'POST', url: '/v1/model-library/quantize/estimate', headers, payload: { key: 'gguf:teste', preset: 'equilibrado' } });
+    assert.equal(locked.statusCode, 423);
+  } finally {
+    await app.close();
+    await core.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('O limite global vale para a rota de quantização', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'quantize-limit-'));
+  const core = new Core(dir, resolve('.'));
+  await core.init();
+  await core.setup('senha-fixture-quantizar');
+  const { app } = await createApp(core, 'quantize-limit');
+  const headers = { host: '127.0.0.1:4317', authorization: 'Bearer quantize-limit' };
+  try {
+    let limited = 0;
+    for (let i = 0; i < 1201; i++) {
+      const response = await app.inject({ method: 'GET', url: '/v1/model-library/quantize', headers });
+      if (response.statusCode === 429) limited = i + 1;
+    }
+    assert.equal(limited, 1201);
+  } finally {
+    await app.close();
+    await core.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

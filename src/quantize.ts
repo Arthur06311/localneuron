@@ -19,6 +19,7 @@ import {
 import { availableParallelism } from 'node:os';
 import { basename, dirname, extname, isAbsolute, join, relative } from 'node:path';
 import { memoryStatus } from './model.js';
+import { redactSensitive } from './redact-log.js';
 
 const GiB = 1024 ** 3;
 /** Bits por peso medidos em Llama 3.1 8B, tabela do llama.cpp b10809. */
@@ -137,13 +138,36 @@ type LaunchOptions = {
 export type QuantProcess = {
   stdout: NodeJS.ReadableStream | null;
   stderr: NodeJS.ReadableStream | null;
+  kill?: (signal?: NodeJS.Signals) => boolean;
   on(event: 'error', listener: (error: Error) => void): void;
   on(event: 'exit', listener: (code: number | null, signal: NodeJS.Signals | null) => void): void;
+};
+
+export type QuantizeHooks = {
+  launch?: ProcessLauncher;
+  memoryAvailable?: () => number;
+  diskFree?: () => number;
+  sandbox?: boolean;
+  termGraceMs?: number;
+  killGraceMs?: number;
 };
 
 export type ProcessLauncher = (command: string, args: readonly string[], options: LaunchOptions) => QuantProcess;
 
 const defaultLaunch: ProcessLauncher = (command, args, options) => spawn(command, args as string[], options) as ChildProcess;
+
+const TERM_GRACE_MS = 5000;
+const KILL_GRACE_MS = 2000;
+const liveChildren = new Set<QuantProcess>();
+
+/** Encerra quantizadores ainda vivos. O servidor chama isto ao sair para não deixar processo órfão. */
+export function releaseQuantizeChildren() {
+  for (const child of liveChildren) {
+    try { child.kill?.('SIGKILL'); } catch { /* o processo já encerrou */ }
+  }
+}
+
+process.on('exit', releaseQuantizeChildren);
 
 const LABELS: Record<QuantJobState, string> = {
   preparing: 'Preparando a quantização',
@@ -360,16 +384,15 @@ export class Quantizer {
   private controller: AbortController | null = null;
   private finished: Promise<void> = Promise.resolve();
   private tail = '';
+  private active: QuantProcess | null = null;
+  private settleActive: (() => void) | null = null;
+  private termTimer: ReturnType<typeof setTimeout> | null = null;
+  private killTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private modelsDir: string,
     private tools: QuantizeTools,
-    private hooks: {
-      launch?: ProcessLauncher;
-      memoryAvailable?: () => number;
-      diskFree?: () => number;
-      sandbox?: boolean;
-    } = {},
+    private hooks: QuantizeHooks = {},
   ) {}
 
   get running() {
@@ -539,13 +562,15 @@ export class Quantizer {
       detail: estimate.detail,
     };
     const signal = this.controller.signal;
-    this.finished = this.execute({ target, preset, resolved, partial, finalPath, imatrix: estimate.imatrix, signal }).then(() => undefined, () => undefined);
+    this.finished = this.execute({ target, preset, resolved, partial, finalPath, imatrix: estimate.imatrix, outputBytes: estimate.output_bytes!, signal }).then(() => undefined, () => undefined);
     return this.view()!;
   }
 
   async cancel() {
     if (!this.running) return this.view();
     this.controller?.abort();
+    try { this.active?.kill?.('SIGTERM'); } catch { /* o processo já encerrou */ }
+    this.armDeadlines();
     await this.finished;
     return this.view();
   }
@@ -556,11 +581,12 @@ export class Quantizer {
     return { ok: true as const };
   }
 
-  private async execute(run: { target: QuantTarget; preset: Preset; resolved: string; partial: string; finalPath: string; imatrix: boolean; signal: AbortSignal }) {
+  private async execute(run: { target: QuantTarget; preset: Preset; resolved: string; partial: string; finalPath: string; imatrix: boolean; outputBytes: number; signal: AbortSignal }) {
     const imatrixPath = run.imatrix ? destinationInside(this.modelsDir, `.imatrix-${this.job!.id}.gguf`) : '';
     try {
       if (run.imatrix) {
         this.set('imatrix', 1);
+        this.guard(run.resolved, run.outputBytes, 'imatrix');
         await this.track(this.launch(this.tools.imatrix, [
           '-m', run.resolved,
           '-f', this.tools.calibration,
@@ -574,6 +600,7 @@ export class Quantizer {
         if (!existsSync(imatrixPath) || statSync(imatrixPath).size <= 0) throw new Error('A matriz de importância não foi gerada.');
       }
       this.set('quantizing', run.imatrix ? 42 : 8);
+      this.guard(run.resolved, run.outputBytes, run.target.format === 'MLX' ? 'mlx' : 'gguf');
       if (run.target.format === 'MLX') await this.runMlx(run.resolved, run.partial, run.preset);
       else await this.runGguf(run.resolved, run.partial, run.preset, imatrixPath);
       if (!existsSync(run.partial)) throw new Error('O quantizador não gravou o arquivo.');
@@ -602,13 +629,48 @@ export class Quantizer {
       const cancelled = run.signal.aborted || (error as { cancelled?: boolean }).cancelled === true || (error as Error).name === 'AbortError';
       this.job.state = cancelled ? 'cancelled' : 'failed';
       this.job.label = LABELS[this.job.state];
+      const detail = (error as Error).message.replace(this.tools.quantize, 'llama-quantize');
       this.job.error = cancelled
         ? 'Quantização cancelada. O modelo original foi mantido.'
-        : 'A quantização não foi concluída. ' + (error as Error).message.replace(this.tools.quantize, 'llama-quantize').slice(0, 500);
+        : redactSensitive('A quantização não foi concluída. ' + detail).slice(0, 500);
     } finally {
+      this.clearDeadlines();
       if (imatrixPath) rmSync(imatrixPath, { force: true });
       this.controller = null;
     }
+  }
+
+  private guard(source: string, outputBytes: number, phase: 'imatrix' | 'gguf' | 'mlx') {
+    const sourceBytes = statSync(source).size;
+    const ram = phase === 'imatrix'
+      ? Math.ceil(sourceBytes * 1.25 + GiB)
+      : phase === 'mlx'
+        ? sourceBytes + outputBytes + GiB
+        : sourceBytes + GiB;
+    if (this.memory() < ram) throw new Error(`RAM livre insuficiente para quantizar. O processo precisa de cerca de ${gib(ram)}.`);
+    if (this.disk() < outputBytes + GiB) throw new Error('Espaço em disco insuficiente para gravar o modelo quantizado e manter 1 GiB livre.');
+  }
+
+  private clearDeadlines() {
+    if (this.termTimer) clearTimeout(this.termTimer);
+    if (this.killTimer) clearTimeout(this.killTimer);
+    this.termTimer = null;
+    this.killTimer = null;
+  }
+
+  private armDeadlines() {
+    if (this.termTimer) return;
+    const term = this.hooks.termGraceMs ?? TERM_GRACE_MS;
+    const kill = this.hooks.killGraceMs ?? KILL_GRACE_MS;
+    this.termTimer = setTimeout(() => {
+      try { this.active?.kill?.('SIGKILL'); } catch { /* o processo já encerrou */ }
+    }, term);
+    this.killTimer = setTimeout(() => {
+      try { this.active?.kill?.('SIGKILL'); } catch { /* o processo já encerrou */ }
+      this.settleActive?.();
+    }, term + kill);
+    this.termTimer.unref();
+    this.killTimer.unref();
   }
 
   private set(state: QuantJobState, progress: number) {
@@ -657,13 +719,19 @@ export class Quantizer {
   }
 
   private track(child: QuantProcess) {
+    this.active = child;
+    liveChildren.add(child);
     return new Promise<void>((resolve, reject) => {
       let settled = false;
       const finish = (fn: () => void) => {
         if (settled) return;
         settled = true;
+        this.clearDeadlines();
+        if (this.active === child) this.active = null;
+        this.settleActive = null;
         fn();
       };
+      this.settleActive = () => finish(() => reject(Object.assign(new Error('cancel'), { cancelled: true })));
       const take = (chunk: Buffer | string) => {
         const text = chunk.toString();
         this.tail = (this.tail + text).slice(-4000);
@@ -671,12 +739,20 @@ export class Quantizer {
       };
       child.stdout?.on('data', take);
       child.stderr?.on('data', take);
-      child.on('error', error => finish(() => reject(error)));
-      child.on('exit', (code, signal) => finish(() => {
-        if (this.controller?.signal.aborted) reject(Object.assign(new Error('cancel'), { cancelled: true }));
-        else if (code === 0) resolve();
-        else reject(new Error((this.tail || `código ${code ?? signal ?? 'desconhecido'}`).trim().slice(-400)));
-      }));
+      child.on('error', error => {
+        if (error.name === 'AbortError' && typeof child.kill === 'function') return;
+        liveChildren.delete(child);
+        const cancelled = error.name === 'AbortError' || this.controller?.signal.aborted;
+        finish(() => reject(cancelled ? Object.assign(error, { cancelled: true }) : error));
+      });
+      child.on('exit', (code, signal) => {
+        liveChildren.delete(child);
+        finish(() => {
+          if (this.controller?.signal.aborted) reject(Object.assign(new Error('cancel'), { cancelled: true }));
+          else if (code === 0) resolve();
+          else reject(new Error((this.tail || `código ${code ?? signal ?? 'desconhecido'}`).trim().slice(-400)));
+        });
+      });
     });
   }
 

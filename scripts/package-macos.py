@@ -57,7 +57,7 @@ with tempfile.TemporaryDirectory(prefix='colmeia-package-') as scratch:
         else:
             shutil.copy2(source, app / name)
     (app / 'runtime').mkdir()
-    for name in ['manifest.json', 'LICENSE.llama.cpp', 'tools-manifest.json','LICENSE.whisper.cpp']:
+    for name in ['manifest.json', 'LICENSE.llama.cpp', 'tools-manifest.json','LICENSE.whisper.cpp', 'quantize-calibration.txt']:
         shutil.copy2(root / 'runtime' / name, app / 'runtime' / name)
     shutil.copytree(root / 'runtime/tools-darwin-arm64', app / 'runtime/tools-darwin-arm64', symlinks=True, ignore=ignore_runtime_conflicts)
     shutil.copytree(root / 'runtime/darwin-arm64', app / 'runtime/darwin-arm64', symlinks=True)

@@ -1,6 +1,6 @@
 # Quantização na biblioteca
 
-A biblioteca pode reduzir um modelo que já está no disco e guardar o resultado como outro modelo. O arquivo original permanece. A escolha abaixo usa as medições publicadas com as versões que o aplicativo já embute: llama.cpp `b10809` e, no Mac com Apple Silicon, MLX LM `0.31.3`.
+A biblioteca pode reduzir um modelo que já está no disco e salvar o resultado como outro modelo. O arquivo original permanece. A escolha abaixo usa as medições publicadas com as versões que o aplicativo já embute: llama.cpp `b10809` e, no Mac com Apple Silicon, MLX LM `0.31.3`.
 
 ## O que entra em cada formato
 
@@ -31,7 +31,7 @@ Unsloth e outras publicações de GGUF dinâmico continuam sendo llama.cpp com i
 
 No Mac, a quantização MLX usa o Python portátil 3.12.14, o MLX 0.32.2 e o MLX LM 0.31.3 de `runtime/mlx-manifest.json`, montados por `scripts/fetch-mlx.py` na compilação. Nenhum Python instalado no sistema é chamado. No Windows e no Linux a opção MLX explica que o pacote não a inclui.
 
-A calibração da imatrix lê `runtime/quantize-calibration.txt`, um texto curto em português e inglês que acompanha o código. Não há download de corpus.
+A calibração da imatrix lê `runtime/quantize-calibration.txt`, um texto curto em português e inglês copiado para o pacote junto com o runtime. Não há download de corpus.
 
 ## O que a tela faz
 
@@ -44,5 +44,5 @@ O progresso, o cancelamento e o erro ficam na janela e na lista. O resultado ent
 - A origem GGUF aceita é F16, BF16, F32 ou Q8_0, num único arquivo. Q4, Q5, Q6 e I-quants já comprimidos ficam de fora: o próprio llama.cpp avisa que requantizar esses tipos perde qualidade. Q8_0 ainda pode ser requantizado, com resultado abaixo de partir de 16 bits.
 - GGUF dividido em partes, projetor `mmproj` e arquivo fora da pasta de modelos do aplicativo, inclusive um GGUF só enxergado na pasta do LM Studio, não entram.
 - Pasta MLX já quantizada, ou com quantização por camada, também fica de fora. GGUF não é convertido em MLX.
-- Se a RAM ou o disco, com 1 GiB de margem, não comportam a operação, ela não começa.
+- Se a RAM ou o disco, com 1 GiB de margem, não comportam a operação, ela não começa. A mesma conta é refeita imediatamente antes de cada etapa, porque a memória livre pode cair durante a calibração.
 - Há uma quantização por vez. O processo recebe um vetor de argumentos, sem shell. Os caminhos são resolvidos e precisam permanecer dentro da pasta de modelos. A amostra e os pesos não saem pela rede: o MLX herda `HF_HUB_OFFLINE` e, no Mac, o mesmo perfil que nega saída de rede da inferência.

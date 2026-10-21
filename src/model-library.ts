@@ -14,7 +14,7 @@ import { CATALOG, catalogFiles, modelUrl, type CatalogModel } from './catalog.js
 import { lmStudioEndpoint, lmStudioPort, localModels, memoryStatus } from './model.js';
 import { embeddedEngine } from './embedded-engine.js';
 import { suggestStarterModel } from './starter-model.js';
-import { Quantizer, toolBeside } from './quantize.js';
+import { Quantizer, toolBeside, type QuantizeHooks } from './quantize.js';
 
 const exec = promisify(execFile);
 const GiB = 1024 ** 3;
@@ -75,10 +75,10 @@ export class ModelLibrary {
   active: { controller: AbortController; promise: Promise<void> } | null = null;
   busy = false;
   private endpoint: string;
-  constructor(directory: string, private audit: Audit, private lms = findLms(), private runtime?: LocalRuntime, private hfToken:()=>string|undefined=()=>undefined, private env: NodeJS.ProcessEnv = process.env) {
+  constructor(directory: string, private audit: Audit, private lms = findLms(), private runtime?: LocalRuntime, private hfToken:()=>string|undefined=()=>undefined, private env: NodeJS.ProcessEnv = process.env, quantizeHooks?: QuantizeHooks) {
     this.endpoint = lmStudioEndpoint(lmStudioPort(env));
     this.directory = join(directory, 'models'); mkdirSync(this.directory, { recursive: true, mode: 0o700 });this.access=new CatalogAccess(this.directory,hfToken);
-    this.quantizer = new Quantizer(this.directory, runtime ? { quantize: toolBeside(runtime.binary, 'llama-quantize'), imatrix: toolBeside(runtime.binary, 'llama-imatrix'), mlxPython: runtime.mlxPython, mlxAvailable: runtime.mlxAvailable, calibration: join(runtime.root, 'runtime', 'quantize-calibration.txt') } : { quantize: '', imatrix: '', mlxPython: '', mlxAvailable: false, calibration: '' });
+    this.quantizer = new Quantizer(this.directory, runtime ? { quantize: toolBeside(runtime.binary, 'llama-quantize'), imatrix: toolBeside(runtime.binary, 'llama-imatrix'), mlxPython: runtime.mlxPython, mlxAvailable: runtime.mlxAvailable, calibration: join(runtime.root, 'runtime', 'quantize-calibration.txt') } : { quantize: '', imatrix: '', mlxPython: '', mlxAvailable: false, calibration: '' }, quantizeHooks);
     try{const saved=JSON.parse(readFileSync(join(this.directory,'hub-catalog.json'),'utf8'));if(Array.isArray(saved))for(const m of saved.slice(0,2000)){if(validSavedModel(m)&&!this.catalog.some(c=>c.id===m.id))this.catalog.push(m);}}catch{}
     try { this.jobs = JSON.parse(readFileSync(join(this.directory, 'downloads.json'), 'utf8')); } catch { /* First use. */ }
     this.runtime?.setCatalog(this.catalog);
@@ -86,6 +86,9 @@ export class ModelLibrary {
       if (!this.catalog.some(model => model.id === id)) { delete this.jobs[id]; continue; }
       if (['downloading','verifying','importing'].includes(job.state)) { job.state = 'failed'; job.error = 'Interrompido ao fechar. Continue o download para retomar os arquivos já recebidos.'; }
     }
+  }
+  assertQuantizeIdle() {
+    if (this.quantizer.running) throw new Error('Aguarde a quantização terminar ou cancele-a.');
   }
   save() { const path = join(this.directory, 'downloads.json'); writeFileSync(path + '.tmp', JSON.stringify(this.jobs), { mode: 0o600 }); renameSync(path + '.tmp', path); }
   async cli(args: string[]) {
@@ -197,6 +200,7 @@ export class ModelLibrary {
     return { ok: true };
   }
   async install(id: string) {
+    this.assertQuantizeIdle();
     const model = this.model(id);
     if (this.busy) throw new Error('Aguarde a operação atual'); this.busy = true;
     try {

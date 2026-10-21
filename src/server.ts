@@ -67,6 +67,10 @@ const { createSecret, hasKey, loadKey, removeKey, removeLegacyAccess, storeKey }
 
 const equal = (a: string, b: string) => { if (!a || !b) return false; const left = Buffer.from(a), right = Buffer.from(b); return left.length === right.length && timingSafeEqual(left, right); };
 export const LOCAL_REQUESTS_PER_MINUTE = 1200;
+export function otherAiBlocksQuantize(input: { chats: boolean; api: boolean; apiBusy: boolean; aux: boolean; pro: boolean; jobs: number }) {
+  if (input.chats || input.api || input.apiBusy || input.aux || input.pro || input.jobs > 0) return 'Aguarde a conversa, a Minha API ou a outra IA terminar antes de quantizar.';
+  return '';
+}
 export function localRateLimitError() {
   const error = new Error('Muitas consultas num curto intervalo. Aguarde e tente novamente.') as Error & { statusCode?: number };
   error.statusCode = 429;
@@ -128,9 +132,9 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     const bearer = request.headers.authorization?.replace(/^Bearer /, '') ?? '';
     const cookie = request.headers.cookie?.split('; ').find(v => v.startsWith('colmeia='))?.slice(8) ?? '';
     if (!equal(bearer, token) && !equal(cookie, token)) return reply.code(401).send({ error: 'Abra a aplicação pelo iniciador local para autenticar esta sessão.' });
-    if((music.busy||music.running||editor.busy)&&request.method==='POST'&&/^\/v1\/(experience\/bots\/.*\/run|chats\/.*\/send|model-library\/(load|unload|engine|import-mlx|quantize|quantize\/cancel)|sharing\/start|tasks\/.*\/start|pro\/(jobs|media\/.*)|local-engines\/(generate|transcribe)|experience\/(room|benchmark))$/.test(request.url))return reply.code(409).send({error:'Pare o motor de música ou aguarde o Editor antes de iniciar outra IA.'});
+    if((music.busy||music.running||editor.busy)&&request.method==='POST'&&/^\/v1\/(experience\/bots\/.*\/run|chats\/.*\/send|model-library\/(load|unload|engine|import-mlx)|sharing\/start|tasks\/.*\/start|pro\/(jobs|media\/.*)|local-engines\/(generate|transcribe)|experience\/(room|benchmark))$/.test(request.url))return reply.code(409).send({error:'Pare o motor de música ou aguarde o Editor antes de iniciar outra IA.'});
     if(experienceJobs.busy&&request.method!=='GET'&&!/^\/v1\/(experience\/(room|benchmark)\/stop|assistant\/approve|lock)$/.test(request.url))return reply.code(409).send({error:'Pare o teste ou a reunião antes de iniciar outra operação.'});
-    if(pro.busy&&request.method==='POST'&&/^\/v1\/(experience\/bots\/.*\/run|chats\/.*\/send|model-library\/(load|unload|engine|import-mlx|quantize|quantize\/cancel)|sharing\/start|tasks\/.*\/start|local-engines\/(generate|transcribe))$/.test(request.url))return reply.code(409).send({error:'Aguarde a tarefa Pro ou cancele-a na fila.'});
+    if(pro.busy&&request.method==='POST'&&/^\/v1\/(experience\/bots\/.*\/run|chats\/.*\/send|model-library\/(load|unload|engine|import-mlx)|sharing\/start|tasks\/.*\/start|local-engines\/(generate|transcribe))$/.test(request.url))return reply.code(409).send({error:'Aguarde a tarefa Pro ou cancele-a na fila.'});
     if((aux.busy||proMedia.busy)&&request.method==='POST'&&/\/chats\/[^/]+\/send$/.test(request.url))return reply.code(409).send({error:'Aguarde o motor de voz ou imagem.'});
     if (!['/v1/status','/v1/setup','/v1/unlock','/v1/session','/v1/vault/migrate','/v1/vault/skip-legacy','/v1/vault/device-open','/v1/vault/device-migrate','/v1/vault/device-commit','/v1/vault/device-abort','/v1/vault/device-fresh'].includes(request.url.split('?')[0]) && core.vault.locked) return reply.code(423).send({ error: 'Desbloqueie o cofre para continuar.' });
   });
@@ -492,6 +496,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/media-downloads/pause',async()=>mediaDownloads.pause());
   app.post('/v1/model-library/engine', async request => exclusive(async () => { if (core.vault.locked) throw new Error('Cofre bloqueado'); z.strictObject({}).parse(body(request)); return library.startEngine(); }));
   app.post('/v1/model-library/import-mlx', async request => exclusive(async () => {
+    library.assertQuantizeIdle();
     if (core.vault.locked || chats.busy || library.busy || gateway.busy) throw new Error('Aguarde a operação atual antes de importar.');
     const {folder}=z.strictObject({folder:z.string().min(1).max(2048)}).parse(body(request));
     const imported=await runtime.importMlx(folder);
@@ -504,8 +509,14 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/model-library/unload', async request => exclusive(async () => { if (core.vault.locked) throw new Error('Cofre bloqueado'); const { instance } = z.strictObject({ instance: z.string().min(1).max(512) }).parse(body(request)); if ((await core.snapshot()).tasks.some(task => task.state === 'running' && task.model === instance)) throw new Error('Este modelo está trabalhando em uma entrega. Pause a entrega primeiro.'); if (chats.busy||gateway.busy||aux.busy) throw new Error('Pare a resposta atual antes de liberar memória.'); if(gateway.status().enabled&&gateway.status().local_model===instance)throw new Error('Desligue Minha API antes de liberar o modelo compartilhado.'); return library.unload(instance); }));
   const quantizePreset = z.enum(['equilibrado', 'menor', 'qualidade']);
   app.get('/v1/model-library/quantize', async () => library.quantizer.view());
-  app.post('/v1/model-library/quantize/estimate', async request => { const { key, preset } = z.strictObject({ key: z.string().min(1).max(512), preset: quantizePreset }).parse(body(request)); return library.quantizationEstimate(key, preset); });
-  app.post('/v1/model-library/quantize', async request => { if (core.vault.locked) throw new Error('Cofre bloqueado'); const { key, preset } = z.strictObject({ key: z.string().min(1).max(512), preset: quantizePreset }).parse(body(request)); return library.quantizeModel(key, preset); });
+  app.post('/v1/model-library/quantize/estimate', async request => { if (core.vault.locked) throw new Error('Cofre bloqueado'); const { key, preset } = z.strictObject({ key: z.string().min(1).max(512), preset: quantizePreset }).parse(body(request)); return library.quantizationEstimate(key, preset); });
+  app.post('/v1/model-library/quantize', async request => exclusive(async () => {
+    if (core.vault.locked) throw new Error('Cofre bloqueado');
+    const blocked = otherAiBlocksQuantize({ chats: chats.busy, api: gateway.status().enabled, apiBusy: gateway.busy, aux: aux.busy, pro: pro.busy, jobs: core.jobs.size });
+    if (blocked) throw new Error(blocked);
+    const { key, preset } = z.strictObject({ key: z.string().min(1).max(512), preset: quantizePreset }).parse(body(request));
+    return library.quantizeModel(key, preset);
+  }));
   app.post('/v1/model-library/quantize/cancel', async request => { if (core.vault.locked) throw new Error('Cofre bloqueado'); z.strictObject({}).parse(body(request)); return library.quantizer.cancel(); });
   app.post('/v1/model-library/quantize/clear', async request => { if (core.vault.locked) throw new Error('Cofre bloqueado'); z.strictObject({}).parse(body(request)); return library.quantizer.clear(); });
   app.post('/v1/tasks', async request => core.create(body(request), key(request)));
