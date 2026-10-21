@@ -15,7 +15,7 @@ O Pro passa a ser um plano do aplicativo. A antiga página Pro agora se chama **
 
 Não há redução artificial da velocidade ou da qualidade dos motores gratuitos. O Pro melhora o contexto, a organização e os recursos do aplicativo. Não transforma um modelo pequeno em um modelo maior nem acrescenta RAM ao computador. Não há cobrança por mensagem local; serviços de terceiros e licenças dos modelos não estão incluídos.
 
-**Preço:** ainda não publicado. R$ 29,90/mês foi uma sugestão anterior, e não um preço comercial configurado. O lançamento desta versão usa somente plano mensal; não oferece cobrança anual, vitalícia ou créditos de inferência. O valor real aparece no Checkout antes do pagamento e é definido por um único `priceId` mensal no serviço do publicador.
+**Preço:** ainda não publicado. Uma sugestão mensal anterior não chegou a ser um preço comercial configurado. O lançamento desta versão usa somente plano mensal; não oferece cobrança anual, vitalícia ou créditos de inferência. O valor real aparece no Checkout antes do pagamento e é definido por um único `priceId` mensal no serviço do publicador.
 
 ## Comportamento implementado
 
@@ -31,7 +31,7 @@ Não há redução artificial da velocidade ou da qualidade dos motores gratuito
 
 `subscription-config.json` está sem serviço e sem chave pública. O pacote inicia no Grátis; os botões de compra informam que a venda está em preparação. Não existem contas Stripe, produtos, cobranças ou assinaturas reais criados por esta alteração.
 
-O serviço separado `src/billing-service.ts` implementa Checkout mensal, portal do cliente, verificação de webhook, idempotência e emissão de licenças. Usa SQLite persistente no servidor do publicador e a API Stripe fixada em `2025-03-31.basil`. Ele consulta a assinatura atual, o preço esperado e a última fatura paga; não libera acesso por uma URL de sucesso ou pelo conteúdo antigo de um evento.
+O serviço separado `src/billing-service.ts` implementa Checkout, portal do cliente, verificação de webhook, idempotência e emissão de licenças. Na 0.14 o banco era SQLite no servidor do publicador. A publicação atual usa Edge Functions e Postgres no Supabase, em `sa-east-1`; o passo a passo está em [billing-deploy.md](billing-deploy.md). A API Stripe permanece `2025-03-31.basil`. Ele consulta a assinatura atual, o preço esperado e a última fatura paga; não libera acesso por uma URL de sucesso ou pelo conteúdo antigo de um evento.
 
 Os testes usam um adaptador Stripe simulado. Ainda é necessário executar a homologação com uma conta Stripe em modo de teste, configurar o portal para cancelamento no fim do período, hospedar o serviço e só então habilitar produção. Veja [configuração comercial](subscription-operations.md).
 

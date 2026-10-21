@@ -49,3 +49,5 @@ models/
 
 LocalNeuron-*.run
 LocalNeuron-*.run.sha256
+
+supabase/.temp/
