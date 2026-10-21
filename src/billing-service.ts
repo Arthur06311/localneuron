@@ -19,8 +19,8 @@ export function signLease(lease:Lease,key:string) { const payload=Buffer.from(JS
 export type BillingPlan='monthly'|'yearly';
 export type BillingConfig={database:string;secretKey:string;webhookSecret:string;monthlyPriceId:string;yearlyPriceId:string;privateKey:string;publicUrl:string};
 export const approvedPlans=Object.freeze({
-  monthly:Object.freeze({currency:'brl',unitAmount:2990,interval:'month',intervalCount:1}),
-  yearly:Object.freeze({currency:'brl',unitAmount:29900,interval:'year',intervalCount:1}),
+  monthly:Object.freeze({currency:'brl',unitAmount:2000,interval:'month',intervalCount:1}),
+  yearly:Object.freeze({currency:'brl',unitAmount:15000,interval:'year',intervalCount:1}),
 });
 const priceShape=(price:any,plan:BillingPlan)=>{
   const expected=approvedPlans[plan];
@@ -28,7 +28,7 @@ const priceShape=(price:any,plan:BillingPlan)=>{
 };
 export function validateApprovedPrice(price:any):BillingPlan {
   const plan=(['monthly','yearly'] as const).find(name=>priceShape(price,name));
-  if(!plan)throw Error('O preço do Pro precisa ser R$ 29,90 por mês (BRL 2990) ou R$ 299 por ano (BRL 29900), fixo e sem cobrança por uso.');
+  if(!plan)throw Error('O preço do Pro precisa ser R$ 20,00 por mês (BRL 2000) ou R$ 150 por ano (BRL 15000), fixo e sem cobrança por uso.');
   return plan;
 }
 type StripeCall=(path:string,body?:Record<string,string>,idempotency?:string)=>Promise<any>;
@@ -51,8 +51,8 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
   if(config.monthlyPriceId===config.yearlyPriceId)throw Error('Os preços mensal e anual precisam ser identificadores diferentes.');
   const monthly=await stripe('prices/'+encodeURIComponent(config.monthlyPriceId));
   const yearly=await stripe('prices/'+encodeURIComponent(config.yearlyPriceId));
-  if(validateApprovedPrice(monthly)!=='monthly')throw Error('O preço mensal do Pro precisa ser fixo: R$ 29,90 em BRL por mês, sem cobrança por uso.');
-  if(validateApprovedPrice(yearly)!=='yearly')throw Error('O preço anual do Pro precisa ser fixo: R$ 299 em BRL por ano, sem cobrança por uso.');
+  if(validateApprovedPrice(monthly)!=='monthly')throw Error('O preço mensal do Pro precisa ser fixo: R$ 20,00 em BRL por mês, sem cobrança por uso.');
+  if(validateApprovedPrice(yearly)!=='yearly')throw Error('O preço anual do Pro precisa ser fixo: R$ 150 em BRL por ano, sem cobrança por uso.');
   const priceId:Record<BillingPlan,string>={monthly:config.monthlyPriceId,yearly:config.yearlyPriceId};
   mkdirSync(dirname(config.database),{recursive:true,mode:0o700});const db=new DatabaseSync(config.database);db.exec(`PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS devices (id TEXT PRIMARY KEY, secret TEXT NOT NULL, checkout TEXT, checkout_url TEXT, checkout_expires INTEGER, checkout_attempt TEXT, checkout_plan TEXT, customer TEXT, subscription TEXT, trial_used INTEGER NOT NULL DEFAULT 0); CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, processed INTEGER NOT NULL);`);
   const columns=()=>db.prepare('PRAGMA table_info(devices)').all() as any[];

@@ -14,8 +14,8 @@ import {testKeys,testConfig,activateTestPro} from './subscription-fixture.js';
 const privateKey=testKeys.privateKey.export({type:'pkcs8',format:'pem'}).toString();
 const temporary=()=>mkdtempSync(join(tmpdir(),'neuron-subscription-'));
 const day=86400_000;
-const monthlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:2990,billing_scheme:'per_unit',recurring:{interval:'month',interval_count:1,usage_type:'licensed'}});
-const yearlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:29900,billing_scheme:'per_unit',recurring:{interval:'year',interval_count:1,usage_type:'licensed'}});
+const monthlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:2000,billing_scheme:'per_unit',recurring:{interval:'month',interval_count:1,usage_type:'licensed'}});
+const yearlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:15000,billing_scheme:'per_unit',recurring:{interval:'year',interval_count:1,usage_type:'licensed'}});
 const billingConfig=(dir:string)=>({database:join(dir,'billing.sqlite'),secretKey:'test',webhookSecret:'webhook-test',monthlyPriceId:'price_month',yearlyPriceId:'price_year',privateKey,publicUrl:'https://billing.example.com'});
 function lease(device:string,now:number):Lease {return {version:1,audience:'localneuron-pro',device,subscription:'sub_test',status:'active',issued_at:now,expires_at:now+7*day,period_end:now+30*day,cancel_at_period_end:false};}
 test('Licença assinada: offline, reinício, expiração, cancelamento e relógio',()=>{
@@ -90,21 +90,21 @@ test('Cobrança mensal: checkout único, confirmação, portal, renovação, fal
  assert.equal(verifyLease((await post('refresh')).json().token,testConfig.publicKey,device).status,'active');
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
-test('Lista de preços: aceita mensal BRL 2990 e anual BRL 29900 e recusa combinações fora da lista',async()=>{
+test('Lista de preços: aceita mensal BRL 2000 e anual BRL 15000 e recusa combinações fora da lista',async()=>{
  const monthly=monthlyPrice(),yearly=yearlyPrice();
  assert.equal(validateApprovedPrice(monthly),'monthly');assert.equal(validateApprovedPrice(yearly),'yearly');
- for(const price of [{...monthly,active:false},{...monthly,type:'one_time'},{...monthly,currency:'usd'},{...monthly,unit_amount:29900},{...monthly,unit_amount:null},{...yearly,unit_amount:2990},{...monthly,billing_scheme:'tiered'},{...monthly,transform_quantity:{divide_by:5,round:'up'}},{...monthly,recurring:{...monthly.recurring,interval:'year'}},{...yearly,recurring:{...yearly.recurring,interval:'month'}},{...monthly,recurring:{...monthly.recurring,interval_count:3}},{...yearly,recurring:{...yearly.recurring,interval_count:12}},{...monthly,recurring:{...monthly.recurring,usage_type:'metered'}}])
-  assert.throws(()=>validateApprovedPrice(price),/2990|29900/);
+ for(const price of [{...monthly,active:false},{...monthly,type:'one_time'},{...monthly,currency:'usd'},{...monthly,unit_amount:15000},{...monthly,unit_amount:null},{...yearly,unit_amount:2000},{...monthly,billing_scheme:'tiered'},{...monthly,transform_quantity:{divide_by:5,round:'up'}},{...monthly,recurring:{...monthly.recurring,interval:'year'}},{...yearly,recurring:{...yearly.recurring,interval:'month'}},{...monthly,recurring:{...monthly.recurring,interval_count:3}},{...yearly,recurring:{...yearly.recurring,interval_count:12}},{...monthly,recurring:{...monthly.recurring,usage_type:'metered'}}])
+  assert.throws(()=>validateApprovedPrice(price),/2000|15000/);
  const dir=temporary();
  try{
   const wrong=async(path:string)=>{if(path==='prices/price_month')return {...monthly,unit_amount:1000};if(path==='prices/price_year')return yearly;throw Error(path);};
-  await assert.rejects(()=>createBillingService(billingConfig(dir),wrong),/2990|29900/);
+  await assert.rejects(()=>createBillingService(billingConfig(dir),wrong),/2000|15000/);
   const swapped=async(path:string)=>{if(path==='prices/price_month')return yearly;if(path==='prices/price_year')return yearly;throw Error(path);};
-  await assert.rejects(()=>createBillingService(billingConfig(dir),swapped),/29,90/);
+  await assert.rejects(()=>createBillingService(billingConfig(dir),swapped),/20,00/);
   await assert.rejects(()=>createBillingService({...billingConfig(dir),yearlyPriceId:'price_month'},async()=>monthly),/diferentes/);
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
-test('Checkout anual usa o preço de R$ 299 e inclui 7 dias de teste',async()=>{
+test('Checkout anual usa o preço de R$ 150 e inclui 7 dias de teste',async()=>{
  const dir=temporary(),device=randomUUID(),now=Date.now(),calls:any[]=[];
  const stripe=async(path:string,body?:Record<string,string>)=>{
   calls.push({path,body});

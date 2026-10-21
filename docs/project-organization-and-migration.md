@@ -205,8 +205,8 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 | `LOCALNEURON_BILLING_DB` | Banco do serviço de cobrança | Somente billing |
 | `STRIPE_SECRET_KEY` | Chave secreta Stripe | Somente billing |
 | `STRIPE_WEBHOOK_SECRET` | Assinatura de webhook | Somente billing |
-| `STRIPE_MONTHLY_PRICE_ID` | Preço mensal do Pro (BRL 2990) | Somente billing |
-| `STRIPE_YEARLY_PRICE_ID` | Preço anual do Pro (BRL 29900) | Somente billing |
+| `STRIPE_MONTHLY_PRICE_ID` | Preço mensal do Pro (BRL 2000) | Somente billing |
+| `STRIPE_YEARLY_PRICE_ID` | Preço anual do Pro (BRL 15000) | Somente billing |
 | `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` | Caminho do arquivo PEM da chave privada de licença | Somente billing |
 | `LOCALNEURON_BILLING_PUBLIC_URL` | URL pública HTTPS do serviço de cobrança | Somente billing |
 | `LOCALNEURON_BILLING_HOST` | Endereço de escuta do serviço de cobrança | Não; padrão `127.0.0.1`. No Fly, `0.0.0.0` |

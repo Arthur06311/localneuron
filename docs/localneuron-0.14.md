@@ -15,7 +15,7 @@ O Pro passa a ser um plano do aplicativo. A antiga página Pro agora se chama **
 
 Não há redução artificial da velocidade ou da qualidade dos motores gratuitos. O Pro melhora o contexto, a organização e os recursos do aplicativo. Não transforma um modelo pequeno em um modelo maior nem acrescenta RAM ao computador. Não há cobrança por mensagem local; serviços de terceiros e licenças dos modelos não estão incluídos.
 
-**Preço:** ainda não publicado. R$ 29,90/mês foi uma sugestão anterior, e não um preço comercial configurado. O lançamento desta versão usa somente plano mensal; não oferece cobrança anual, vitalícia ou créditos de inferência. O valor real aparece no Checkout antes do pagamento e é definido por um único `priceId` mensal no serviço do publicador.
+**Preço:** ainda não publicado. Uma sugestão mensal anterior não chegou a ser um preço comercial configurado. O lançamento desta versão usa somente plano mensal; não oferece cobrança anual, vitalícia ou créditos de inferência. O valor real aparece no Checkout antes do pagamento e é definido por um único `priceId` mensal no serviço do publicador.
 
 ## Comportamento implementado
 

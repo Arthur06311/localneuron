@@ -8,10 +8,10 @@ Preços aprovados, os dois com 7 dias grátis, uma vez por instalação ou por c
 
 | Plano | Valor | `unit_amount` | Intervalo |
 | --- | --- | ---: | --- |
-| Mensal | R$ 29,90 | 2990 | mês |
-| Anual | R$ 299 | 29900 | ano |
+| Mensal | R$ 20,00 | 2000 | mês |
+| Anual | R$ 150 | 15000 | ano |
 
-O anual economiza cerca de 2 meses em relação a doze vezes o mensal. O serviço recusa subir se o preço não for exatamente um desses dois: moeda `brl`, preço fixo por unidade, quantidade 1, sem medição de uso e sem transformação de quantidade.
+O anual economiza cerca de 37% em relação a doze vezes o mensal, cerca de 4,5 meses. O serviço recusa iniciar se o preço não for exatamente um desses dois: moeda `brl`, preço fixo por unidade, quantidade 1, sem medição de uso e sem transformação de quantidade.
 
 ## O que você precisa antes
 
@@ -60,9 +60,9 @@ A chave em uso tem de ser a de teste. Se o comando ou o painel mostrar modo ao v
 
 1. **Product catalog → Add product**.
 2. Nome: `LocalNeuron Pro`. Descrição: `Assinatura do LocalNeuron Pro`.
-3. Primeiro preço: moeda **BRL**, valor **29.90**, recorrente, a cada **mês**, cobrança padrão por unidade. Não marque uso medido.
-4. **Add another price**: moeda **BRL**, valor **299.00**, recorrente, a cada **ano**, também por unidade e sem uso medido.
-5. Salve. Copie os dois identificadores `price_...`. O de R$ 29,90 é o mensal. O de R$ 299 é o anual.
+3. Primeiro preço: moeda **BRL**, valor **20.00**, recorrente, a cada **mês**, cobrança padrão por unidade. Não marque uso medido.
+4. **Add another price**: moeda **BRL**, valor **150.00**, recorrente, a cada **ano**, também por unidade e sem uso medido.
+5. Salve. Copie os dois identificadores `price_...`. O de R$ 20,00 é o mensal. O de R$ 150 é o anual.
 
 ### Pelo Stripe CLI
 
@@ -76,7 +76,7 @@ stripe products create \
 stripe prices create \
   -d product="prod_SUBSTITUA" \
   -d currency=brl \
-  -d unit_amount=2990 \
+  -d unit_amount=2000 \
   -d billing_scheme=per_unit \
   -d "recurring[interval]=month" \
   -d "recurring[interval_count]=1" \
@@ -85,7 +85,7 @@ stripe prices create \
 stripe prices create \
   -d product="prod_SUBSTITUA" \
   -d currency=brl \
-  -d unit_amount=29900 \
+  -d unit_amount=15000 \
   -d billing_scheme=per_unit \
   -d "recurring[interval]=year" \
   -d "recurring[interval_count]=1" \
@@ -296,10 +296,10 @@ Se o comando aceitar, reconstrua os pacotes do aplicativo. Sem esse arquivo pree
 Use só cartões de teste. Nenhum `sk_live_` neste passo.
 
 - `curl -fsS https://billing.localneuron.ai/health` devolve `{"ok":true}`.
-- No aplicativo configurado, Meu plano mostra **Mensal R$ 29,90**, **Anual R$ 299 (economize ~2 meses)** e **7 dias grátis**.
+- No aplicativo configurado, Meu plano mostra **Mensal R$ 20,00**, **Anual R$ 150 (economize ~37%, cerca de 4,5 meses)** e **7 dias grátis**.
 - Com `serviceUrl` nulo, esses botões continuam ocultos ou desligados e nenhuma cobrança é criada.
-- Mensal abre Checkout de assinatura em R$ 29,90, com 7 dias de teste e cartão obrigatório.
-- Anual abre Checkout de assinatura em R$ 299,00, com 7 dias de teste.
+- Mensal abre Checkout de assinatura em R$ 20,00, com 7 dias de teste e cartão obrigatório.
+- Anual abre Checkout de assinatura em R$ 150,00, com 7 dias de teste.
 - A mesma instalação, numa segunda abertura, não ganha outro teste.
 - Cartão `4242424242424242`: assinatura fica `trialing` e **Atualizar assinatura** libera o Pro.
 - Cartão `4000002500003155`: autenticação adicional.
@@ -321,7 +321,7 @@ Defina termos, suporte para perda da instalação e política de reembolso antes
 Só depois do checklist. O modo ao vivo é outro conjunto de objetos na mesma conta.
 
 1. No painel, desligue **Test mode**.
-2. Crie de novo o produto `LocalNeuron Pro` e os dois preços: BRL 2990 por mês e BRL 29900 por ano, fixos, por unidade, sem uso medido. Os `price_` ao vivo são outros.
+2. Crie de novo o produto `LocalNeuron Pro` e os dois preços: BRL 2000 por mês e BRL 15000 por ano, fixos, por unidade, sem uso medido. Os `price_` ao vivo são outros.
 3. Crie outro endpoint de webhook para `https://billing.localneuron.ai/billing/webhook`, versão `2025-03-31.basil`, com os mesmos seis eventos. O `whsec_` ao vivo é outro.
 4. Salve o portal padrão ao vivo com as mesmas regras do passo 7.
 5. Troque os segredos. Mantenha o mesmo par Ed25519, para as licenças de teste já emitidas continuarem verificáveis. Só gere outro par se você quiser invalidar todas as licenças.
@@ -340,7 +340,7 @@ fly secrets set \
 fly logs -a localneuron-billing
 ```
 
-A chave ao vivo começa com `sk_live_`. Se o serviço recusar iniciar, o preço ao vivo não está na lista (2990 mensal ou 29900 anual, BRL).
+A chave ao vivo começa com `sk_live_`. Se o serviço recusar iniciar, o preço ao vivo não está na lista (2000 mensal ou 15000 anual, BRL).
 
 6. Confirme `https://billing.localneuron.ai/health`.
 7. Preencha `subscription-config.json` como no passo 8, valide e publique um pacote novo do aplicativo.
