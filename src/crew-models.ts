@@ -60,7 +60,7 @@ export type CrewSuggestion = {
   note: string;
 };
 
-const NOTE = 'Por predefinição, a equipa usa um modelo local de 7B a 14B que caiba na RAM. Modelos de 70B ou mais, o EXO, outro computador, Anthropic e xAI são uma opção avançada e só podem ficar no coordenador.';
+const NOTE = 'Por padrão, a equipe usa um modelo local de 7B a 14B que caiba na RAM. Modelos de 70B ou mais, o EXO, outro computador, Anthropic e xAI são uma opção avançada e só podem ficar no coordenador.';
 
 export function crewPlatformReady(platform: string, architecture: string) {
   return (platform === 'darwin' && architecture === 'arm64')

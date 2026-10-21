@@ -21,7 +21,7 @@ A navegação da interface também já está organizada em cinco ilhas, implemen
 | Ilha | Páginas |
 |---|---|
 | Trabalhar | Chat, Minha equipe, Modelos |
-| Equipas | Equipas |
+| Equipes | Equipes |
 | Criar | Imagem, Vídeo, Música, Editor |
 | Conectar | Conexões, Rede EXO, Minha API |
 | Conta | Central Pro, Meu plano, Configuração guiada, Configurações |
@@ -89,7 +89,7 @@ O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes esp
 - `src/chat.ts` e `src/chat-context.ts`: conversas, anexos, histórico e contexto.
 - `src/agent.ts`: ciclo do assistente e personalidade opcional.
 - `src/experience.ts`, `src/experience-jobs.ts` e `src/bot-playbooks.ts`: wizard, perfis, bots pessoais/profissionais e salas de colaboração.
-- `src/crews.ts`: ilha Equipas. Reusa os bots de Minha equipe (nome, papel, instruções, memória e modelo). As tabelas novas guardam só o vínculo, o mascote, as não lidas, os limites e os provedores.
+- `src/crews.ts`: ilha Equipes. Reusa os bots de Minha equipe (nome, papel, instruções, memória e modelo). As tabelas novas guardam só o vínculo, o mascote, as não lidas, os limites e os provedores.
 - `src/web-tools.ts`: pesquisa e leitura web com validação de destino.
 - `src/connections.ts`: servidores MCP por HTTP/stdio, OAuth e revogação.
 - `src/computer-control.ts` e `desktop/computer.cjs`: controle de computador no desktop, quando habilitado.
@@ -126,7 +126,7 @@ As entregas acumuladas no histórico público do GitHub foram agrupadas abaixo p
 - Studio para Photo, Video, Música, voz, transcrição e Editor.
 - Mascote 2D com diferentes estados.
 - Pro com projetos, fila, modelos, templates, documentos, exportação, backups e diagnóstico.
-- Navegação atual por cinco ilhas clicáveis. Equipas reusa os bots de Minha equipe.
+- Navegação atual por cinco ilhas clicáveis. Equipes reusa os bots de Minha equipe.
 
 ### Motores e integrações
 

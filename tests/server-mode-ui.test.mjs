@@ -7,7 +7,7 @@ const html = readFileSync(new URL('../public/index.html', import.meta.url), 'utf
 const app = readFileSync(new URL('../public/app.js', import.meta.url), 'utf8');
 const server = readFileSync(new URL('../src/server.ts', import.meta.url), 'utf8');
 
-test('O ecrã Modo servidor pergunta o papel e fica na navegação', () => {
+test('A tela Modo servidor pergunta o papel e fica na navegação', () => {
   assert.match(ui, /Como este computador vai participar\?/);
   assert.match(ui, /Contribuir/);
   assert.match(ui, /Gerenciar/);

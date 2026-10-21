@@ -73,6 +73,7 @@ test('envio da equipe aceita nome de LAN e recusa metadado no DNS', async () => 
   linkLocal = true;
   await assert.rejects(() => assertCrewDestination(new URL('http://nas.lan/v1'), resolver), /recusado/);
   await assert.rejects(() => assertCrewDestination(new URL('https://example.com/v1'), resolver), /recusado/);
+  await assert.rejects(() => assertCrewDestination(new URL('http://nas.lan/v1'), async () => [{ address: '127.0.0.1' }]), /recusado/);
   await assertCrewDestination(new URL('http://printer.local/v1'), async () => { throw new Error('mdns'); });
   const before = calls;
   await assertCrewDestination(new URL('http://192.168.1.1/v1'), async () => { calls += 1; return [{ address: '192.168.1.1' }]; });

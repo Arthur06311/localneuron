@@ -4,7 +4,7 @@ import { assertAssignable, classifyHost, planProvider, redactSecrets, tokenHint 
 
 const remote = { acknowledged: true, confirm_remote: true, token: 'crew-test-token-aaaa' };
 
-test('EXO da equipa só aceita loopback e não leva token', () => {
+test('EXO da equipe só aceita loopback e não leva token', () => {
   assert.equal(planProvider({ kind: 'exo', label: 'EXO local' }).endpoint, 'http://127.0.0.1:52415');
   assert.equal(planProvider({ kind: 'exo', label: 'EXO local', endpoint: 'http://localhost:52415' }).leaves_computer, false);
   for (const endpoint of ['http://192.168.1.20:52415', 'http://10.0.0.4:52415', 'https://127.0.0.1:52415', 'http://1.1.1.1:52415']) {
@@ -21,7 +21,7 @@ test('Outro computador exige confirmação, token e TLS ou rede privada', () => 
   assert.throws(() => planProvider({ kind: 'openai', label: 'LM', endpoint: 'http://1.1.1.1:1234/v1', ...remote, trusted_network: true }), /HTTPS|confiável/);
   assert.throws(() => planProvider({ kind: 'openai', label: 'LM', endpoint: 'https://10.0.0.5:1234/v1', token: 'crew-test-token-aaaa' }), /sai do computador/);
   assert.throws(() => planProvider({ kind: 'openai', label: 'LM', endpoint: 'http://169.254.169.254/v1', ...remote, trusted_network: true }), /recusado/);
-  assert.throws(() => planProvider({ kind: 'openai', label: 'LM', endpoint: 'http://user:crew-test-token-aaaa@127.0.0.1:1234/v1' }), /utilizador/);
+  assert.throws(() => planProvider({ kind: 'openai', label: 'LM', endpoint: 'http://user:crew-test-token-aaaa@127.0.0.1:1234/v1' }), /usuário/);
   assert.equal(classifyHost('127.0.0.1'), 'loopback');
   assert.equal(classifyHost('10.1.1.1'), 'private');
   assert.equal(classifyHost('8.8.8.8'), 'public');

@@ -373,7 +373,9 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.get('/v1/computer-control',async()=>computerControl.status());
   app.post('/v1/computer-control',async request=>{const v=z.strictObject({enabled:z.boolean()}).parse(body(request));if(!v.enabled)return computerControl.stop();if(!computerControl.available)throw Error('Abra o aplicativo desktop para usar este controle.');computerControl.enabled=true;return computerControl.status();});
   app.get('/v1/connections',{ config: { rateLimit: { max: 120, timeWindow: '1 minute' } } },async()=>connections.list());
+  app.get('/v1/connections/:id',{ config: { rateLimit: { max: 120, timeWindow: '1 minute' } } },async request=>connections.get(id(request)));
   app.post('/v1/connections',async request=>connections.add(body(request)));
+  app.patch('/v1/connections/:id',async request=>{if(chats.busy)throw Error('Pare a resposta antes de reconectar.');return connections.update(id(request),body(request));});
   app.post('/v1/connections/:id/test',async request=>{if(chats.busy)throw Error('Pare a resposta antes de reconectar.');return connections.test(id(request));});
   app.delete('/v1/connections/:id',async request=>connections.remove(id(request)));
   app.get('/v1/personality',async()=>({enabled:await personality()}));
@@ -413,7 +415,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   });
   app.post('/v1/experience/bots/:id/run',async request=>exclusive(async()=>{
     const v=z.strictObject({objective:z.string().trim().min(1).max(12000)}).parse(body(request));
-    if(crewTalk?.busy)throw Error('Aguarde a conversa da equipa.');
+    if(crewTalk?.busy)throw Error('Aguarde a conversa da equipe.');
     if(chats.busy||aux.busy||proMedia.busy||pro.busy||experienceJobs.busy||gateway.status().enabled||gateway.busy||core.jobs.size||library.busy||music.running||music.busy||editor.busy)throw Error('Aguarde a tarefa atual ou pare o outro motor antes de começar.');
     const requestKey=z.string().regex(/^[a-zA-Z0-9_-]{8,90}$/).parse(key(request));
     const bot=(await experience.snapshot()).bots.find(b=>b.id===id(request));if(!bot)throw Error('Bot não encontrado.');
@@ -461,7 +463,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/chats', async request => { const metadata=z.strictObject({bot_id:z.string().uuid().optional(),preferred_model:z.string().max(512).optional()}).parse(body(request)); return chats.create(key(request),metadata); });
   app.post('/v1/chats/:id/send', {bodyLimit:2*1024**2}, async request => exclusive(async () => {
     const data = z.strictObject({ model: z.string().min(1).max(512), model_key:z.string().max(512).optional(), content: z.string().trim().min(1).max(131072), options:optionsSchema.optional(), retry:z.boolean().default(false),access:accessSchema.optional(),attachments:z.array(attachmentSchema).max(4).default([]) }).parse(body(request));
-    if(crewTalk?.busy)throw new Error('Aguarde a conversa da equipa.');
+    if(crewTalk?.busy)throw new Error('Aguarde a conversa da equipe.');
     if(aux.busy||proMedia.busy)throw new Error('Aguarde o motor de voz ou imagem.');
     if(gateway.busy)throw new Error('A IA está atendendo uma chamada da API. Tente em instantes.');
     return chats.send(id(request), data.model, data.content, key(request), data.options, data.retry,data.access,data.attachments,data.model_key);
@@ -577,7 +579,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     return { text: result.text };
   }, exclusive, () => {
     if (core.vault.locked) return 'Desbloqueie o cofre para continuar.';
-    if (chats.busy || gateway.busy || gateway.status().enabled || aux.busy || pro.busy || proMedia.busy || experienceJobs.busy || music.running || music.busy || editor.busy || library.busy) return 'Aguarde a IA atual antes da conversa da equipa.';
+    if (chats.busy || gateway.busy || gateway.status().enabled || aux.busy || pro.busy || proMedia.busy || experienceJobs.busy || music.running || music.busy || editor.busy || library.busy) return 'Aguarde a IA atual antes da conversa da equipe.';
     return null;
   });
   registerCrewRoutes(app, crews, crewTalk);

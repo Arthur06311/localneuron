@@ -13,7 +13,7 @@ function parseSecrets(value: unknown) {
   return secrets;
 }
 
-/** Chaves de provedor cifradas com a chave de serviço do cofre. O texto limpo não vai para a base nem para o registo. */
+/** Chaves de provedor cifradas com a chave de serviço do cofre. O texto simples não vai para o banco nem para o registro. */
 export class CrewSecrets {
   private file: string;
   constructor(directory: string, private vault: Vault) {

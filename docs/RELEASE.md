@@ -23,7 +23,7 @@ git push origin v0.28.0
 
 O push da tag dispara o workflow e, se a checagem passar, abre o rascunho. Para só reconstruir os artefatos, abra Actions → Release → Run workflow. Pode informar uma tag que já existe, ou deixar o campo vazio para usar o commit selecionado. O disparo manual não cria tag e não publica nada.
 
-A tag tem de ser exatamente `v` + a versão do `package.json`. `v0.27.0-linux.3` falha de propósito: era uma tag histórica só do Linux. O fluxo novo usa `vX.Y.Z`.
+A tag precisa ser exatamente `v` + a versão do `package.json`. `v0.27.0-linux.3` falha de propósito: era uma tag histórica só do Linux. O fluxo novo usa `vX.Y.Z`.
 
 ## O que o workflow faz
 

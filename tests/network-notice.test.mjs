@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { listensBeyondLoopback, exposureBanner, networkExposureNotice } from '../public/network-notice.js';
 
-const notice = 'está a escutar fora deste computador. Outros dispositivos desta rede conseguem aceder.';
+const notice = 'está escutando fora deste computador. Outros dispositivos desta rede conseguem acessar.';
 
 test('Aviso de escuta fora do loopback distingue loopback, 0.0.0.0 e LAN', () => {
   for (const host of ['', '127.0.0.1', '127.0.0.2', 'localhost', '::1', '[::1]']) assert.equal(listensBeyondLoopback(host), false, host);
@@ -13,7 +13,7 @@ test('Aviso de escuta fora do loopback distingue loopback, 0.0.0.0 e LAN', () =>
   assert.equal(banner.includes('class="notice warn"'), true);
   assert.equal(banner.includes('role="alert"'), true);
   assert.equal(banner.includes(networkExposureNotice('A Minha API')), true);
-  assert.match(banner, /A Minha API está a escutar fora deste computador\. Outros dispositivos desta rede conseguem aceder\./);
+  assert.match(banner, /A Minha API está escutando fora deste computador\. Outros dispositivos desta rede conseguem acessar\./);
   assert.match(networkExposureNotice('A Rede EXO'), new RegExp('A Rede EXO ' + notice.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 });
 

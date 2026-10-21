@@ -444,7 +444,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
         <p class="eq-note">A chave fica no cofre deste computador. A tela não volta a mostrar a chave inteira.</p>
         <p class="notice">Nada fica público por padrão. O EXO fica em loopback.</p>
         <label class="eq-check"><input name="acknowledged" type="checkbox">Compreendo que o pedido pode sair deste computador.</label>
-        <label class="eq-check"><input name="confirm_remote" type="checkbox">Confirmo esta ligação.</label>
+        <label class="eq-check"><input name="confirm_remote" type="checkbox">Confirmo esta conexão.</label>
         <label class="eq-check"><input name="trusted_network" type="checkbox">Esta é uma rede privada confiável.</label>
       </details>
       <p class="eq-alert" id="eq-dialog-alert"></p>
