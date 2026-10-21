@@ -46,3 +46,4 @@ O progresso, o cancelamento e o erro ficam na janela e na lista. O resultado ent
 - Pasta MLX já quantizada, ou com quantização por camada, também fica de fora. GGUF não é convertido em MLX.
 - Se a RAM ou o disco, com 1 GiB de margem, não comportam a operação, ela não começa. A mesma conta é refeita imediatamente antes de cada etapa, porque a memória livre pode cair durante a calibração.
 - Há uma quantização por vez. O processo recebe um vetor de argumentos, sem shell. Os caminhos são resolvidos e precisam permanecer dentro da pasta de modelos. A amostra e os pesos não saem pela rede: o MLX herda `HF_HUB_OFFLINE` e, no Mac, o mesmo perfil que nega saída de rede da inferência.
+- O cancelamento e o fechamento normal do aplicativo enviam SIGTERM e, se o quantizador não sair, SIGKILL. Se o processo do aplicativo for morto com SIGKILL, o sistema não deixa o programa avisar o filho. Nesse caso o quantizador pode continuar até terminar sozinho.

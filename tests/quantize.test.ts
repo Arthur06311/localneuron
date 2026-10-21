@@ -22,7 +22,7 @@ import { basename, join, relative, resolve } from 'node:path';
 import { Core } from '../src/core.js';
 import { ModelLibrary } from '../src/model-library.js';
 import { LocalRuntime, type RuntimeModel } from '../src/runtime.js';
-import { otherAiBlocksQuantize, createApp } from '../src/server.js';
+import { otherAiBlocksQuantize, quantizationBlocksRequest, createApp } from '../src/server.js';
 import { mergeLibraryProgress } from '../public/library-progress.js';
 import {
   GGUF_BPW,
@@ -678,8 +678,8 @@ test('Instalar, importar e parar respeitam a quantização em andamento', async 
   } finally { rmSync(data, { recursive: true, force: true }); }
 });
 
-test('A quantização espera a outra IA, o cofre e o limite local, e o 409 de música não a bloqueia', async () => {
-  const idle = { chats: false, api: false, apiBusy: false, aux: false, pro: false, jobs: 0 };
+test('A quantização espera música, Editor e mídia, e o cancelamento fica fora do 409', async () => {
+  const idle = { chats: false, api: false, apiBusy: false, aux: false, pro: false, jobs: 0, music: false, editor: false, media: false };
   assert.equal(otherAiBlocksQuantize(idle), '');
   for (const busy of [
     { chats: true },
@@ -688,7 +688,20 @@ test('A quantização espera a outra IA, o cofre e o limite local, e o 409 de m�
     { aux: true },
     { pro: true },
     { jobs: 2 },
+    { music: true },
+    { editor: true },
+    { media: true },
   ]) assert.match(otherAiBlocksQuantize({ ...idle, ...busy }), /Aguarde a conversa, a Minha API ou a outra IA terminar antes de quantizar/);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/chats/11111111-1111-1111-1111-111111111111/send'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/sharing/start'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/music/start'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/music/generate'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/editor/plan'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/editor/apply'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/pro/jobs'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/model-library/quantize/cancel'), false);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/model-library/quantize'), false);
+  assert.equal(quantizationBlocksRequest(false, 'POST', '/v1/music/start'), false);
 
   const server = readFileSync(resolve('src/server.ts'), 'utf8');
   const blockers = server.split('\n').filter(line => line.includes('model-library\\/(load|unload|engine|import-mlx)'));
@@ -721,6 +734,72 @@ test('A quantização espera a outra IA, o cofre e o limite local, e o 409 de m�
     const locked = await app.inject({ method: 'POST', url: '/v1/model-library/quantize/estimate', headers, payload: { key: 'gguf:teste', preset: 'equilibrado' } });
     assert.equal(locked.statusCode, 423);
   } finally {
+    await app.close();
+    await core.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('A conferência de RAM do MLX soma os pesos e ignora o tamanho da pasta', async () => {
+  const { dir, models, tool } = layout();
+  tool.mlxAvailable = true;
+  const folder = join(models, 'modelo');
+  mkdirSync(folder);
+  writeFileSync(join(folder, 'config.json'), '{}\n');
+  const weights = 8 * 1024 * 1024;
+  writeFileSync(join(folder, 'weights.safetensors'), Buffer.alloc(64));
+  const fd = openSync(join(folder, 'weights.safetensors'), 'r+');
+  try { ftruncateSync(fd, weights); } finally { closeSync(fd); }
+  const output = estimateOutputBytes(weights, 16, 4.5);
+  const harness = mockLauncher();
+  let reads = 0;
+  const quantizer = new Quantizer(models, tool, {
+    launch: harness.launch,
+    memoryAvailable: () => {
+      reads += 1;
+      return reads === 1 ? 32 * GiB : output + GiB + 1024 * 1024;
+    },
+    diskFree: () => 32 * GiB,
+    sandbox: false,
+  });
+  try {
+    quantizer.start({ key: 'mlx:modelo', format: 'MLX', path: folder }, 'equilibrado');
+    const failed = await until(quantizer, job => job?.state === 'failed');
+    assert.match(failed?.error || '', /RAM livre insuficiente/);
+    assert.equal(harness.calls.length, 0);
+    assert.ok(reads >= 2);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('Com a quantização em andamento, chat, Minha API, música, Editor e Pro recebem 409', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'quantize-busy-'));
+  const core = new Core(dir, resolve('.'));
+  await core.init();
+  await core.setup('senha-fixture-quantizar');
+  const { app, library } = await createApp(core, 'quantize-busy');
+  const headers = { host: '127.0.0.1:4317', authorization: 'Bearer quantize-busy' };
+  library.quantizer.job = { id: 'job', key: 'gguf:teste', preset: 'equilibrado', state: 'quantizing', progress: 12, label: 'Quantizando', detail: 'GGUF Q4_K_M' };
+  try {
+    const blocked = [
+      '/v1/chats/11111111-1111-1111-1111-111111111111/send',
+      '/v1/sharing/start',
+      '/v1/music/start',
+      '/v1/music/generate',
+      '/v1/editor/plan',
+      '/v1/editor/apply',
+      '/v1/pro/jobs',
+    ];
+    for (const url of blocked) {
+      const response = await app.inject({ method: 'POST', url, headers, payload: {} });
+      assert.equal(response.statusCode, 409, url);
+      assert.match(response.json().error, /quantização/);
+    }
+    const cancel = await app.inject({ method: 'POST', url: '/v1/model-library/quantize/cancel', headers, payload: {} });
+    assert.notEqual(cancel.statusCode, 409);
+    const estimate = await app.inject({ method: 'POST', url: '/v1/model-library/quantize/estimate', headers, payload: { key: 'gguf:ausente', preset: 'equilibrado' } });
+    assert.notEqual(estimate.statusCode, 409);
+  } finally {
+    library.quantizer.job = null;
     await app.close();
     await core.close();
     rmSync(dir, { recursive: true, force: true });

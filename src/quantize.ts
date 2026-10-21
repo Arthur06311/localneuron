@@ -640,8 +640,20 @@ export class Quantizer {
     }
   }
 
+  private weightBytes(source: string) {
+    const stat = lstatSync(source);
+    if (!stat.isDirectory()) return stat.size;
+    let bytes = 0;
+    for (const entry of readdirSync(source, { withFileTypes: true })) {
+      if (!entry.isFile() || entry.isSymbolicLink() || !entry.name.endsWith('.safetensors')) continue;
+      bytes += lstatSync(join(source, entry.name)).size;
+    }
+    if (bytes <= 0) throw new Error('A pasta MLX não tem pesos .safetensors.');
+    return bytes;
+  }
+
   private guard(source: string, outputBytes: number, phase: 'imatrix' | 'gguf' | 'mlx') {
-    const sourceBytes = statSync(source).size;
+    const sourceBytes = this.weightBytes(source);
     const ram = phase === 'imatrix'
       ? Math.ceil(sourceBytes * 1.25 + GiB)
       : phase === 'mlx'
