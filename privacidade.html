@@ -76,7 +76,7 @@
 <li><strong>Terminal.</strong> Cada comando pede a sua autorização. Ele roda no seu computador, com as permissões do sistema, sem sandbox. O LocalNeuron não envia o comando aos servidores dele. Se o comando autorizado falar com a rede, essa saída é do próprio comando.</li>
 <li><strong>Instalação de motores, quando você pede.</strong> O motor de música baixa o pacote <code>uv</code> no PyPI e, em seguida, o <code>uv</code> busca as dependências. O código do ACE-Step vem de <code>codeload.github.com</code>. Os pesos vêm do Hugging Face. O MLX baixa rodas em <code>files.pythonhosted.org</code> e o Python empacotado no GitHub. Binários do llama.cpp, do Whisper e do stable-diffusion.cpp vêm de publicações no GitHub. Esses destinos veem o IP da conexão. A telemetria do Hugging Face fica desligada no processo que o LocalNeuron inicia.</li>
 <li><strong>Instalador do EXO.</strong> Só quando você pede para instalar o EXO no Mac. O download vem do GitHub do projeto EXO e é conferido pelo SHA-256.</li>
-<li><strong>Minha API.</strong> Nasce desligada. A porta padrão é 4320. O endereço tem de ser <code>127.0.0.1</code> ou um endereço privado deste computador. Fora do loopback, outro aparelho na rede local pode enviar o texto do pedido, com uma chave. O painel, as conversas, o terminal e os arquivos não são publicados por essa API. Acesso de navegador de outro site é recusado.</li>
+<li><strong>Minha API.</strong> Nasce desligada. A porta padrão é 4320. O endereço precisa ser <code>127.0.0.1</code> ou um endereço privado deste computador. Fora do loopback, outro aparelho na rede local pode enviar o texto do pedido, com uma chave. O painel, as conversas, o terminal e os arquivos não são publicados por essa API. Acesso de navegador de outro site é recusado.</li>
 <li><strong>Modo servidor.</strong> O pareamento fica na rede local, e o painel do aplicativo continua em <code>127.0.0.1</code>. O gateway não escuta em <code>0.0.0.0</code>. Se você ligar a exposição na rede local, o EXO 1.0.71 pode abrir a API em <code>0.0.0.0:52415</code>, sem autenticação, enquanto o nó estiver em execução. Fechar o aplicativo encerra o nó.</li>
 <li><strong>Assinatura.</strong> Só se o endereço do serviço de cobrança estiver configurado no aplicativo, e só quando você abre o pagamento, abre o portal ou atualiza a licença. Depois de uma consulta bem-sucedida, o aplicativo pode repetir a atualização cerca de uma vez por dia. Essa chamada envia o identificador da instalação e o segredo da licença. Não envia o chat.</li>
 </ul>
@@ -103,16 +103,16 @@
 </section>
 <section class="doc-block">
 <h2>Transferência internacional</h2>
-<p>Algum dado pode ser tratado fora do Brasil. A base é o art. 33 da LGPD: cláusulas do contrato com o operador (inciso II), execução de contrato ou de procedimentos preliminares relacionados a contrato (inciso IX, com o art. 7º, II) e, quando você liga um recurso que envia dado para fora, o seu consentimento específico e em destaque (inciso VIII).</p>
+<p>Algum dado pode ser tratado fora do Brasil. Quando o operador adota as cláusulas-padrão contratuais da Resolução CD/ANPD nº 19/2024, a transferência se apoia nelas (art. 33, II, da LGPD). Também pode se apoiar na execução de contrato ou de procedimentos preliminares (art. 33, IX, com o art. 7º, II) e, quando você liga um recurso que envia dado para fora, no seu consentimento específico (art. 33, VIII). Esta página não afirma que cada contrato foi depositado na ANPD, nem uma decisão de adequação.</p>
 <ul>
-<li><strong>GitHub.</strong> Hospeda este site, o download do aplicativo, o manifesto de atualização e binários de motores (llama.cpp, Whisper, stable-diffusion.cpp e o instalador do EXO). O código do ACE-Step sai de <code>codeload.github.com</code>. A GitHub pode tratar o IP e o registro técnico fora do Brasil. Base: cláusulas do serviço (art. 33, II) e a execução do download ou da consulta que você pediu (art. 33, IX).</li>
-<li><strong>Hugging Face.</strong> Pesquisa e download de modelos, e os pesos do motor de música, quando você pede. O token de leitura só segue para lá se você conectar uma conta. Base: art. 33, II e IX, e o consentimento de quem pede o download (art. 33, VIII).</li>
-<li><strong>Anthropic e xAI.</strong> Só se você criar o provedor, confirmar que o texto sai do computador e enviar a mensagem. Sem isso, nada é enviado. Base: consentimento específico (art. 33, VIII).</li>
-<li><strong>country.is.</strong> No idioma automático, quando o idioma do navegador não é um dos sete do site, o navegador envia o IP para sugerir o idioma pelo país aproximado. Escolher o idioma à mão impede essa consulta. Base: consentimento (art. 33, VIII), depois do aviso desta política e do botão Idioma e privacidade.</li>
-<li><strong>Stripe.</strong> Pagamento e portal do cliente, quando a compra estiver aberta. O cartão é digitado no site da Stripe. Base: cláusulas do contrato com a Stripe (art. 33, II) e execução da assinatura (art. 33, IX).</li>
-<li><strong>Supabase.</strong> Operadora do servidor de cobrança (Edge Functions) e do Postgres, os dois no Brasil, região <code>sa-east-1</code> (São Paulo), em <code>billing.localneuron.ai</code>. A Supabase mantém logs de plataforma, inclusive o IP do cliente que chega com o pedido HTTP, e pode tratá-los fora do Brasil. Esse IP não entra no Postgres. Base: cláusulas do contrato com a operadora (art. 33, II) e execução da assinatura (art. 33, IX).</li>
+<li><strong>GitHub.</strong> Hospeda este site, o download do aplicativo, o manifesto de atualização e binários de motores (llama.cpp, Whisper, stable-diffusion.cpp e o instalador do EXO). O código do ACE-Step sai de <code>codeload.github.com</code>. A GitHub pode tratar o IP e o registro técnico fora do Brasil. Base: cláusulas-padrão da Resolução CD/ANPD nº 19/2024, quando adotadas pelo operador (art. 33, II), e a execução do download ou da consulta que você pediu (art. 33, IX).</li>
+<li><strong>Hugging Face.</strong> Pesquisa e download de modelos, e os pesos do motor de música, quando você pede. O token de leitura só segue para lá se você conectar uma conta. Base: art. 33, II, com as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando o operador as adota, art. 33, IX, e o consentimento de quem pede o download (art. 33, VIII).</li>
+<li><strong>Anthropic e xAI.</strong> Só se você criar o provedor, confirmar que o texto sai do computador e enviar a mensagem. Sem isso, nada é enviado. Base: consentimento específico (art. 33, VIII) e, quando o operador as adota, as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 (art. 33, II).</li>
+<li><strong>country.is.</strong> No idioma automático, quando o idioma do navegador não é um dos sete do site, o navegador envia o IP para sugerir o idioma pelo país aproximado. A base desse tratamento é o legítimo interesse (art. 7º, IX da LGPD). Não há consentimento prévio. Escolher o idioma à mão impede essa consulta. A transferência internacional se apoia nas cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando o operador as adota (art. 33, II).</li>
+<li><strong>Stripe.</strong> Pagamento e portal do cliente, quando a compra estiver aberta. O cartão é digitado no site da Stripe. Base: cláusulas do contrato com a Stripe, inclusive as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando adotadas (art. 33, II), e execução da assinatura (art. 33, IX).</li>
+<li><strong>Supabase.</strong> Operadora do servidor de cobrança (Edge Functions) e do Postgres, os dois no Brasil, região <code>sa-east-1</code> (São Paulo), em <code>billing.localneuron.ai</code>. A Supabase mantém logs de plataforma, inclusive o IP do cliente que chega com o pedido HTTP, e pode tratá-los fora do Brasil. Esse IP não entra no Postgres. Base: cláusulas do contrato com a operadora, inclusive as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando adotadas (art. 33, II), e execução da assinatura (art. 33, IX).</li>
 </ul>
-<p>Onde a base é o contrato, vale o contrato dessa operadora. Onde a base é o consentimento, o envio só ocorre depois que você liga o recurso.</p>
+<p>O country.is não depende de consentimento prévio. Nos recursos que você liga, o envio para fora só ocorre depois dessa escolha.</p>
 </section>
 <section class="doc-block">
 <h2>O que o servidor de cobrança guarda</h2>
@@ -132,7 +132,7 @@
 </ul>
 <p>A tabela <code>events</code> guarda o identificador do aviso da Stripe (<code>id</code>) e o momento em que foi processado (<code>processed</code>).</p>
 <p>Não há coluna de nome, e-mail em claro, endereço ou número de cartão. O e-mail que você informar no pagamento fica na Stripe, não nesse banco.</p>
-<p>Para impedir um segundo teste grátis da mesma pessoa ou do mesmo cartão, o servidor guarda só um hash com chave (HMAC) da impressão digital do cartão e do e-mail. Esse registro está sendo acrescentado no PR #85. Não é o número do cartão nem o e-mail em claro, não é coluna da tabela <code>devices</code> nesta revisão, e serve só para essa verificação.</p>
+<p>A política do teste grátis é de uso único, por pessoa e por cartão. Para impedir um segundo teste, o servidor guarda o registro <code>billing.trial_identities</code>: só um hash com chave (HMAC) do e-mail e da impressão digital do cartão. Não guarda e-mail nem cartão em claro. A base é o legítimo interesse, para prevenção de fraude (art. 7º, IX da LGPD). O registro permanece enquanto for necessário para essa prevenção e, no máximo, por 5 anos; depois é apagado.</p>
 <p>A Supabase mantém logs de plataforma. O IP do cliente chega à Supabase com o pedido HTTP à Edge Function. Esse IP não é gravado no Postgres.</p>
 </section>
 <section class="doc-block">
@@ -142,6 +142,7 @@
 <li><strong>Identificador da instalação no servidor:</strong> enquanto o banco de cobrança existir. O programa não apaga essa linha sozinho, porque precisa reconhecer a instalação e a assinatura. Dá para pedir a exclusão quando não houver dever legal de guardar o registro.</li>
 <li><strong>Identificadores de avisos da Stripe:</strong> 90 dias, e depois o programa apaga.</li>
 <li><strong>Logs de plataforma:</strong> ficam com a Supabase, pelo prazo da política dela. O IP do cliente não entra no banco.</li>
+<li><strong>Registro <code>billing.trial_identities</code>:</strong> enquanto for necessário para impedir abuso do teste grátis e, no máximo, por 5 anos; depois é apagado.</li>
 <li><strong>Pagamento na Stripe:</strong> pelo tempo da política da Stripe e pelo tempo exigido para disputa de pagamento, defesa de direito e obrigação legal.</li>
 <li><strong>Este site:</strong> a escolha de idioma e de tema fica só neste navegador (<code>localneuron-language</code> e <code>localneuron-theme</code>). O site não grava essa escolha num servidor.</li>
 </ul>
@@ -149,7 +150,7 @@
 <section class="doc-block">
 <h2>Este site</h2>
 <p>O GitHub Pages hospeda localneuron.ai. Ao abrir a página, o GitHub pode manter registros técnicos de hospedagem, inclusive o IP, conforme a política do GitHub.</p>
-<p>No idioma automático, o site usa o idioma do navegador quando ele é um dos sete idiomas da página. Caso contrário, o navegador consulta o serviço country.is, que recebe o IP para sugerir o idioma pelo país aproximado. O site não pede GPS e não grava IP nem histórico de localização. A escolha manual fica só neste navegador. Você evita a consulta ao country.is escolhendo o idioma à mão.</p>
+<p>No idioma automático, o site usa o idioma do navegador quando ele é um dos sete idiomas da página. Caso contrário, o navegador consulta o serviço country.is, que recebe o IP para sugerir o idioma pelo país aproximado. A base é o legítimo interesse (art. 7º, IX da LGPD). Não há consentimento prévio. O site não pede GPS e não grava IP nem histórico de localização. A escolha manual fica só neste navegador e impede a consulta ao country.is.</p>
 <p>O botão “Idioma e privacidade” no rodapé da página inicial explica essa consulta. Esta política é o documento completo.</p>
 </section>
 <section class="doc-block">
@@ -169,7 +170,7 @@
 <ul>
 <li><strong>Contrato e passos anteriores ao contrato.</strong> Identificador, hash do segredo e identificadores da Stripe, para entregar a licença que você pedir.</li>
 <li><strong>Obrigação legal.</strong> Registros de cobrança necessários para dever fiscal e para o Código de Defesa do Consumidor.</li>
-<li><strong>Legítimo interesse.</strong> Limite de chamadas repetidas no servidor de cobrança, e a sugestão de idioma do site. A sugestão pode ser evitada com a escolha manual do idioma.</li>
+<li><strong>Legítimo interesse (art. 7º, IX).</strong> Limite de chamadas repetidas no servidor de cobrança. Consulta automática ao country.is para sugerir o idioma, sem consentimento prévio; a escolha manual impede essa consulta. Prevenção de fraude no teste grátis, pelo registro <code>billing.trial_identities</code>.</li>
 </ul>
 <p>O uso local do aplicativo, sem assinatura e sem os recursos de rede acima, não envia dado pessoal ao responsável.</p>
 </section>
@@ -181,7 +182,8 @@
 <li>confirmação de que tratamos dados seus e acesso a eles;</li>
 <li>correção de dado incompleto, errado ou desatualizado;</li>
 <li>anonimização, bloqueio ou exclusão de dado desnecessário, excessivo ou tratado em desacordo com a lei;</li>
-<li>informação das entidades públicas e privadas com as quais o responsável compartilhou dados (art. 18, VI da LGPD);</li>
+<li>eliminação dos dados pessoais tratados com o consentimento do titular, exceto nas hipóteses do art. 16 da LGPD (art. 18, VI);</li>
+<li>informação das entidades públicas e privadas com as quais o responsável compartilhou dados (art. 18, VII da LGPD);</li>
 <li>informação sobre a possibilidade de não autorizar um tratamento e sobre as consequências;</li>
 <li>revogação de consentimento, quando o tratamento se basear nele;</li>
 <li>oposição a tratamento irregular;</li>
