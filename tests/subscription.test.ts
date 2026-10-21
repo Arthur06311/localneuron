@@ -5,8 +5,8 @@ import {join,resolve} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createHmac,generateKeyPairSync,randomUUID} from 'node:crypto';
 import {Subscription,billingEndpoint,requiredFeature,verifyLease,type Lease} from '../src/subscription.js';
-import {billingConfigFromEnv,billingFunctionPath,createBillingService,handleBillingWeb,signLease,verifyWebhook,validateApprovedPrice,trialIdentityHmac} from '../src/billing-service.js';
-import {MemoryBillingStore,assertTransactionPoolerUrl,createPostgresStore,supabasePoolOptions} from '../src/billing-store.js';
+import {billingConfigFromEnv,billingFunctionPath,billingProxyMode,createBillingService,handleBillingWeb,signLease,verifyWebhook,validateApprovedPrice,trialIdentityHmac} from '../src/billing-service.js';
+import {MemoryBillingStore,assertConnectedRole,assertTransactionPoolerUrl,createPostgresStore,supabasePoolOptions} from '../src/billing-store.js';
 import type postgres from 'postgres';
 import {optimizeContext} from '../src/optimization.js';
 import {optionsSchema} from '../src/inference.js';
@@ -316,10 +316,46 @@ test('Postgres usa o pooler 6543 em sa-east-1, verify-full, e a migração não 
  assert.match(readFileSync(resolve('.github/workflows/ci.yml'),'utf8'),/deno check supabase\/functions\/\*\/index\.ts/);
  assert.match(readFileSync(resolve('.gitignore'),'utf8'),/supabase\/\.temp\//);
  assert.doesNotMatch(serviceSrc,/billing\.localneuron\.ai/);
- const deploy=readFileSync(resolve('docs/billing-deploy.md'),'utf8');assert.doesNotMatch(deploy,/billing\.localneuron\.ai/);assert.match(deploy,/--api-version=2025-03-31\.basil/);assert.match(deploy,/500\.000/);assert.match(deploy,/LOCALNEURON_BILLING_TRUST_PROXY=off/);assert.match(deploy,/cf-connecting-ip/);assert.match(deploy,/203\.0\.113\.50/);assert.match(deploy,/42501/);assert.doesNotMatch(deploy,/hop da direita/);
+ const deploy=readFileSync(resolve('docs/billing-deploy.md'),'utf8');assert.doesNotMatch(deploy,/billing\.localneuron\.ai/);assert.match(deploy,/--api-version=2025-03-31\.basil/);assert.match(deploy,/500\.000/);assert.match(deploy,/LOCALNEURON_BILLING_TRUST_PROXY=off/);assert.match(deploy,/cf-connecting-ip/);assert.match(deploy,/203\.0\.113\.50/);assert.match(deploy,/203\.0\.113\.77/);assert.match(deploy,/203\.0\.113\.5, 1\.1\.1\.1/);assert.match(deploy,/edge_logs/);assert.match(deploy,/não tem coluna de checksum/);assert.match(deploy,/inicialização a frio/);assert.match(deploy,/instalação e o token/);assert.match(deploy,/42501/);assert.doesNotMatch(deploy,/hop da direita/);assert.doesNotMatch(deploy,/arranque a frio/);assert.doesNotMatch(deploy,/checksum em `schema_migrations` confere/);
+ assert.match(serviceSrc,/LOCALNEURON_BILLING_TRUST_PROXY:'off'/);assert.match(storeSrc,/rolsuper/);assert.match(storeSrc,/rolbypassrls/);
+ assert.equal(billingProxyMode({}),'off');assert.equal(billingProxyMode({LOCALNEURON_BILLING_TRUST_PROXY:'supabase'}),'supabase');assert.equal(billingProxyMode({LOCALNEURON_BILLING_TRUST_PROXY:'off',SUPABASE_URL:'https://hifnfveklpskbtxyeqza.supabase.co'}),'off');
+ assert.throws(()=>assertConnectedRole(undefined),/billing_app/);assert.throws(()=>assertConnectedRole({session_user:'billing_app',current_user:'billing_app',rolsuper:true,rolbypassrls:false}),/bypassrls|superuser/);assert.doesNotThrow(()=>assertConnectedRole({session_user:'billing_app',current_user:'billing_app',rolsuper:false,rolbypassrls:false}));
  assert.equal((readFileSync(resolve('supabase/config.toml'),'utf8').match(/verify_jwt = false/g)||[]).length,2);
  assert.equal(existsSync('vercel.json'),false);assert.equal(existsSync('api/billing.js'),false);assert.equal(existsSync('billing/migrations/20261021000000_init.sql'),false);
  assert.equal(existsSync('fly.toml'),false);assert.equal(existsSync('billing/Dockerfile'),false);assert.equal(existsSync('billing/docker-entrypoint.sh'),false);assert.equal(existsSync('.dockerignore'),false);
+});
+test('A conexão confere rolsuper e rolbypassrls, não só o nome na URI',async()=>{
+ const url='postgresql://billing_app.projeto:senha@aws-0-sa-east-1.pooler.supabase.com:6543/postgres';
+ const good={session_user:'billing_app',current_user:'billing_app',rolsuper:false,rolbypassrls:false};
+ function connect(row:typeof good|null,failFirst=false){
+  let network=failFirst;
+  const sql=(strings:TemplateStringsArray)=>{
+   const text=strings.join('');
+   if(text.includes('pg_roles')){
+    if(network){network=false;return Promise.reject(Error('rede'));}
+    return Promise.resolve(row?[row]:[]);
+   }
+   return Promise.resolve([]);
+  };
+  (sql as unknown as {end:(opts?:unknown)=>Promise<void>}).end=async()=>{};
+  return sql as unknown as ReturnType<typeof postgres>;
+ }
+ const store=createPostgresStore(url,(()=>connect(good)) as unknown as typeof postgres);
+ await store.ping();await store.close();
+ const retry=createPostgresStore(url,(()=>connect(good,true)) as unknown as typeof postgres);
+ await assert.rejects(()=>retry.ping(),/rede/);
+ await retry.ping();await retry.close();
+ for(const row of [
+  {session_user:'billing_app',current_user:'billing_app',rolsuper:true,rolbypassrls:false},
+  {session_user:'billing_app',current_user:'billing_app',rolsuper:false,rolbypassrls:true},
+  {session_user:'postgres',current_user:'billing_app',rolsuper:false,rolbypassrls:false},
+  {session_user:'billing_app',current_user:'postgres',rolsuper:false,rolbypassrls:false},
+  null,
+ ]){
+  const refused=createPostgresStore(url,(()=>connect(row)) as unknown as typeof postgres);
+  await assert.rejects(()=>refused.ping(),/billing_app/);
+  await refused.close();
+ }
 });
 test('A função entrega o corpo cru do webhook e a saúde no caminho do Supabase',async()=>{
  const dir=temporary(),now=Date.now();
@@ -446,6 +482,16 @@ test('O limite usa cf-connecting-ip, cai em x-real-ip e ignora x-forwarded-for',
   assert.equal((await post({})).statusCode,200);
   assert.equal(seen[forwardedOnly],seen[forwardedOnly+1]);
   assert.notEqual(seen[forwardedOnly],seen[0]);assert.notEqual(seen[forwardedOnly],seen[realOnly]);
+  const v6=seen.length;
+  assert.equal((await post({'cf-connecting-ip':'2001:db8:1:2::1'})).statusCode,200);
+  assert.equal((await post({'cf-connecting-ip':'2001:db8:1:2:aaaa:bbbb:cccc:dddd'})).statusCode,200);
+  assert.equal(seen[v6],seen[v6+1]);
+  assert.equal((await post({'cf-connecting-ip':'2001:db8:1:3::1'})).statusCode,200);
+  assert.notEqual(seen[v6+2],seen[v6]);
+  assert.equal((await post({'cf-connecting-ip':'::ffff:203.0.113.8'})).statusCode,200);
+  assert.equal((await post({'cf-connecting-ip':'203.0.113.8'})).statusCode,200);
+  assert.equal(seen[v6+3],seen[v6+4]);
+  assert.notEqual(seen[v6+3],seen[v6]);
  }finally{await app.close();}
  const plain=new MemoryBillingStore();const plainSeen:string[]=[];
  plain.bumpRate=async(ipHash)=>{plainSeen.push(ipHash);return 1;};
@@ -453,7 +499,7 @@ test('O limite usa cf-connecting-ip, cai em x-real-ip e ignora x-forwarded-for',
  try{
   assert.equal((await unset.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'cf-connecting-ip':'203.0.113.5','x-forwarded-for':'192.0.2.50'},payload:{device}})).statusCode,200);
   assert.equal((await unset.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'cf-connecting-ip':'198.51.100.9','x-forwarded-for':'192.0.2.50'},payload:{device}})).statusCode,200);
-  assert.notEqual(plainSeen[0],plainSeen[1]);
+  assert.equal(plainSeen[0],plainSeen[1]);
  }finally{await unset.close();}
  const offStore=new MemoryBillingStore();const offSeen:string[]=[];
  offStore.bumpRate=async(ipHash)=>{offSeen.push(ipHash);return 1;};

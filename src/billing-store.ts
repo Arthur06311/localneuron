@@ -132,6 +132,12 @@ export function assertBillingRole(databaseUrl: string) {
   if (!user.startsWith('billing_app')) throw Error('DATABASE_URL precisa usar o papel billing_app.');
 }
 
+export function assertConnectedRole(row: { session_user?: unknown; current_user?: unknown; rolsuper?: unknown; rolbypassrls?: unknown } | undefined) {
+  if (!row || row.session_user !== 'billing_app' || row.current_user !== 'billing_app' || row.rolsuper !== false || row.rolbypassrls !== false) {
+    throw Error('A conexão precisa ser o papel billing_app, sem superuser e sem bypassrls.');
+  }
+}
+
 function mapDevice(row: any): DeviceRow {
   return {
     id: String(row.id), secret: String(row.secret),
@@ -148,40 +154,54 @@ export function createPostgresStore(databaseUrl: string, connect?: typeof postgr
   assertSaoPauloHost(databaseUrl);
   assertBillingRole(databaseUrl);
   const sql = (connect ?? postgres)(databaseUrl, supabasePoolOptions(env));
+  let roleOk: Promise<void> | null = null;
+  function ensureRole() {
+    if (roleOk) return roleOk;
+    roleOk = (async () => {
+      try {
+        const rows = await sql`select session_user as session_user, current_user as current_user, rolsuper, rolbypassrls from pg_catalog.pg_roles where rolname = session_user`;
+        assertConnectedRole(rows[0]);
+      } catch (err) {
+        if (!(err instanceof Error) || err.message !== 'A conexão precisa ser o papel billing_app, sem superuser e sem bypassrls.') roleOk = null;
+        throw err;
+      }
+    })();
+    return roleOk;
+  }
   return {
-    async getDevice(id) { const rows = await sql`select * from billing.devices where id = ${id} limit 1`; return rows[0] ? mapDevice(rows[0]) : undefined; },
-    async insertDevice(id, secret) { await sql`insert into billing.devices (id, secret) values (${id}, ${secret}) on conflict (id) do nothing`; },
-    async updateDevice(id, patch) {
+    async getDevice(id) { await ensureRole(); const rows = await sql`select * from billing.devices where id = ${id} limit 1`; return rows[0] ? mapDevice(rows[0]) : undefined; },
+    async insertDevice(id, secret) { await ensureRole(); await sql`insert into billing.devices (id, secret) values (${id}, ${secret}) on conflict (id) do nothing`; },
+    async updateDevice(id, patch) { await ensureRole();
       const keys = deviceColumns.filter(key => key in patch);
       if (!keys.length) return;
       const values: Record<string, string | number | null> = {};
       for (const key of keys) values[key] = (patch as any)[key] ?? null;
       await sql`update billing.devices set ${sql(values, ...keys)} where id = ${id}`;
     },
-    async findDeviceBySubscription(subscription) { const rows = await sql`select * from billing.devices where subscription = ${subscription} limit 1`; return rows[0] ? mapDevice(rows[0]) : undefined; },
-    async markTrial(id) { await sql`update billing.devices set trial_used = 1 where id = ${id}`; },
-    async claimCheckoutAttempt(id, attempt) {
+    async findDeviceBySubscription(subscription) { await ensureRole(); const rows = await sql`select * from billing.devices where subscription = ${subscription} limit 1`; return rows[0] ? mapDevice(rows[0]) : undefined; },
+    async markTrial(id) { await ensureRole(); await sql`update billing.devices set trial_used = 1 where id = ${id}`; },
+    async claimCheckoutAttempt(id, attempt) { await ensureRole();
       const rows = await sql`update billing.devices set checkout_attempt = coalesce(checkout_attempt, ${attempt}) where id = ${id} returning checkout_attempt`;
       if (!rows[0]) throw Error('Instalação não encontrada.');
       return String(rows[0].checkout_attempt);
     },
-    async hasEvent(id) { const rows = await sql`select id from billing.events where id = ${id} limit 1`; return rows.length > 0; },
-    async saveEvent(id, processed) { await sql`insert into billing.events (id, processed) values (${id}, ${processed}) on conflict (id) do nothing`; },
-    async purgeEvents(before) { await sql`delete from billing.events where processed < ${before}`; },
-    async rememberIdentity(hmac, subscription, created) {
+    async hasEvent(id) { await ensureRole(); const rows = await sql`select id from billing.events where id = ${id} limit 1`; return rows.length > 0; },
+    async saveEvent(id, processed) { await ensureRole(); await sql`insert into billing.events (id, processed) values (${id}, ${processed}) on conflict (id) do nothing`; },
+    async purgeEvents(before) { await ensureRole(); await sql`delete from billing.events where processed < ${before}`; },
+    async rememberIdentity(hmac, subscription, created) { await ensureRole();
       const inserted = await sql`insert into billing.trial_identities (hmac, subscription, created) values (${hmac}, ${subscription}, ${created}) on conflict (hmac) do nothing returning subscription`;
       if (inserted[0]) return String(inserted[0].subscription);
       const rows = await sql`select subscription from billing.trial_identities where hmac = ${hmac} limit 1`;
       return String(rows[0].subscription);
     },
-    async purgeIdentities(before) { await sql`delete from billing.trial_identities where created < ${before}`; },
-    async listIdentities() { const rows = await sql`select hmac, subscription from billing.trial_identities`; return rows.map(row => ({ hmac: String(row.hmac), subscription: String(row.subscription) })); },
-    async bumpRate(ipHash, route, windowStart) {
+    async purgeIdentities(before) { await ensureRole(); await sql`delete from billing.trial_identities where created < ${before}`; },
+    async listIdentities() { await ensureRole(); const rows = await sql`select hmac, subscription from billing.trial_identities`; return rows.map(row => ({ hmac: String(row.hmac), subscription: String(row.subscription) })); },
+    async bumpRate(ipHash, route, windowStart) { await ensureRole();
       const rows = await sql`insert into billing.rate_windows (ip_hash, route, window_start, hits) values (${ipHash}, ${route}, ${windowStart}, 1) on conflict (ip_hash, route, window_start) do update set hits = billing.rate_windows.hits + 1 returning hits`;
       return Number(rows[0].hits);
     },
-    async purgeRateWindows(before) { await sql`delete from billing.rate_windows where window_start < ${before}`; },
-    async ping() { await sql`select 1`; },
+    async purgeRateWindows(before) { await ensureRole(); await sql`delete from billing.rate_windows where window_start < ${before}`; },
+    async ping() { await ensureRole(); await sql`select 1`; },
     async close() { await sql.end({ timeout: 5 }); },
   };
 }

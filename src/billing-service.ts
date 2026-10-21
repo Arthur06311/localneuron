@@ -65,8 +65,14 @@ export function billingConfigFromEnv(env:Env=process.env):BillingConfig {
   if(parsed.LOCALNEURON_BILLING_RATE_HMAC_KEY===parsed.LOCALNEURON_BILLING_TRIAL_HMAC_KEY)throw Error('LOCALNEURON_BILLING_RATE_HMAC_KEY precisa ser diferente de LOCALNEURON_BILLING_TRIAL_HMAC_KEY.');
   return {databaseUrl:parsed.DATABASE_URL,secretKey:parsed.STRIPE_SECRET_KEY,webhookSecret:parsed.STRIPE_WEBHOOK_SECRET,monthlyPriceId:parsed.STRIPE_MONTHLY_PRICE_ID,yearlyPriceId:parsed.STRIPE_YEARLY_PRICE_ID,privateKey:readPrivateKey(env),publicUrl:parsed.LOCALNEURON_BILLING_PUBLIC_URL,trialHmacKey:parsed.LOCALNEURON_BILLING_TRIAL_HMAC_KEY,rateHmacKey:parsed.LOCALNEURON_BILLING_RATE_HMAC_KEY};
 }
+function runningOnSupabaseEdge() {
+  const deno=(globalThis as {Deno?:{serve?:unknown}}).Deno;
+  return typeof deno?.serve==='function';
+}
 export function billingProxyMode(env:Env=process.env):'supabase'|'off' {
-  return env.LOCALNEURON_BILLING_TRUST_PROXY==='off'?'off':'supabase';
+  if(env.LOCALNEURON_BILLING_TRUST_PROXY==='off')return 'off';
+  if(env.LOCALNEURON_BILLING_TRUST_PROXY==='supabase'||runningOnSupabaseEdge())return 'supabase';
+  return 'off';
 }
 function singleIp(value:unknown) {
   const raw=Array.isArray(value)?value[value.length-1]:value;
@@ -75,9 +81,31 @@ function singleIp(value:unknown) {
   if(!token||token.length>64||token.includes(',')||!/^[0-9a-fA-F:.]+$/.test(token)||token.includes('..'))return '';
   return token;
 }
+function ipv4(token:string) {
+  return /^(?:25[0-5]|2[0-4]\d|[01]?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|[01]?\d?\d)){3}$/.test(token)?token:'';
+}
+/** IPv6 rate-limit key is the /64 prefix. The interface id must not open another bucket. */
+function rateLimitIp(ip:string) {
+  if(ip.includes(':')&&ip.includes('.'))return ipv4(ip.slice(ip.lastIndexOf(':')+1))||ip;
+  if(!ip.includes(':'))return ip;
+  const halves=ip.split('::');
+  if(halves.length>2)return ip;
+  const groupsOf=(part:string)=>part?part.split(':'):[];
+  const head=groupsOf(halves[0]);
+  const tail=halves.length===2?groupsOf(halves[1]):[];
+  if(halves.length===1&&head.length!==8)return ip;
+  const missing=8-head.length-tail.length;
+  if(missing<0)return ip;
+  const groups=[...head,...Array.from({length:missing},()=>'0'),...tail];
+  if(groups.length!==8||groups.some(group=>!/^[0-9a-fA-F]{1,4}$/.test(group)))return ip;
+  const prefix=groups.slice(0,4).map(group=>parseInt(group,16).toString(16));
+  let end=4;
+  while(end>0&&prefix[end-1]==='0')end--;
+  return end===0?'::':prefix.slice(0,end).join(':')+'::';
+}
 function clientIp(headers:Record<string,unknown>,fallback:string,mode:'supabase'|'off') {
-  if(mode!=='supabase')return fallback;
-  return singleIp(headers['cf-connecting-ip'])||singleIp(headers['x-real-ip'])||fallback;
+  const chosen=mode==='supabase'?(singleIp(headers['cf-connecting-ip'])||singleIp(headers['x-real-ip'])||fallback):fallback;
+  return rateLimitIp(chosen);
 }
 function publicBase(publicUrl:string) {
   const origin=new URL(publicUrl);
@@ -354,7 +382,8 @@ export async function handleBillingWeb(app:Awaited<ReturnType<typeof createBilli
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
   const host=z.enum(['127.0.0.1','0.0.0.0']).default('127.0.0.1').parse(process.env.LOCALNEURON_BILLING_HOST);
-  const app=await createBillingFromEnv();
+  const localEnv:Env={...process.env,LOCALNEURON_BILLING_TRUST_PROXY:'off'};
+  const app=await createBillingFromEnv(localEnv);
   await app.listen({host,port:Number(process.env.LOCALNEURON_BILLING_PORT||4330)});
   for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>void app.close().then(()=>process.exit(0)));
 }
