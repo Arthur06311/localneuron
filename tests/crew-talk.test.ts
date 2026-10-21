@@ -37,7 +37,7 @@ async function model(fx: Awaited<ReturnType<typeof open>>, botId: string, name: 
   assert.equal(response.statusCode, 200);
 }
 
-test('o coordenador pede um colega por ronda e a resposta fica na conversa da equipa', async () => {
+test('o coordenador pede um colega por rodada e a resposta fica na conversa da equipe', async () => {
   const fx = await open();
   try {
     const { coordinator, colleagues } = await linked(fx);
@@ -50,12 +50,13 @@ test('o coordenador pede um colega por ronda e a resposta fica na conversa da eq
       calls.push(input.botId);
       assert.ok(input.maxTokens <= 1024);
       if (input.botId === coordinator.bot_id && calls.filter(id => id === coordinator.bot_id).length === 1) {
+        assert.match(input.messages.map(message => message.content).join('\n'), /Usuário: Prepara o resumo/);
         return { text: `PARA: ${colleague.bot_id}\nPEDIDO: resume o pedido\nPARA: ${other.bot_id}\nPEDIDO: ignora este segundo pedido` };
       }
       if (input.botId === colleague.bot_id) return { text: 'O resumo do colega.' };
       const heard = input.messages.map(message => message.content).join('\n');
       assert.match(heard, /O resumo do colega/);
-      return { text: 'FIM: a equipa fechou o pedido.' };
+      return { text: 'FIM: a equipe fechou o pedido.' };
     };
     const result = await runCrewTalk(fx.crews, complete, 'Prepara o resumo.', new AbortController().signal);
     assert.equal(result.stopped, 'done');
@@ -74,7 +75,7 @@ test('o coordenador pede um colega por ronda e a resposta fica na conversa da eq
   }
 });
 
-test('a conversa para no máximo de rondas, nos tokens, no próprio coordenador e no cancelamento', async () => {
+test('a conversa para no máximo de rodadas, nos tokens, no próprio coordenador e no cancelamento', async () => {
   const fx = await open();
   try {
     const { coordinator, colleagues } = await linked(fx);
@@ -113,7 +114,7 @@ test('a conversa para no máximo de rondas, nos tokens, no próprio coordenador 
     }, 'Não te peças.', new AbortController().signal);
     assert.equal(self.stopped, 'self');
     assert.equal(calls, 1);
-    assert.match(self.messages.map(message => message.content).join('\n'), /não se pede a si próprio/);
+    assert.match(self.messages.map(message => message.content).join('\n'), /não pede a si mesmo/);
 
     await fx.core.store.db.query('DELETE FROM crew_messages');
     const controller = new AbortController();

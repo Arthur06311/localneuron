@@ -103,7 +103,7 @@ Rotas autenticadas, cofre aberto, com limite por rota (`global: false`): leitura
 - `PATCH /v1/crews/members/:id`: mascote, coordenador ou `provider_id`.
 - `POST /v1/crews/members/:id/model`: `{model}` e Idempotency-Key. Grava o modelo no bot. Um modelo de 70B ou mais, EXO, outro computador, Anthropic ou xAI só pode ficar no coordenador.
 - `GET|POST /v1/crews/members/:id/messages` e `GET /v1/crews/team/messages`.
-- `POST /v1/crews/talk`: `{content}`. O coordenador pede no máximo um colega por ronda, nunca a si próprio, e para em `max_rounds`, `max_tokens` ou se a ligação cair. Colegas ficam no modelo deste computador. O coordenador pode usar Anthropic, xAI, outro computador ou EXO em loopback; o endereço e o aviso são revistos na hora da chamada, o redirecionamento não é seguido e o token não volta na resposta. A resposta traz `stopped`, `rounds`, `tokens` e a transcrição.
+- `POST /v1/crews/talk`: `{content}`. O coordenador pede no máximo um colega por rodada, nunca a si mesmo, e para em `max_rounds`, `max_tokens` ou se a conexão cair. Colegas ficam no modelo deste computador. O coordenador pode usar Anthropic, xAI, outro computador ou EXO em loopback; o endereço e o aviso são revistos na hora da chamada, o redirecionamento não é seguido e o token não volta na resposta. A resposta traz `stopped`, `rounds`, `tokens` e a transcrição.
 - `POST /v1/crews/settings`: `{max_rounds, max_tokens}`.
 - `POST|PATCH|DELETE /v1/crews/providers`: metadados do provedor. O token vai para o cofre cifrado e a resposta só devolve `has_token` e `token_hint`.
 

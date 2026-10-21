@@ -69,7 +69,7 @@ export function parseEndpoint(value: string): ParsedEndpoint {
     throw new Error('Endereço inválido.');
   }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') throw new Error('Use HTTP ou HTTPS.');
-  if (url.username || url.password || url.search || url.hash) throw new Error('O endereço não pode ter utilizador, senha, consulta ou fragmento.');
+  if (url.username || url.password || url.search || url.hash) throw new Error('O endereço não pode ter usuário, senha, consulta ou fragmento.');
   const path = url.pathname.replace(/\/+$/, '');
   if (path !== '' && path !== '/v1') throw new Error('Use só a origem do serviço, com o caminho /v1 se for uma API compatível.');
   const hostClass = classifyHost(url.hostname);
@@ -142,7 +142,7 @@ export function planProvider(input: unknown): ProviderPlan {
     if (value.endpoint?.trim() && value.endpoint.replace(/\/+$/, '') !== endpoint) {
       throw new Error(value.kind === 'anthropic' ? 'A Anthropic usa apenas https://api.anthropic.com.' : 'A xAI usa apenas https://api.x.ai.');
     }
-    if (!value.acknowledged || !value.confirm_remote) throw new Error('Esta ligação sai do computador. Confirme o aviso antes de a guardar.');
+    if (!value.acknowledged || !value.confirm_remote) throw new Error('Esta conexão sai do computador. Confirme o aviso antes de salvá-la.');
     return { kind: value.kind, label: value.label, endpoint, model, leaves_computer: true, trusted_network: false, acknowledged: true, confirm_remote: true, enabled, token };
   }
   const endpoint = value.endpoint?.trim();
@@ -150,7 +150,7 @@ export function planProvider(input: unknown): ProviderPlan {
   const parsed = parseEndpoint(endpoint);
   const leaves = parsed.hostClass !== 'loopback';
   if (leaves) {
-    if (!value.acknowledged || !value.confirm_remote) throw new Error('Esta ligação sai do computador. Confirme o aviso antes de a guardar.');
+    if (!value.acknowledged || !value.confirm_remote) throw new Error('Esta conexão sai do computador. Confirme o aviso antes de salvá-la.');
     if (parsed.protocol !== 'https:' && !(parsed.hostClass === 'private' && value.trusted_network)) {
       throw new Error('Num outro computador, use HTTPS ou uma rede privada marcada como confiável.');
     }

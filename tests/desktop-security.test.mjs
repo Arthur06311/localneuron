@@ -227,17 +227,23 @@ test('O navegador da IA segura o pedido até o DNS confirmar o destino', async (
   }
   const agent = createAgentWindow(AgentWindow, { resolveHost: async hostname => hostname === 'example.com' });
   const listener = agent.webContents.session.webRequest.listener;
-  assert.deepEqual(agent.webContents.session.webRequest.filter.urls, ['http://*/*', 'https://*/*']);
+  assert.deepEqual(agent.webContents.session.webRequest.filter.urls, ['http://*/*', 'https://*/*', 'ws://*/*', 'wss://*/*']);
   const decisions = [];
   listener({ url: 'http://192.168.0.8/' }, result => decisions.push(['private', result]));
+  listener({ url: 'ws://127.0.0.1/socket' }, result => decisions.push(['ws-loopback', result]));
   listener({ url: 'https://example.com/a' }, result => decisions.push(['public', result]));
+  listener({ url: 'wss://example.com/socket' }, result => decisions.push(['wss', result]));
   listener({ url: 'https://rebind.example/a' }, result => decisions.push(['rebind', result]));
-  assert.deepEqual(decisions, [['private', { cancel: true }]]);
+  listener({ url: 'wss://rebind.example/socket' }, result => decisions.push(['wss-rebind', result]));
+  assert.deepEqual(decisions, [['private', { cancel: true }], ['ws-loopback', { cancel: true }]]);
   await new Promise(resolve => setImmediate(resolve));
   assert.deepEqual(decisions, [
     ['private', { cancel: true }],
+    ['ws-loopback', { cancel: true }],
     ['public', { cancel: false }],
+    ['wss', { cancel: false }],
     ['rebind', { cancel: true }],
+    ['wss-rebind', { cancel: true }],
   ]);
 });
 

@@ -369,6 +369,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.get('/v1/computer-control',async()=>computerControl.status());
   app.post('/v1/computer-control',async request=>{const v=z.strictObject({enabled:z.boolean()}).parse(body(request));if(!v.enabled)return computerControl.stop();if(!computerControl.available)throw Error('Abra o aplicativo desktop para usar este controle.');computerControl.enabled=true;return computerControl.status();});
   app.get('/v1/connections',{ config: { rateLimit: { max: 120, timeWindow: '1 minute' } } },async()=>connections.list());
+  app.get('/v1/connections/:id',{ config: { rateLimit: { max: 120, timeWindow: '1 minute' } } },async request=>connections.get(id(request)));
   app.post('/v1/connections',async request=>connections.add(body(request)));
   app.patch('/v1/connections/:id',async request=>{if(chats.busy)throw Error('Pare a resposta antes de reconectar.');return connections.update(id(request),body(request));});
   app.post('/v1/connections/:id/test',async request=>{if(chats.busy)throw Error('Pare a resposta antes de reconectar.');return connections.test(id(request));});

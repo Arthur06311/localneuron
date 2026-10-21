@@ -48,7 +48,7 @@ test('O código de 6 dígitos expira e trava depois de cinco tentativas', async 
   }
 });
 
-test('A máquina pareada fala com o EXO simulado, fica no registo e pode ser revogada', async () => {
+test('A máquina pareada fala com o EXO simulado, fica no registro e pode ser revogada', async () => {
   const { dir, gateway, calls } = harness();
   try {
     const issued = gateway.createCode();

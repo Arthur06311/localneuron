@@ -149,6 +149,9 @@ test('editar conexão valida como uma nova e preserva o token omitido',async()=>
   assert.equal(edited?.command,process.execPath);
   assert.deepEqual(edited?.args,[file]);
   assert.equal(edited?.connected,true);
+  assert.equal('token' in edited!,false);
+  for(const item of c.list()){assert.equal('command' in item,false);assert.equal('args' in item,false);assert.equal('token' in item,false);}
+  const detail=c.get(row!.id);assert.equal(detail.command,process.execPath);assert.deepEqual(detail.args,[file]);assert.equal('token' in detail,false);
   assert.equal(storedConnection(dir,vault).find(item=>item.id===row!.id)?.token,'credencial-ficticia-secreta');
   await assert.rejects(()=>c.update(row!.id,{name:'Shell',command:'/bin/bash',args:['-c','id']}),/shell|absoluto/);
   await assert.rejects(()=>c.update(row!.id,{name:'Privada',url:'https://192.168.1.5/mcp',command:'',args:[],trusted_network:false}),/HTTPS com nome público/);
@@ -161,4 +164,38 @@ test('editar conexão valida como uma nova e preserva o token omitido',async()=>
   assert.equal(storedConnection(dir,vault).find(item=>item.id===row!.id)?.token,'token-novo-de-teste');
   assert.equal(readFileSync(join(dir,'connections.enc.json'),'utf8').includes('token-novo-de-teste'),false);
  }finally{await c.close();rmSync(dir,{recursive:true,force:true});}
+});
+
+test('trocar a origem sem token novo apaga o Bearer e não o envia',async()=>{
+ const dir=mkdtempSync(join(tmpdir(),'neuron-mcp-origin-')),vault=new Vault(dir);vault.initialize('senha-de-testes-mcp');
+ const seen:{url:string;authorization:string}[]=[];
+ const record=(label:string)=>createServer((req,res)=>{seen.push({url:label+(req.url??''),authorization:String(req.headers.authorization??'')});req.resume();res.writeHead(404);res.end();});
+ const first=record('a'),second=record('b');
+ const c=new Connections(dir,vault);
+ try{
+  const portA=await listen(first),portB=await listen(second),secret='segredo-antigo-de-teste';
+  const row=await c.add({name:'Origem',url:`http://127.0.0.1:${portA}/mcp`,token:secret});
+  assert.ok(row);
+  assert.ok(seen.some(hit=>hit.url.startsWith('a')&&hit.authorization.includes(secret)));
+  await c.update(row.id,{name:'Origem',url:`http://127.0.0.1:${portA}/outro`});
+  assert.equal(storedConnection(dir,vault)[0]?.token,secret);
+  const before=seen.length;
+  await c.update(row.id,{name:'Outra origem',url:`http://127.0.0.1:${portB}/mcp`});
+  assert.equal(storedConnection(dir,vault)[0]?.token,'');
+  assert.equal(readFileSync(join(dir,'connections.enc.json'),'utf8').includes(secret),false);
+  const moved=seen.slice(before).filter(hit=>hit.url.startsWith('b'));
+  assert.ok(moved.length>0);
+  assert.ok(moved.every(hit=>!hit.authorization.includes(secret)&&!hit.url.includes(secret)));
+  await c.update(row.id,{name:'Outra origem',url:`http://127.0.0.1:${portB}/mcp`,token:'novo-token-informado'});
+  assert.equal(storedConnection(dir,vault)[0]?.token,'novo-token-informado');
+  assert.ok(seen.some(hit=>hit.authorization.includes('novo-token-informado')));
+  await c.update(row.id,{name:'Outra origem',url:`http://127.0.0.1:${portB}/mcp`,token:''});
+  assert.equal(storedConnection(dir,vault)[0]?.token,'');
+  for(const item of c.list()){assert.equal('command' in item,false);assert.equal('args' in item,false);assert.equal('token' in item,false);}
+  const detail=c.get(row.id);
+  assert.equal(detail.command,'');
+  assert.deepEqual(detail.args,[]);
+  assert.equal('token' in detail,false);
+  assert.throws(()=>c.get('00000000-0000-4000-8000-000000000000'),/não encontrada/);
+ }finally{await c.close();await stop(first);await stop(second);rmSync(dir,{recursive:true,force:true});}
 });

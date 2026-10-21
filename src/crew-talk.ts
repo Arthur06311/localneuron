@@ -61,8 +61,8 @@ function channelFor(member: { coordinator: boolean; model: string }, provider: {
 }
 
 /**
- * Uma ronda pede no máximo um colega, nunca o próprio coordenador.
- * Para quando acaba as rondas, os tokens, o pedido, ou a ligação é cancelada.
+ * Uma rodada pede no máximo um colega, nunca o próprio coordenador.
+ * Para quando acabam as rodadas, os tokens, o pedido, ou a conexão é cancelada.
  * Só o coordenador pode usar um provedor que sai deste computador.
  */
 export async function runCrewTalk(crews: Crews, complete: TalkComplete, content: string, signal: AbortSignal) {
@@ -93,7 +93,7 @@ export async function runCrewTalk(crews: Crews, complete: TalkComplete, content:
 
   await crews.addTeamUserMessage(content, 1);
   let used = usedBefore + incoming;
-  const heard: string[] = [`Utilizador: ${clip(content, 400)}`];
+  const heard: string[] = [`Usuário: ${clip(content, 400)}`];
 
   for (let round = 1; round <= settings.max_rounds; round += 1) {
     if (signal.aborted) return finish(crews, 'abort', round, used, settings.max_rounds, settings.max_tokens);
@@ -107,11 +107,11 @@ export async function runCrewTalk(crews: Crews, complete: TalkComplete, content:
     }
     const target = seatFor(parsed.id, seats);
     if (target === 'self') {
-      await crews.recordNotice('O coordenador não se pede a si próprio. A ronda para aqui.', round);
+      await crews.recordNotice('O coordenador não pede a si mesmo. A rodada para aqui.', round);
       return finish(crews, 'self', round, used, settings.max_rounds, settings.max_tokens);
     }
     if (!target) {
-      await crews.recordNotice('O coordenador pediu alguém que não está na equipe. A ronda para aqui.', round);
+      await crews.recordNotice('O coordenador pediu alguém que não está na equipe. A rodada para aqui.', round);
       return finish(crews, 'done', round, used, settings.max_rounds, settings.max_tokens);
     }
     if (target.channel !== 'local') {
@@ -164,7 +164,7 @@ function coordinatorPrompt(coordinator: Seat, colleagues: Seat[], heard: string[
 
 function colleaguePrompt(seat: Seat, task: string): TalkMessage[] {
   return [
-    { role: 'system', content: `És ${seat.name}. O teu papel é ${seat.role || 'colega'}. ${clip(seat.instructions, 1200)} Responde só ao pedido, em português. Não delegues.` },
+    { role: 'system', content: `Você é ${seat.name}. Seu papel é ${seat.role || 'colega'}. ${clip(seat.instructions, 1200)} Responde só ao pedido, em português. Não delegue.` },
     { role: 'user', content: task },
   ];
 }
