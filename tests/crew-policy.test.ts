@@ -25,6 +25,17 @@ test('Outro computador exige confirmação, token e TLS ou rede privada', () => 
   assert.equal(classifyHost('127.0.0.1'), 'loopback');
   assert.equal(classifyHost('10.1.1.1'), 'private');
   assert.equal(classifyHost('8.8.8.8'), 'public');
+  const nas = planProvider({ kind: 'openai', label: 'NAS', endpoint: 'http://nas.lan:1234/v1', ...remote, trusted_network: true });
+  assert.equal(nas.endpoint, 'http://nas.lan:1234/v1');
+  assert.equal(classifyHost('printer.local'), 'private');
+  const printer = planProvider({ kind: 'openai', label: 'Impressora', endpoint: 'http://printer.local:1234/v1', ...remote, trusted_network: true });
+  assert.equal(printer.endpoint, 'http://printer.local:1234/v1');
+  assert.throws(() => planProvider({ kind: 'openai', label: 'NAS', endpoint: 'http://nas.lan:1234/v1', ...remote, trusted_network: false }), /HTTPS|confiável/);
+  const home = planProvider({ kind: 'openai', label: 'Casa', endpoint: 'https://box.home.arpa/v1', ...remote });
+  assert.equal(home.endpoint, 'https://box.home.arpa/v1');
+  const tailscale = planProvider({ kind: 'openai', label: 'VPN', endpoint: 'https://mac.ts.net/v1', ...remote });
+  assert.equal(tailscale.endpoint, 'https://mac.ts.net/v1');
+  assert.throws(() => planProvider({ kind: 'openai', label: 'Meta', endpoint: 'https://metadata.google.internal/v1', ...remote, trusted_network: true }), /recusado/);
 });
 
 test('Anthropic e xAI ficam marcados como saída do computador e não aceitam outro host', () => {

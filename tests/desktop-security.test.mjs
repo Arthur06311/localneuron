@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import Module from 'node:module';
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 
 const require = createRequire(import.meta.url);
 const { createMainWindow, createAgentWindow } = require(resolve('desktop/window-policy.cjs'));
@@ -75,8 +75,16 @@ test('window.open e a navegação externa só saem da app em http/https público
   for (const url of [
     'https://example.com:8443/',
     'http://127.0.0.1:4318/',
+    'http://127.0.0.2/',
     'http://localhost/',
     'http://[::1]/',
+    'http://[::ffff:127.0.0.1]/',
+    'http://10.0.0.1/',
+    'http://192.168.1.1/',
+    'http://169.254.169.254/',
+    'http://metadata.google.internal/',
+    'http://printer.local/',
+    'http://2130706433/',
     'https://user:secret@example.com/',
     'file:///etc/passwd',
     'javascript:alert(1)',
@@ -167,4 +175,88 @@ test('O preload expõe só os canais IPC permitidos', async () => {
   assert.doesNotMatch(source, /\bshell\b/);
   assert.doesNotMatch(source, /ipcRenderer\.(send|sendSync|postMessage)/);
   assert.match(source, /exposeDesktopApi\(contextBridge, ipcRenderer\)/);
+});
+
+test('Link externo só abre depois que o DNS confirma um endereço público', async () => {
+  const BrowserWindow = fakeBrowserWindow();
+  const opened = [];
+  const shell = { openExternal(url) { opened.push(url); return Promise.resolve(); } };
+  const main = createMainWindow(BrowserWindow, {
+    preload: '/preload.cjs',
+    origin: 'http://127.0.0.1:4318',
+    shell,
+    resolveHost: async hostname => hostname === 'example.com',
+  });
+  assert.deepEqual(main.webContents.openHandler({ url: 'https://example.com/docs' }), { action: 'deny' });
+  assert.deepEqual(main.webContents.openHandler({ url: 'https://rebind.example/x' }), { action: 'deny' });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(opened, ['https://example.com/docs']);
+
+  class AgentWindow extends fakeBrowserWindow() {
+    isDestroyed() { return false; }
+    loadURL(url) { this.loaded = url; }
+  }
+  const agent = createAgentWindow(AgentWindow, { resolveHost: async hostname => hostname === 'example.com' });
+  agent.webContents.stop = () => { agent.stopped = (agent.stopped || 0) + 1; };
+  const page = navigationEvent();
+  agent.webContents.handlers['will-navigate'](page, 'https://example.com:8443/path');
+  assert.equal(page.prevented, false);
+  const redirect = navigationEvent();
+  agent.webContents.handlers['will-redirect'](redirect, 'http://example.com/a');
+  assert.equal(redirect.prevented, false);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(agent.loaded, undefined);
+  assert.equal(agent.stopped, undefined);
+  const blocked = navigationEvent();
+  agent.webContents.handlers['will-redirect'](blocked, 'http://192.168.0.8/');
+  assert.equal(blocked.prevented, true);
+  const rebind = navigationEvent();
+  agent.webContents.handlers['will-redirect'](rebind, 'https://rebind.example/x');
+  assert.equal(rebind.prevented, false);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(agent.stopped, 1);
+  assert.equal(agent.loaded, undefined);
+});
+
+test('Fuses deixam o servidor local de pé e fecham os injetores', () => {
+  const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+  const { DESIRED_FUSES, fuseFlipConfig, electronBinary } = require(resolve('desktop/fuses.cjs'));
+  const config = fuseFlipConfig(FuseV1Options, FuseVersion);
+  assert.equal(config.version, FuseVersion.V1);
+  assert.equal(config.resetAdHocDarwinSignature, true);
+  assert.equal(config[FuseV1Options.RunAsNode], true);
+  assert.equal(config[FuseV1Options.EnableCookieEncryption], true);
+  assert.equal(config[FuseV1Options.EnableNodeOptionsEnvironmentVariable], false);
+  assert.equal(config[FuseV1Options.EnableNodeCliInspectArguments], false);
+  assert.equal(config[FuseV1Options.EnableEmbeddedAsarIntegrityValidation], false);
+  assert.equal(config[FuseV1Options.OnlyLoadAppFromAsar], false);
+  assert.equal(config[FuseV1Options.LoadBrowserProcessSpecificV8Snapshot], false);
+  assert.equal(config[FuseV1Options.GrantFileProtocolExtraPrivileges], false);
+  assert.equal(DESIRED_FUSES.runAsNode, true);
+  assert.equal(electronBinary('/out', 'linux'), join('/out', 'LocalNeuron'));
+  assert.equal(electronBinary('/out', 'win32'), join('/out', 'LocalNeuron.exe'));
+  assert.equal(electronBinary('/out', 'darwin'), join('/out', 'LocalNeuron.app', 'Contents', 'MacOS', 'LocalNeuron'));
+  const main = readFileSync(resolve('desktop/main.cjs'), 'utf8');
+  const packaging = readFileSync(resolve('scripts/package-desktop.mjs'), 'utf8');
+  assert.match(main, /enableSandbox\(\)/);
+  assert.doesNotMatch(main, /crashReporter/);
+  assert.match(packaging, /applyElectronFuses\(electronBinary/);
+  assert.match(packaging, /asar:false/);
+});
+
+test('IPC do cofre recusa lista, nulo e objeto com protótipo estranho', async () => {
+  const { registerLocalAccess } = require(resolve('desktop/local-access.cjs'));
+  let handler;
+  registerLocalAccess({
+    ipcMain: { handle(_channel, fn) { handler = fn; } },
+    safeStorage: {},
+    getWindow: () => null,
+    origin: 'http://127.0.0.1:4318',
+    dataDirectory: '/tmp',
+    token: 't',
+    nonce: 'n',
+  });
+  await assert.rejects(() => handler({}, ['suspend']), /Pedido inválido/);
+  await assert.rejects(() => handler({}, null), /Pedido inválido/);
+  await assert.rejects(() => handler({}, Object.create({ action: 'open' })), /Pedido inválido/);
 });

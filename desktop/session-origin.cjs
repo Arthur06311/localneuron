@@ -1,3 +1,5 @@
+const { redactSensitive } = require('./redact.cjs');
+
 const DESKTOP_PORT = 4318;
 
 function desktopPort(env = process.env) {
@@ -22,12 +24,13 @@ function sessionOrigin(session, preferredPort) {
 }
 
 function serviceFailureMessage(output) {
-  const text = String(output || '');
+  const text = redactSensitive(String(output || ''));
   const busy = text.match(/A porta \d+ está em uso por outro programa\./);
   if (busy) return busy[0];
   const invalid = text.match(/(?:LOCALNEURON_PORT|COLMEIA_PORT) inválida[^\n]*/);
   if (invalid) return invalid[0].trim();
-  return 'O serviço local encerrou: ' + text;
+  const detail = text.replace(/\s+/g, ' ').trim().slice(0, 280);
+  return detail ? 'O serviço local encerrou: ' + detail : 'O serviço local encerrou.';
 }
 
 module.exports = { DESKTOP_PORT, desktopPort, sessionOrigin, serviceFailureMessage };

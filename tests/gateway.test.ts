@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync,rmSync,readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { Gateway } from '../src/gateway.js';
+import { Gateway, gatewayHostAllowed, gatewayOriginAllowed } from '../src/gateway.js';
 import { optionsSchema } from '../src/inference.js';
 
 test('API isolada autentica, responde nos dois formatos e não publica o painel',async()=>{
@@ -14,6 +14,15 @@ test('API isolada autentica, responde nos dois formatos e não publica o painel'
   await assert.rejects(gateway.start('0.0.0.0','model',optionsSchema.parse({})),/rede privada/);
   await gateway.start('127.0.0.1','model',optionsSchema.parse({}));const url=gateway.status().base_url!,headers={authorization:'Bearer '+key,'content-type':'application/json'};
   assert.equal((await fetch(url+'/models')).status,401);assert.equal((await fetch(url+'/models',{headers:{authorization:'Bearer bad-key'}})).status,401);
+  const api=gateway.server;if(!api)throw Error('API não abriu');
+  assert.equal((await api.inject({method:'GET',url:'/v1/models',headers:{host:'evil.test',authorization:'Bearer '+key}})).statusCode,403);
+  const port=gateway.status().port;
+  assert.equal((await api.inject({method:'GET',url:'/v1/models',headers:{host:`localhost:${port}`,authorization:'Bearer '+key}})).statusCode,200);
+  assert.equal((await api.inject({method:'GET',url:'/v1/models',headers:{host:`[::1]:${port}`,authorization:'Bearer '+key}})).statusCode,200);
+  assert.equal((await api.inject({method:'GET',url:'/v1/models',headers:{host:`host.docker.internal:${port}`,authorization:'Bearer '+key}})).statusCode,403);
+  assert.equal((await fetch(url+'/models',{headers:{...headers,origin:`http://localhost:${port}`}})).status,200);
+  assert.equal((await fetch(url+'/models',{headers:{...headers,origin:`http://[::1]:${port}`}})).status,200);
+  assert.equal((await api.inject({method:'GET',url:'/v1/models',headers:{host:`127.0.0.1:${port}`,'sec-fetch-site':'cross-site',authorization:'Bearer '+key}})).statusCode,403);
   assert.equal((await fetch(url+'/workspace',{headers})).status,404);assert.equal((await fetch(url+'/models',{headers:{...headers,origin:'https://evil.example'}})).status,403);
   assert.equal((await (await fetch(url+'/models',{headers})).json() as any).data[0].id,'local');
   const input={model:'local',messages:[{role:'user',content:'Olá'}]};
@@ -23,6 +32,17 @@ test('API isolada autentica, responde nos dois formatos e não publica o painel'
   permitted=false;assert.equal((await fetch(url+'/chat/completions',{method:'POST',headers,body:JSON.stringify(input)})).status,503);assert.equal(calls,2);
   await gateway.revoke();assert.equal(gateway.status().enabled,false);assert.equal(gateway.status().has_key,false);await assert.rejects(gateway.start('127.0.0.1','model',optionsSchema.parse({})),/chave/);
  }finally{await gateway.stop();rmSync(dir,{recursive:true,force:true});}
+});
+test('Host de loopback aceita apelidos e a rede anunciada não',()=>{
+ assert.equal(gatewayHostAllowed('localhost:4320','127.0.0.1',4320),true);
+ assert.equal(gatewayHostAllowed('[::1]:4320','127.0.0.1',4320),true);
+ assert.equal(gatewayHostAllowed('host.docker.internal:4320','127.0.0.1',4320),false);
+ assert.equal(gatewayHostAllowed('localhost:4320','192.168.1.9',4320),false);
+ assert.equal(gatewayHostAllowed('192.168.1.9:4320','192.168.1.9',4320),true);
+ assert.equal(gatewayOriginAllowed('http://localhost:4320','127.0.0.1',4320),true);
+ assert.equal(gatewayOriginAllowed('http://[::1]:4320','127.0.0.1',4320),true);
+ assert.equal(gatewayOriginAllowed('http://localhost:4320','192.168.1.9',4320),false);
+ assert.equal(gatewayOriginAllowed(undefined,'127.0.0.1',4320),true);
 });
 test('Desligar API cancela geração e uma segunda chamada não compete por memória',async()=>{
  const dir=mkdtempSync(join(tmpdir(),'api-cancel-'));let began!:()=>void;const ready=new Promise<void>(resolve=>began=resolve);

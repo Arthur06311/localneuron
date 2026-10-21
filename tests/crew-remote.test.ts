@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { crewRemoteComplete, remoteDestination, type RemoteProvider } from '../src/crew-remote.js';
+import { assertCrewDestination, crewRemoteComplete, remoteDestination, type RemoteProvider } from '../src/crew-remote.js';
 
 const TOKEN = 'crew-test-token-aaaa';
 
@@ -56,4 +56,25 @@ test('outro computador exige HTTPS ou rede privada, e o EXO não sai do loopback
   assert.equal(exo.token, null);
   const trusted = remoteDestination(provider({ kind: 'openai', endpoint: 'http://10.0.0.8/v1', leaves_computer: true, trusted_network: true, model: 'remoto' }));
   assert.equal(trusted.url, 'http://10.0.0.8/v1/chat/completions');
+  const named = remoteDestination(provider({ kind: 'openai', endpoint: 'http://nas.lan/v1', leaves_computer: true, trusted_network: true, model: 'remoto' }));
+  assert.equal(named.url, 'http://nas.lan/v1/chat/completions');
+});
+
+test('envio da equipe aceita nome de LAN e recusa metadado no DNS', async () => {
+  let linkLocal = false;
+  let calls = 0;
+  const resolver = async (hostname: string) => {
+    calls += 1;
+    if (hostname === 'nas.lan') return [{ address: linkLocal ? '169.254.169.254' : '192.168.0.8' }];
+    if (hostname === 'example.com') return [{ address: '10.0.0.1' }];
+    throw new Error('dns');
+  };
+  await assertCrewDestination(new URL('http://nas.lan/v1'), resolver);
+  linkLocal = true;
+  await assert.rejects(() => assertCrewDestination(new URL('http://nas.lan/v1'), resolver), /recusado/);
+  await assert.rejects(() => assertCrewDestination(new URL('https://example.com/v1'), resolver), /recusado/);
+  await assertCrewDestination(new URL('http://printer.local/v1'), async () => { throw new Error('mdns'); });
+  const before = calls;
+  await assertCrewDestination(new URL('http://192.168.1.1/v1'), async () => { calls += 1; return [{ address: '192.168.1.1' }]; });
+  assert.equal(calls, before);
 });

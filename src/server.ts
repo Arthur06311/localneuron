@@ -48,10 +48,14 @@ import { libraryRevision } from './library-progress.js';
 import { ModelLibrary } from './model-library.js';
 import { acquireProcessLock } from './lock.js';
 import { listenWithFallback, preferredPort } from './local-port.js';
+import { redactSensitive } from './redact-log.js';
+import { startupMessage } from './startup-errors.js';
 import { verifyPackage } from '../scripts/protocol.mjs';
 import { z } from 'zod';
 
 const { legacyEnv } = createRequire(import.meta.url)('../../desktop/env.cjs') as { legacyEnv: (suffix: string) => string | undefined };
+const { isLoopbackPeer } = createRequire(import.meta.url)('../../desktop/public-url.cjs') as { isLoopbackPeer: (ip: string) => boolean };
+const { APP_CSP, PERMISSIONS_POLICY } = createRequire(import.meta.url)('../../desktop/content-security.cjs') as { APP_CSP: string; PERMISSIONS_POLICY: string };
 const { createSecret, hasKey, loadKey, removeKey, removeLegacyAccess, storeKey } = createRequire(import.meta.url)('../../desktop/vault-key.cjs') as {
   createSecret: () => string;
   hasKey: (directory: string) => boolean;
@@ -61,12 +65,17 @@ const { createSecret, hasKey, loadKey, removeKey, removeLegacyAccess, storeKey }
   storeKey: (input: { directory: string; secret: string; safeStorage: null; warn?: (message: string) => void }) => string;
 };
 
-const equal = (a: string, b: string) => { const left = Buffer.from(a), right = Buffer.from(b); return left.length === right.length && timingSafeEqual(left,right); };
+const equal = (a: string, b: string) => { if (!a || !b) return false; const left = Buffer.from(a), right = Buffer.from(b); return left.length === right.length && timingSafeEqual(left, right); };
+export const LOCAL_REQUESTS_PER_MINUTE = 1200;
+export function localRateLimitError() {
+  const error = new Error('Muitas consultas num curto intervalo. Aguarde e tente novamente.') as Error & { statusCode?: number };
+  error.statusCode = 429;
+  return error;
+}
 export async function createApp(core: Core, token = randomBytes(32).toString('hex'), initialOrigin = 'http://127.0.0.1:4317', runtime = new LocalRuntime(core.directory,core.root), planConfig = subscriptionConfig(core.root), deviceNonce = '') {
   let origin = initialOrigin;
-  const app = Fastify({ logger: false, bodyLimit: 2 * 1024 * 1024, ajv: { customOptions: { removeAdditional: false } } });
-  // Limite só na rota nova, que lê o disco. global:false deixa as outras rotas livres para o limite global por IP do servidor local.
-  await app.register(rateLimit, { global: false });
+  const app = Fastify({ logger: false, bodyLimit: 2 * 1024 * 1024, trustProxy: false, ajv: { customOptions: { removeAdditional: false } } });
+  await app.register(rateLimit, { global: true, max: LOCAL_REQUESTS_PER_MINUTE, timeWindow: '1 minute', errorResponseBuilder: () => localRateLimitError() });
   const serverMode = new ServerMode(core.directory);
   const serverGateway = new ServerGateway(core.directory, core.vault, fetch, () => runtime.exo.config.endpoint, () => runtime.exo.installer.running, () => serverMode.snapshot().role);
   const subscription=new Subscription(core.directory,planConfig);
@@ -105,8 +114,11 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const markDirectory=join(core.root,'public/mascotes');if(existsSync(markDirectory))for(const file of readdirSync(markDirectory)){if(/^[a-z]+-[a-z]+\.svg$/.test(file))staticFiles['/mascotes/'+file]=['mascotes/'+file,'image/svg+xml'];}
   let failedUnlocks = 0, retryAt = 0;
   app.addHook('onRequest', async (request, reply) => {
+    if (!isLoopbackPeer(request.ip)) return reply.code(403).send({ error: 'Acesso local recusado.' });
     reply.header('X-Content-Type-Options','nosniff').header('Referrer-Policy','no-referrer').header('Cache-Control','no-store');
-    reply.header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'none'");
+    reply.header('X-Frame-Options','DENY').header('Cross-Origin-Resource-Policy','same-origin').header('Cross-Origin-Opener-Policy','same-origin');
+    reply.header('Permissions-Policy', PERMISSIONS_POLICY);
+    reply.header('Content-Security-Policy', APP_CSP);
     if (request.headers.host !== new URL(origin).host) return reply.code(403).send({ error: 'Host recusado' });
     const oauthCallback=request.method==='GET'&&request.url.startsWith('/v1/connections/oauth/callback?');
     if(oauthCallback)return;
@@ -133,7 +145,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     }
     if (statusCode === 409) return reply.code(409).send({ error: (error as Error).message });
     const err = error as Error;
-    const message = err instanceof z.ZodError ? 'Dados inválidos: ' + err.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ') : err.message;
+    const message = redactSensitive(err instanceof z.ZodError ? 'Dados inválidos: ' + err.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ') : err.message);
     const conflict = /Conflito|Versão mudou|Idempotency-Key reutilizada|imutável/.test(message);
     reply.code(conflict ? 409 : 400).send({ error: message });
   });
@@ -565,7 +577,7 @@ export async function openLocalServer(directory: string, root: string, env: Node
     await core.init();
     if (env.ELECTRON_RUN_AS_NODE !== '1') {
       try { await adoptDeviceVault(core); }
-      catch (error) { console.warn(error instanceof Error ? error.message : 'Não foi possível abrir o cofre.'); }
+      catch (error) { console.warn(redactSensitive(error instanceof Error ? error.message : 'Não foi possível abrir o cofre.')); }
     }
     const created = await createApp(core, undefined, `http://127.0.0.1:${preferred}`, undefined, undefined, String(env.LOCALNEURON_DEVICE_NONCE || ''));
     app = created.app;
@@ -595,7 +607,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     process.on('exit', started.releaseLock);
     process.on('SIGINT', close); process.on('SIGTERM', close);
   } catch (error) {
-    console.error(error instanceof Error ? error.message : 'O serviço local não iniciou.');
+    console.error(startupMessage(error));
     process.exit(1);
   }
+  process.on('uncaughtException', error => { console.error(startupMessage(error)); process.exit(1); });
+  process.on('unhandledRejection', error => { console.error(startupMessage(error)); });
 }

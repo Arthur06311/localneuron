@@ -4,7 +4,7 @@ import {join} from 'node:path';
 import {z} from 'zod';
 import type {Vault} from './vault.js';
 export const hfTokenSchema=z.string().trim().regex(/^hf_[A-Za-z0-9]{20,200}$/,'Use um token de leitura do Hugging Face.');
-export function hfHeaders(url:URL|string,token?:string):Record<string,string>{const u=new URL(url);return {'User-Agent':'LocalNeuron/0.15',...(token&&u.origin==='https://huggingface.co'?{Authorization:'Bearer '+token}:{})};}
+export function hfHeaders(url:URL|string,token?:string):Record<string,string>{const u=new URL(url);return {'User-Agent':'LocalNeuron',...(token&&u.origin==='https://huggingface.co'?{Authorization:'Bearer '+token}:{})};}
 export function hfError(status:number){return status===401?'O Hugging Face exige uma conta autorizada. Conecte um token de leitura em Acesso ao Hugging Face.':status===403?'Acesso ainda não autorizado. Aceite a licença e aguarde a aprovação na página oficial do modelo.':status===404?'O arquivo ou a revisão não está disponível no Hugging Face. Atualize a ficha do modelo.':status===429?'O Hugging Face limitou as consultas. Aguarde um pouco e tente novamente.':`Hugging Face indisponível (HTTP ${status}). Tente novamente.`;}
 export class HFAccount {
  private file:string;private generation=0;

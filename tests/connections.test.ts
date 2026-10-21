@@ -1,4 +1,5 @@
-import test from 'node:test';import assert from 'node:assert/strict';import{mkdtempSync,readFileSync,rmSync,writeFileSync}from'node:fs';import{tmpdir}from'node:os';import{join,resolve}from'node:path';import{createServer,type Server}from'node:http';import{createServer as createHttps}from'node:https';import{execFileSync}from'node:child_process';import{createDecipheriv,createHash}from'node:crypto';import{Agent,fetch as undiciFetch}from'undici';import{Vault}from'../src/vault.js';import{Connections,decideOAuthOrigin}from'../src/connections.js';
+import test from 'node:test';import assert from 'node:assert/strict';import{mkdtempSync,readFileSync,rmSync,writeFileSync}from'node:fs';import{tmpdir}from'node:os';import{join,resolve}from'node:path';import{createServer,type Server}from'node:http';import{createServer as createHttps}from'node:https';import{execFileSync}from'node:child_process';import{createDecipheriv,createHash}from'node:crypto';import{Agent,fetch as undiciFetch}from'undici';import{Vault}from'../src/vault.js';import{Connections,assertMcpUrl,connectionSchema,decideOAuthOrigin}from'../src/connections.js';
+import{assertMcpResolved}from'../src/fetch-guard.js';
 test('MCP local negocia protocolo, cifra credenciais e respeita revogação',async()=>{const dir=mkdtempSync(join(tmpdir(),'neuron-mcp-')),vault=new Vault(dir);vault.initialize('senha-de-testes-mcp');const file=join(dir,'server.mjs');const sdk=resolve('node_modules/@modelcontextprotocol/sdk/dist/esm');writeFileSync(file,`import {McpServer} from ${JSON.stringify('file://'+sdk+'/server/mcp.js')};import {StdioServerTransport} from ${JSON.stringify('file://'+sdk+'/server/stdio.js')};const s=new McpServer({name:'fixture',version:'1'});s.registerTool('hello',{description:'Teste local',annotations:{readOnlyHint:true}},async()=>({content:[{type:'text',text:'Olá do servidor MCP'}]}));await s.connect(new StdioServerTransport());`);const c=new Connections(dir,vault);try{const row=await c.add({name:'Fixture',command:process.execPath,args:[file],token:'credencial-ficticia-secreta'});assert.equal(row?.connected,true);assert.equal(row?.tools.length,1);assert.ok(!readFileSync(join(dir,'connections.enc.json'),'utf8').includes('credencial-ficticia'));const defs=c.definitions([row!.id],true);assert.equal(defs.length,1);assert.equal(c.definitions([],false).length,0);const result=await c.call(defs[0].function.name,{},[row!.id],new AbortController().signal);assert.match(JSON.stringify(result),/Olá do servidor/);await c.remove(row!.id);await assert.rejects(c.call(defs[0].function.name,{},[row!.id],new AbortController().signal),/revogada/);vault.lock();assert.throws(()=>c.list(),/Cofre/);}finally{await c.close();rmSync(dir,{recursive:true,force:true});}});
 
 test('decideOAuthOrigin permite a origem MCP e a origem fixada e recusa troca',()=>{
@@ -106,4 +107,24 @@ test('OAuth sem origem fixada recusa HTTP fora do servidor MCP e não o contacta
   assert.equal(row.authorization_url,undefined);
   assert.equal(outsider.length,0);
  }finally{await c.close();await stop(other);await stop(mcp);rmSync(dir,{recursive:true,force:true});}
+});
+
+test('HTTPS privado ou VPN só passa com rede confiável, e o loopback continua de fora',async()=>{
+ assert.equal(connectionSchema.parse({name:'Antiga',command:'/usr/bin/node',args:[]}).trusted_network,false);
+ const message=/HTTPS com nome público/;
+ await assert.rejects(async()=>assertMcpUrl('https://192.168.1.5/mcp'),message);
+ await assert.rejects(async()=>assertMcpUrl('https://100.64.1.2/mcp'),message);
+ await assert.rejects(async()=>assertMcpUrl('https://127.0.0.1/mcp',true),message);
+ await assert.rejects(async()=>assertMcpUrl('https://printer.local/mcp'),message);
+ assert.doesNotThrow(()=>assertMcpUrl('https://192.168.1.5/mcp',true));
+ assert.doesNotThrow(()=>assertMcpUrl('https://100.64.1.2/mcp',true));
+ assert.doesNotThrow(()=>assertMcpUrl('https://printer.local/mcp',true));
+ assert.doesNotThrow(()=>assertMcpUrl('https://example.com/mcp'));
+ const resolver=async(hostname:string)=>hostname==='machine.ts.net'?[{address:'100.64.1.2'}]:[{address:'1.1.1.1'}];
+ await assert.rejects(()=>assertMcpResolved(new URL('https://machine.ts.net/mcp'),false,resolver),/recusado/);
+ await assertMcpResolved(new URL('https://machine.ts.net/mcp'),true,resolver);
+ await assert.rejects(()=>assertMcpResolved(new URL('https://192.168.1.5/mcp'),false,resolver),/recusado/);
+ await assertMcpResolved(new URL('https://192.168.1.5/mcp'),true,resolver);
+ await assert.rejects(()=>assertMcpResolved(new URL('https://127.0.0.1/mcp'),true,resolver),/recusado/);
+ await assertMcpResolved(new URL('https://printer.local/mcp'),true,async()=>{throw new Error('mdns');});
 });

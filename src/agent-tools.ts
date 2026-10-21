@@ -610,6 +610,7 @@ export class Toolbox {
           download_available: true,
         };
       } else if (tool === "terminal_run") {
+        if (args.command.includes("\0")) throw new Error("Comando inválido.");
         const root = await this.scoped(".");
         const allow = await this.approval(
           context.chat,
@@ -648,6 +649,7 @@ export class Toolbox {
     }
   }
   private command(command: string, cwd: string, signal: AbortSignal) {
+    if (command.includes("\0")) return Promise.reject(new Error("Comando inválido."));
     return new Promise((resolveCommand, reject) => {
       const env: NodeJS.ProcessEnv = {};
       for (const key of [

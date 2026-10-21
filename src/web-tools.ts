@@ -2,8 +2,12 @@ import { readFileSync } from "node:fs";
 import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
 import { lookup } from "node:dns/promises";
+import { createRequire } from "node:module";
 import ipaddr from "ipaddr.js";
 import { load } from "cheerio";
+const { hostClass } = createRequire(import.meta.url)(
+  "../../desktop/public-url.cjs",
+) as { hostClass: (hostname: string) => string };
 const productVersion = JSON.parse(
   readFileSync(new URL("../../package.json", import.meta.url), "utf8"),
 ).version as string;
@@ -30,6 +34,10 @@ export async function publicPage(
       url.href.length > 3000
     )
       throw new Error("Use uma URL pública HTTP ou HTTPS, sem credenciais.");
+    if (hostClass(url.hostname) !== "public")
+      throw new Error(
+        "Endereços internos e privados não estão disponíveis à ferramenta web.",
+      );
     const host = url.hostname.replace(/^\[|\]$/g, "");
     const answers = await resolver(host, { all: true, verbatim: true });
     if (!answers.length || answers.some((a) => !publicAddress(a.address)))
