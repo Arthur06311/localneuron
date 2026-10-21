@@ -103,16 +103,16 @@
 </section>
 <section class="doc-block">
 <h2>Transferência internacional</h2>
-<p>Algum dado pode ser tratado fora do Brasil. Quando o operador adota as cláusulas-padrão contratuais da Resolução CD/ANPD nº 19/2024, a transferência se apoia nelas (art. 33, II, da LGPD). Também pode se apoiar na execução de contrato ou de procedimentos preliminares (art. 33, IX, com o art. 7º, II) e, quando você liga um recurso que envia dado para fora, no seu consentimento específico (art. 33, VIII). Esta página não afirma que cada contrato foi depositado na ANPD, nem uma decisão de adequação.</p>
+<p>Algum dado pode ser tratado fora do Brasil. Quando o operador adota as cláusulas-padrão contratuais da Resolução CD/ANPD nº 19/2024, a transferência se apoia nelas (art. 33, II, da LGPD). Também pode se apoiar na execução de contrato ou de procedimentos preliminares (art. 33, IX, com o art. 7º, V) e, quando você liga um recurso que envia dado para fora, no seu consentimento específico (art. 33, VIII). Esta página não afirma que cada contrato foi depositado na ANPD, nem uma decisão de adequação.</p>
 <ul>
 <li><strong>GitHub.</strong> Hospeda este site, o download do aplicativo, o manifesto de atualização e binários de motores (llama.cpp, Whisper, stable-diffusion.cpp e o instalador do EXO). O código do ACE-Step sai de <code>codeload.github.com</code>. A GitHub pode tratar o IP e o registro técnico fora do Brasil. Base: cláusulas-padrão da Resolução CD/ANPD nº 19/2024, quando adotadas pelo operador (art. 33, II), e a execução do download ou da consulta que você pediu (art. 33, IX).</li>
 <li><strong>Hugging Face.</strong> Pesquisa e download de modelos, e os pesos do motor de música, quando você pede. O token de leitura só segue para lá se você conectar uma conta. Base: art. 33, II, com as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando o operador as adota, art. 33, IX, e o consentimento de quem pede o download (art. 33, VIII).</li>
 <li><strong>Anthropic e xAI.</strong> Só se você criar o provedor, confirmar que o texto sai do computador e enviar a mensagem. Sem isso, nada é enviado. Base: consentimento específico (art. 33, VIII) e, quando o operador as adota, as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 (art. 33, II).</li>
-<li><strong>country.is.</strong> No idioma automático, quando o idioma do navegador não é um dos sete do site, o navegador envia só o IP, para sugerir o idioma pelo país aproximado. A base desse tratamento e dessa transferência é o legítimo interesse (art. 7º, IX da LGPD). Não há consentimento prévio. Escolher o idioma à mão impede essa consulta.</li>
+<li><strong>country.is.</strong> No idioma automático, quando o idioma do navegador não é um dos sete do site, o próprio navegador consulta o country.is. Sai só o IP dessa conexão, para sugerir o idioma pelo país aproximado. Sugerir o idioma se baseia no legítimo interesse (art. 7º, IX da LGPD), sem consentimento prévio. O art. 7º não fundamenta a ida do IP ao country.is: o pedido parte do navegador, direto para esse serviço, e não de um servidor da LocalNeuron. Escolher o idioma à mão impede essa consulta.</li>
 <li><strong>Stripe.</strong> Pagamento e portal do cliente, quando a compra estiver aberta. O cartão é digitado no site da Stripe. Base: cláusulas do contrato com a Stripe, inclusive as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando adotadas (art. 33, II), e execução da assinatura (art. 33, IX).</li>
-<li><strong>Supabase.</strong> Operadora do servidor de cobrança (Edge Functions) e do Postgres, os dois no Brasil, região <code>sa-east-1</code> (São Paulo), em <code>hifnfveklpskbtxyeqza.supabase.co</code>. O IP em claro não é guardado. Para limitar repetições, fica só um HMAC do IP, de mão única e com chave separada, por cerca de 2 minutos, e depois é apagado. A Supabase mantém os próprios logs de acesso, que podem incluir o IP e ser tratados fora do Brasil. Base: cláusulas do contrato com a operadora, inclusive as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando adotadas (art. 33, II), e execução da assinatura (art. 33, IX).</li>
+<li><strong>Supabase.</strong> Operadora do servidor de cobrança (Edge Functions) e do Postgres, os dois no Brasil, região <code>sa-east-1</code> (São Paulo), em <code>hifnfveklpskbtxyeqza.supabase.co</code>. O IP em claro não é guardado. Para limitar repetições, a tabela <code>billing.rate_windows</code> guarda só um HMAC do IP, de mão única e com chave separada, por cerca de 2 minutos, e depois é apagado. A base desse registro é o legítimo interesse, para segurança (art. 7º, IX da LGPD). A Supabase mantém os próprios logs de acesso, que podem incluir o IP e ser tratados fora do Brasil. Base da transferência: cláusulas do contrato com a operadora, inclusive as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando adotadas (art. 33, II), e execução da assinatura (art. 33, IX).</li>
 </ul>
-<p>O country.is não depende de consentimento prévio. Nos recursos que você liga, o envio para fora só ocorre depois dessa escolha.</p>
+<p>A consulta ao country.is sai do navegador e não depende de consentimento prévio. Nos recursos que você liga, o envio para fora só ocorre depois dessa escolha.</p>
 </section>
 <section class="doc-block">
 <h2>O que o servidor de cobrança guarda</h2>
@@ -133,7 +133,7 @@
 <p>A tabela <code>events</code> guarda o identificador do aviso da Stripe (<code>id</code>) e o momento em que foi processado (<code>processed</code>).</p>
 <p>Não há coluna de nome, e-mail em claro, endereço ou número de cartão. O e-mail que você informar no pagamento fica na Stripe, não nesse banco.</p>
 <p>A política do teste grátis é de uso único, por pessoa e por cartão. Para impedir um segundo teste, o servidor guarda o registro <code>billing.trial_identities</code>: os hashes com chave (HMAC) do e-mail e da impressão digital do cartão, e o identificador da assinatura. Não guarda e-mail nem cartão em claro. A base é o legítimo interesse, para prevenção de fraude (art. 7º, IX da LGPD). O registro permanece enquanto for necessário para essa prevenção e, no máximo, por 5 anos; depois é apagado.</p>
-<p>O IP em claro não é guardado. Para limitar repetições, fica só um HMAC do IP, de mão única e com chave separada, por cerca de 2 minutos, e depois é apagado. A Supabase mantém os próprios logs de acesso.</p>
+<p>O IP em claro não é guardado. Para limitar repetições, a tabela <code>billing.rate_windows</code> guarda só um HMAC do IP, de mão única e com chave separada, por cerca de 2 minutos, e depois é apagado. A base é o legítimo interesse, para segurança (art. 7º, IX da LGPD). A Supabase mantém os próprios logs de acesso.</p>
 </section>
 <section class="doc-block">
 <h2>Por quanto tempo</h2>
@@ -141,7 +141,7 @@
 <li><strong>No seu computador:</strong> até você apagar a pasta de dados ou o arquivo. Desinstalar só o aplicativo não apaga essa pasta.</li>
 <li><strong>Identificador da instalação no servidor:</strong> enquanto o banco de cobrança existir. O programa não apaga essa linha sozinho, porque precisa reconhecer a instalação e a assinatura. Dá para pedir a exclusão quando não houver dever legal de guardar o registro.</li>
 <li><strong>Identificadores de avisos da Stripe:</strong> 90 dias, e depois o programa apaga.</li>
-<li><strong>Logs de acesso da plataforma:</strong> ficam com a Supabase, pelo prazo da política dela. O IP em claro não é guardado no banco. Para limitar repetições, fica só um HMAC do IP, de mão única e com chave separada, por cerca de 2 minutos, e depois é apagado.</li>
+<li><strong>Tabela <code>billing.rate_windows</code>:</strong> o IP em claro não é guardado. Para limitar repetições, fica só um HMAC do IP, de mão única e com chave separada, por cerca de 2 minutos, e depois é apagado. A base é o legítimo interesse, para segurança (art. 7º, IX da LGPD). Os logs de acesso da plataforma ficam com a Supabase, pelo prazo da política dela.</li>
 <li><strong>Registro <code>billing.trial_identities</code>:</strong> enquanto for necessário para impedir abuso do teste grátis e, no máximo, por 5 anos; depois é apagado.</li>
 <li><strong>Pagamento na Stripe:</strong> pelo tempo da política da Stripe e pelo tempo exigido para disputa de pagamento, defesa de direito e obrigação legal.</li>
 <li><strong>Este site:</strong> a escolha de idioma e de tema fica só neste navegador (<code>localneuron-language</code> e <code>localneuron-theme</code>). O site não grava essa escolha num servidor.</li>
@@ -150,7 +150,7 @@
 <section class="doc-block">
 <h2>Este site</h2>
 <p>O GitHub Pages hospeda localneuron.ai. Ao abrir a página, o GitHub pode manter registros técnicos de hospedagem, inclusive o IP, conforme a política do GitHub.</p>
-<p>No idioma automático, o site usa o idioma do navegador quando ele é um dos sete idiomas da página. Caso contrário, o navegador consulta o serviço country.is, que recebe o IP para sugerir o idioma pelo país aproximado. A base é o legítimo interesse (art. 7º, IX da LGPD). Não há consentimento prévio. O site não pede GPS e não grava IP nem histórico de localização. A escolha manual fica só neste navegador e impede a consulta ao country.is.</p>
+<p>No idioma automático, o site usa o idioma do navegador quando ele é um dos sete idiomas da página. Caso contrário, o próprio navegador consulta o country.is e envia só o IP dessa conexão, para sugerir o idioma pelo país aproximado. Sugerir o idioma se baseia no legítimo interesse (art. 7º, IX da LGPD), sem consentimento prévio. O art. 7º não fundamenta a ida do IP ao country.is: o pedido parte do navegador, direto para esse serviço. O site não pede GPS e não grava IP nem histórico de localização. A escolha manual fica só neste navegador e impede a consulta.</p>
 <p>O botão “Idioma e privacidade” no rodapé da página inicial explica essa consulta. Esta política é o documento completo.</p>
 </section>
 <section class="doc-block">
@@ -170,7 +170,7 @@
 <ul>
 <li><strong>Contrato e passos anteriores ao contrato.</strong> Identificador, hash do segredo e identificadores da Stripe, para entregar a licença que você pedir.</li>
 <li><strong>Obrigação legal.</strong> Registros de cobrança necessários para dever fiscal e para o Código de Defesa do Consumidor.</li>
-<li><strong>Legítimo interesse (art. 7º, IX).</strong> Limite de chamadas repetidas no servidor de cobrança. Consulta automática ao country.is para sugerir o idioma, sem consentimento prévio; a escolha manual impede essa consulta. Prevenção de fraude no teste grátis, pelo registro <code>billing.trial_identities</code>.</li>
+<li><strong>Legítimo interesse (art. 7º, IX).</strong> Limite de chamadas repetidas, para segurança, na tabela <code>billing.rate_windows</code>. Sugestão de idioma pelo country.is, sem consentimento prévio; a consulta sai do navegador, e a escolha manual a impede. Prevenção de fraude no teste grátis, pelo registro <code>billing.trial_identities</code>.</li>
 </ul>
 <p>O uso local do aplicativo, sem assinatura e sem os recursos de rede acima, não envia dado pessoal ao responsável.</p>
 </section>
