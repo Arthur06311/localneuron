@@ -699,6 +699,14 @@ test('A quantização espera música, Editor e mídia, e o cancelamento fica for
   assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/editor/plan'), true);
   assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/editor/apply'), true);
   assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/pro/jobs'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/pro/media/speak'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/pro/media/inpaint'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/local-engines/generate'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/local-engines/transcribe'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/tasks/11111111-1111-1111-1111-111111111111/start'), true);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/pro/media/stop'), false);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/local-engines/stop'), false);
+  assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/tasks/11111111-1111-1111-1111-111111111111/pause'), false);
   assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/model-library/quantize/cancel'), false);
   assert.equal(quantizationBlocksRequest(true, 'POST', '/v1/model-library/quantize'), false);
   assert.equal(quantizationBlocksRequest(false, 'POST', '/v1/music/start'), false);
@@ -788,6 +796,11 @@ test('Com a quantização em andamento, chat, Minha API, música, Editor e Pro r
       '/v1/editor/plan',
       '/v1/editor/apply',
       '/v1/pro/jobs',
+      '/v1/pro/media/speak',
+      '/v1/pro/media/inpaint',
+      '/v1/local-engines/generate',
+      '/v1/local-engines/transcribe',
+      '/v1/tasks/11111111-1111-1111-1111-111111111111/start',
     ];
     for (const url of blocked) {
       const response = await app.inject({ method: 'POST', url, headers, payload: {} });

@@ -73,7 +73,7 @@ export function otherAiBlocksQuantize(input: { chats: boolean; api: boolean; api
 }
 export function quantizationBlocksRequest(running: boolean, method: string, url: string) {
   if (!running || method !== 'POST') return false;
-  return /^\/v1\/(?:chats\/[^/]+\/send|sharing\/start|music\/(?:install|start|generate)|editor\/(?:plan|apply)|pro\/jobs)$/.test(url.split('?')[0]);
+  return /^\/v1\/(?:chats\/[^/]+\/send|sharing\/start|music\/(?:install|start|generate)|editor\/(?:plan|apply)|pro\/jobs|pro\/media\/(?:speak|inpaint)|local-engines\/(?:generate|transcribe)|tasks\/[^/]+\/start)$/.test(url.split('?')[0]);
 }
 export function localRateLimitError() {
   const error = new Error('Muitas consultas num curto intervalo. Aguarde e tente novamente.') as Error & { statusCode?: number };
