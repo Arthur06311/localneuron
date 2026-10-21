@@ -10,6 +10,7 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Adicionado
 
+- A biblioteca quantiza um modelo já instalado, em GGUF com llama-quantize ou em MLX no Mac, e salva o resultado como outro modelo. O original permanece. A comparação das abordagens está em `docs/quantizacao.md`.
 - Anexos de texto e PDF passam a ser divididos em trechos, indexados no computador e consultados na conversa. Sem um modelo de embeddings, os trechos ficam guardados e a busca semântica avisa que não está disponível (#46).
 - O Modo servidor começa desligado e distingue Contribuir, Gerenciar e Só usar. O mapa lê o estado do EXO. RDMA permanece só como caminho futuro; a conexão desta fase é TCP (#57).
 - O gateway do Modo servidor escuta só na rede local, na porta 52416, com pareamento por código de seis dígitos e chave por máquina. Enquanto o EXO está ligado, a porta 52415 continua sem senha (#59).

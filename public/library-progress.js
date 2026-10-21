@@ -11,6 +11,7 @@ export function mergeLibraryProgress(status, progress) {
       total_memory_bytes: progress.total_memory_bytes,
       media_downloads: progress.media_downloads,
       studio_download: progress.studio_download,
+      quantize: Object.prototype.hasOwnProperty.call(progress, 'quantize') ? progress.quantize : status.quantize ?? null,
       catalog: status.catalog.map(model => ({ ...model, job: jobs.get(model.id) ?? null })),
     },
   };

@@ -67,6 +67,14 @@ const { createSecret, hasKey, loadKey, removeKey, removeLegacyAccess, storeKey }
 
 const equal = (a: string, b: string) => { if (!a || !b) return false; const left = Buffer.from(a), right = Buffer.from(b); return left.length === right.length && timingSafeEqual(left, right); };
 export const LOCAL_REQUESTS_PER_MINUTE = 1200;
+export function otherAiBlocksQuantize(input: { chats: boolean; api: boolean; apiBusy: boolean; aux: boolean; pro: boolean; jobs: number; music: boolean; editor: boolean; media: boolean }) {
+  if (input.chats || input.api || input.apiBusy || input.aux || input.pro || input.jobs > 0 || input.music || input.editor || input.media) return 'Aguarde a conversa, a Minha API ou a outra IA terminar antes de quantizar.';
+  return '';
+}
+export function quantizationBlocksRequest(running: boolean, method: string, url: string) {
+  if (!running || method !== 'POST') return false;
+  return /^\/v1\/(?:chats\/[^/]+\/send|sharing\/start|music\/(?:install|start|generate)|editor\/(?:plan|apply)|pro\/jobs|pro\/media\/(?:speak|inpaint)|local-engines\/(?:generate|transcribe)|tasks\/[^/]+\/start)$/.test(url.split('?')[0]);
+}
 export function localRateLimitError() {
   const error = new Error('Muitas consultas num curto intervalo. Aguarde e tente novamente.') as Error & { statusCode?: number };
   error.statusCode = 429;
@@ -92,7 +100,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const updates=new Updates(core.directory,JSON.parse(readFileSync(join(core.root,'package.json'),'utf8')).version);
   const personality=async()=>Boolean((await experience.snapshot()).personality);
   const music=new Music(core.directory,core.root);
-  const editor=new Editor(core.root,async(key,prompt,signal)=>exclusive(async()=>{if(core.vault.locked||chats.busy||aux.busy||pro.busy||gateway.status().enabled||experienceJobs.busy||music.running||music.busy)throw Error('Aguarde a IA atual e desligue o motor de música antes de preparar a edição.');const m=await library.load(key,8192);const result=await complete(m.instance_id,[{role:'user',content:prompt}],optionsSchema.parse({context:8192,max_tokens:3000,temperature:.2,reasoning:'off'}),signal,()=>{},runtime.backend(m.instance_id));return result.text;}));
+  const editor=new Editor(core.root,async(key,prompt,signal)=>exclusive(async()=>{if(library.quantizer.running)throw Error('Aguarde a quantização terminar ou cancele-a.');if(core.vault.locked||chats.busy||aux.busy||pro.busy||gateway.status().enabled||experienceJobs.busy||music.running||music.busy)throw Error('Aguarde a IA atual e desligue o motor de música antes de preparar a edição.');const m=await library.load(key,8192);const result=await complete(m.instance_id,[{role:'user',content:prompt}],optionsSchema.parse({context:8192,max_tokens:3000,temperature:.2,reasoning:'off'}),signal,()=>{},runtime.backend(m.instance_id));return result.text;}));
   const chats = new Chats(core,agentReply(runtime,toolbox,personality),async()=>(await library.snapshot()).installed);
   if (!core.vault.locked) await chats.recover();
   let operationBusy=false;
@@ -100,8 +108,8 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   let experienceJobs:ExperienceJobs;
   let pro:Pro;
 
-  const gateway=new Gateway(core.directory,()=>!music.busy&&!music.running&&!editor.busy&&!core.vault.locked&&!chats.busy&&!core.jobs.size&&!operationBusy&&!aux.busy&&!proMedia.busy&&!pro?.busy&&!experienceJobs?.busy&&!crewTalk?.busy,(model,messages,options,signal,delta)=>complete(model,messages,options,signal,delta,runtime.backend(model)),4320,core.root,()=>subscription.active);
-  pro=new Pro(core.directory,{models:async()=>(await library.snapshot()).installed,canRun:()=>!music.busy&&!music.running&&!editor.busy&&!experienceJobs?.busy&&subscription.active&&!core.vault.locked&&!operationBusy&&!chats.busy&&!gateway.busy&&!aux.busy&&!proMedia.busy&&!core.jobs.size&&!library.busy,run:async(key,messages,options,signal,delta)=>exclusive(async()=>{signal.throwIfAborted();if(core.vault.locked||chats.busy||gateway.busy||aux.busy)throw Error('Aguarde o motor atual.');if(gateway.status().enabled&&gateway.status().local_model!==key)throw Error('Desligue Minha API antes de executar outra IA no Pro.');subscription.require('jobs');const model=await library.load(key,options.context);signal.throwIfAborted();const result=await agentReply(runtime,toolbox,personality)(model.instance_id,messages.filter(m=>m.role==='user'||m.role==='assistant').map((m,i)=>({id:String(i),role:m.role as 'user'|'assistant',content:m.content,at:Date.now(),status:'complete' as const})),signal,delta,{...options,system:messages.filter(m=>m.role==='system').map(m=>m.content).join('\n')||options.system},{chatId:'pro-job',access:{enabled:false},activity:()=>{}});return typeof result==='string'?result:result.text;})});
+  const gateway=new Gateway(core.directory,()=>!library.quantizer.running&&!music.busy&&!music.running&&!editor.busy&&!core.vault.locked&&!chats.busy&&!core.jobs.size&&!operationBusy&&!aux.busy&&!proMedia.busy&&!pro?.busy&&!experienceJobs?.busy&&!crewTalk?.busy,(model,messages,options,signal,delta)=>complete(model,messages,options,signal,delta,runtime.backend(model)),4320,core.root,()=>subscription.active);
+  pro=new Pro(core.directory,{models:async()=>(await library.snapshot()).installed,canRun:()=>!library.quantizer.running&&!music.busy&&!music.running&&!editor.busy&&!experienceJobs?.busy&&subscription.active&&!core.vault.locked&&!operationBusy&&!chats.busy&&!gateway.busy&&!aux.busy&&!proMedia.busy&&!core.jobs.size&&!library.busy,run:async(key,messages,options,signal,delta)=>exclusive(async()=>{signal.throwIfAborted();if(library.quantizer.running)throw Error('Aguarde a quantização terminar ou cancele-a.');if(core.vault.locked||chats.busy||gateway.busy||aux.busy)throw Error('Aguarde o motor atual.');if(gateway.status().enabled&&gateway.status().local_model!==key)throw Error('Desligue Minha API antes de executar outra IA no Pro.');subscription.require('jobs');const model=await library.load(key,options.context);signal.throwIfAborted();const result=await agentReply(runtime,toolbox,personality)(model.instance_id,messages.filter(m=>m.role==='user'||m.role==='assistant').map((m,i)=>({id:String(i),role:m.role as 'user'|'assistant',content:m.content,at:Date.now(),status:'complete' as const})),signal,delta,{...options,system:messages.filter(m=>m.role==='system').map(m=>m.content).join('\n')||options.system},{chatId:'pro-job',access:{enabled:false},activity:()=>{}});return typeof result==='string'?result:result.text;})});
   experienceJobs=new ExperienceJobs(experience,async(key,prompt,options,signal,delta,bot)=>exclusive(async()=>{signal.throwIfAborted();if(core.vault.locked)throw Error('Cofre bloqueado');const model=await library.load(key,options.context);signal.throwIfAborted();return agentReply(runtime,toolbox,personality)(model.instance_id,[{id:'experience',role:'user',content:prompt,at:Date.now(),status:'complete'}],signal,delta,options,{chatId:'experience',privateContext:false,access:{enabled:false},activity:()=>{}});}),()=>!music.busy&&!music.running&&!editor.busy&&!core.vault.locked&&!operationBusy&&!chats.busy&&!pro.busy&&!gateway.status().enabled&&!gateway.busy&&!aux.busy&&!proMedia.busy&&!core.jobs.size&&!library.busy,core.directory);
   let modelGate = Promise.resolve();
   function exclusive<T>(operation: () => Promise<T>): Promise<T> {
@@ -132,6 +140,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     if(experienceJobs.busy&&request.method!=='GET'&&!/^\/v1\/(experience\/(room|benchmark)\/stop|assistant\/approve|lock)$/.test(request.url))return reply.code(409).send({error:'Pare o teste ou a reunião antes de iniciar outra operação.'});
     if(pro.busy&&request.method==='POST'&&/^\/v1\/(experience\/bots\/.*\/run|chats\/.*\/send|model-library\/(load|unload|engine|import-mlx)|sharing\/start|tasks\/.*\/start|local-engines\/(generate|transcribe))$/.test(request.url))return reply.code(409).send({error:'Aguarde a tarefa Pro ou cancele-a na fila.'});
     if((aux.busy||proMedia.busy)&&request.method==='POST'&&/\/chats\/[^/]+\/send$/.test(request.url))return reply.code(409).send({error:'Aguarde o motor de voz ou imagem.'});
+    if(quantizationBlocksRequest(library.quantizer.running,request.method,request.url))return reply.code(409).send({error:'Aguarde a quantização terminar ou cancele-a.'});
     if (!['/v1/status','/v1/setup','/v1/unlock','/v1/session','/v1/vault/migrate','/v1/vault/skip-legacy','/v1/vault/device-open','/v1/vault/device-migrate','/v1/vault/device-commit','/v1/vault/device-abort','/v1/vault/device-fresh'].includes(request.url.split('?')[0]) && core.vault.locked) return reply.code(423).send({ error: 'Desbloqueie o cofre para continuar.' });
   });
   app.addHook('preHandler',async(request)=>{const feature=requiredFeature(request.method,request.routeOptions.url||request.url.split('?')[0],request.body);if(feature)subscription.require(feature);});
@@ -384,7 +393,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.get('/v1/music/models',async()=>music.check());
   app.get('/v1/music/gallery',async()=>music.gallery());
   app.get('/v1/music/artifacts/:id',async(request,reply)=>reply.type('audio/wav').send(readFileSync(music.artifact(id(request)))));
-  const musicIdle=(inside=false)=>{if(core.vault.locked||(!inside&&operationBusy)||chats.busy||aux.busy||proMedia.busy||pro.busy||gateway.status().enabled||gateway.busy||experienceJobs.busy||editor.busy||core.jobs.size||library.busy)throw Error('Aguarde a IA atual antes de usar música.');};
+  const musicIdle=(inside=false)=>{if(library.quantizer.running)throw Error('Aguarde a quantização terminar ou cancele-a.');if(core.vault.locked||(!inside&&operationBusy)||chats.busy||aux.busy||proMedia.busy||pro.busy||gateway.status().enabled||gateway.busy||experienceJobs.busy||editor.busy||core.jobs.size||library.busy)throw Error('Aguarde a IA atual antes de usar música.');};
   app.post('/v1/music/install',async()=>{musicIdle();return music.install();});
   app.post('/v1/music/start',async()=>{musicIdle();return exclusive(async()=>{musicIdle(true);for(const model of runtime.status().models)await runtime.unload(model);return music.start();});});
   app.post('/v1/music/connection',async request=>music.configure(body(request)));
@@ -438,6 +447,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/sharing/stop',async request=>{z.strictObject({}).parse(body(request));return gateway.stop();});
   app.post('/v1/sharing/start',async request=>exclusive(async()=>{
     if(gateway.status().enabled)throw new Error('Desligue a API antes de mudar o modelo.');
+    if(library.quantizer.running)throw new Error('Aguarde a quantização terminar ou cancele-a.');
     if(core.vault.locked||chats.busy||gateway.busy||core.jobs.size)throw new Error('Aguarde a IA terminar antes de compartilhar.');
     const data=z.strictObject({host:z.string().max(50),key:z.string().min(1).max(512),trusted_network:z.boolean().default(false),options:optionsSchema.optional()}).parse(body(request));
     if(data.host!=='127.0.0.1'&&!data.trusted_network)throw new Error('Confirme que esta é uma rede privada confiável ou VPN.');
@@ -459,6 +469,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/chats', async request => { const metadata=z.strictObject({bot_id:z.string().uuid().optional(),preferred_model:z.string().max(512).optional()}).parse(body(request)); return chats.create(key(request),metadata); });
   app.post('/v1/chats/:id/send', {bodyLimit:2*1024**2}, async request => exclusive(async () => {
     const data = z.strictObject({ model: z.string().min(1).max(512), model_key:z.string().max(512).optional(), content: z.string().trim().min(1).max(131072), options:optionsSchema.optional(), retry:z.boolean().default(false),access:accessSchema.optional(),attachments:z.array(attachmentSchema).max(4).default([]) }).parse(body(request));
+    if(library.quantizer.running)throw new Error('Aguarde a quantização terminar ou cancele-a.');
     if(crewTalk?.busy)throw new Error('Aguarde a conversa da equipe.');
     if(aux.busy||proMedia.busy)throw new Error('Aguarde o motor de voz ou imagem.');
     if(gateway.busy)throw new Error('A IA está atendendo uma chamada da API. Tente em instantes.');
@@ -479,7 +490,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     const state = libraryState();
     const memory = memoryStatus();
     const disk = statfsSync(library.directory);
-    return { revision: state.revision, busy: library.busy, disk_free_bytes: disk.bavail * disk.bsize, available_memory_bytes: memory.available_memory_bytes, total_memory_bytes: totalmem(), jobs: Object.values(library.jobs).map(job => ({ id: job.id, state: job.state, downloaded: job.downloaded, total: job.total, error: job.error, model_key: job.model_key })), media_downloads: { busy: state.media.busy, jobs: state.media.jobs.map(job => ({ model: job.model, file: job.file, state: job.state, downloaded: job.downloaded, total: job.total, error: job.error })) }, studio_download: state.studio };
+    return { revision: state.revision, busy: library.busy, disk_free_bytes: disk.bavail * disk.bsize, available_memory_bytes: memory.available_memory_bytes, total_memory_bytes: totalmem(), jobs: Object.values(library.jobs).map(job => ({ id: job.id, state: job.state, downloaded: job.downloaded, total: job.total, error: job.error, model_key: job.model_key })), quantize: library.quantizer.view(), media_downloads: { busy: state.media.busy, jobs: state.media.jobs.map(job => ({ model: job.model, file: job.file, state: job.state, downloaded: job.downloaded, total: job.total, error: job.error })) }, studio_download: state.studio };
   });
   app.get('/v1/model-library', async (request, reply) => {
     const state = libraryState();
@@ -494,6 +505,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/media-downloads/pause',async()=>mediaDownloads.pause());
   app.post('/v1/model-library/engine', async request => exclusive(async () => { if (core.vault.locked) throw new Error('Cofre bloqueado'); z.strictObject({}).parse(body(request)); return library.startEngine(); }));
   app.post('/v1/model-library/import-mlx', async request => exclusive(async () => {
+    library.assertQuantizeIdle();
     if (core.vault.locked || chats.busy || library.busy || gateway.busy) throw new Error('Aguarde a operação atual antes de importar.');
     const {folder}=z.strictObject({folder:z.string().min(1).max(2048)}).parse(body(request));
     const imported=await runtime.importMlx(folder);
@@ -504,6 +516,18 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.post('/v1/model-library/install', async request => exclusive(async () => { if (core.vault.locked) throw new Error('Cofre bloqueado'); const { id } = z.strictObject({ id: z.string().max(60) }).parse(body(request)); return library.install(id); }));
   app.post('/v1/model-library/load', async request => exclusive(async () => { if (core.vault.locked) throw new Error('Cofre bloqueado'); const { key,context } = z.strictObject({ key: z.string().min(1).max(512),context:z.number().int().min(2048).max(131072).default(16384) }).parse(body(request)); if ((await core.snapshot()).tasks.some(task => task.state === 'running')) throw new Error('Aguarde a entrega atual terminar antes de carregar outro modelo'); if (chats.busy||gateway.busy||aux.busy) throw new Error('Pare a resposta atual antes de preparar outra IA.'); if(gateway.status().enabled&&runtime.owns(key)&&runtime.owns(gateway.status().local_model)&&gateway.status().local_model!==key)throw new Error('Desligue Minha API antes de trocar a IA do motor integrado.'); return library.load(key,context); }));
   app.post('/v1/model-library/unload', async request => exclusive(async () => { if (core.vault.locked) throw new Error('Cofre bloqueado'); const { instance } = z.strictObject({ instance: z.string().min(1).max(512) }).parse(body(request)); if ((await core.snapshot()).tasks.some(task => task.state === 'running' && task.model === instance)) throw new Error('Este modelo está trabalhando em uma entrega. Pause a entrega primeiro.'); if (chats.busy||gateway.busy||aux.busy) throw new Error('Pare a resposta atual antes de liberar memória.'); if(gateway.status().enabled&&gateway.status().local_model===instance)throw new Error('Desligue Minha API antes de liberar o modelo compartilhado.'); return library.unload(instance); }));
+  const quantizePreset = z.enum(['equilibrado', 'menor', 'qualidade']);
+  app.get('/v1/model-library/quantize', async () => library.quantizer.view());
+  app.post('/v1/model-library/quantize/estimate', async request => { if (core.vault.locked) throw new Error('Cofre bloqueado'); const { key, preset } = z.strictObject({ key: z.string().min(1).max(512), preset: quantizePreset }).parse(body(request)); return library.quantizationEstimate(key, preset); });
+  app.post('/v1/model-library/quantize', async request => exclusive(async () => {
+    if (core.vault.locked) throw new Error('Cofre bloqueado');
+    const blocked = otherAiBlocksQuantize({ chats: chats.busy, api: gateway.status().enabled, apiBusy: gateway.busy, aux: aux.busy, pro: pro.busy, jobs: core.jobs.size, music: music.busy || music.running, editor: editor.busy, media: proMedia.busy });
+    if (blocked) throw new Error(blocked);
+    const { key, preset } = z.strictObject({ key: z.string().min(1).max(512), preset: quantizePreset }).parse(body(request));
+    return library.quantizeModel(key, preset);
+  }));
+  app.post('/v1/model-library/quantize/cancel', async request => { if (core.vault.locked) throw new Error('Cofre bloqueado'); z.strictObject({}).parse(body(request)); return library.quantizer.cancel(); });
+  app.post('/v1/model-library/quantize/clear', async request => { if (core.vault.locked) throw new Error('Cofre bloqueado'); z.strictObject({}).parse(body(request)); return library.quantizer.clear(); });
   app.post('/v1/tasks', async request => core.create(body(request), key(request)));
   app.post('/v1/tasks/:id/start', async request => exclusive(async () => { if (core.vault.locked) throw new Error('Cofre bloqueado'); if (chats.busy||gateway.busy||aux.busy) throw new Error('Pare a resposta atual antes de iniciar uma entrega.'); return core.start(id(request), key(request)); }));
   app.post('/v1/tasks/:id/pause', async request => { await core.pause(id(request)); return { ok: true }; });
@@ -566,7 +590,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
     return null;
   });
   registerCrewRoutes(app, crews, crewTalk);
-  return { app, token, subscription, setOrigin(next: string) { origin = next; } };
+  return { app, token, subscription, library, setOrigin(next: string) { origin = next; } };
 }
 
 export async function openLocalServer(directory: string, root: string, env: NodeJS.ProcessEnv = process.env) {
