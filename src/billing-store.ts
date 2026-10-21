@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import process from 'node:process';
 import postgres from 'postgres';
-import { supabaseRootCa } from './billing-ca.js';
+import { supabaseRootCa } from './billing-ca.ts';
 type Env = Record<string, string | undefined>;
 
 export type DeviceRow = {

@@ -7,7 +7,7 @@ do $$ begin
   end if;
 end $$;
 
-alter role billing_app with nologin noinherit nosuperuser nobypassrls;
+alter role billing_app with nologin noinherit nobypassrls;
 
 alter table billing.trial_identities add column if not exists created bigint not null default 0;
 alter table billing.trial_identities alter column created drop default;
