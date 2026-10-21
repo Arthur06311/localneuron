@@ -16,7 +16,7 @@ async function open() {
   const dir = await mkdtemp(join(tmpdir(), 'neuron-crews-'));
   const core = new Core(dir, process.cwd());
   await core.init();
-  await core.setup('senha-ficticia-equipas');
+  await core.setup('senha-ficticia-equipes');
   const { app } = await createApp(core, 'crews-fixture');
   const headers = { host: '127.0.0.1:4317', authorization: 'Bearer crews-fixture', 'idempotency-key': randomUUID() };
   return { dir, core, app, headers };

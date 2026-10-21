@@ -81,7 +81,7 @@ test('primeira execução abre o Chat sem senha e rejeita origem estranha ou ses
   }
 });
 
-test('atualização com cofre antigo abre o Chat, guarda a cópia e o segundo arranque não pede senha', async () => {
+test('atualização com cofre antigo abre o Chat, guarda a cópia e a segunda inicialização não pede senha', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'startup-legacy-'));
   const prepared = new Core(dir, process.cwd());
   await prepared.init();
