@@ -1,6 +1,6 @@
--- Cobrança do LocalNeuron. Rode no SQL Editor do Supabase, como dono do banco.
+-- Cobrança do LocalNeuron. Rode com supabase db push, como dono do banco.
 -- O aplicativo usa o schema billing. Ele não fica na Data API.
--- trial_identities guarda só o HMAC do cartão ou do e-mail, nunca o valor.
+-- trial_identities guarda só o HMAC, nunca o valor.
 
 create schema if not exists billing;
 
@@ -27,7 +27,8 @@ create table if not exists billing.events (
 
 create table if not exists billing.trial_identities (
   hmac text primary key,
-  subscription text not null
+  subscription text not null,
+  created bigint not null
 );
 
 create index if not exists devices_subscription_idx on billing.devices (subscription);

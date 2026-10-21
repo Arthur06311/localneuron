@@ -163,7 +163,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   const key = (request: any) => String(request.headers['idempotency-key'] ?? '');
   const id = (request: any) => String(request.params.id);
   let lastPlanRefresh=0;
-  app.get('/v1/subscription',async()=>{await subscription.refreshEligibility().catch(()=>{});const state=subscription.snapshot();if(state.configured&&state.checked_at&&Date.now()-state.checked_at>86400_000&&Date.now()-lastPlanRefresh>1800_000){lastPlanRefresh=Date.now();void subscription.refresh().catch(()=>{});}return state;});
+  app.get('/v1/subscription',async request=>{const intent=z.object({intent:z.string().max(32).optional()}).parse(request.query??{}).intent;if(intent==='plan')subscription.scheduleEligibility();const state=subscription.snapshot();if(state.configured&&state.checked_at&&Date.now()-state.checked_at>86400_000&&Date.now()-lastPlanRefresh>1800_000){lastPlanRefresh=Date.now();void subscription.refresh().catch(()=>{});}return state;});
   app.post('/v1/subscription/refresh',async()=>subscription.refresh());
   app.post('/v1/subscription/checkout',async request=>{const {plan}=z.strictObject({plan:z.enum(['monthly','yearly']).optional()}).parse(body(request)??{});return subscription.checkout(plan??'monthly');});
   app.post('/v1/subscription/portal',async()=>subscription.portal());

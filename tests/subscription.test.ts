@@ -4,8 +4,8 @@ import {existsSync,mkdtempSync,readFileSync,rmSync} from 'node:fs';
 import {join,resolve} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createHmac,generateKeyPairSync,randomUUID} from 'node:crypto';
-import {Subscription,requiredFeature,verifyLease,type Lease} from '../src/subscription.js';
-import {billingConfigFromEnv,billingRequestUrl,createBillingService,dispatchNodeRequest,signLease,verifyWebhook,validateApprovedPrice,trialIdentityHmac} from '../src/billing-service.js';
+import {Subscription,billingEndpoint,requiredFeature,verifyLease,type Lease} from '../src/subscription.js';
+import {billingConfigFromEnv,billingFunctionPath,createBillingService,handleBillingWeb,signLease,verifyWebhook,validateApprovedPrice,trialIdentityHmac} from '../src/billing-service.js';
 import {MemoryBillingStore,assertTransactionPoolerUrl,createPostgresStore,supabasePoolOptions} from '../src/billing-store.js';
 import type postgres from 'postgres';
 import {optimizeContext} from '../src/optimization.js';
@@ -124,6 +124,8 @@ test('Checkout anual usa o preço de R$ 150 e inclui 7 dias de teste',async()=>{
   const body=calls.find(c=>c.path==='checkout/sessions').body;
   assert.equal(body.mode,'subscription');assert.equal(body['line_items[0][price]'],'price_year');assert.equal(body['line_items[0][quantity]'],'1');
   assert.equal(body['subscription_data[trial_period_days]'],'7');assert.equal(body['subscription_data[metadata][device]'],device);
+  assert.equal(body.client_reference_id,device);assert.equal(body['metadata[device]'],device);
+  assert.equal(Object.keys(body).some(key=>/email|\[name\]|^name$|secret/i.test(key)),false);
   assert.equal(body.payment_method_collection,'always');assert.equal(body.locale,'pt-BR');
   assert.equal((await app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device,plan:'vitalicio'}})).statusCode,400);
   assert.equal((await app.inject({method:'GET',url:'/health'})).json().ok,true);
@@ -253,55 +255,63 @@ test('Cartão ou e-mail repetido encerra o teste sem gravar o valor',async()=>{
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
 test('Elegibilidade desconhecida não anuncia o teste e a página só mostra os 7 dias para quem pode',async()=>{
- const dir=temporary(),now=Date.now(),original=globalThis.fetch;const {readFileSync}=await import('node:fs');
+ const dir=temporary(),original=globalThis.fetch;let now=Date.now();const {readFileSync}=await import('node:fs');
  try{const local=new Subscription(dir,{...testConfig,serviceUrl:'https://billing.example.com/'},()=>now);
   assert.equal(local.snapshot().trial_eligible,false);
-  globalThis.fetch=async()=>{throw Error('offline');};await local.refreshEligibility();assert.equal(local.snapshot().trial_eligible,false);
-  globalThis.fetch=async()=>new Response(JSON.stringify({trial_eligible:true}));await local.refreshEligibility();assert.equal(local.snapshot().trial_eligible,true);
-  local.install(signLease(lease(local.snapshot().device,now),privateKey));assert.equal(local.snapshot().trial_eligible,false);
+  let calls=0;globalThis.fetch=async()=>{calls++;throw Error('offline');};await local.refreshEligibility();await local.refreshEligibility();assert.equal(local.snapshot().trial_eligible,false);assert.equal(calls,1);
+  now+=11*60_000;globalThis.fetch=async()=>new Response(JSON.stringify({trial_eligible:true}));await local.refreshEligibility();assert.equal(local.snapshot().trial_eligible,true);
+  calls=0;globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({trial_eligible:true}));};
+  local.install(signLease(lease(local.snapshot().device,now),privateKey));assert.equal(local.snapshot().trial_eligible,false);await local.refreshEligibility();assert.equal(calls,0);
+  const idle=new Subscription(dir+'-off',testConfig,()=>now);await idle.refreshEligibility();assert.equal(calls,0);
   const page=readFileSync(resolve('public/subscription.js'),'utf8');
   assert.match(page,/trial=Boolean\(state\.configured&&state\.trial_eligible&&!managing\)/);
   assert.match(page,/trial\?'<p class="trial-note">7 dias grátis<\/p>':''/);
-  assert.match(page,/Troque entre Mensal e Anual em Gerenciar assinatura/);
- }finally{globalThis.fetch=original;rmSync(dir,{recursive:true,force:true});}
+  assert.match(page,/uma vez por pessoa e por cartão/);
+  assert.match(page,/O teste grátis desta pessoa ou deste cartão já foi usado e terminou agora/);
+  assert.doesNotMatch(page,/Troque entre Mensal e Anual/);
+ }finally{globalThis.fetch=original;rmSync(dir,{recursive:true,force:true});rmSync(dir+'-off',{recursive:true,force:true});}
 });
 test('O serviço exige a chave de HMAC do teste',async()=>{
  const dir=temporary();
  try{await assert.rejects(()=>createBillingService({...billingConfig(dir),trialHmacKey:'curta'},async()=>monthlyPrice()),/32/);}
  finally{rmSync(dir,{recursive:true,force:true});}
 });
-test('Postgres usa o pooler 6543 sem prepared statements e a migração não guarda cartão',async()=>{
- assert.equal(supabasePoolOptions.prepare,false);assert.equal(supabasePoolOptions.ssl,'require');assert.equal(supabasePoolOptions.max,1);
+test('Postgres usa o pooler 6543 em sa-east-1, verify-full, e a migração não guarda cartão',async()=>{
+ const options=supabasePoolOptions();
+ assert.equal(options.prepare,false);assert.equal(options.max,1);assert.equal(options.ssl.rejectUnauthorized,true);assert.match(options.ssl.ca,/BEGIN CERTIFICATE/);
+ const custom=supabasePoolOptions({LOCALNEURON_BILLING_DB_CA:options.ssl.ca.replace(/\n/g,'\\n')});assert.match(custom.ssl.ca,/BEGIN CERTIFICATE/);
+ assert.throws(()=>supabasePoolOptions({LOCALNEURON_BILLING_DB_CA:'nao-e-um-pem'}),/PEM/);
  assert.throws(()=>assertTransactionPoolerUrl('postgresql://local:local@127.0.0.1:5432/postgres'),/6543/);
- let opened=false;const connect=(((_url:string,options:typeof supabasePoolOptions)=>{opened=true;assert.equal(options.prepare,false);return {async end(){}};}) as unknown) as typeof postgres;
- const store=createPostgresStore('postgresql://postgres.projeto:senha@aws-0-sa-east-1.pooler.supabase.com:6543/postgres',connect);
+ let opened=false;const connect=(((_url:string,opts:ReturnType<typeof supabasePoolOptions>)=>{opened=true;assert.equal(opts.prepare,false);assert.equal(opts.ssl.rejectUnauthorized,true);return {async end(){}};}) as unknown) as typeof postgres;
+ const store=createPostgresStore('postgresql://billing_app.projeto:senha@aws-0-sa-east-1.pooler.supabase.com:6543/postgres',connect);
  assert.equal(opened,true);await store.close();
- assert.throws(()=>createPostgresStore('postgresql://local:local@127.0.0.1:5432/postgres',(()=>{throw Error('não conecta');}) as unknown as typeof postgres),/6543/);
- const sql=readFileSync(resolve('billing/migrations/20261021000000_init.sql'),'utf8');
- assert.match(sql,/billing\.devices/);assert.match(sql,/billing\.events/);assert.match(sql,/billing\.trial_identities/);
+ const refuse=(()=>{throw Error('não conecta');}) as unknown as typeof postgres;
+ assert.throws(()=>createPostgresStore('postgresql://billing_app.projeto:senha@db.projeto.supabase.co:6543/postgres',refuse),/sa-east-1/);
+ assert.throws(()=>createPostgresStore('postgresql://postgres.projeto:senha@aws-0-sa-east-1.pooler.supabase.com:6543/postgres',refuse),/billing_app/);
+ assert.throws(()=>createPostgresStore('postgresql://local:local@127.0.0.1:5432/postgres',refuse),/6543/);
+ const sql=['20261021000000_init.sql','20261021010000_role_and_rate.sql','20261021020000_keep_alive.sql'].map(name=>readFileSync(resolve('supabase/migrations',name),'utf8')).join('\n');
+ assert.match(sql,/billing\.devices/);assert.match(sql,/billing\.events/);assert.match(sql,/billing\.trial_identities/);assert.match(sql,/billing_app/);assert.match(sql,/rate_windows/);assert.match(sql,/created bigint/);
+ assert.match(sql,/pg_cron/);assert.match(sql,/billing-keep-alive/);assert.match(sql,/billing-purge-events/);assert.match(sql,/billing-purge-identities/);assert.match(sql,/for all to billing_app/);
  assert.match(sql,/enable row level security/);assert.doesNotMatch(sql,/fingerprint|email/i);
- const vercel=readFileSync(resolve('vercel.json'),'utf8');assert.match(vercel,/gru1/);assert.match(vercel,/path=\/health/);
- assert.match(readFileSync(resolve('api/billing.js'),'utf8'),/bodyParser:\s*false/);
+ const fn=readFileSync(resolve('supabase/functions/billing/index.ts'),'utf8');assert.match(fn,/starting \?\?=/);assert.doesNotMatch(fn,/SERVICE_ROLE/);
+ const hook=readFileSync(resolve('supabase/functions/stripe-webhook/index.ts'),'utf8');assert.match(hook,/constructEventAsync/);assert.match(hook,/createSubtleCryptoProvider/);assert.match(hook,/starting \?\?=/);
+ assert.equal((readFileSync(resolve('supabase/config.toml'),'utf8').match(/verify_jwt = false/g)||[]).length,2);
+ assert.equal(existsSync('vercel.json'),false);assert.equal(existsSync('api/billing.js'),false);assert.equal(existsSync('billing/migrations/20261021000000_init.sql'),false);
  assert.equal(existsSync('fly.toml'),false);assert.equal(existsSync('billing/Dockerfile'),false);assert.equal(existsSync('billing/docker-entrypoint.sh'),false);assert.equal(existsSync('.dockerignore'),false);
 });
-test('A função da Vercel entrega o corpo cru do webhook na rota pública',async()=>{
+test('A função entrega o corpo cru do webhook e a saúde no caminho do Supabase',async()=>{
  const dir=temporary(),now=Date.now();
  const stripe=async(path:string)=>{if(path==='prices/price_month')return monthlyPrice();if(path==='prices/price_year')return yearlyPrice();throw Error(path);};
  const app=await createBillingService(billingConfig(dir),stripe,()=>now);
  const payload='{"id": "evt_raw", "type": "invoice.paid", "data": {"object": {}}}';
  const ts=Math.floor(now/1000),signature='t='+ts+',v1='+createHmac('sha256','webhook-test').update(ts+'.'+payload).digest('hex');
- const request={method:'POST',url:'/api/billing?path=/billing/webhook',headers:{'content-type':'application/json','stripe-signature':signature,'content-length':'9999','transfer-encoding':'chunked'},async *[Symbol.asyncIterator](){yield Buffer.from(payload);}};
- const response={statusCode:0,setHeader(){},end(body?:any){this.statusCode=response.statusCode;response.body=Buffer.isBuffer(body)?body.toString('utf8'):String(body??'');},body:''};
  try{
-  assert.equal(billingRequestUrl('/health'),'/health');
-  assert.equal(billingRequestUrl('/api/billing?path=/health'),'/health');
-  assert.equal(billingRequestUrl('/api/billing?path=/billing/webhook'),'/billing/webhook');
-  assert.equal(billingRequestUrl('/billing/success'),'/billing/success');
-  await dispatchNodeRequest(app,request,response);
-  assert.equal(response.statusCode,200);assert.match(response.body,/received/);
-  const health={statusCode:0,setHeader(){},end(body?:any){health.body=Buffer.isBuffer(body)?body.toString('utf8'):String(body??'');},body:''};
-  await dispatchNodeRequest(app,{method:'GET',url:'/api/billing?path=/health',headers:{},async *[Symbol.asyncIterator](){}},health);
-  assert.equal(health.statusCode,200);assert.match(health.body,/"ok":true/);
+  assert.equal(billingFunctionPath('https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing/health?forceFunctionRegion=sa-east-1').split('?')[0],'/billing/health');
+  assert.equal(billingFunctionPath('/functions/v1/billing/checkout').split('?')[0],'/billing/checkout');
+  const health=await handleBillingWeb(app,new Request('https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing/health'));
+  assert.equal(health.status,200);assert.match(await health.text(),/"ok":true/);
+  const response=await handleBillingWeb(app,new Request('https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing/webhook?forceFunctionRegion=sa-east-1',{method:'POST',headers:{'content-type':'application/json','stripe-signature':signature,'content-length':'9999'},body:payload}));
+  assert.equal(response.status,200);assert.match(await response.text(),/received/);
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
 test('Checkout autenticado para no 60º pedido e saúde continua livre',async()=>{
@@ -322,6 +332,143 @@ test('Checkout autenticado para no 60º pedido e saúde continua livre',async()=
   assert.equal(blocked.statusCode,429);assert.match(blocked.body,/Aguarde antes de tentar novamente/);
   assert.equal((await app.inject({method:'GET',url:'/health'})).statusCode,200);
   assert.equal((await app.inject({method:'POST',url:'/billing/checkout',headers:{...headers,origin:'https://evil.example'},payload:{device}})).statusCode,403);
+ }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('Elegibilidade não cria instalação e o refresh repetido não emite licença de teste',async()=>{
+ const dir=temporary(),device=randomUUID();let now=Date.now(),status='trialing';
+ const fingerprint='fp_repetido';
+ const stripe=async(path:string,body?:Record<string,string>)=>{
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='checkout/sessions')return {id:'cs_rep',url:'https://checkout.stripe.com/c/rep',expires_at:(now+day)/1000};
+  if(path.includes('expand[]=default_payment_method'))return {id:'sub_rep',status,customer:{id:'cus_rep',email:'pessoa@example.com'},default_payment_method:{card:{fingerprint}},metadata:{device}};
+  if(body?.trial_end==='now')return {id:'sub_rep',status};
+  if(path.startsWith('subscriptions/sub_rep'))return {id:'sub_rep',customer:'cus_rep',metadata:{device},status,trial_end:(now+7*day)/1000,latest_invoice:{status:'open'},items:{data:[{price:{id:'price_month'},current_period_end:(now+30*day)/1000}]}};
+  throw Error(path);
+ };
+ const store=new MemoryBillingStore();
+ await store.rememberIdentity(trialIdentityHmac('card',fingerprint,trialHmacKey),'sub_outra',now-day);
+ const app=await createBillingService(billingConfig(dir),stripe,()=>now,store);
+ const headers={authorization:'Bearer '+'a'.repeat(64)};
+ try{
+  assert.equal((await app.inject({method:'POST',url:'/billing/eligibility',headers,payload:{device}})).json().trial_eligible,true);
+  assert.equal(await store.getDevice(device),undefined);
+  assert.equal((await app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device}})).statusCode,200);
+  await store.updateDevice(device,{customer:'cus_rep',subscription:'sub_rep',checkout:null});
+  const refreshed=await app.inject({method:'POST',url:'/billing/refresh',headers,payload:{device}});
+  assert.equal(refreshed.statusCode,200);assert.equal(refreshed.json().trial_repeat,true);assert.equal(refreshed.json().token,undefined);assert.equal(refreshed.json().status,'free');
+  store.ping=async()=>{throw Error('senha-do-banco-nao-sai');};
+  const health=await app.inject({method:'GET',url:'/billing/health'});
+  assert.equal(health.statusCode,503);assert.deepEqual(health.json(),{ok:false});assert.equal(health.body.includes('senha-do-banco-nao-sai'),false);
+  assert.equal((await app.inject({method:'GET',url:'/health'})).json().ok,true);
+ }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('O limite durável vale entre instâncias e cai para a memória se o banco falhar',async()=>{
+ const dir=temporary(),device=randomUUID(),now=Date.now();
+ const stripe=async(path:string)=>{
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='checkout/sessions')return {id:'cs_share',url:'https://checkout.stripe.com/c/share',expires_at:(now+day)/1000};
+  if(path==='checkout/sessions/cs_share')return {status:'open',mode:'subscription',client_reference_id:device};
+  throw Error(path);
+ };
+ const store=new MemoryBillingStore();let bumps=0;
+ const original=store.bumpRate.bind(store);
+ store.bumpRate=async(ipHash,route,windowStart)=>{bumps++;assert.match(ipHash,/^[a-f0-9]{64}$/);assert.equal(ipHash.includes('.'),false);assert.equal(route.includes('.'),false);return original(ipHash,route,windowStart);};
+ const headers={authorization:'Bearer '+'b'.repeat(64)};
+ const first=await createBillingService(billingConfig(dir),stripe,()=>now,store);
+ const second=await createBillingService(billingConfig(dir),stripe,()=>now,store);
+ const post=(app:typeof first)=>app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device}});
+ try{
+  for(let i=0;i<60;i++)assert.equal((await post(first)).statusCode,200);
+  const mid=bumps;
+  assert.equal((await post(second)).statusCode,429);
+  assert.equal(bumps,mid+1);
+  assert.equal((await post(second)).statusCode,429);
+  assert.equal(bumps,mid+1);
+ }finally{await first.close();await second.close();}
+ store.bumpRate=async()=>{throw Error('banco');};
+ const fallback=await createBillingService(billingConfig(dir),stripe,()=>now,store);
+ try{
+  for(let i=0;i<60;i++)assert.equal((await post(fallback)).statusCode,200);
+  assert.equal((await post(fallback)).statusCode,429);
+ }finally{await fallback.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('Reembolso integral cancela a assinatura e o parcial não',async()=>{
+ const dir=temporary(),now=Date.now();const deleted:{path:string;key?:string;method?:string}[]=[];
+ const stripe=async(path:string,_body?:Record<string,string>,key?:string,method?:string)=>{
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='invoices/in_1')return {parent:{subscription_details:{subscription:'sub_r'}}};
+  if(path==='invoices/in_done')return {subscription:'sub_done'};
+  if(path==='invoices/in_fail')return {subscription:'sub_fail'};
+  if(method==='DELETE'){if(path.endsWith('sub_fail'))throw Error('falhou');deleted.push({path,key,method});return {status:'canceled'};}
+  if(path.startsWith('subscriptions/'))return {id:path.split('/')[1],status:path.includes('sub_done')?'canceled':'active'};
+  throw Error(path);
+ };
+ const store=new MemoryBillingStore();
+ const app=await createBillingService(billingConfig(dir),stripe,()=>now,store);
+ const post=(id:string,object:any)=>{const raw=JSON.stringify({id,type:'charge.refunded',data:{object}}),ts=Math.floor(now/1000),signature='t='+ts+',v1='+createHmac('sha256','webhook-test').update(ts+'.'+raw).digest('hex');return app.inject({method:'POST',url:'/billing/webhook',headers:{'content-type':'application/json','stripe-signature':signature},payload:raw});};
+ try{
+  assert.equal((await post('evt_partial',{refunded:false,invoice:'in_partial'})).statusCode,200);assert.equal(deleted.length,0);
+  assert.equal((await post('evt_full',{refunded:true,invoice:'in_1'})).statusCode,200);
+  assert.equal(deleted[0].path,'subscriptions/sub_r');assert.equal(deleted[0].method,'DELETE');assert.equal(deleted[0].key,'ln-refund-evt_full');
+  assert.equal((await post('evt_done',{refunded:true,invoice:'in_done'})).statusCode,200);assert.equal(deleted.length,1);
+  assert.notEqual((await post('evt_fail',{refunded:true,invoice:'in_fail'})).statusCode,200);
+  assert.equal(await store.hasEvent('evt_fail'),false);assert.equal(await store.hasEvent('evt_full'),true);
+  assert.equal(JSON.stringify([...store.events]).includes('invoice'),false);
+ }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('A URL das funções junta o caminho e fixa São Paulo',async()=>{
+ const dir=temporary(),original=globalThis.fetch;
+ try{const target=billingEndpoint('https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing','/billing/checkout');
+  assert.equal(target.pathname,'/functions/v1/billing/checkout');assert.equal(target.searchParams.get('forceFunctionRegion'),'sa-east-1');
+  assert.equal(billingEndpoint('https://billing.example.com/','/billing/refresh').href,'https://billing.example.com/billing/refresh');
+  const local=new Subscription(dir,{...testConfig,serviceUrl:'https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing'},()=>Date.now());
+  let sent='';let region='';
+  globalThis.fetch=async(url,init)=>{sent=String(url);region=String((init as RequestInit).headers&&(init as RequestInit&{headers:Record<string,string>}).headers['x-region']);return new Response(JSON.stringify({url:'https://checkout.stripe.com/c/year'}));};
+  assert.equal((await local.checkout('yearly')).url,'https://checkout.stripe.com/c/year');
+  assert.match(sent,/\/functions\/v1\/billing\/checkout\?forceFunctionRegion=sa-east-1$/);assert.equal(region,'sa-east-1');
+  globalThis.fetch=async()=>new Response(JSON.stringify({status:'free',trial_repeat:true}));
+  await local.refresh();assert.equal(local.snapshot().trial_repeat,true);
+  const again=new Subscription(dir,{...testConfig,serviceUrl:'https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing'},()=>Date.now());
+  assert.equal(again.snapshot().trial_repeat,true);
+ }finally{globalThis.fetch=original;rmSync(dir,{recursive:true,force:true});}
+});
+test('Meu plano consulta a elegibilidade sem travar o chat',async()=>{
+ const dir=temporary(),core=new Core(dir,resolve('.'));await core.init();await core.setup('assinatura-senha-de-teste');
+ const {app,subscription}=await createApp(core,'test-pro-token',undefined,undefined,{...testConfig,serviceUrl:'https://billing.example.com/'});
+ const headers={host:'127.0.0.1:4317',authorization:'Bearer test-pro-token'};const original=globalThis.fetch;
+ let calls=0;let release=()=>{};const gate=new Promise<void>(r=>{release=r;});
+ globalThis.fetch=async()=>{calls++;await gate;return new Response(JSON.stringify({trial_eligible:true}));};
+ try{
+  assert.equal((await app.inject({method:'GET',url:'/v1/subscription',headers})).statusCode,200);assert.equal(calls,0);
+  const started=Date.now();const plan=await app.inject({method:'GET',url:'/v1/subscription?intent=plan',headers});
+  assert.ok(Date.now()-started<1000);assert.equal(plan.json().trial_eligible,false);assert.equal(calls,1);
+  release();let seen=false;
+  for(let i=0;i<40&&!seen;i++){await new Promise(r=>setTimeout(r,25));seen=(await app.inject({method:'GET',url:'/v1/subscription',headers})).json().trial_eligible===true;}
+  assert.equal(seen,true);assert.equal(calls,1);
+  activateTestPro(subscription);calls=0;
+  globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({trial_eligible:true}));};
+  await app.inject({method:'GET',url:'/v1/subscription?intent=plan',headers});assert.equal(calls,0);
+ }finally{release();globalThis.fetch=original;await app.close();await core.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('A URL pública das funções pede a região de São Paulo',async()=>{
+ const dir=temporary(),device=randomUUID(),now=Date.now();const calls:any[]=[];
+ const stripe=async(path:string,body?:Record<string,string>)=>{
+  calls.push({path,body});
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='checkout/sessions')return {id:'cs_region',url:'https://checkout.stripe.com/c/region',expires_at:(now+day)/1000};
+  throw Error(path);
+ };
+ const app=await createBillingService({...billingConfig(dir),publicUrl:'https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing'},stripe,()=>now);
+ try{
+  assert.equal((await app.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'c'.repeat(64)},payload:{device,plan:'yearly'}})).statusCode,200);
+  const body=calls.find(c=>c.path==='checkout/sessions').body;
+  assert.match(body.success_url,/\/functions\/v1\/billing\/success\?forceFunctionRegion=sa-east-1/);
+  assert.match(body.cancel_url,/forceFunctionRegion=sa-east-1/);
+  assert.equal(body.client_reference_id,device);
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
 test('Produção recusa iniciar sem DATABASE_URL',()=>{

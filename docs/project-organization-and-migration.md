@@ -100,7 +100,7 @@ O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes esp
 - `src/editor.ts` e `desktop/resolve-bridge.py`: plano de edição e ponte para o DaVinci Resolve Studio.
 - `src/pro.ts` e `src/pro-documents.ts`: projetos, tarefas, templates, exportações, backups e diagnósticos Pro.
 - `src/subscription.ts`: licença, recursos premium e verificação local.
-- `src/billing-service.ts` e `src/billing-store.ts`: serviço separado para Stripe, Postgres no Supabase, preços mensal e anual validados em BRL, teste de 7 dias e emissão de licença assinada. Na Vercel a entrada é `api/billing.js`.
+- `src/billing-service.ts` e `src/billing-store.ts`: serviço separado para Stripe, Postgres no Supabase, preços mensal e anual validados em BRL, teste de 7 dias e emissão de licença assinada. A entrada hospedada é `supabase/functions/`.
 - `subscription-config.json`: configuração pública; não contém chave privada.
 
 ### Interface
@@ -188,7 +188,7 @@ O código atual não é um serviço multiusuário pronto para ficar exposto dire
 - política de retenção e exclusão de dados;
 - processo de assinatura/notarização e atualização segura dos clientes.
 
-O serviço de cobrança Stripe (`src/billing-service.ts`) fica separado do app local, na Vercel, em `billing.localneuron.ai`. As variáveis necessárias são `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_YEARLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY` (ou `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` no computador), `LOCALNEURON_BILLING_PUBLIC_URL` e `LOCALNEURON_BILLING_TRIAL_HMAC_KEY`. Elas nunca devem entrar no Git ou no bundle do desktop. A chave de HMAC não revela cartão nem e-mail: o banco guarda só o HMAC. O passo a passo está em [billing-deploy.md](billing-deploy.md) e o esquema em [billing-schema.md](billing-schema.md).
+O serviço de cobrança Stripe (`src/billing-service.ts`) fica separado do app local, nas Edge Functions do Supabase, em `sa-east-1`. O domínio `billing.localneuron.ai` é posterior. As variáveis necessárias são `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_YEARLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY` (ou `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` no computador), `LOCALNEURON_BILLING_PUBLIC_URL` e `LOCALNEURON_BILLING_TRIAL_HMAC_KEY`. Elas nunca devem entrar no Git ou no bundle do desktop. A chave de HMAC não revela cartão nem e-mail: o banco guarda só o HMAC. O passo a passo está em [billing-deploy.md](billing-deploy.md) e o esquema em [billing-schema.md](billing-schema.md).
 
 ## 6. Configuração e variáveis importantes
 
@@ -207,13 +207,14 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) fica separado do app l
 | `STRIPE_WEBHOOK_SECRET` | Assinatura de webhook | Somente billing |
 | `STRIPE_MONTHLY_PRICE_ID` | Preço mensal do Pro (BRL 2000) | Somente billing |
 | `STRIPE_YEARLY_PRICE_ID` | Preço anual do Pro (BRL 15000) | Somente billing |
-| `LOCALNEURON_LICENSE_PRIVATE_KEY` | PEM da chave privada de licença, usado na Vercel | Somente billing |
+| `LOCALNEURON_LICENSE_PRIVATE_KEY` | PEM da chave privada de licença, segredo da função Supabase | Somente billing |
 | `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` | Caminho do arquivo PEM no computador. A variável acima ganha se as duas existirem | Somente billing |
 | `LOCALNEURON_BILLING_PUBLIC_URL` | URL pública HTTPS do serviço de cobrança | Somente billing |
 | `LOCALNEURON_BILLING_TRIAL_HMAC_KEY` | Segredo do HMAC de cartão e e-mail do teste. Mínimo de 32 caracteres. Não é o valor em claro. | Somente billing |
 | `LOCALNEURON_BILLING_HOST` | Endereço de escuta de `npm run billing` | Não; padrão `127.0.0.1` |
-| `LOCALNEURON_BILLING_PORT` | Porta local do serviço de cobrança | Não; padrão `4330`. A Vercel não usa esta porta |
-| `LOCALNEURON_BILLING_TRUST_PROXY` | `vercel` para ler `x-real-ip` ou o primeiro hop de `x-forwarded-for` | Não; `VERCEL=1` já liga esse modo |
+| `LOCALNEURON_BILLING_PORT` | Porta local do serviço de cobrança | Não; padrão `4330`. A função Supabase não usa esta porta |
+| `LOCALNEURON_BILLING_TRUST_PROXY` | `supabase` para ler `x-real-ip` ou o primeiro hop de `x-forwarded-for` | Não; `SUPABASE_URL` em `.supabase.co` já liga esse modo |
+| `LOCALNEURON_BILLING_DB_CA` | PEM ou caminho do certificado público do Postgres, se não for o pacote | Não |
 | `HF_HOME` / `HF_HUB_CACHE` | Cache Hugging Face | Hoje ignoradas: o motor de música define esses caminhos dentro da própria pasta |
 
 O arquivo [`.env.example`](../.env.example) lista essas variáveis com valores de exemplo. O app não lê `.env` automaticamente: exporte as variáveis no shell, no gerenciador de serviços ou no cofre de segredos do servidor.

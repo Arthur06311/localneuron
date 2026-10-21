@@ -31,7 +31,7 @@ Não há redução artificial da velocidade ou da qualidade dos motores gratuito
 
 `subscription-config.json` está sem serviço e sem chave pública. O pacote inicia no Grátis; os botões de compra informam que a venda está em preparação. Não existem contas Stripe, produtos, cobranças ou assinaturas reais criados por esta alteração.
 
-O serviço separado `src/billing-service.ts` implementa Checkout, portal do cliente, verificação de webhook, idempotência e emissão de licenças. Na 0.14 o banco era SQLite no servidor do publicador. A publicação atual usa Postgres no Supabase e a Vercel; o passo a passo está em [billing-deploy.md](billing-deploy.md). A API Stripe permanece `2025-03-31.basil`. Ele consulta a assinatura atual, o preço esperado e a última fatura paga; não libera acesso por uma URL de sucesso ou pelo conteúdo antigo de um evento.
+O serviço separado `src/billing-service.ts` implementa Checkout, portal do cliente, verificação de webhook, idempotência e emissão de licenças. Na 0.14 o banco era SQLite no servidor do publicador. A publicação atual usa Edge Functions e Postgres no Supabase, em `sa-east-1`; o passo a passo está em [billing-deploy.md](billing-deploy.md). A API Stripe permanece `2025-03-31.basil`. Ele consulta a assinatura atual, o preço esperado e a última fatura paga; não libera acesso por uma URL de sucesso ou pelo conteúdo antigo de um evento.
 
 Os testes usam um adaptador Stripe simulado. Ainda é necessário executar a homologação com uma conta Stripe em modo de teste, configurar o portal para cancelamento no fim do período, hospedar o serviço e só então habilitar produção. Veja [configuração comercial](subscription-operations.md).
 

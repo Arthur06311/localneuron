@@ -1,4 +1,6 @@
+import { existsSync, readFileSync } from 'node:fs';
 import postgres from 'postgres';
+import { supabaseRootCa } from './billing-ca.js';
 
 export type DeviceRow = {
   id: string;
@@ -25,15 +27,21 @@ export interface BillingStore {
   hasEvent(id: string): Promise<boolean>;
   saveEvent(id: string, processed: number): Promise<void>;
   purgeEvents(before: number): Promise<void>;
-  rememberIdentity(hmac: string, subscription: string): Promise<string>;
+  rememberIdentity(hmac: string, subscription: string, created: number): Promise<string>;
+  purgeIdentities(before: number): Promise<void>;
   listIdentities(): Promise<{ hmac: string; subscription: string }[]>;
+  bumpRate(ipHash: string, route: string, windowStart: number): Promise<number>;
+  purgeRateWindows(before: number): Promise<void>;
+  ping(): Promise<void>;
   close(): Promise<void>;
 }
 
 export class MemoryBillingStore implements BillingStore {
   readonly devices = new Map<string, DeviceRow>();
   readonly identities = new Map<string, string>();
+  readonly identityCreated = new Map<string, number>();
   readonly events = new Map<string, number>();
+  readonly rates = new Map<string, { hits: number }>();
   async getDevice(id: string) { const row = this.devices.get(id); return row ? { ...row } : undefined; }
   async insertDevice(id: string, secret: string) {
     if (this.devices.has(id)) return;
@@ -55,29 +63,71 @@ export class MemoryBillingStore implements BillingStore {
   async hasEvent(id: string) { return this.events.has(id); }
   async saveEvent(id: string, processed: number) { if (!this.events.has(id)) this.events.set(id, processed); }
   async purgeEvents(before: number) { for (const [id, processed] of this.events) if (processed < before) this.events.delete(id); }
-  async rememberIdentity(hmac: string, subscription: string) {
+  async rememberIdentity(hmac: string, subscription: string, created: number) {
     const existing = this.identities.get(hmac);
     if (existing) return existing;
     this.identities.set(hmac, subscription);
+    this.identityCreated.set(hmac, created);
     return subscription;
   }
+  async purgeIdentities(before: number) {
+    for (const [hmac, created] of this.identityCreated) if (created < before) { this.identityCreated.delete(hmac); this.identities.delete(hmac); }
+  }
   async listIdentities() { return [...this.identities].map(([hmac, subscription]) => ({ hmac, subscription })); }
+  async bumpRate(ipHash: string, route: string, windowStart: number) {
+    const key = ipHash + '\0' + route + '\0' + windowStart;
+    const row = this.rates.get(key) ?? { hits: 0 };
+    row.hits += 1;
+    this.rates.set(key, row);
+    return row.hits;
+  }
+  async purgeRateWindows(before: number) {
+    for (const key of this.rates.keys()) {
+      const windowStart = Number(key.split('\0')[2]);
+      if (windowStart < before) this.rates.delete(key);
+    }
+  }
+  async ping() {}
   async close() {}
 }
 
-/** Supabase transaction pooler (port 6543) rejects prepared statements. */
-export const supabasePoolOptions = Object.freeze({
-  prepare: false as const,
-  max: 1,
-  ssl: 'require' as const,
-  idle_timeout: 20,
-  connect_timeout: 10,
-});
+/** Certificado público, ou o PEM/caminho em LOCALNEURON_BILLING_DB_CA. verify-full exige o CA e o nome do host. */
+export function billingDbCa(env: NodeJS.ProcessEnv = process.env): string {
+  const raw = env.LOCALNEURON_BILLING_DB_CA;
+  if (typeof raw !== 'string' || !raw.trim()) return supabaseRootCa;
+  const text = raw.replace(/\\n/g, '\n');
+  if (text.includes('-----BEGIN CERTIFICATE-----')) return text;
+  const path = text.trim();
+  if (existsSync(path)) return readFileSync(path, 'utf8');
+  throw Error('LOCALNEURON_BILLING_DB_CA precisa ser um PEM ou o caminho do certificado.');
+}
+
+export function supabasePoolOptions(env: NodeJS.ProcessEnv = process.env) {
+  return Object.freeze({
+    prepare: false as const,
+    max: 1,
+    ssl: Object.freeze({ rejectUnauthorized: true as const, ca: billingDbCa(env) }),
+    idle_timeout: 20,
+    connect_timeout: 10,
+  });
+}
 
 export function assertTransactionPoolerUrl(databaseUrl: string) {
   let port = '';
   try { port = new URL(databaseUrl).port; } catch { port = ''; }
   if (port !== '6543') throw Error('DATABASE_URL precisa ser o pooler do Supabase em modo transação, porta 6543.');
+}
+
+export function assertSaoPauloHost(databaseUrl: string) {
+  let host = '';
+  try { host = new URL(databaseUrl).hostname; } catch { host = ''; }
+  if (!host.includes('sa-east-1')) throw Error('DATABASE_URL precisa ser o pooler do projeto em sa-east-1 (São Paulo).');
+}
+
+export function assertBillingRole(databaseUrl: string) {
+  let user = '';
+  try { user = decodeURIComponent(new URL(databaseUrl).username); } catch { user = ''; }
+  if (!user.startsWith('billing_app')) throw Error('DATABASE_URL precisa usar o papel billing_app.');
 }
 
 function mapDevice(row: any): DeviceRow {
@@ -91,9 +141,11 @@ function mapDevice(row: any): DeviceRow {
   };
 }
 
-export function createPostgresStore(databaseUrl: string, connect: typeof postgres = postgres): BillingStore {
+export function createPostgresStore(databaseUrl: string, connect?: typeof postgres, env: NodeJS.ProcessEnv = process.env): BillingStore {
   assertTransactionPoolerUrl(databaseUrl);
-  const sql = connect(databaseUrl, supabasePoolOptions);
+  assertSaoPauloHost(databaseUrl);
+  assertBillingRole(databaseUrl);
+  const sql = (connect ?? postgres)(databaseUrl, supabasePoolOptions(env));
   return {
     async getDevice(id) { const rows = await sql`select * from billing.devices where id = ${id} limit 1`; return rows[0] ? mapDevice(rows[0]) : undefined; },
     async insertDevice(id, secret) { await sql`insert into billing.devices (id, secret) values (${id}, ${secret}) on conflict (id) do nothing`; },
@@ -114,13 +166,20 @@ export function createPostgresStore(databaseUrl: string, connect: typeof postgre
     async hasEvent(id) { const rows = await sql`select id from billing.events where id = ${id} limit 1`; return rows.length > 0; },
     async saveEvent(id, processed) { await sql`insert into billing.events (id, processed) values (${id}, ${processed}) on conflict (id) do nothing`; },
     async purgeEvents(before) { await sql`delete from billing.events where processed < ${before}`; },
-    async rememberIdentity(hmac, subscription) {
-      const inserted = await sql`insert into billing.trial_identities (hmac, subscription) values (${hmac}, ${subscription}) on conflict (hmac) do nothing returning subscription`;
+    async rememberIdentity(hmac, subscription, created) {
+      const inserted = await sql`insert into billing.trial_identities (hmac, subscription, created) values (${hmac}, ${subscription}, ${created}) on conflict (hmac) do nothing returning subscription`;
       if (inserted[0]) return String(inserted[0].subscription);
       const rows = await sql`select subscription from billing.trial_identities where hmac = ${hmac} limit 1`;
       return String(rows[0].subscription);
     },
+    async purgeIdentities(before) { await sql`delete from billing.trial_identities where created < ${before}`; },
     async listIdentities() { const rows = await sql`select hmac, subscription from billing.trial_identities`; return rows.map(row => ({ hmac: String(row.hmac), subscription: String(row.subscription) })); },
+    async bumpRate(ipHash, route, windowStart) {
+      const rows = await sql`insert into billing.rate_windows (ip_hash, route, window_start, hits) values (${ipHash}, ${route}, ${windowStart}, 1) on conflict (ip_hash, route, window_start) do update set hits = billing.rate_windows.hits + 1 returning hits`;
+      return Number(rows[0].hits);
+    },
+    async purgeRateWindows(before) { await sql`delete from billing.rate_windows where window_start < ${before}`; },
+    async ping() { await sql`select 1`; },
     async close() { await sql.end({ timeout: 5 }); },
   };
 }
