@@ -14,6 +14,7 @@ const { randomBytes } = require('node:crypto');
 const { openDeviceVault } = require('./vault-open.cjs');
 const { join, resolve } = require('node:path');
 const { legacyEnv } = require('./env.cjs');
+const { safeLocaleToken } = require('./preload-api.cjs');
 const { mkdirSync, existsSync, readFileSync, writeFileSync } = require('node:fs');
 app.enableSandbox();
 const root = resolve(__dirname, '..');
@@ -78,7 +79,12 @@ else app.whenReady().then(async () => {
   });
   const resolved = sessionOrigin(localSession, preferred);
   origin = resolved.origin;
-  window = createMainWindow(BrowserWindow, { preload: join(root,'desktop/preload.cjs'), origin, shell, resolveHost: hostname => resolvesPublic(hostname, lookup) });
+  const launchArguments = [];
+  const desktopLocale = safeLocaleToken(app.getLocale());
+  if (desktopLocale) launchArguments.push(`localneuron-locale=${desktopLocale}`);
+  const desktopLang = safeLocaleToken(legacyEnv('LANG'));
+  if (desktopLang) launchArguments.push(`localneuron-lang=${desktopLang}`);
+  window = createMainWindow(BrowserWindow, { preload: join(root,'desktop/preload.cjs'), origin, shell, resolveHost: hostname => resolvesPublic(hostname, lookup), extraArguments: launchArguments });
   session.defaultSession.webRequest.onBeforeRequest((details,callback)=>{callback({cancel:!(details.url.startsWith(origin+'/')||details.url.startsWith('blob:'+origin+'/'))});});
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     const responseHeaders = Object.assign({}, details.responseHeaders);

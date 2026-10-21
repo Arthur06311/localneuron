@@ -1,33 +1,35 @@
+import { t, textLocale } from './i18n.js';
+
 export const PALETTE_PAGES = [
-  ['chat', 'Ir para o Chat'],
-  ['team', 'Ir para a minha equipe'],
-  ['models', 'Ir para os modelos'],
-  ['photo', 'Ir para a imagem'],
-  ['studio', 'Ir para o vídeo'],
-  ['music', 'Ir para a música'],
-  ['editor', 'Ir para o editor'],
-  ['connections', 'Ir para as conexões'],
-  ['exo', 'Ir para a rede EXO'],
-  ['server', 'Ir para o modo servidor'],
-  ['sharing', 'Ir para a minha API'],
-  ['pro', 'Ir para a Central Pro'],
-  ['subscription', 'Ir para o meu plano'],
-  ['wizard', 'Ir para a configuração guiada'],
-  ['settings', 'Ir para as configurações'],
+  ['chat', 'palette.page.chat'],
+  ['team', 'palette.page.team'],
+  ['models', 'palette.page.models'],
+  ['photo', 'palette.page.photo'],
+  ['studio', 'palette.page.studio'],
+  ['music', 'palette.page.music'],
+  ['editor', 'palette.page.editor'],
+  ['connections', 'palette.page.connections'],
+  ['exo', 'palette.page.exo'],
+  ['server', 'palette.page.server'],
+  ['sharing', 'palette.page.sharing'],
+  ['pro', 'palette.page.pro'],
+  ['subscription', 'palette.page.subscription'],
+  ['wizard', 'palette.page.wizard'],
+  ['settings', 'palette.page.settings'],
 ];
 
 export function paletteCommands({ chats = [], models = [] } = {}) {
   return [
-    ...PALETTE_PAGES.map(([page, label]) => ({ id: `page:${page}`, group: 'Telas', label, run: { type: 'page', page } })),
-    ...chats.slice(0, 8).map(chat => ({ id: `chat:${chat.id}`, group: 'Conversas recentes', label: chat.title || 'Conversa sem título', run: { type: 'chat', id: chat.id } })),
-    ...models.slice(0, 12).map(model => ({ id: `model:${model.key}`, group: 'Mudar de modelo', label: model.display_name || model.key, run: { type: 'model', key: model.key } })),
+    ...PALETTE_PAGES.map(([page, label]) => ({ id: `page:${page}`, group: t('palette.group.pages'), label: t(label), run: { type: 'page', page } })),
+    ...chats.slice(0, 8).map(chat => ({ id: `chat:${chat.id}`, group: t('palette.group.chats'), label: chat.title || t('palette.untitled'), run: { type: 'chat', id: chat.id } })),
+    ...models.slice(0, 12).map(model => ({ id: `model:${model.key}`, group: t('palette.group.models'), label: model.display_name || model.key, run: { type: 'model', key: model.key } })),
   ];
 }
 
 export function filterCommands(commands, query) {
-  const text = query.trim().toLocaleLowerCase('pt-BR');
+  const text = query.trim().toLocaleLowerCase(textLocale());
   if (!text) return commands;
-  return commands.filter(command => `${command.group} ${command.label}`.toLocaleLowerCase('pt-BR').includes(text));
+  return commands.filter(command => `${command.group} ${command.label}`.toLocaleLowerCase(textLocale()).includes(text));
 }
 
 export function reducePalette(state, event) {
@@ -54,7 +56,7 @@ export function mountCommandPalette(doc, { load, onRun }) {
   root.hidden = true;
   root.setAttribute('role', 'dialog');
   root.setAttribute('aria-modal', 'true');
-  root.setAttribute('aria-label', 'Paleta de comandos');
+  root.setAttribute('aria-label', t('palette.label'));
   const input = doc.createElement('input');
   input.id = 'command-palette-input';
   input.type = 'text';
@@ -62,18 +64,18 @@ export function mountCommandPalette(doc, { load, onRun }) {
   input.setAttribute('aria-expanded', 'false');
   input.setAttribute('aria-controls', 'command-palette-list');
   input.setAttribute('aria-autocomplete', 'list');
-  input.setAttribute('aria-label', 'Pesquisar telas, conversas e modelos');
-  input.placeholder = 'Pesquisar telas, conversas e modelos';
+  input.setAttribute('aria-label', t('palette.placeholder'));
+  input.placeholder = t('palette.placeholder');
   const list = doc.createElement('div');
   list.id = 'command-palette-list';
   list.setAttribute('role', 'listbox');
   const empty = doc.createElement('p');
   empty.id = 'command-palette-empty';
   empty.hidden = true;
-  empty.textContent = 'Nenhum comando corresponde.';
+  empty.textContent = t('palette.empty');
   const hint = doc.createElement('p');
   hint.className = 'command-palette-hint';
-  hint.textContent = 'Setas para percorrer · Enter para abrir · Esc para fechar';
+  hint.textContent = t('palette.hint');
   root.append(input, list, empty, hint);
   doc.body.append(root);
 

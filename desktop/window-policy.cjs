@@ -11,8 +11,10 @@ const SECURE_WEB_PREFERENCES = Object.freeze({
   webviewTag: false,
 });
 
-function mainWebPreferences(preload) {
-  return { ...SECURE_WEB_PREFERENCES, preload, spellcheck: false };
+function mainWebPreferences(preload, extraArguments = []) {
+  const preferences = { ...SECURE_WEB_PREFERENCES, preload, spellcheck: false };
+  if (extraArguments.length) preferences.additionalArguments = [...extraArguments];
+  return preferences;
 }
 
 function agentWebPreferences() {
@@ -48,7 +50,7 @@ function blockWhen(event, blocked) {
   if (blocked) event.preventDefault();
 }
 
-function createMainWindow(BrowserWindow, { preload, origin, shell, resolveHost }) {
+function createMainWindow(BrowserWindow, { preload, origin, shell, resolveHost, extraArguments = [] }) {
   const window = new BrowserWindow({
     width: 1320,
     height: 900,
@@ -57,7 +59,7 @@ function createMainWindow(BrowserWindow, { preload, origin, shell, resolveHost }
     title: 'LocalNeuron',
     backgroundColor: '#f6f5f0',
     autoHideMenuBar: true,
-    webPreferences: mainWebPreferences(preload),
+    webPreferences: mainWebPreferences(preload, extraArguments),
   });
   window.webContents.setWindowOpenHandler(({ url }) => {
     openExternalHttp(url, href => shell.openExternal(href), resolveHost);

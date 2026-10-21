@@ -23,6 +23,19 @@ Quem já usava senha vê, uma vez, o pedido da senha atual. Se essa senha estive
 
 O wizard salva a conclusão ao chegar ao último passo. Para refazê-lo, use **Minha equipe → Mais opções da equipe → Repetir configuração**. Isso preserva perfil, conversas e bots existentes, sem obrigar a refazer tudo na próxima abertura.
 
+## Idioma
+
+A interface acompanha o idioma do sistema. Qualquer idioma que comece com `pt` fica em português do Brasil; os demais ficam em inglês. Em **Configurações → Idioma** dá para escolher **Automático**, **Português (Brasil)** ou **English**. A escolha fica neste computador, na chave `localneuron-language` do armazenamento local do aplicativo.
+
+Para uma abertura ou uma captura só:
+
+- acrescente `?lang=en` ou `?lang=pt-BR` ao endereço local (também valem `pt`, `en-US` e o equivalente);
+- ou defina `LOCALNEURON_LANG=en` antes de abrir o aplicativo de mesa. O nome antigo `COLMEIA_LANG` continua aceito.
+
+A ordem é: a consulta `lang` desta carga, depois a variável de ambiente, depois a opção salva, depois o idioma do sistema. No aplicativo de mesa, o idioma do sistema é o de `app.getLocale()`. `?lang=auto` é ignorado. A consulta e a variável de ambiente continuam valendo depois de recarregar, até a consulta sair do endereço. Salvar o idioma em Configurações apaga `lang` do endereço e recarrega a página. Se a variável de ambiente estiver definida, ela continua na frente da opção salva.
+
+O Chat, a navegação (o caminho passa a dizer Work / Chat ou Account / Settings) e Configurações entram nessa tradução. As outras telas continuam em português.
+
 ## Avisos de novas versões
 
 A partir da 0.27, o aplicativo avisa quando encontra uma versão mais recente no manifesto público do GitHub (endereço independente do domínio do site). Consulte **Configurações → Atualizações** para verificar manualmente, ler novidades ou desativar a consulta automática. A consulta ocorre ao abrir e a cada seis horas, com cache, sem enviar conversas, arquivos ou identificadores do espaço. A hospedagem recebe a requisição de rede normal, incluindo IP. Falhas de conexão não bloqueiam o uso offline.

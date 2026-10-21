@@ -7,7 +7,7 @@ import { join, resolve } from 'node:path';
 
 const require = createRequire(import.meta.url);
 const { createMainWindow, createAgentWindow } = require(resolve('desktop/window-policy.cjs'));
-const { ALLOWED_IPC_CHANNELS, invokeAllowed } = require(resolve('desktop/preload-api.cjs'));
+const { ALLOWED_IPC_CHANNELS, invokeAllowed, createDesktopApi, safeLocaleToken } = require(resolve('desktop/preload-api.cjs'));
 
 function fakeBrowserWindow() {
   class BrowserWindow {
@@ -145,7 +145,7 @@ test('O preload expõe só os canais IPC permitidos', async () => {
   assert.equal(exposed[0].name, 'colmeiaDesktop');
   const api = exposed[0].api;
   assert.equal(Object.isFrozen(api), true);
-  assert.deepEqual(Object.keys(api).sort(), ['chooseFolder', 'localAccess', 'restoreWorkspace']);
+  assert.deepEqual(Object.keys(api).sort(), ['chooseFolder', 'lang', 'localAccess', 'locale', 'restoreWorkspace']);
   for (const forbidden of ['ipcRenderer', 'require', 'shell', 'send', 'invoke', 'openExternal']) {
     assert.equal(Object.hasOwn(api, forbidden), false);
   }
@@ -175,6 +175,27 @@ test('O preload expõe só os canais IPC permitidos', async () => {
   assert.doesNotMatch(source, /\bshell\b/);
   assert.doesNotMatch(source, /ipcRenderer\.(send|sendSync|postMessage)/);
   assert.match(source, /exposeDesktopApi\(contextBridge, ipcRenderer\)/);
+});
+
+test('o idioma do sistema chega só como texto validado', () => {
+  assert.equal(safeLocaleToken('pt-BR'), 'pt-BR');
+  assert.equal(safeLocaleToken('en-US'), 'en-US');
+  assert.equal(safeLocaleToken('--disable-web-security'), '');
+  assert.equal(safeLocaleToken('pt BR'), '');
+  const api = createDesktopApi(
+    { invoke() { return Promise.resolve(); } },
+    ['localneuron-lang=--evil', 'localneuron-locale=pt-BR', 'localneuron-lang=en'],
+  );
+  assert.equal(api.locale, 'pt-BR');
+  assert.equal(api.lang, 'en');
+  const rejected = createDesktopApi({ invoke() {} }, ['localneuron-locale=not a locale']);
+  assert.equal(rejected.locale, '');
+  assert.equal(rejected.lang, '');
+  const main = readFileSync(resolve('desktop/main.cjs'), 'utf8');
+  assert.match(main, /localneuron-locale=/);
+  assert.match(main, /legacyEnv\('LANG'\)/);
+  assert.match(main, /extraArguments: launchArguments/);
+  assert.match(readFileSync(resolve('desktop/window-policy.cjs'), 'utf8'), /additionalArguments/);
 });
 
 test('Link externo só abre depois que o DNS confirma um endereço público', async () => {
