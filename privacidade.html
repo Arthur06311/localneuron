@@ -1,0 +1,183 @@
+<!-- revisar com advogado -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f1114"><meta name="color-scheme" content="light dark">
+<title>Política de Privacidade — LocalNeuron</title>
+<meta name="description" content="Política de Privacidade do LocalNeuron, em linguagem simples e conforme a LGPD: o que fica no computador, o que a Stripe processa, o que o servidor de cobrança guarda e como pedir seus direitos.">
+<link rel="canonical" href="https://localneuron.ai/privacidade.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LocalNeuron">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://localneuron.ai/privacidade.html">
+<meta property="og:title" content="Política de Privacidade — LocalNeuron">
+<meta property="og:description" content="O que o LocalNeuron trata, o que fica no seu computador e como falar com o responsável.">
+<meta property="og:image" content="https://localneuron.ai/product.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://localneuron.ai/product.png">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" href="./app-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="stylesheet" href="./style.css">
+<script>try{var t=localStorage.getItem("localneuron-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script></head>
+<body>
+<a class="skip" href="#main">Ir ao conteúdo</a>
+<header class="guide-header">
+<a class="brand" href="./"><img src="./app-icon.png" width="18" height="18" alt="">LocalNeuron</a>
+<nav aria-label="Navegação"><a href="./">Início</a><a href="./precos.html">Planos</a><a href="./termos.html">Termos</a><a href="./privacidade.html" aria-current="page">Privacidade</a><a href="./reembolso.html">Reembolso</a></nav>
+<div class="header-actions"><button type="button" class="theme-toggle" id="theme-toggle"></button></div>
+</header>
+<main class="guide-main prose doc" id="main">
+<section class="doc-block">
+<p class="eyebrow">Política de Privacidade</p>
+<h1>Política de Privacidade</h1>
+<p>Última atualização: 21 de outubro de 2026.</p>
+<p>Esta página descreve o site localneuron.ai, o aplicativo de mesa e o servidor de cobrança do Pro. Ela segue a Lei Geral de Proteção de Dados (Lei nº 13.709/2018). O texto usa o que o programa faz hoje. Onde a compra ainda não está aberta, isso está dito.</p>
+</section>
+<section class="doc-block">
+<h2>Quem decide sobre os dados</h2>
+<p>O responsável (controlador) é <strong>Arthur Pinheiro Kriger</strong>, pessoa física no Brasil.</p>
+<ul>
+<li>CPF: <strong class="placeholder">[PREENCHER: CPF de Arthur Pinheiro Kriger]</strong></li>
+<li>Contato para pedidos de titular: <strong class="placeholder">[PREENCHER: e-mail de contato de Arthur Pinheiro Kriger]</strong></li>
+</ul>
+<p>Não há conta de usuário na LocalNeuron. Não pedimos e-mail para abrir o aplicativo.</p>
+</section>
+<section class="doc-block">
+<h2>O que fica no seu computador</h2>
+<p>O padrão é ficar no computador. Conversas, arquivos, modelos e o histórico local de tarefas não são enviados à LocalNeuron.</p>
+<p>Os segredos do cofre usam AES-256-GCM. No aplicativo de mesa, a chave do cofre fica no sistema quando ele oferece armazenamento seguro: Keychain no macOS, DPAPI no Windows, libsecret no Linux. Se esse armazenamento não existe, a chave fica num arquivo local de permissão restrita. Essa chave não cifra todas as conversas. Proteja também a conta do sistema e o disco.</p>
+<p>A pasta de dados, em instalações novas, fica em:</p>
+<ul>
+<li>macOS: <code>~/Library/Application Support/Colmeia/</code></li>
+<li>Windows: <code>%APPDATA%/Colmeia/</code></li>
+<li>Linux: <code>~/.config/Colmeia/</code> ou <code>$XDG_CONFIG_HOME/Colmeia/</code></li>
+</ul>
+<p>Colmeia é o nome antigo da pasta, mantido por compatibilidade. O arquivo <code>subscription.json</code>, dentro dessa pasta, guarda o identificador da instalação, o segredo da licença, a data da última consulta e, quando existe, a licença assinada. O segredo da licença não é a chave do cofre.</p>
+<p>Este site não recebe as configurações do aplicativo.</p>
+</section>
+<section class="doc-block">
+<h2>Sem telemetria</h2>
+<p>O aplicativo não inicia coletor de análise de uso, relatório de falha nem sinal de presença. Relatos de erro ficam na máquina. O aplicativo não lê número de série, MAC nem outro identificador de hardware para enviar a lugar nenhum.</p>
+<p>Métricas de tarefas do Pro, quando existem, usam só o histórico local. Não são enviadas para faturamento nem para um servidor de análise.</p>
+<p>Isso não significa que o computador nunca acesse a rede. A seção seguinte lista as saídas que o programa realmente faz.</p>
+</section>
+<section class="doc-block">
+<h2>Quando algum dado sai</h2>
+<p>Nada abaixo envia, por conta própria, o conteúdo do chat, caminhos dos seus arquivos ou chaves. Onde um destino vê o seu IP, isso está escrito.</p>
+<ul>
+<li><strong>Atualização do aplicativo.</strong> A consulta automática nasce desligada. Se você marcar o aviso em Preferências → Atualizações, ou clicar em Verificar agora, o aplicativo baixa o manifesto público em <code>raw.githubusercontent.com</code>. O GitHub vê o IP e o cabeçalho <code>User-Agent: LocalNeuron</code>, sem versão do aplicativo e sem identificador. Com a opção ligada, a consulta se repete no máximo a cada seis horas. Não há instalação automática.</li>
+<li><strong>Modelos.</strong> Pesquisa e download que você pede vão ao Hugging Face e às CDNs dele. Esse destino vê o IP e o mesmo tipo de cabeçalho. O token de leitura, se você conectar uma conta, só segue para <code>huggingface.co</code> e fica cifrado no cofre.</li>
+<li><strong>Equipe com provedor externo.</strong> Anthropic, Grok (xAI) ou outra API que você configurar só recebem o texto quando você cria o provedor, confirma que o texto sai do computador e envia a mensagem.</li>
+<li><strong>Ferramenta da web e MCP.</strong> Só quando você autoriza. A ferramenta da web envia a consulta ou a URL pública. Um servidor MCP recebe o que a conexão combinada pedir, dentro da origem permitida.</li>
+<li><strong>Instalador do EXO.</strong> Só quando você pede para instalar o EXO no Mac. O download vem do GitHub do projeto EXO e é conferido pelo SHA-256.</li>
+<li><strong>Assinatura.</strong> Só se o endereço do serviço de cobrança estiver configurado no aplicativo, e só quando você abre o pagamento, abre o portal ou atualiza a licença. Depois de uma consulta bem-sucedida, o aplicativo pode repetir a atualização cerca de uma vez por dia. Essa chamada envia o identificador da instalação e o segredo da licença. Não envia o chat.</li>
+</ul>
+<p>A versão pública de hoje não traz esse endereço de cobrança preenchido. Por isso o aplicativo não chama o servidor de cobrança e não pede cartão.</p>
+<p>Motores locais de texto, imagem e música falam com o próprio computador. O motor de música e o MLX desligam a telemetria do Hugging Face no processo que o LocalNeuron inicia.</p>
+</section>
+<section class="doc-block">
+<h2>O identificador da instalação</h2>
+<p>Na primeira execução, o aplicativo cria um identificador aleatório (UUID) e um segredo de 32 bytes, e grava os dois em <code>subscription.json</code>. Isso acontece no computador, mesmo antes de qualquer pagamento. O identificador não deriva do hardware.</p>
+<p>Ele serve para amarrar a licença assinada a esta instalação. A licença, quando o Pro está ativo, dura no máximo 7 dias ou até o fim do período pago, o que acabar antes. Esses 7 dias são a validade offline da licença, não o teste grátis.</p>
+<p>O identificador e o segredo só saem do computador na chamada de assinatura descrita acima. O servidor guarda o identificador e o hash SHA-256 do segredo. Quem tiver só o hash não recupera o segredo.</p>
+</section>
+<section class="doc-block">
+<h2>O que a Stripe processa</h2>
+<p>Quando a compra estiver aberta, o pagamento usa a Stripe. Há duas páginas, as duas no site da Stripe:</p>
+<ul>
+<li><strong>Checkout</strong> (<code>checkout.stripe.com</code>), para assinar.</li>
+<li><strong>Portal do cliente</strong> (<code>billing.stripe.com</code>), para trocar o meio de pagamento e cancelar a renovação.</li>
+</ul>
+<p>Você digita o cartão na página da Stripe. O número do cartão, a validade e o código de segurança não passam pelo aplicativo LocalNeuron, por este site nem pelo servidor de cobrança. O que mais a Stripe pede para concluir a assinatura (por exemplo, o e-mail) também é digitado lá.</p>
+<p>O servidor de cobrança pede à Stripe que abra essas páginas. Ele informa à Stripe o identificador da instalação, como referência do Checkout e como metadado da assinatura. Não envia conversas, arquivos nem nomes de modelos.</p>
+<p>A Stripe guarda o cliente, a assinatura e o meio de pagamento, segundo a política dela: <a href="https://stripe.com/privacy">stripe.com/privacy</a>. A Stripe pode tratar esses dados fora do Brasil, porque o serviço dela opera em outros países. Ela atua como operadora do pagamento.</p>
+<p>O servidor não guarda cópia do corpo dos avisos da Stripe. Ele consulta o estado atual da assinatura e anota só o identificador do aviso, para não processar o mesmo aviso duas vezes.</p>
+</section>
+<section class="doc-block">
+<h2>O que o servidor de cobrança guarda</h2>
+<p>O servidor é um programa separado. Ele não acompanha o aplicativo de mesa e não roda neste site. O registro de uma instalação só é criado quando o Checkout é iniciado.</p>
+<p>Para cada instalação, o banco guarda:</p>
+<ul>
+<li>o identificador aleatório;</li>
+<li>o hash do segredo, não o segredo;</li>
+<li>o identificador da sessão de Checkout, a URL dessa sessão, a data de expiração e um código de tentativa;</li>
+<li>o identificador de cliente da Stripe e o identificador da assinatura na Stripe, depois que existem.</li>
+</ul>
+<p>Não há coluna de nome, e-mail, endereço ou cartão. O e-mail que você informar fica na Stripe, não nesse banco.</p>
+<p>O IP da chamada serve só para limitar repetições, na memória do processo, por cerca de um minuto. Esse IP não é gravado no banco. O programa de cobrança não escreve log de acesso. Um proxy HTTPS na frente do servidor, quando ele for hospedado, pode guardar registro técnico da conexão. Esse proxy ainda não está publicado.</p>
+</section>
+<section class="doc-block">
+<h2>Por quanto tempo</h2>
+<ul>
+<li><strong>No seu computador:</strong> até você apagar a pasta de dados ou o arquivo. Desinstalar só o aplicativo não apaga essa pasta.</li>
+<li><strong>Identificador da instalação no servidor:</strong> enquanto o banco de cobrança existir. O programa não apaga essa linha sozinho, porque precisa reconhecer a instalação e a assinatura. Dá para pedir a exclusão quando não houver dever legal de guardar o registro.</li>
+<li><strong>Identificadores de avisos da Stripe:</strong> 90 dias, e depois o programa apaga.</li>
+<li><strong>Pagamento na Stripe:</strong> pelo tempo da política da Stripe e pelo tempo exigido para disputa de pagamento, defesa de direito e obrigação legal.</li>
+<li><strong>Este site:</strong> a escolha de idioma e de tema fica só neste navegador (<code>localneuron-language</code> e <code>localneuron-theme</code>). O site não grava essa escolha num servidor.</li>
+</ul>
+</section>
+<section class="doc-block">
+<h2>Este site</h2>
+<p>O GitHub Pages hospeda localneuron.ai. Ao abrir a página, o GitHub pode manter registros técnicos de hospedagem, inclusive o IP, conforme a política do GitHub.</p>
+<p>No idioma automático, o site usa o idioma do navegador quando ele é um dos sete idiomas da página. Caso contrário, o navegador consulta o serviço country.is, que recebe o IP para sugerir o idioma pelo país aproximado. O site não pede GPS e não grava IP nem histórico de localização. A escolha manual fica só neste navegador. Você evita a consulta ao country.is escolhendo o idioma à mão.</p>
+<p>O botão “Idioma e privacidade” no rodapé da página inicial explica essa consulta. Esta política é o documento completo.</p>
+</section>
+<section class="doc-block">
+<h2>Com quem os dados são compartilhados</h2>
+<p>Não vendemos dados pessoais e não usamos dado seu para anúncio.</p>
+<ul>
+<li><strong>Stripe</strong>, quando você paga ou abre o portal, nos termos acima.</li>
+<li><strong>GitHub</strong>, ao visitar o site, baixar o aplicativo ou consultar atualização.</li>
+<li><strong>country.is</strong>, só no caso de idioma automático descrito acima.</li>
+<li><strong>Hugging Face, provedores de equipe, sites e servidores MCP</strong>, só quando você liga esses recursos.</li>
+</ul>
+<p>Autoridades públicas podem receber dado quando a lei obrigar.</p>
+</section>
+<section class="doc-block">
+<h2>Por que tratamos</h2>
+<ul>
+<li><strong>Contrato e passos anteriores ao contrato.</strong> Identificador, hash do segredo e identificadores da Stripe, para entregar a licença que você pedir.</li>
+<li><strong>Obrigação legal.</strong> Registros de cobrança necessários para dever fiscal e para o Código de Defesa do Consumidor.</li>
+<li><strong>Legítimo interesse.</strong> Limite de chamadas repetidas no servidor de cobrança, e a sugestão de idioma do site. A sugestão pode ser evitada com a escolha manual do idioma.</li>
+</ul>
+<p>O uso local do aplicativo, sem assinatura e sem os recursos de rede acima, não envia dado pessoal ao responsável.</p>
+</section>
+<section class="doc-block">
+<h2>Seus direitos</h2>
+<p>Você pode pedir, pelo e-mail de contato:</p>
+<ul>
+<li>confirmação de que tratamos dados seus e acesso a eles;</li>
+<li>correção de dado incompleto, errado ou desatualizado;</li>
+<li>anonimização, bloqueio ou exclusão de dado desnecessário, excessivo ou tratado em desacordo com a lei;</li>
+<li>informação sobre com quem compartilhamos;</li>
+<li>informação sobre a possibilidade de não autorizar um tratamento e sobre as consequências;</li>
+<li>revogação de consentimento, quando o tratamento se basear nele;</li>
+<li>oposição a tratamento irregular;</li>
+<li>portabilidade, quando a lei exigir.</li>
+</ul>
+<p>A confirmação ou o acesso saem de forma simples assim que for possível, ou em declaração clara em até 15 dias, como prevê o art. 19 da LGPD. Segredo comercial do programa pode ser omitido. Não há decisão automatizada sobre crédito, perfil de consumo ou outro efeito jurídico a seu respeito. A licença só confere ou não o Pro nesta instalação.</p>
+<p>Conversas e arquivos já estão no seu computador. Copiar a pasta de dados é o caminho de portabilidade desse material. Não existe uma conta na nuvem para exportar.</p>
+<p>Pedido de exclusão do registro de cobrança pode encerrar a licença daquela instalação. Se a lei exigir a guarda do registro de pagamento, conservamos só o que a obrigação alcançar e pelo tempo dela.</p>
+<p>Dado que esteja só na Stripe pode ser visto e ajustado também no portal do cliente, quando a assinatura existir. Não envie número de cartão por e-mail.</p>
+<p>Você pode peticionar à Autoridade Nacional de Proteção de Dados (ANPD), em <a href="https://www.gov.br/anpd">gov.br/anpd</a>.</p>
+</section>
+<section class="doc-block">
+<h2>Crianças e alterações</h2>
+<p>O LocalNeuron não é dirigido a crianças. A assinatura paga é um contrato. Quem contratar declara ter capacidade para isso. O aplicativo não verifica idade.</p>
+<p>Se esta política mudar, a data no topo muda junto.</p>
+<p>As condições de uso estão nos <a href="./termos.html">Termos de Uso</a>. Preço, cancelamento e reembolso estão em <a href="./precos.html">Planos</a> e em <a href="./reembolso.html">Cancelamento e reembolso</a>.</p>
+</section>
+<p class="guide-top-links"><a href="./termos.html">Termos de Uso</a><a href="./reembolso.html">Cancelamento e reembolso</a><a href="./precos.html">Planos</a></p>
+</main>
+<footer>
+<a class="brand" href="./"><img src="./app-icon.png" alt="" width="18" height="18">LocalNeuron</a>
+<p>Sua IA. Seu computador.</p>
+<a href="./#privacidade">Idioma e privacidade</a>
+<nav aria-label="Documentos legais"><a href="./termos.html">Termos de Uso</a><a href="./privacidade.html" aria-current="page">Política de Privacidade</a><a href="./reembolso.html">Cancelamento e reembolso</a></nav>
+<span>0.28.1 · Alfa</span>
+</footer>
+<script src="./theme.js"></script></body>
+</html>
