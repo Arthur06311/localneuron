@@ -1,4 +1,3 @@
-<!-- revisar com advogado -->
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -33,8 +32,8 @@
 <section class="doc-block">
 <p class="eyebrow">Política de Privacidade</p>
 <h1>Política de Privacidade</h1>
-<p>Última atualização: 21 de outubro de 2026.</p>
-<p>Esta página descreve o site localneuron.ai, o aplicativo de mesa e o servidor de cobrança do Pro. Ela segue a Lei Geral de Proteção de Dados (Lei nº 13.709/2018). O texto usa o que o programa faz hoje. Onde a compra ainda não está aberta, isso está dito.</p>
+<p>Última atualização: 20 de outubro de 2026.</p>
+<p>Esta página descreve o site localneuron.ai, o aplicativo para computador e o servidor de cobrança do Pro. Ela segue a Lei Geral de Proteção de Dados (Lei nº 13.709/2018). O texto usa o que o programa faz hoje. Onde a compra ainda não está aberta, isso está dito.</p>
 </section>
 <section class="doc-block">
 <h2>Quem decide sobre os dados</h2>
@@ -48,7 +47,7 @@
 <section class="doc-block">
 <h2>O que fica no seu computador</h2>
 <p>O padrão é ficar no computador. Conversas, arquivos, modelos e o histórico local de tarefas não são enviados à LocalNeuron.</p>
-<p>Os segredos do cofre usam AES-256-GCM. No aplicativo de mesa, a chave do cofre fica no sistema quando ele oferece armazenamento seguro: Keychain no macOS, DPAPI no Windows, libsecret no Linux. Se esse armazenamento não existe, a chave fica num arquivo local de permissão restrita. Essa chave não cifra todas as conversas. Proteja também a conta do sistema e o disco.</p>
+<p>Os segredos do cofre usam AES-256-GCM. No aplicativo para computador, a chave do cofre fica no sistema quando ele oferece armazenamento seguro: Keychain no macOS, DPAPI no Windows, libsecret no Linux. Se esse armazenamento não existe, a chave fica num arquivo local de permissão restrita. Essa chave não cifra todas as conversas. Proteja também a conta do sistema e o disco.</p>
 <p>A pasta de dados, em instalações novas, fica em:</p>
 <ul>
 <li>macOS: <code>~/Library/Application Support/Colmeia/</code></li>
@@ -66,17 +65,23 @@
 </section>
 <section class="doc-block">
 <h2>Quando algum dado sai</h2>
-<p>Nada abaixo envia, por conta própria, o conteúdo do chat, caminhos dos seus arquivos ou chaves. Onde um destino vê o seu IP, isso está escrito.</p>
+<p>Nada abaixo sai sozinho com o conteúdo do chat, caminhos de arquivos ou chaves. Onde um destino vê o IP, ou onde o texto sai porque você autorizou, isso está escrito.</p>
 <ul>
-<li><strong>Atualização do aplicativo.</strong> A consulta automática nasce desligada. Se você marcar o aviso em Preferências → Atualizações, ou clicar em Verificar agora, o aplicativo baixa o manifesto público em <code>raw.githubusercontent.com</code>. O GitHub vê o IP e o cabeçalho <code>User-Agent: LocalNeuron</code>, sem versão do aplicativo e sem identificador. Com a opção ligada, a consulta se repete no máximo a cada seis horas. Não há instalação automática.</li>
+<li><strong>Atualização do aplicativo.</strong> A consulta automática nasce desligada. Se você marcar o aviso em Preferências → Atualizações, o aplicativo baixa o manifesto público em <code>raw.githubusercontent.com</code>, no máximo a cada seis horas. Verificar agora consulta na hora. O GitHub vê o IP e o cabeçalho <code>User-Agent: LocalNeuron</code>, sem versão do aplicativo e sem identificador. Não há instalação automática.</li>
 <li><strong>Modelos.</strong> Pesquisa e download que você pede vão ao Hugging Face e às CDNs dele. Esse destino vê o IP e o mesmo tipo de cabeçalho. O token de leitura, se você conectar uma conta, só segue para <code>huggingface.co</code> e fica cifrado no cofre.</li>
 <li><strong>Equipe com provedor externo.</strong> Anthropic, Grok (xAI) ou outra API que você configurar só recebem o texto quando você cria o provedor, confirma que o texto sai do computador e envia a mensagem.</li>
+<li><strong>Equipes, opção Outro computador.</strong> O texto da mensagem vai para o endereço que você gravou, quando esse endereço não é o deste computador. O destino pode ser HTTPS público. Nome de rede privada ou VPN (<code>.local</code>, <code>.lan</code>, <code>.home.arpa</code>, <code>.ts.net</code>) e IP privado só seguem se você marcou essa rede como confiável. O canal EXO da equipe usa só <code>127.0.0.1</code>.</li>
 <li><strong>Ferramenta da web e MCP.</strong> Só quando você autoriza. A ferramenta da web envia a consulta ou a URL pública. Um servidor MCP recebe o que a conexão combinada pedir, dentro da origem permitida.</li>
+<li><strong>Navegador da IA.</strong> Só quando uma ferramenta do navegador roda. Ele abre páginas HTTP ou HTTPS públicas. O site de destino vê o IP e o pedido. Endereços internos são recusados. Campos de senha e de arquivo ficam bloqueados. A janela fica visível.</li>
+<li><strong>Terminal.</strong> Cada comando pede a sua autorização. Ele roda no seu computador, com as permissões do sistema, sem sandbox. O LocalNeuron não envia o comando aos servidores dele. Se o comando autorizado falar com a rede, essa saída é do próprio comando.</li>
+<li><strong>Instalação de motores, quando você pede.</strong> O motor de música baixa o pacote <code>uv</code> no PyPI e, em seguida, o <code>uv</code> busca as dependências. O código do ACE-Step vem de <code>codeload.github.com</code>. Os pesos vêm do Hugging Face. O MLX baixa rodas em <code>files.pythonhosted.org</code> e o Python empacotado no GitHub. Binários do llama.cpp, do Whisper e do stable-diffusion.cpp vêm de publicações no GitHub. Esses destinos veem o IP da conexão. A telemetria do Hugging Face fica desligada no processo que o LocalNeuron inicia.</li>
 <li><strong>Instalador do EXO.</strong> Só quando você pede para instalar o EXO no Mac. O download vem do GitHub do projeto EXO e é conferido pelo SHA-256.</li>
+<li><strong>Minha API.</strong> Nasce desligada. A porta padrão é 4320. O endereço tem de ser <code>127.0.0.1</code> ou um endereço privado deste computador. Fora do loopback, outro aparelho na rede local pode enviar o texto do pedido, com uma chave. O painel, as conversas, o terminal e os arquivos não são publicados por essa API. Acesso de navegador de outro site é recusado.</li>
+<li><strong>Modo servidor.</strong> O pareamento fica na rede local, e o painel do aplicativo continua em <code>127.0.0.1</code>. O gateway não escuta em <code>0.0.0.0</code>. Se você ligar a exposição na rede local, o EXO 1.0.71 pode abrir a API em <code>0.0.0.0:52415</code>, sem autenticação, enquanto o nó estiver em execução. Fechar o aplicativo encerra o nó.</li>
 <li><strong>Assinatura.</strong> Só se o endereço do serviço de cobrança estiver configurado no aplicativo, e só quando você abre o pagamento, abre o portal ou atualiza a licença. Depois de uma consulta bem-sucedida, o aplicativo pode repetir a atualização cerca de uma vez por dia. Essa chamada envia o identificador da instalação e o segredo da licença. Não envia o chat.</li>
 </ul>
 <p>A versão pública de hoje não traz esse endereço de cobrança preenchido. Por isso o aplicativo não chama o servidor de cobrança e não pede cartão.</p>
-<p>Motores locais de texto, imagem e música falam com o próprio computador. O motor de música e o MLX desligam a telemetria do Hugging Face no processo que o LocalNeuron inicia.</p>
+<p>Depois de instalados, os motores locais de texto, imagem e música falam com o próprio computador.</p>
 </section>
 <section class="doc-block">
 <h2>O identificador da instalação</h2>
@@ -93,21 +98,42 @@
 </ul>
 <p>Você digita o cartão na página da Stripe. O número do cartão, a validade e o código de segurança não passam pelo aplicativo LocalNeuron, por este site nem pelo servidor de cobrança. O que mais a Stripe pede para concluir a assinatura (por exemplo, o e-mail) também é digitado lá.</p>
 <p>O servidor de cobrança pede à Stripe que abra essas páginas. Ele informa à Stripe o identificador da instalação, como referência do Checkout e como metadado da assinatura. Não envia conversas, arquivos nem nomes de modelos.</p>
-<p>A Stripe guarda o cliente, a assinatura e o meio de pagamento, segundo a política dela: <a href="https://stripe.com/privacy">stripe.com/privacy</a>. A Stripe pode tratar esses dados fora do Brasil, porque o serviço dela opera em outros países. Ela atua como operadora do pagamento.</p>
+<p>A Stripe guarda o cliente, a assinatura e o meio de pagamento, segundo a política dela: <a href="https://stripe.com/privacy">stripe.com/privacy</a>. Ela atua como operadora do pagamento. A transferência para fora do Brasil está na seção seguinte.</p>
 <p>O servidor não guarda cópia do corpo dos avisos da Stripe. Ele consulta o estado atual da assinatura e anota só o identificador do aviso, para não processar o mesmo aviso duas vezes.</p>
 </section>
 <section class="doc-block">
-<h2>O que o servidor de cobrança guarda</h2>
-<p>O servidor é um programa separado. Ele não acompanha o aplicativo de mesa e não roda neste site. O registro de uma instalação só é criado quando o Checkout é iniciado.</p>
-<p>Para cada instalação, o banco guarda:</p>
+<h2>Transferência internacional</h2>
+<p>Algum dado pode ser tratado fora do Brasil. A base é o art. 33 da LGPD: cláusulas do contrato com o operador (inciso II), execução de contrato ou de procedimentos preliminares relacionados a contrato (inciso IX, com o art. 7º, II) e, quando você liga um recurso que envia dado para fora, o seu consentimento específico e em destaque (inciso VIII).</p>
 <ul>
-<li>o identificador aleatório;</li>
-<li>o hash do segredo, não o segredo;</li>
-<li>o identificador da sessão de Checkout, a URL dessa sessão, a data de expiração e um código de tentativa;</li>
-<li>o identificador de cliente da Stripe e o identificador da assinatura na Stripe, depois que existem.</li>
+<li><strong>GitHub.</strong> Hospeda este site, o download do aplicativo, o manifesto de atualização e binários de motores (llama.cpp, Whisper, stable-diffusion.cpp e o instalador do EXO). O código do ACE-Step sai de <code>codeload.github.com</code>. A GitHub pode tratar o IP e o registro técnico fora do Brasil. Base: cláusulas do serviço (art. 33, II) e a execução do download ou da consulta que você pediu (art. 33, IX).</li>
+<li><strong>Hugging Face.</strong> Pesquisa e download de modelos, e os pesos do motor de música, quando você pede. O token de leitura só segue para lá se você conectar uma conta. Base: art. 33, II e IX, e o consentimento de quem pede o download (art. 33, VIII).</li>
+<li><strong>Anthropic e xAI.</strong> Só se você criar o provedor, confirmar que o texto sai do computador e enviar a mensagem. Sem isso, nada é enviado. Base: consentimento específico (art. 33, VIII).</li>
+<li><strong>country.is.</strong> No idioma automático, quando o idioma do navegador não é um dos sete do site, o navegador envia o IP para sugerir o idioma pelo país aproximado. Escolher o idioma à mão impede essa consulta. Base: consentimento (art. 33, VIII), depois do aviso desta política e do botão Idioma e privacidade.</li>
+<li><strong>Stripe.</strong> Pagamento e portal do cliente, quando a compra estiver aberta. O cartão é digitado no site da Stripe. Base: cláusulas do contrato com a Stripe (art. 33, II) e execução da assinatura (art. 33, IX).</li>
+<li><strong>Fly.io.</strong> Operadora que hospeda o servidor de cobrança em <code>billing.localneuron.ai</code>. A máquina e o volume do banco ficam em São Paulo (<code>gru</code>). A Fly.io mantém logs de plataforma e do proxy, e pode tratá-los fora do Brasil. Base: cláusulas do contrato com a operadora (art. 33, II) e execução da assinatura (art. 33, IX).</li>
 </ul>
-<p>Não há coluna de nome, e-mail, endereço ou cartão. O e-mail que você informar fica na Stripe, não nesse banco.</p>
-<p>O IP da chamada serve só para limitar repetições, na memória do processo, por cerca de um minuto. Esse IP não é gravado no banco. O programa de cobrança não escreve log de acesso. Um proxy HTTPS na frente do servidor, quando ele for hospedado, pode guardar registro técnico da conexão. Esse proxy ainda não está publicado.</p>
+<p>Onde a base é o contrato, vale o contrato dessa operadora. Onde a base é o consentimento, o envio só ocorre depois que você liga o recurso.</p>
+</section>
+<section class="doc-block">
+<h2>O que o servidor de cobrança guarda</h2>
+<p>O servidor de cobrança é um programa separado, hospedado pela Fly.io em <code>billing.localneuron.ai</code>, na região de São Paulo (<code>gru</code>). Ele não acompanha o aplicativo para computador e não roda neste site. O registro de uma instalação só é criado quando o Checkout é iniciado.</p>
+<p>A tabela <code>devices</code> guarda estas colunas:</p>
+<ul>
+<li><code>id</code>, o identificador aleatório da instalação;</li>
+<li><code>secret</code>, o hash SHA-256 do segredo, não o segredo;</li>
+<li><code>checkout</code>, o identificador da sessão de Checkout;</li>
+<li><code>checkout_url</code>, a URL dessa sessão;</li>
+<li><code>checkout_expires</code>, a expiração da sessão;</li>
+<li><code>checkout_attempt</code>, o código da tentativa;</li>
+<li><code>checkout_plan</code>, o plano escolhido, mensal ou anual;</li>
+<li><code>customer</code>, o identificador de cliente na Stripe, quando existe;</li>
+<li><code>subscription</code>, o identificador da assinatura na Stripe, quando existe;</li>
+<li><code>trial_used</code>, marcado quando esta instalação já iniciou um teste.</li>
+</ul>
+<p>A tabela <code>events</code> guarda o identificador do aviso da Stripe (<code>id</code>) e o momento em que foi processado (<code>processed</code>).</p>
+<p>Não há coluna de nome, e-mail em claro, endereço ou número de cartão. O e-mail que você informar no pagamento fica na Stripe, não nesse banco.</p>
+<p>Para impedir um segundo teste grátis da mesma pessoa ou do mesmo cartão, o servidor guarda só um hash com chave (HMAC) da impressão digital do cartão e do e-mail. Esse registro está sendo acrescentado no PR #85. Não é o número do cartão nem o e-mail em claro, não é coluna da tabela <code>devices</code> nesta revisão, e serve só para essa verificação.</p>
+<p>A Fly.io mantém logs de plataforma e do proxy. No deploy, o IP usado para limitar repetições chega pelo cabeçalho <code>Fly-Client-IP</code>. Se esse cabeçalho não vier, o programa usa o IP da conexão. Esse IP fica só na memória do processo, por cerca de um minuto, e não é gravado no SQLite.</p>
 </section>
 <section class="doc-block">
 <h2>Por quanto tempo</h2>
@@ -115,6 +141,7 @@
 <li><strong>No seu computador:</strong> até você apagar a pasta de dados ou o arquivo. Desinstalar só o aplicativo não apaga essa pasta.</li>
 <li><strong>Identificador da instalação no servidor:</strong> enquanto o banco de cobrança existir. O programa não apaga essa linha sozinho, porque precisa reconhecer a instalação e a assinatura. Dá para pedir a exclusão quando não houver dever legal de guardar o registro.</li>
 <li><strong>Identificadores de avisos da Stripe:</strong> 90 dias, e depois o programa apaga.</li>
+<li><strong>Logs de plataforma e do proxy:</strong> ficam com a Fly.io, pelo prazo da política dela. O IP do limite de taxa não entra no banco.</li>
 <li><strong>Pagamento na Stripe:</strong> pelo tempo da política da Stripe e pelo tempo exigido para disputa de pagamento, defesa de direito e obrigação legal.</li>
 <li><strong>Este site:</strong> a escolha de idioma e de tema fica só neste navegador (<code>localneuron-language</code> e <code>localneuron-theme</code>). O site não grava essa escolha num servidor.</li>
 </ul>
@@ -130,9 +157,10 @@
 <p>Não vendemos dados pessoais e não usamos dado seu para anúncio.</p>
 <ul>
 <li><strong>Stripe</strong>, quando você paga ou abre o portal, nos termos acima.</li>
-<li><strong>GitHub</strong>, ao visitar o site, baixar o aplicativo ou consultar atualização.</li>
+<li><strong>Fly.io</strong>, operadora que hospeda o servidor de cobrança em <code>billing.localneuron.ai</code>, inclusive os logs de plataforma e do proxy.</li>
+<li><strong>GitHub</strong>, ao visitar o site, baixar o aplicativo, consultar atualização ou instalar um motor publicado lá.</li>
 <li><strong>country.is</strong>, só no caso de idioma automático descrito acima.</li>
-<li><strong>Hugging Face, provedores de equipe, sites e servidores MCP</strong>, só quando você liga esses recursos.</li>
+<li><strong>Hugging Face, Anthropic, xAI, outro computador da equipe, sites e servidores MCP</strong>, só quando você liga esses recursos.</li>
 </ul>
 <p>Autoridades públicas podem receber dado quando a lei obrigar.</p>
 </section>
@@ -147,12 +175,13 @@
 </section>
 <section class="doc-block">
 <h2>Seus direitos</h2>
-<p>Você pode pedir, pelo e-mail de contato:</p>
+<p>Não há encarregado (DPO) designado. O tratamento é de agente de pequeno porte, na forma da Resolução CD/ANPD nº 2/2022. O canal para os direitos do titular é o e-mail <strong class="placeholder">[PREENCHER: e-mail de contato de Arthur Pinheiro Kriger]</strong>.</p>
+<p>Você pode pedir, por esse e-mail:</p>
 <ul>
 <li>confirmação de que tratamos dados seus e acesso a eles;</li>
 <li>correção de dado incompleto, errado ou desatualizado;</li>
 <li>anonimização, bloqueio ou exclusão de dado desnecessário, excessivo ou tratado em desacordo com a lei;</li>
-<li>informação sobre com quem compartilhamos;</li>
+<li>informação das entidades públicas e privadas com as quais o responsável compartilhou dados (art. 18, VI da LGPD);</li>
 <li>informação sobre a possibilidade de não autorizar um tratamento e sobre as consequências;</li>
 <li>revogação de consentimento, quando o tratamento se basear nele;</li>
 <li>oposição a tratamento irregular;</li>
