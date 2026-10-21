@@ -1,4 +1,38 @@
-import { parseEndpoint, planProvider, redactSecrets, type ProviderKind } from './crew-policy.js';
+import { lookup } from 'node:dns/promises';
+import { createRequire } from 'node:module';
+import { classifyHost, parseEndpoint, planProvider, redactSecrets, type ProviderKind } from './crew-policy.js';
+import { assertResolvedFetch } from './fetch-guard.js';
+
+const { hostClass, isConfiguredLanName } = createRequire(import.meta.url)('../../desktop/public-url.cjs') as {
+  hostClass: (hostname: string) => 'loopback' | 'private' | 'public' | 'blocked';
+  isConfiguredLanName: (hostname: string) => boolean;
+};
+type CrewResolver = (hostname: string, options: { all: true; verbatim: true }) => Promise<readonly { address: string }[]>;
+
+function literalAddress(hostname: string) {
+  const host = hostname.replace(/^\[|\]$/g, '');
+  return /^\d+\.\d+\.\d+\.\d+$/.test(host) || host.includes(':');
+}
+
+/** Nome público só resolve para endereço público. Nome de LAN/VPN que a pessoa configurou aceita rede privada e falha de mDNS em `.local`. */
+export async function assertCrewDestination(url: URL, resolver?: CrewResolver) {
+  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Endereço recusado.');
+  const kind = classifyHost(url.hostname);
+  if (kind === 'blocked') throw new Error('Endereço recusado.');
+  if (kind === 'public') {
+    await assertResolvedFetch(url, {}, resolver);
+    return;
+  }
+  if (literalAddress(url.hostname) || !resolver) return;
+  let answers: readonly { address: string }[];
+  try {
+    answers = await resolver(url.hostname, { all: true, verbatim: true });
+  } catch {
+    if (isConfiguredLanName(url.hostname) && url.hostname.replace(/\.$/, '').toLowerCase().endsWith('.local')) return;
+    throw new Error('Endereço recusado.');
+  }
+  if (!answers.length || answers.some(answer => hostClass(answer.address) === 'blocked')) throw new Error('Endereço recusado.');
+}
 
 export type RemoteMessage = { role: 'system' | 'user' | 'assistant'; content: string };
 
@@ -68,6 +102,7 @@ export async function crewRemoteComplete(provider: RemoteProvider, messages: Rem
   const call = AbortSignal.any([signal, AbortSignal.timeout(30_000)]);
   let response: { ok: boolean; status: number; text: () => Promise<string> };
   try {
+    if (fetchImpl === fetch) await assertCrewDestination(new URL(target.url), lookup);
     response = await fetchImpl(target.url, { method: 'POST', headers, body, redirect: 'error', signal: call });
   } catch (error) {
     if (signal.aborted || (error instanceof Error && error.name === 'AbortError')) throw error;

@@ -29,6 +29,11 @@ export function assertLanAddress(host: string) {
   return ip;
 }
 
+export function exoPreviewPath(url: string) {
+  const query = url.includes('?') ? url.slice(url.indexOf('?') + 1) : '';
+  if (query.length > 512 || /[\0\r\n]/.test(query)) fail(400, 'Consulta recusada.');
+  return '/instance/previews?' + query;
+}
 function fail(statusCode: number, message: string): never {
   const error = new Error(message) as Error & { statusCode: number };
   error.statusCode = statusCode;
@@ -233,6 +238,6 @@ export class ServerGateway {
     this.app.post('/pair', limit, async request => this.pair(request.ip, request.body));
     this.app.get('/exo/state', limit, async request => this.forward(request.ip, request.headers.authorization ?? '', '/state'));
     this.app.get('/exo/node_id', limit, async request => this.forward(request.ip, request.headers.authorization ?? '', '/node_id'));
-    this.app.get('/exo/previews', limit, async request => this.forward(request.ip, request.headers.authorization ?? '', '/instance/previews?' + (request.url.split('?')[1] ?? '')));
+    this.app.get('/exo/previews', limit, async request => this.forward(request.ip, request.headers.authorization ?? '', exoPreviewPath(request.url)));
   }
 }

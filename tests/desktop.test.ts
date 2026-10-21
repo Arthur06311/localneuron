@@ -25,6 +25,7 @@ test('Sessão do desktop adota a porta real e o microfone acompanha essa origem'
  assert.equal(serviceFailureMessage('COLMEIA_PORT inválida. Use um número de 1 a 65535.\n'),'COLMEIA_PORT inválida. Use um número de 1 a 65535.');
  assert.equal(serviceFailureMessage('LOCALNEURON_PORT inválida. Use um número de 1 a 65535.\n'),'LOCALNEURON_PORT inválida. Use um número de 1 a 65535.');
  assert.equal(serviceFailureMessage('stack cru'),'O serviço local encerrou: stack cru');
+ assert.equal(serviceFailureMessage('falhou em /home/ada/segredo hf_abcdefghijklmnopqrst'),'O serviço local encerrou: falhou em ~/… ••••');
  const origin=moved.origin;
  assert.equal(allowsMicrophone('media',origin,origin,{mediaType:'audio'},origin),true);
  assert.equal(allowsMicrophone('media','http://127.0.0.1:4318',origin,{mediaType:'audio'},origin),false);
