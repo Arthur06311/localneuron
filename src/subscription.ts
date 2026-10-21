@@ -39,7 +39,7 @@ export function subscriptionConfig(root: string): SubscriptionConfig {
 }
 export class Subscription {
   private file: string;
-  private state: { device: string; secret: string; token?: string; last_seen: number; checked_at?: number };
+  private state: { device: string; secret: string; token?: string; last_seen: number; checked_at?: number; trial_eligible?: boolean; eligibility_checked_at?: number };
   private lease?: Lease;
   private error = '';
   private refreshing?: Promise<unknown>;
@@ -47,7 +47,7 @@ export class Subscription {
     mkdirSync(directory,{recursive:true,mode:0o700}); this.file = join(directory,'subscription.json');
     this.state = {device:randomUUID(),secret:randomBytes(32).toString('hex'),last_seen:now()};
     if (existsSync(this.file)) {
-      try { this.state = z.object({ device:z.string().uuid(),secret:z.string().regex(/^[a-f0-9]{64}$/),token:z.string().max(8192).optional(),last_seen:z.number().finite(),checked_at:z.number().finite().optional() }).parse(JSON.parse(readFileSync(this.file,'utf8'))); }
+      try { this.state = z.object({ device:z.string().uuid(),secret:z.string().regex(/^[a-f0-9]{64}$/),token:z.string().max(8192).optional(),last_seen:z.number().finite(),checked_at:z.number().finite().optional(),trial_eligible:z.boolean().optional(),eligibility_checked_at:z.number().finite().optional() }).parse(JSON.parse(readFileSync(this.file,'utf8'))); }
       catch { renameSync(this.file,this.file+'.invalid-'+randomUUID()); this.error='Os dados da assinatura precisam de recuperação. O arquivo anterior foi preservado; o Grátis continua disponível.'; }
     }
     if (this.state.token && config.publicKey) { try { this.lease = verifyLease(this.state.token,config.publicKey,this.state.device); } catch { this.error = 'Licença inválida. Atualize a assinatura.'; } }
@@ -58,7 +58,7 @@ export class Subscription {
     const now = this.now(), rollback = now < this.state.last_seen - 300_000;
     if (now > this.state.last_seen + 60_000) { this.state.last_seen=now; this.save(); }
     const active = !rollback && Boolean(this.lease?.status==='active' && now >= this.lease.issued_at-300_000 && now < this.lease.expires_at);
-    return {plan:active?'pro':'free',active,license_kind:this.lease?.subscription==='local-owner-test'?'test':'subscription',configured:Boolean(this.config.publicKey&&this.config.serviceUrl),device:this.state.device,status:rollback?'clock_error':active?(this.lease!.cancel_at_period_end?'canceling':'active'):this.lease?.status==='past_due'?'past_due':this.lease?.status==='canceled'?'canceled':this.lease?'expired':'free',period_end:this.lease?.period_end??null,offline_until:this.lease?.expires_at??null,checked_at:this.state.checked_at??null,error:rollback?'Confira a data e a hora do computador.':this.error,features:premiumFeatures};
+    return {plan:active?'pro':'free',active,license_kind:this.lease?.subscription==='local-owner-test'?'test':'subscription',configured:Boolean(this.config.publicKey&&this.config.serviceUrl),device:this.state.device,status:rollback?'clock_error':active?(this.lease!.cancel_at_period_end?'canceling':'active'):this.lease?.status==='past_due'?'past_due':this.lease?.status==='canceled'?'canceled':this.lease?'expired':'free',period_end:this.lease?.period_end??null,offline_until:this.lease?.expires_at??null,checked_at:this.state.checked_at??null,trial_eligible:!active&&this.state.trial_eligible===true,error:rollback?'Confira a data e a hora do computador.':this.error,features:premiumFeatures};
   }
   get active() { return this.snapshot().active; }
   require(feature: PremiumFeature) { if (!this.active) throw new ProRequired(feature); }
@@ -66,7 +66,7 @@ export class Subscription {
     if (!this.config.publicKey) throw Error('A verificação de assinaturas ainda não foi configurada nesta versão.');
     const lease = verifyLease(token,this.config.publicKey,this.state.device);
     if (lease.issued_at > this.now()+300_000 || lease.issued_at < (this.lease?.issued_at??0)) throw Error('Licença antiga ou com data futura.');
-    this.lease=lease; this.state.token=token; this.state.checked_at=this.now(); this.error=''; this.save(); return this.snapshot();
+    this.lease=lease; this.state.token=token; this.state.checked_at=this.now(); this.state.trial_eligible=false; delete this.state.eligibility_checked_at; this.error=''; this.save(); return this.snapshot();
   }
   private async request(path: string, extra: Record<string, string> = {}) {
     if (!this.config.serviceUrl || !this.config.publicKey) throw Error('Assinaturas em preparação. Nenhuma cobrança está habilitada.');
@@ -78,13 +78,20 @@ export class Subscription {
   }
   async checkout(plan: 'monthly' | 'yearly' = 'monthly') {
     if(plan!=='monthly'&&plan!=='yearly') throw Error('Escolha o plano mensal ou o anual.');
-    return this.external('/billing/checkout','checkout.stripe.com',{plan});
+    return this.external('/billing/checkout',['checkout.stripe.com','billing.stripe.com'],{plan});
   }
   async portal() { return this.external('/billing/portal','billing.stripe.com'); }
-  private async external(path: string, host: string, extra: Record<string, string> = {}) { const value=await this.request(path,extra);const url=new URL(value.url);if(url.protocol!=='https:'||url.hostname!==host||url.username||url.password||url.port)throw Error('Endereço de pagamento inválido.');return {url:url.href}; }
+  private async external(path: string, host: string | string[], extra: Record<string, string> = {}) { const value=await this.request(path,extra);const url=new URL(value.url);const allowed=typeof host==='string'?[host]:host;if(url.protocol!=='https:'||!allowed.includes(url.hostname)||url.username||url.password||url.port)throw Error('Endereço de pagamento inválido.');return {url:url.href}; }
+  async refreshEligibility() {
+    if(!this.config.publicKey||!this.config.serviceUrl)return this.snapshot();
+    if(typeof this.state.trial_eligible==='boolean'&&this.state.eligibility_checked_at&&this.now()-this.state.eligibility_checked_at<10*60_000)return this.snapshot();
+    try{const value=await this.request('/billing/eligibility');this.state.trial_eligible=value?.trial_eligible===true;this.state.eligibility_checked_at=this.now();}
+    catch{this.state.trial_eligible=false;delete this.state.eligibility_checked_at;}
+    this.save();return this.snapshot();
+  }
   async refresh() {
     if(this.refreshing)return this.refreshing;
-    this.refreshing=(async()=>{try{const value=await this.request('/billing/refresh');if(typeof value.token==='string')return this.install(value.token);if(value.status==='free'){this.lease=undefined;delete this.state.token;this.state.checked_at=this.now();this.error='';this.save();return this.snapshot();}throw Error('Resposta de assinatura inválida.');}catch(e){this.error=(e as Error).message;throw e;}finally{this.refreshing=undefined;}})();return this.refreshing;
+    this.refreshing=(async()=>{try{const value=await this.request('/billing/refresh');if(typeof value.token==='string')return this.install(value.token);if(value.status==='free'){this.lease=undefined;delete this.state.token;this.state.checked_at=this.now();this.state.trial_eligible=false;delete this.state.eligibility_checked_at;this.error='';this.save();return this.snapshot();}throw Error('Resposta de assinatura inválida.');}catch(e){this.error=(e as Error).message;throw e;}finally{this.refreshing=undefined;}})();return this.refreshing;
   }
 }
 

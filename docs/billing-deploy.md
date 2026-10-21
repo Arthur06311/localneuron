@@ -4,7 +4,7 @@ Este guia é para o publicador. Ele não cria conta na Stripe, não cria conta n
 
 O vendedor é pessoa física (CPF) no Stripe do Brasil. Os preços são só em BRL. O serviço fica no Fly.io, região `gru` (São Paulo), no endereço `https://billing.localneuron.ai`. O aplicativo de mesa continua sem cobrança enquanto `subscription-config.json` estiver com `serviceUrl` e `publicKey` nulos.
 
-Preços aprovados, os dois com 7 dias grátis, uma vez por instalação ou por cliente:
+Preços aprovados, os dois com 7 dias grátis. O teste fica reservado quando a assinatura existe, uma vez por instalação, por cliente, por cartão ou por e-mail:
 
 | Plano | Valor | `unit_amount` | Intervalo |
 | --- | --- | ---: | --- |
@@ -54,7 +54,7 @@ stripe login
 stripe config --list
 ```
 
-A chave em uso tem de ser a de teste. Se o comando ou o painel mostrar modo ao vivo, pare.
+A chave em uso precisa ser a de teste. Se o comando ou o painel mostrar modo ao vivo, pare.
 
 ### Pelo painel
 
@@ -133,27 +133,26 @@ O `fly.toml` já define o que não é segredo: escuta em `0.0.0.0:4330`, banco e
 
 O segredo do webhook ainda não existe. Use um valor temporário só para o processo conseguir iniciar. Você troca no passo 6, antes de qualquer pagamento de teste.
 
+O teste repetido é reconhecido pela impressão digital do cartão e pelo e-mail, nos eventos `checkout.session.completed` e `customer.subscription.created`. O serviço guarda só o HMAC-SHA256 desses valores, com a chave `LOCALNEURON_BILLING_TRIAL_HMAC_KEY`, e o id da assinatura. O cartão e o e-mail em claro não entram no banco. Gere essa chave uma vez (`openssl rand -hex 32`) e guarde no cofre. Se ela mudar, cartões e e-mails já vistos deixam de ser reconhecidos. Ela não vai para o aplicativo.
+
 ```bash
-export STRIPE_WEBHOOK_SECRET="temporario_troque_no_passo_7"
+export STRIPE_WEBHOOK_SECRET="temporario_troque_no_passo_6"
+# Uma vez só. Se a chave já estiver no cofre, exporte o mesmo valor em vez de gerar outro.
+export LOCALNEURON_BILLING_TRIAL_HMAC_KEY="$(openssl rand -hex 32)"
 fly secrets set \
   STRIPE_SECRET_KEY="$STRIPE_SECRET_KEY" \
   STRIPE_WEBHOOK_SECRET="$STRIPE_WEBHOOK_SECRET" \
   STRIPE_MONTHLY_PRICE_ID="$STRIPE_MONTHLY_PRICE_ID" \
   STRIPE_YEARLY_PRICE_ID="$STRIPE_YEARLY_PRICE_ID" \
+  LOCALNEURON_BILLING_TRIAL_HMAC_KEY="$LOCALNEURON_BILLING_TRIAL_HMAC_KEY" \
   LOCALNEURON_LICENSE_PRIVATE_KEY="$(cat "$HOME/.localneuron/license-private.pem")" \
   -a localneuron-billing
 fly deploy -a localneuron-billing
 ```
 
-`fly secrets set` lê a chave privada do arquivo e guarda no Fly. O comando não imprime o PEM. A imagem não contém esse arquivo: o entrypoint grava em `/tmp` na hora de subir e apaga a variável antes de iniciar o Node.
+`fly secrets set` lê a chave privada do arquivo e guarda no Fly. O comando não imprime o PEM. A imagem não contém esse arquivo.
 
-O processo final é o usuário `node`, não root. Na primeira subida o volume pode estar gravável só pelo root. Se o log disser que `/data` não pode ser gravada:
-
-```bash
-fly logs -a localneuron-billing
-fly ssh console --user root -a localneuron-billing -C "chown node:node /data && chmod 700 /data"
-fly apps restart localneuron-billing
-```
+O entrypoint inicia como root só para ajustar o volume. No Fly, `/data` nasce do root. O script faz `chown node:node /data`, grava a chave privada em `/tmp` com dono `node` e modo 600, apaga `LOCALNEURON_LICENSE_PRIVATE_KEY` e troca para o usuário `node` com `setpriv`. O Node não roda como root. Não é preciso entrar por SSH para corrigir o dono do volume.
 
 Confira que os dois preços foram aceitos. Se o serviço recusar iniciar, o valor, a moeda ou o intervalo na Stripe não é o da tabela do topo.
 
@@ -173,7 +172,7 @@ fly certs add billing.localneuron.ai -a localneuron-billing
 fly certs show billing.localneuron.ai -a localneuron-billing
 ```
 
-Na Name.com: **My Domains → localneuron.ai → Manage DNS Records**. Se o DNS estiver noutro provedor, faça o registro lá. O preferido para este subdomínio é CNAME:
+Na Name.com: **My Domains → localneuron.ai → Manage DNS Records**. Se o DNS estiver em outro provedor, faça o registro lá. O preferido para este subdomínio é CNAME:
 
 | Type | Host | Answer |
 | --- | --- | --- |
@@ -181,7 +180,7 @@ Na Name.com: **My Domains → localneuron.ai → Manage DNS Records**. Se o DNS 
 
 O Host é `billing`, não `billing.localneuron.ai` e não vazio. O Answer não leva `https://` nem barra. Pode manter o TTL 300. Se você tiver mudado o nome do app, o Answer é `<nome-do-app>.fly.dev`.
 
-Se a Name.com não aceitar CNAME nesse host, use A e AAAA dedicados do Fly, sem mexer no ápice:
+Se a Name.com não aceitar CNAME nesse host, use o IPv4 compartilhado (`--shared`) e o AAAA do Fly, sem mexer no ápice:
 
 ```bash
 fly ips allocate-v4 --shared -a localneuron-billing
@@ -205,7 +204,7 @@ A resposta esperada é `{"ok":true}`.
 
 ## 6. Webhook
 
-O endpoint é `https://billing.localneuron.ai/billing/webhook`. A versão da API tem de ser `2025-03-31.basil`, a mesma que o serviço envia. Cadastre só estes seis eventos:
+O endpoint é `https://billing.localneuron.ai/billing/webhook`. A versão da API precisa ser `2025-03-31.basil`, a mesma que o serviço envia. Cadastre só estes seis eventos:
 
 - `checkout.session.completed`
 - `customer.subscription.created`
@@ -247,9 +246,11 @@ O aplicativo abre o portal padrão da conta. Não manda um `customer` escolhido 
 - histórico de faturas: ligado;
 - cancelar assinatura: ligado, **no fim do período** (`at_period_end`), não na hora;
 - alterar quantidade: desligado;
-- trocar de preço ou de produto: desligado.
+- trocar de preço: ligado, somente entre os dois preços do LocalNeuron Pro (Mensal R$ 20,00 e Anual R$ 150). Não inclua outro produto.
 
-O CLI equivalente, se você for marcar o resultado como padrão no painel em seguida:
+Quem já assina usa **Gerenciar assinatura** no aplicativo. Esse botão abre o portal, onde dá para mudar de Mensal para Anual e o contrário. O Checkout não abre de novo enquanto a assinatura existe.
+
+O CLI equivalente, se você for marcar o resultado como padrão no painel em seguida. `prod_SUBSTITUA` é o produto criado no passo 2:
 
 ```bash
 stripe billing_portal configurations create \
@@ -258,10 +259,15 @@ stripe billing_portal configurations create \
   -d "features[customer_update][enabled]=false" \
   -d "features[subscription_cancel][enabled]=true" \
   -d "features[subscription_cancel][mode]=at_period_end" \
-  -d "features[subscription_update][enabled]=false"
+  -d "features[subscription_update][enabled]=true" \
+  -d "features[subscription_update][default_allowed_updates][]=price" \
+  -d "features[subscription_update][proration_behavior]=create_prorations" \
+  -d "features[subscription_update][products][0][product]=prod_SUBSTITUA" \
+  -d "features[subscription_update][products][0][prices][]=$STRIPE_MONTHLY_PRICE_ID" \
+  -d "features[subscription_update][products][0][prices][]=$STRIPE_YEARLY_PRICE_ID"
 ```
 
-Pix não entra neste fluxo. A assinatura é recorrente e o Checkout pede cartão, inclusive nos 7 dias grátis. A cobrança do plano escolhido começa quando o teste termina, se a pessoa não cancelar antes.
+Pix não entra neste fluxo. A assinatura é recorrente e o Checkout pede cartão, inclusive nos 7 dias grátis. A cobrança do plano escolhido começa quando o teste termina, se a pessoa não cancelar antes. Se o cartão ou o e-mail já tiver sido usado em outra assinatura, o teste termina na hora e a cobrança segue o preço normal.
 
 ## 8. Preencher subscription-config.json
 
@@ -296,11 +302,14 @@ Se o comando aceitar, reconstrua os pacotes do aplicativo. Sem esse arquivo pree
 Use só cartões de teste. Nenhum `sk_live_` neste passo.
 
 - `curl -fsS https://billing.localneuron.ai/health` devolve `{"ok":true}`.
-- No aplicativo configurado, Meu plano mostra **Mensal R$ 20,00**, **Anual R$ 150 (economize ~37%, cerca de 4,5 meses)** e **7 dias grátis**.
+- No aplicativo configurado, Meu plano mostra **Mensal R$ 20,00** e **Anual R$ 150 (economize ~37%, cerca de 4,5 meses)**. **7 dias grátis** só aparece quando a instalação ainda pode receber o teste.
 - Com `serviceUrl` nulo, esses botões continuam ocultos ou desligados e nenhuma cobrança é criada.
 - Mensal abre Checkout de assinatura em R$ 20,00, com 7 dias de teste e cartão obrigatório.
 - Anual abre Checkout de assinatura em R$ 150,00, com 7 dias de teste.
-- A mesma instalação, numa segunda abertura, não ganha outro teste.
+- Trocar Mensal/Anual antes de pagar, ou deixar a sessão expirar, não gasta o teste.
+- A mesma instalação, depois que a assinatura existe, não ganha outro teste.
+- Quem já assina vê **Gerenciar assinatura** e troca Mensal/Anual no portal.
+- Outra instalação com o mesmo cartão ou o mesmo e-mail não permanece em teste: a assinatura é cobrada na hora.
 - Cartão `4242424242424242`: assinatura fica `trialing` e **Atualizar assinatura** libera o Pro.
 - Cartão `4000002500003155`: autenticação adicional.
 - Fechar a janela sem pagar não libera o Pro.
@@ -324,7 +333,7 @@ Só depois do checklist. O modo ao vivo é outro conjunto de objetos na mesma co
 2. Crie de novo o produto `LocalNeuron Pro` e os dois preços: BRL 2000 por mês e BRL 15000 por ano, fixos, por unidade, sem uso medido. Os `price_` ao vivo são outros.
 3. Crie outro endpoint de webhook para `https://billing.localneuron.ai/billing/webhook`, versão `2025-03-31.basil`, com os mesmos seis eventos. O `whsec_` ao vivo é outro.
 4. Salve o portal padrão ao vivo com as mesmas regras do passo 7.
-5. Troque os segredos. Mantenha o mesmo par Ed25519, para as licenças de teste já emitidas continuarem verificáveis. Só gere outro par se você quiser invalidar todas as licenças.
+5. Troque os segredos da Stripe. Mantenha o mesmo par Ed25519, para as licenças de teste já emitidas continuarem verificáveis. Só gere outro par se você quiser invalidar todas as licenças. Mantenha também a mesma `LOCALNEURON_BILLING_TRIAL_HMAC_KEY`: outra chave faria um cartão já usado parecer novo.
 
 ```bash
 export STRIPE_SECRET_KEY="cole_a_chave_secreta_ao_vivo"

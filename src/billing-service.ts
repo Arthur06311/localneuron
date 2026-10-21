@@ -16,8 +16,14 @@ export function verifyWebhook(raw:Buffer, header:string, secret:string, now=Date
   return z.object({id:z.string().max(200),type:z.string().max(200),data:z.object({object:z.record(z.string(),z.any())})}).parse(JSON.parse(raw.toString('utf8')));
 }
 export function signLease(lease:Lease,key:string) { const payload=Buffer.from(JSON.stringify(lease)).toString('base64url');return payload+'.'+sign(null,Buffer.from(payload),key).toString('base64url'); }
+/** Keyed HMAC of a card fingerprint or e-mail. The raw value is never stored. */
+export function trialIdentityHmac(kind:'card'|'email', value:string, key:string) {
+  const normalized=kind==='email'?value.trim().toLowerCase():value.trim();
+  if(!normalized||normalized.length>(kind==='email'?320:128))throw Error('Identificador de teste inválido.');
+  return createHmac('sha256',key).update(kind+'\0'+normalized).digest('hex');
+}
 export type BillingPlan='monthly'|'yearly';
-export type BillingConfig={database:string;secretKey:string;webhookSecret:string;monthlyPriceId:string;yearlyPriceId:string;privateKey:string;publicUrl:string};
+export type BillingConfig={database:string;secretKey:string;webhookSecret:string;monthlyPriceId:string;yearlyPriceId:string;privateKey:string;publicUrl:string;trialHmacKey:string};
 export const approvedPlans=Object.freeze({
   monthly:Object.freeze({currency:'brl',unitAmount:2000,interval:'month',intervalCount:1}),
   yearly:Object.freeze({currency:'brl',unitAmount:15000,interval:'year',intervalCount:1}),
@@ -48,13 +54,14 @@ const flyClientIp=(header:unknown)=>{
 const hadTrial=(sub:any)=>Boolean(sub&&(sub.status==='trialing'||sub.trial_start||sub.trial_end));
 export async function createBillingService(config:BillingConfig, stripe:StripeCall=stripeClient(config.secretKey), now=Date.now) {
   const origin=new URL(config.publicUrl);if(origin.protocol!=='https:'||origin.username||origin.password||origin.pathname!=='/'||origin.search||origin.hash)throw Error('Configure uma origem HTTPS pública.');
+  if(typeof config.trialHmacKey!=='string'||config.trialHmacKey.length<32)throw Error('Configure LOCALNEURON_BILLING_TRIAL_HMAC_KEY com pelo menos 32 caracteres.');
   if(config.monthlyPriceId===config.yearlyPriceId)throw Error('Os preços mensal e anual precisam ser identificadores diferentes.');
   const monthly=await stripe('prices/'+encodeURIComponent(config.monthlyPriceId));
   const yearly=await stripe('prices/'+encodeURIComponent(config.yearlyPriceId));
   if(validateApprovedPrice(monthly)!=='monthly')throw Error('O preço mensal do Pro precisa ser fixo: R$ 20,00 em BRL por mês, sem cobrança por uso.');
   if(validateApprovedPrice(yearly)!=='yearly')throw Error('O preço anual do Pro precisa ser fixo: R$ 150 em BRL por ano, sem cobrança por uso.');
   const priceId:Record<BillingPlan,string>={monthly:config.monthlyPriceId,yearly:config.yearlyPriceId};
-  mkdirSync(dirname(config.database),{recursive:true,mode:0o700});const db=new DatabaseSync(config.database);db.exec(`PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS devices (id TEXT PRIMARY KEY, secret TEXT NOT NULL, checkout TEXT, checkout_url TEXT, checkout_expires INTEGER, checkout_attempt TEXT, checkout_plan TEXT, customer TEXT, subscription TEXT, trial_used INTEGER NOT NULL DEFAULT 0); CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, processed INTEGER NOT NULL);`);
+  mkdirSync(dirname(config.database),{recursive:true,mode:0o700});const db=new DatabaseSync(config.database);db.exec(`PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS devices (id TEXT PRIMARY KEY, secret TEXT NOT NULL, checkout TEXT, checkout_url TEXT, checkout_expires INTEGER, checkout_attempt TEXT, checkout_plan TEXT, customer TEXT, subscription TEXT, trial_used INTEGER NOT NULL DEFAULT 0); CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, processed INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS trial_identities (hmac TEXT PRIMARY KEY, subscription TEXT NOT NULL);`);
   const columns=()=>db.prepare('PRAGMA table_info(devices)').all() as any[];
   if(!columns().some(c=>c.name==='checkout_attempt'))db.exec('ALTER TABLE devices ADD COLUMN checkout_attempt TEXT');
   if(!columns().some(c=>c.name==='checkout_plan'))db.exec('ALTER TABLE devices ADD COLUMN checkout_plan TEXT');
@@ -95,6 +102,31 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
     if(hadTrial(sub))markTrial(device);
     return sub;
   }
+  async function rememberTrialIdentity(deviceId:string, subscriptionId:string, emailHint?:string) {
+    const sub=await stripe('subscriptions/'+encodeURIComponent(subscriptionId)+'?expand[]=default_payment_method&expand[]=customer');
+    const fingerprint=sub?.default_payment_method?.card?.fingerprint;
+    const customerEmail=typeof sub?.customer==='object'?sub.customer?.email:undefined;
+    const seen=new Set<string>();
+    let repeat=false;
+    const consider=(kind:'card'|'email', value:unknown)=>{
+      if(typeof value!=='string')return;
+      let hmac:string;
+      try{hmac=trialIdentityHmac(kind,value,config.trialHmacKey);}catch{return;}
+      if(seen.has(hmac))return;
+      seen.add(hmac);
+      const existing=db.prepare('SELECT subscription FROM trial_identities WHERE hmac=?').get(hmac) as {subscription?:string}|undefined;
+      if(!existing){
+        try{db.prepare('INSERT INTO trial_identities(hmac,subscription) VALUES(?,?)').run(hmac,subscriptionId);}
+        catch{const again=db.prepare('SELECT subscription FROM trial_identities WHERE hmac=?').get(hmac) as {subscription?:string}|undefined;if(again&&again.subscription!==subscriptionId)repeat=true;}
+      }else if(existing.subscription!==subscriptionId)repeat=true;
+    };
+    consider('card',fingerprint);
+    consider('email',customerEmail);
+    consider('email',emailHint);
+    if(!repeat)return;
+    markTrial(deviceId);
+    if(sub?.status==='trialing')await stripe('subscriptions/'+encodeURIComponent(subscriptionId),{trial_end:'now'});
+  }
   async function customerUsedTrial(d:any) {
     if(!d.customer)return false;
     const list=await stripe('subscriptions?customer='+encodeURIComponent(d.customer)+'&status=all&limit=100');
@@ -119,15 +151,20 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
   app.post('/billing/checkout',async req=>{const d=authenticate(req,true);return exclusive(d.id,async()=>{
     const plan=d.requestedPlan as BillingPlan;
     const current=await subscription(d.id);
-    if(current&&['active','trialing','past_due','unpaid','incomplete','paused'].includes(current.status))throw Error('Gerencie sua assinatura existente.');
+    if(current&&['active','trialing','past_due','unpaid','incomplete','paused'].includes(current.status)){
+      const customer=row(d.id).customer;if(!customer)throw Error('Sem assinatura.');
+      const portal=await stripe('billing_portal/sessions',{customer,return_url:origin.origin+'/billing/success'});
+      return {url:portal.url};
+    }
     const fresh=row(d.id);
     if(fresh.checkout_url&&fresh.checkout_expires>now()&&!fresh.subscription&&fresh.checkout_plan===plan)return {url:fresh.checkout_url};
     const grantTrial=!(fresh.trial_used||await customerUsedTrial(fresh));
     if(fresh.checkout&&!fresh.subscription){try{await stripe('checkout/sessions/'+encodeURIComponent(fresh.checkout)+'/expire',{});}catch{/* a sessão anterior já estava encerrada */}}
     const attempt=fresh.checkout_attempt||randomUUID();db.prepare('UPDATE devices SET checkout_attempt=? WHERE id=?').run(attempt,d.id);
     const checkout=await stripe('checkout/sessions',{mode:'subscription','line_items[0][price]':priceId[plan],'line_items[0][quantity]':'1',client_reference_id:d.id,'subscription_data[metadata][device]':d.id,'metadata[device]':d.id,success_url:origin.origin+'/billing/success',cancel_url:origin.origin+'/billing/cancel',payment_method_collection:'always',locale:'pt-BR',...(grantTrial?{'subscription_data[trial_period_days]':'7'}:{}),...(fresh.customer?{customer:fresh.customer}:{})},'ln-'+d.id+'-'+attempt);
-    db.prepare('UPDATE devices SET checkout=?,checkout_url=?,checkout_expires=?,checkout_attempt=NULL,checkout_plan=?,trial_used=1,subscription=NULL WHERE id=?').run(checkout.id,checkout.url,checkout.expires_at*1000,plan,d.id);return {url:checkout.url};
+    db.prepare('UPDATE devices SET checkout=?,checkout_url=?,checkout_expires=?,checkout_attempt=NULL,checkout_plan=?,subscription=NULL WHERE id=?').run(checkout.id,checkout.url,checkout.expires_at*1000,plan,d.id);return {url:checkout.url};
   });});
+  app.post('/billing/eligibility',async req=>{const d=authenticate(req,true);return exclusive(d.id,async()=>{const fresh=row(d.id);return {trial_eligible:!(fresh.trial_used||await customerUsedTrial(fresh))};});});
   app.post('/billing/refresh',async req=>{const d=authenticate(req);return exclusive(d.id,async()=>entitlement(d.id,await subscription(d.id)));});
   app.post('/billing/portal',async req=>{const d=authenticate(req);return exclusive(d.id,async()=>{await subscription(d.id);const customer=row(d.id).customer;if(!customer)throw Error('Sem assinatura.');const portal=await stripe('billing_portal/sessions',{customer,return_url:origin.origin+'/billing/success'});return {url:portal.url};});});
   app.get('/billing/success',async(_req,reply)=>reply.type('text/html; charset=utf-8').send('<!doctype html><html lang="pt-BR"><meta name="viewport" content="width=device-width"><title>LocalNeuron Pro</title><h1>Volte ao LocalNeuron</h1><p>Em Meu plano, clique em Atualizar assinatura. Nos 7 dias grátis, o Pro é liberado depois que a assinatura é confirmada. Fora do teste, o Pro é liberado após a confirmação do pagamento.</p></html>'));
@@ -141,7 +178,15 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
       const device=event.type==='checkout.session.completed'?object.client_reference_id:object.metadata?.device;
       const invoiceSub=object.parent?.subscription_details?.subscription;
       const lookup=typeof device==='string'?row(device):typeof invoiceSub==='string'?db.prepare('SELECT * FROM devices WHERE subscription=?').get(invoiceSub) as any:null;
-      if(lookup&&['checkout.session.completed','customer.subscription.created','customer.subscription.updated','customer.subscription.deleted','invoice.paid','invoice.payment_failed'].includes(event.type))await exclusive(lookup.id,async()=>{await subscription(lookup.id);});
+      if(lookup&&['checkout.session.completed','customer.subscription.created','customer.subscription.updated','customer.subscription.deleted','invoice.paid','invoice.payment_failed'].includes(event.type))await exclusive(lookup.id,async()=>{
+        await subscription(lookup.id);
+        if(event.type!=='checkout.session.completed'&&event.type!=='customer.subscription.created')return;
+        const rawSub=event.type==='checkout.session.completed'?object.subscription:object.id;
+        const subscriptionId=typeof rawSub==='string'?rawSub:typeof rawSub?.id==='string'?rawSub.id:'';
+        if(!subscriptionId)return;
+        const emailHint=typeof object.customer_details?.email==='string'?object.customer_details.email:typeof object.customer_email==='string'?object.customer_email:undefined;
+        await rememberTrialIdentity(lookup.id,subscriptionId,emailHint);
+      });
       db.prepare('INSERT OR IGNORE INTO events(id,processed) VALUES(?,?)').run(event.id,now());
       db.prepare('DELETE FROM events WHERE processed<?').run(now()-90*86400_000);
       return {received:true};
@@ -150,8 +195,8 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
   return app;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
-  const env=z.object({LOCALNEURON_BILLING_DB:z.string().min(1),STRIPE_SECRET_KEY:z.string().min(1),STRIPE_WEBHOOK_SECRET:z.string().min(1),STRIPE_MONTHLY_PRICE_ID:z.string().min(1),STRIPE_YEARLY_PRICE_ID:z.string().min(1),LOCALNEURON_LICENSE_PRIVATE_KEY_FILE:z.string().min(1),LOCALNEURON_BILLING_PUBLIC_URL:z.string().url(),LOCALNEURON_BILLING_HOST:z.enum(['127.0.0.1','0.0.0.0']).default('127.0.0.1')}).parse(process.env);
-  const app=await createBillingService({database:env.LOCALNEURON_BILLING_DB,secretKey:env.STRIPE_SECRET_KEY,webhookSecret:env.STRIPE_WEBHOOK_SECRET,monthlyPriceId:env.STRIPE_MONTHLY_PRICE_ID,yearlyPriceId:env.STRIPE_YEARLY_PRICE_ID,privateKey:readFileSync(env.LOCALNEURON_LICENSE_PRIVATE_KEY_FILE,'utf8'),publicUrl:env.LOCALNEURON_BILLING_PUBLIC_URL});
+  const env=z.object({LOCALNEURON_BILLING_DB:z.string().min(1),STRIPE_SECRET_KEY:z.string().min(1),STRIPE_WEBHOOK_SECRET:z.string().min(1),STRIPE_MONTHLY_PRICE_ID:z.string().min(1),STRIPE_YEARLY_PRICE_ID:z.string().min(1),LOCALNEURON_LICENSE_PRIVATE_KEY_FILE:z.string().min(1),LOCALNEURON_BILLING_PUBLIC_URL:z.string().url(),LOCALNEURON_BILLING_TRIAL_HMAC_KEY:z.string().min(32),LOCALNEURON_BILLING_HOST:z.enum(['127.0.0.1','0.0.0.0']).default('127.0.0.1')}).parse(process.env);
+  const app=await createBillingService({database:env.LOCALNEURON_BILLING_DB,secretKey:env.STRIPE_SECRET_KEY,webhookSecret:env.STRIPE_WEBHOOK_SECRET,monthlyPriceId:env.STRIPE_MONTHLY_PRICE_ID,yearlyPriceId:env.STRIPE_YEARLY_PRICE_ID,privateKey:readFileSync(env.LOCALNEURON_LICENSE_PRIVATE_KEY_FILE,'utf8'),publicUrl:env.LOCALNEURON_BILLING_PUBLIC_URL,trialHmacKey:env.LOCALNEURON_BILLING_TRIAL_HMAC_KEY});
   await app.listen({host:env.LOCALNEURON_BILLING_HOST,port:Number(process.env.LOCALNEURON_BILLING_PORT||4330)});
   for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>void app.close().then(()=>process.exit(0)));
 }

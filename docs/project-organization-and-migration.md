@@ -188,7 +188,7 @@ O código atual não é um serviço multiusuário pronto para ficar exposto dire
 - política de retenção e exclusão de dados;
 - processo de assinatura/notarização e atualização segura dos clientes.
 
-O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do app local. As variáveis necessárias são `LOCALNEURON_BILLING_DB`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_YEARLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` e `LOCALNEURON_BILLING_PUBLIC_URL`. Elas nunca devem entrar no Git ou no bundle do desktop. A hospedagem prevista é o Fly.io, em `billing.localneuron.ai`; o passo a passo está em [billing-deploy.md](billing-deploy.md).
+O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do app local. As variáveis necessárias são `LOCALNEURON_BILLING_DB`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_YEARLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE`, `LOCALNEURON_BILLING_PUBLIC_URL` e `LOCALNEURON_BILLING_TRIAL_HMAC_KEY`. Elas nunca devem entrar no Git ou no bundle do desktop. A chave de HMAC não revela cartão nem e-mail: o banco guarda só o HMAC. A hospedagem prevista é o Fly.io, em `billing.localneuron.ai`; o passo a passo está em [billing-deploy.md](billing-deploy.md).
 
 ## 6. Configuração e variáveis importantes
 
@@ -209,6 +209,7 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 | `STRIPE_YEARLY_PRICE_ID` | Preço anual do Pro (BRL 15000) | Somente billing |
 | `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` | Caminho do arquivo PEM da chave privada de licença | Somente billing |
 | `LOCALNEURON_BILLING_PUBLIC_URL` | URL pública HTTPS do serviço de cobrança | Somente billing |
+| `LOCALNEURON_BILLING_TRIAL_HMAC_KEY` | Segredo do HMAC de cartão e e-mail do teste. Mínimo de 32 caracteres. Não é o valor em claro. | Somente billing |
 | `LOCALNEURON_BILLING_HOST` | Endereço de escuta do serviço de cobrança | Não; padrão `127.0.0.1`. No Fly, `0.0.0.0` |
 | `LOCALNEURON_BILLING_PORT` | Porta local do serviço de cobrança | Não; padrão `4330` |
 | `LOCALNEURON_BILLING_TRUST_PROXY` | `fly` para usar o IP do cabeçalho `Fly-Client-IP` | Não; fora do Fly o padrão é loopback |

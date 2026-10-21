@@ -5,7 +5,7 @@ import {join,resolve} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createHmac,generateKeyPairSync,randomUUID} from 'node:crypto';
 import {Subscription,requiredFeature,verifyLease,type Lease} from '../src/subscription.js';
-import {createBillingService,signLease,verifyWebhook,validateApprovedPrice} from '../src/billing-service.js';
+import {createBillingService,signLease,verifyWebhook,validateApprovedPrice,trialIdentityHmac} from '../src/billing-service.js';
 import {optimizeContext} from '../src/optimization.js';
 import {optionsSchema} from '../src/inference.js';
 import {Core} from '../src/core.js';
@@ -16,7 +16,8 @@ const temporary=()=>mkdtempSync(join(tmpdir(),'neuron-subscription-'));
 const day=86400_000;
 const monthlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:2000,billing_scheme:'per_unit',recurring:{interval:'month',interval_count:1,usage_type:'licensed'}});
 const yearlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:15000,billing_scheme:'per_unit',recurring:{interval:'year',interval_count:1,usage_type:'licensed'}});
-const billingConfig=(dir:string)=>({database:join(dir,'billing.sqlite'),secretKey:'test',webhookSecret:'webhook-test',monthlyPriceId:'price_month',yearlyPriceId:'price_year',privateKey,publicUrl:'https://billing.example.com'});
+const trialHmacKey='hmac-de-teste-com-32-caracteres-ou-mais';
+const billingConfig=(dir:string)=>({database:join(dir,'billing.sqlite'),secretKey:'test',webhookSecret:'webhook-test',monthlyPriceId:'price_month',yearlyPriceId:'price_year',privateKey,publicUrl:'https://billing.example.com',trialHmacKey});
 function lease(device:string,now:number):Lease {return {version:1,audience:'localneuron-pro',device,subscription:'sub_test',status:'active',issued_at:now,expires_at:now+7*day,period_end:now+30*day,cancel_at_period_end:false};}
 test('Licença assinada: offline, reinício, expiração, cancelamento e relógio',()=>{
  const dir=temporary();let now=Date.now();const initial=now;
@@ -80,7 +81,7 @@ test('Cobrança mensal: checkout único, confirmação, portal, renovação, fal
  const headers={authorization:'Bearer '+'a'.repeat(64)};const post=(path:string)=>app.inject({method:'POST',url:'/billing/'+path,headers,payload:{device}});
  try{const [a,b]=await Promise.all([post('checkout'),post('checkout')]);assert.equal(a.statusCode,200);assert.equal(b.statusCode,200);assert.equal(creates,1);const created=calls.find(c=>c.path==='checkout/sessions');assert.equal(created.body['line_items[0][price]'],'price_month');assert.equal(created.body['subscription_data[trial_period_days]'],'7');assert.equal((await post('refresh')).json().status,'free');
  const wrong=await app.inject({method:'POST',url:'/billing/portal',headers:{authorization:'Bearer '+'b'.repeat(64)},payload:{device}});assert.equal(wrong.statusCode,401);
- paid=true;let data=(await post('refresh')).json();assert.equal(verifyLease(data.token,testConfig.publicKey,device).status,'active');assert.equal((await post('checkout')).statusCode,400);
+ paid=true;let data=(await post('refresh')).json();assert.equal(verifyLease(data.token,testConfig.publicKey,device).status,'active');const portal=await post('checkout');assert.equal(portal.statusCode,200);assert.equal(portal.json().url,'https://billing.stripe.com/p/session/test');assert.equal(creates,1);
  assert.equal((await post('portal')).statusCode,200);assert.equal(calls.find(c=>c.path==='billing_portal/sessions').body.customer,'cus_test');
  cancel=true;assert.equal(verifyLease((await post('refresh')).json().token,testConfig.publicKey,device).cancel_at_period_end,true);
  status='past_due';paid=false;assert.equal(verifyLease((await post('refresh')).json().token,testConfig.publicKey,device).status,'past_due');
@@ -147,37 +148,55 @@ test('Status trialing conta como licença ativa, sem exigir fatura paga',async()
   paused=null;trialEnd=now-1000;assert.notEqual(verifyLease((await post()).json().token,testConfig.publicKey,device).status,'active');
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
-test('O teste de 7 dias é único por instalação e por cliente',async()=>{
- const dir=temporary(),device=randomUUID();let now=Date.now(),sessions=0;const calls:any[]=[];
+test('O teste só é reservado quando a assinatura existe',async()=>{
+ const dir=temporary(),device=randomUUID();let now=Date.now(),sessions=0,complete=false,status='canceled';const calls:any[]=[];
  const stripe=async(path:string,body?:Record<string,string>)=>{
   calls.push({path,body});
   if(path==='prices/price_month')return monthlyPrice();
   if(path==='prices/price_year')return yearlyPrice();
   if(path==='checkout/sessions'){sessions++;return {id:'cs_'+sessions,url:'https://checkout.stripe.com/c/'+sessions,expires_at:(now+3600_000)/1000};}
   if(path.endsWith('/expire'))return {id:'expired',status:'expired'};
-  if(path.startsWith('checkout/sessions/'))return {status:'expired',mode:'subscription',client_reference_id:device};
+  if(path.startsWith('checkout/sessions/'))return complete?{status:'complete',mode:'subscription',client_reference_id:device,customer:'cus_trial',subscription:'sub_trial'}:{status:'expired',mode:'subscription',client_reference_id:device};
+  if(path.startsWith('subscriptions/sub_trial'))return {id:'sub_trial',customer:'cus_trial',metadata:{device},status,trial_end:(now+7*day)/1000,latest_invoice:{status:'open'},items:{data:[{price:{id:'price_month'},current_period_end:(now+30*day)/1000}]}};
   if(path.startsWith('subscriptions?'))return {data:[{id:'sub_old',status:'canceled',trial_end:1}],has_more:false};
+  if(path==='billing_portal/sessions')return {url:'https://billing.stripe.com/p/session/test'};
   throw Error(path);
  };
  const app=await createBillingService(billingConfig(dir),stripe,()=>now);
  const headers={authorization:'Bearer '+'e'.repeat(64)};
- const checkout=()=>app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device,plan:'monthly'}});
+ const checkout=(plan:'monthly'|'yearly'='monthly')=>app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device,plan}});
  const sessionBodies=()=>calls.filter(c=>c.path==='checkout/sessions').map(c=>c.body);
+ const {DatabaseSync}=await import('node:sqlite');
  try{
-  assert.equal((await checkout()).statusCode,200);
+  assert.equal((await checkout('monthly')).statusCode,200);
   assert.equal(sessionBodies()[0]['subscription_data[trial_period_days]'],'7');
+  assert.equal((await checkout('yearly')).statusCode,200);
+  assert.equal(sessionBodies()[1]['subscription_data[trial_period_days]'],'7');
+  assert.equal(sessionBodies()[1]['line_items[0][price]'],'price_year');
   now+=2*day;
+  assert.equal((await checkout('monthly')).statusCode,200);
+  assert.equal(sessionBodies()[2]['subscription_data[trial_period_days]'],'7');
+  const open=new DatabaseSync(join(dir,'billing.sqlite'));
+  assert.equal((open.prepare('SELECT trial_used FROM devices WHERE id=?').get(device) as any).trial_used,0);
+  open.close();
+  assert.equal((await app.inject({method:'POST',url:'/billing/eligibility',headers,payload:{device}})).json().trial_eligible,true);
+  complete=true;status='trialing';
+  assert.equal(verifyLease((await app.inject({method:'POST',url:'/billing/refresh',headers,payload:{device}})).json().token,testConfig.publicKey,device).status,'active');
+  const reserved=new DatabaseSync(join(dir,'billing.sqlite'));
+  assert.equal((reserved.prepare('SELECT trial_used FROM devices WHERE id=?').get(device) as any).trial_used,1);
+  reserved.close();
+  assert.equal((await app.inject({method:'POST',url:'/billing/eligibility',headers,payload:{device}})).json().trial_eligible,false);
+  assert.equal((await checkout()).json().url,'https://billing.stripe.com/p/session/test');
+  status='canceled';
   assert.equal((await checkout()).statusCode,200);
-  assert.equal(sessionBodies()[1]['subscription_data[trial_period_days]'],undefined);
-  assert.equal(sessionBodies()[1]['line_items[0][price]'],'price_month');
-  const {DatabaseSync}=await import('node:sqlite');
+  assert.equal(sessionBodies().at(-1)['subscription_data[trial_period_days]'],undefined);
   const db=new DatabaseSync(join(dir,'billing.sqlite'));
   db.prepare('UPDATE devices SET trial_used=0, customer=?, checkout=NULL, checkout_url=NULL, checkout_expires=0, subscription=NULL WHERE id=?').run('cus_prior',device);
   db.exec('PRAGMA wal_checkpoint(TRUNCATE)');
   db.close();
   now+=2*day;
   assert.equal((await checkout()).statusCode,200);
-  assert.equal(sessionBodies()[2]['subscription_data[trial_period_days]'],undefined);
+  assert.equal(sessionBodies().at(-1)['subscription_data[trial_period_days]'],undefined);
   assert.equal(calls.some(c=>c.path==='subscriptions?customer=cus_prior&status=all&limit=100'),true);
   const check=new DatabaseSync(join(dir,'billing.sqlite'));
   assert.equal((check.prepare('SELECT trial_used FROM devices WHERE id=?').get(device) as any).trial_used,1);
@@ -199,6 +218,67 @@ test('Falha de rede não destrói licença offline válida; checkout nunca insta
  globalThis.fetch=async()=>new Response(JSON.stringify({url:'https://checkout.stripe.com/c/test'}));assert.equal((await local.checkout()).url,'https://checkout.stripe.com/c/test');assert.equal(local.active,true);
  globalThis.fetch=async()=>new Response(JSON.stringify({url:'https://example.com/falso'}));await assert.rejects(()=>local.checkout(),/inválido/);
  }finally{globalThis.fetch=original;rmSync(dir,{recursive:true,force:true});}
+});
+test('Cartão ou e-mail repetido encerra o teste sem gravar o valor',async()=>{
+ const dir=temporary(),now=Date.now();const email='Pessoa@Example.com',fingerprint='fp_cartao_unico_de_teste';const ended:string[]=[];
+ const devices={a:randomUUID(),b:randomUUID(),c:randomUUID(),d:randomUUID()};
+ const subs:Record<string,any>={
+  sub_a:{id:'sub_a',customer:{id:'cus_a',email},metadata:{device:devices.a},status:'trialing',default_payment_method:{card:{fingerprint}}},
+  sub_b:{id:'sub_b',customer:{id:'cus_b',email:'outra@example.com'},metadata:{device:devices.b},status:'trialing',default_payment_method:{card:{fingerprint}}},
+  sub_c:{id:'sub_c',customer:{id:'cus_c',email},metadata:{device:devices.c},status:'trialing',default_payment_method:{card:{fingerprint:'fp_outro_cartao'}}},
+  sub_d:{id:'sub_d',customer:{id:'cus_d',email:'nova@example.com'},metadata:{device:devices.d},status:'trialing',default_payment_method:{card:{fingerprint:'fp_cartao_novo'}}},
+ };
+ const stripe=async(path:string,body?:Record<string,string>)=>{
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='checkout/sessions')return {id:'cs_'+path.length,url:'https://checkout.stripe.com/c/pay',expires_at:(now+day)/1000};
+  if(path.startsWith('checkout/sessions/'))return {status:'open',mode:'subscription'};
+  if(path.includes('expand[]=default_payment_method')){const id=decodeURIComponent(path.split('/')[1].split('?')[0]);return subs[id];}
+  if(body?.trial_end==='now'){const id=decodeURIComponent(path.split('/')[1]);ended.push(id);subs[id].status='active';return subs[id];}
+  throw Error(path);
+ };
+ const app=await createBillingService(billingConfig(dir),stripe,()=>now);
+ const headers={authorization:'Bearer '+'f'.repeat(64)};
+ const postEvent=(id:string,type:string,object:any)=>app.inject({method:'POST',url:'/billing/webhook',headers:{'content-type':'application/json','stripe-signature':(()=>{const raw=JSON.stringify({id,type,data:{object}}),ts=Math.floor(now/1000);return 't='+ts+',v1='+createHmac('sha256','webhook-test').update(ts+'.'+raw).digest('hex');})()},payload:JSON.stringify({id,type,data:{object}})});
+ try{
+  const card=trialIdentityHmac('card',fingerprint,trialHmacKey),mail=trialIdentityHmac('email','  pessoa@example.com ',trialHmacKey);
+  assert.equal(card,trialIdentityHmac('card',fingerprint,trialHmacKey));assert.equal(mail.length,64);assert.notEqual(card,fingerprint);assert.notEqual(mail,email.toLowerCase());
+  assert.notEqual(trialIdentityHmac('card',email,trialHmacKey),mail);assert.notEqual(trialIdentityHmac('email',email,trialHmacKey+'x'),mail);
+  for(const id of Object.values(devices))assert.equal((await app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device:id}})).statusCode,200);
+  assert.equal((await postEvent('evt_a','customer.subscription.created',{id:'sub_a',metadata:{device:devices.a}})).statusCode,200);
+  assert.equal((await postEvent('evt_a2','checkout.session.completed',{client_reference_id:devices.a,subscription:'sub_a',customer_details:{email}})).statusCode,200);
+  assert.deepEqual(ended,[]);
+  assert.equal((await postEvent('evt_b','customer.subscription.created',{id:'sub_b',metadata:{device:devices.b}})).statusCode,200);
+  assert.equal((await postEvent('evt_c','checkout.session.completed',{client_reference_id:devices.c,subscription:'sub_c',customer_email:email})).statusCode,200);
+  assert.equal((await postEvent('evt_d','customer.subscription.created',{id:'sub_d',metadata:{device:devices.d}})).statusCode,200);
+  assert.deepEqual(ended,['sub_b','sub_c']);
+  const {DatabaseSync}=await import('node:sqlite');
+  const db=new DatabaseSync(join(dir,'billing.sqlite'));db.exec('PRAGMA wal_checkpoint(TRUNCATE)');
+  const rows=db.prepare('SELECT hmac,subscription FROM trial_identities').all() as {hmac:string,subscription:string}[];
+  assert.ok(rows.length>=2);assert.ok(rows.every(row=>/^[a-f0-9]{64}$/.test(row.hmac)&&row.subscription.startsWith('sub_')));
+  db.close();
+  const {readdirSync,readFileSync}=await import('node:fs');
+  const blob=readdirSync(dir).filter(name=>name.startsWith('billing.sqlite')).map(name=>readFileSync(join(dir,name))).join('');
+  assert.equal(blob.includes(email),false);assert.equal(blob.includes(email.toLowerCase()),false);assert.equal(blob.includes(fingerprint),false);
+ }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('Elegibilidade desconhecida não anuncia o teste e a página só mostra os 7 dias para quem pode',async()=>{
+ const dir=temporary(),now=Date.now(),original=globalThis.fetch;const {readFileSync}=await import('node:fs');
+ try{const local=new Subscription(dir,{...testConfig,serviceUrl:'https://billing.example.com/'},()=>now);
+  assert.equal(local.snapshot().trial_eligible,false);
+  globalThis.fetch=async()=>{throw Error('offline');};await local.refreshEligibility();assert.equal(local.snapshot().trial_eligible,false);
+  globalThis.fetch=async()=>new Response(JSON.stringify({trial_eligible:true}));await local.refreshEligibility();assert.equal(local.snapshot().trial_eligible,true);
+  local.install(signLease(lease(local.snapshot().device,now),privateKey));assert.equal(local.snapshot().trial_eligible,false);
+  const page=readFileSync(resolve('public/subscription.js'),'utf8');
+  assert.match(page,/trial=Boolean\(state\.configured&&state\.trial_eligible&&!managing\)/);
+  assert.match(page,/trial\?'<p class="trial-note">7 dias grátis<\/p>':''/);
+  assert.match(page,/Troque entre Mensal e Anual em Gerenciar assinatura/);
+ }finally{globalThis.fetch=original;rmSync(dir,{recursive:true,force:true});}
+});
+test('O serviço exige a chave de HMAC do teste',async()=>{
+ const dir=temporary();
+ try{await assert.rejects(()=>createBillingService({...billingConfig(dir),trialHmacKey:'curta'},async()=>monthlyPrice()),/32/);}
+ finally{rmSync(dir,{recursive:true,force:true});}
 });
 test('Arquivo de assinatura corrompido preserva o original e mantém Grátis disponível',async()=>{
  const {writeFileSync,readdirSync,readFileSync}=await import('node:fs');const dir=temporary();try{writeFileSync(join(dir,'subscription.json'),'{corrompido');const local=new Subscription(dir,testConfig);assert.equal(local.active,false);const backup=readdirSync(dir).find(p=>p.startsWith('subscription.json.invalid-'));assert.ok(backup);assert.equal(readFileSync(join(dir,backup),'utf8'),'{corrompido');assert.match(local.snapshot().error,/recuperação/);}finally{rmSync(dir,{recursive:true,force:true});}
