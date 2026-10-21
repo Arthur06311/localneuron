@@ -31,7 +31,7 @@ export async function assertCrewDestination(url: URL, resolver?: CrewResolver) {
     if (isConfiguredLanName(url.hostname) && url.hostname.replace(/\.$/, '').toLowerCase().endsWith('.local')) return;
     throw new Error('Endereço recusado.');
   }
-  if (!answers.length || answers.some(answer => hostClass(answer.address) === 'blocked')) throw new Error('Endereço recusado.');
+  if (!answers.length || answers.some(answer => { const kind = hostClass(answer.address); return kind === 'blocked' || kind === 'loopback'; })) throw new Error('Endereço recusado.');
 }
 
 export type RemoteMessage = { role: 'system' | 'user' | 'assistant'; content: string };
@@ -71,7 +71,7 @@ export function remoteDestination(provider: RemoteProvider) {
   if (!plan.model) throw new Error('Indique o modelo deste provedor.');
   if (plan.kind === 'exo') {
     const parsed = parseEndpoint(plan.endpoint);
-    if (parsed.hostClass !== 'loopback' || parsed.protocol !== 'http:') throw new Error('O EXO da equipa fica só em loopback (127.0.0.1). Esta opção não abre a rede.');
+    if (parsed.hostClass !== 'loopback' || parsed.protocol !== 'http:') throw new Error('O EXO da equipe fica só em loopback (127.0.0.1). Esta opção não abre a rede.');
     return { url: `${parsed.origin}/v1/chat/completions`, kind: plan.kind, model: plan.model, token: null as string | null };
   }
   if ((plan.kind === 'anthropic' || plan.kind === 'xai' || (plan.kind === 'openai' && plan.leaves_computer)) && !provider.token) {

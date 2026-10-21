@@ -66,6 +66,16 @@ function isAgentHttpUrl(value) {
   return isHttpUrl(value, { standardPort: false });
 }
 
+function isAgentRequestUrl(value) {
+  try {
+    const target = new URL(value);
+    if (!['https:', 'http:', 'wss:', 'ws:'].includes(target.protocol) || target.username || target.password) return false;
+    return hostClass(target.hostname) === 'public';
+  } catch {
+    return false;
+  }
+}
+
 function isLoopbackPeer(ip) {
   if (typeof ip !== 'string' || !ip) return false;
   return hostClass(ip.replace(/^::ffff:/i, '')) === 'loopback';
@@ -89,6 +99,7 @@ module.exports = {
   hostClass,
   isPublicHttpUrl,
   isAgentHttpUrl,
+  isAgentRequestUrl,
   isLoopbackPeer,
   resolvesPublic,
 };

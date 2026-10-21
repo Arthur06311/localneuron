@@ -21,7 +21,7 @@ test('os tokens grafite e o tema claro ficam num arquivo partilhado', () => {
   assert.match(server, /'\/design-system\.css'/);
 });
 
-test('o shell usa a barra de 232px, foco visível e o registo do chat', () => {
+test('o shell usa a barra de 232px, foco visível e o registro do chat', () => {
   const css = readFileSync('public/design-system.css', 'utf8');
   assert.match(css, /width:\s*232px/);
   assert.match(css, /:focus-visible/);

@@ -5,7 +5,7 @@ export function listensBeyondLoopback(host) {
 }
 
 export function networkExposureNotice(service) {
-  return `${service} está a escutar fora deste computador. Outros dispositivos desta rede conseguem aceder.`;
+  return `${service} está escutando fora deste computador. Outros dispositivos desta rede conseguem acessar.`;
 }
 
 export function exposureBanner(exposed, service) {

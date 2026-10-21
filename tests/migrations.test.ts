@@ -14,7 +14,7 @@ const legacySql = `CREATE TABLE workspace_state (id integer PRIMARY KEY CHECK (i
   INSERT INTO workspace_state VALUES (1, '{"marker":"antigo"}');
   INSERT INTO event_log VALUES (1, 'hash-antigo', '{"seq":1}');`;
 
-test('Base nova recebe as migrações em ordem e o registo da versão', async () => {
+test('Base nova recebe as migrações em ordem e o registro da versão', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'migrations-new-'));
   const store = new Store(dir);
   try {
