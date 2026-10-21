@@ -4,6 +4,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import ptBR from '../public/i18n/pt-BR.js';
 import en from '../public/i18n/en.js';
+import { chatModelLabel, writeChatModelLabel } from '../public/chat-model-label.js';
 import { applyDocument, format, localeFromLanguage, resolveLocale, setText, t, useLocale } from '../public/i18n.js';
 
 test('pt vira pt-BR e qualquer outro idioma vira inglês', () => {
@@ -78,6 +79,42 @@ test('um valor interpolado com HTML é desenhado como texto', () => {
   assert.equal(nodes.every(node => node.nodeType === 3), true);
 });
 
+test('o seletor do Chat traduz integrado e desenha o nome como texto', () => {
+  useLocale('en');
+  try {
+    assert.equal(chatModelLabel('Qwen_Qwen3-0.6B · Q4_K_M · integrado'), 'Qwen_Qwen3-0.6B · Q4_K_M · built-in');
+    assert.equal(chatModelLabel('Pasta · MLX integrado'), 'Pasta · MLX built-in');
+    assert.equal(chatModelLabel('Modelo · pasta externa'), 'Modelo · external folder');
+    assert.equal(chatModelLabel('Grande · Rede EXO'), 'Grande · EXO network');
+    assert.equal(chatModelLabel('Catálogo · LocalNeuron'), 'Catálogo · LocalNeuron');
+    const nodes = [];
+    const option = {
+      ownerDocument: {
+        createTextNode(data) {
+          return { nodeType: 3, data: String(data) };
+        },
+      },
+      replaceChildren(...children) {
+        nodes.splice(0, nodes.length, ...children);
+      },
+      get textContent() {
+        return nodes.map(node => node.data).join('');
+      },
+    };
+    writeChatModelLabel(option, 'Qwen_<img src=x onerror=alert(1)> · integrado');
+    assert.equal(option.textContent, 'Qwen_<img src=x onerror=alert(1)> · built-in');
+    assert.equal(nodes.length, 1);
+    assert.equal(nodes[0].nodeType, 3);
+    assert.equal(nodes[0].data.includes('<img'), true);
+  } finally {
+    useLocale('pt-BR');
+  }
+  assert.equal(chatModelLabel('Qwen_Qwen3-0.6B · Q4_K_M · integrado'), 'Qwen_Qwen3-0.6B · Q4_K_M · integrado');
+  assert.equal(chatModelLabel('Pasta · MLX integrado'), 'Pasta · MLX integrado');
+  assert.equal(chatModelLabel('Modelo · pasta externa'), 'Modelo · pasta externa');
+  assert.equal(chatModelLabel('Grande · Rede EXO'), 'Grande · Rede EXO');
+});
+
 test('o documento recebe lang e o HTML não fixa pt-BR', () => {
   const html = readFileSync(resolve('public/index.html'), 'utf8');
   assert.doesNotMatch(html.split('<head>', 1)[0], /\slang=/);
@@ -147,4 +184,5 @@ test('o caminho Trabalhar / Conta sai dos nomes da ilha e esses nomes traduzem',
   assert.match(server, /'\/i18n\.js'/);
   assert.match(server, /'\/i18n\/pt-BR\.js'/);
   assert.match(server, /'\/i18n\/en\.js'/);
+  assert.match(server, /'\/chat-model-label\.js'/);
 });
