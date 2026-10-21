@@ -110,13 +110,14 @@
 <li><strong>Anthropic e xAI.</strong> Só se você criar o provedor, confirmar que o texto sai do computador e enviar a mensagem. Sem isso, nada é enviado. Base: consentimento específico (art. 33, VIII).</li>
 <li><strong>country.is.</strong> No idioma automático, quando o idioma do navegador não é um dos sete do site, o navegador envia o IP para sugerir o idioma pelo país aproximado. Escolher o idioma à mão impede essa consulta. Base: consentimento (art. 33, VIII), depois do aviso desta política e do botão Idioma e privacidade.</li>
 <li><strong>Stripe.</strong> Pagamento e portal do cliente, quando a compra estiver aberta. O cartão é digitado no site da Stripe. Base: cláusulas do contrato com a Stripe (art. 33, II) e execução da assinatura (art. 33, IX).</li>
-<li><strong>Fly.io.</strong> Operadora que hospeda o servidor de cobrança em <code>billing.localneuron.ai</code>. A máquina e o volume do banco ficam em São Paulo (<code>gru</code>). A Fly.io mantém logs de plataforma e do proxy, e pode tratá-los fora do Brasil. Base: cláusulas do contrato com a operadora (art. 33, II) e execução da assinatura (art. 33, IX).</li>
+<li><strong>Vercel.</strong> Operadora que hospeda o servidor de cobrança em <code>billing.localneuron.ai</code>. A Vercel mantém logs de plataforma, inclusive o IP do cliente, e pode tratá-los fora do Brasil. Base: cláusulas do contrato com a operadora (art. 33, II) e execução da assinatura (art. 33, IX).</li>
+<li><strong>Supabase.</strong> Operadora do Postgres da cobrança, na região <code>sa-east-1</code> (São Paulo). A Supabase mantém logs de plataforma e pode tratá-los fora do Brasil. O IP do cliente não entra nesse banco. Base: cláusulas do contrato com a operadora (art. 33, II) e execução da assinatura (art. 33, IX).</li>
 </ul>
 <p>Onde a base é o contrato, vale o contrato dessa operadora. Onde a base é o consentimento, o envio só ocorre depois que você liga o recurso.</p>
 </section>
 <section class="doc-block">
 <h2>O que o servidor de cobrança guarda</h2>
-<p>O servidor de cobrança é um programa separado, hospedado pela Fly.io em <code>billing.localneuron.ai</code>, na região de São Paulo (<code>gru</code>). Ele não acompanha o aplicativo para computador e não roda neste site. O registro de uma instalação só é criado quando o Checkout é iniciado.</p>
+<p>O servidor de cobrança é um programa separado, hospedado pela Vercel em <code>billing.localneuron.ai</code>. O banco é Postgres da Supabase, na região <code>sa-east-1</code> (São Paulo). Ele não acompanha o aplicativo para computador e não roda neste site. O registro de uma instalação só é criado quando o Checkout é iniciado.</p>
 <p>A tabela <code>devices</code> guarda estas colunas:</p>
 <ul>
 <li><code>id</code>, o identificador aleatório da instalação;</li>
@@ -133,7 +134,7 @@
 <p>A tabela <code>events</code> guarda o identificador do aviso da Stripe (<code>id</code>) e o momento em que foi processado (<code>processed</code>).</p>
 <p>Não há coluna de nome, e-mail em claro, endereço ou número de cartão. O e-mail que você informar no pagamento fica na Stripe, não nesse banco.</p>
 <p>Para impedir um segundo teste grátis da mesma pessoa ou do mesmo cartão, o servidor guarda só um hash com chave (HMAC) da impressão digital do cartão e do e-mail. Esse registro está sendo acrescentado no PR #85. Não é o número do cartão nem o e-mail em claro, não é coluna da tabela <code>devices</code> nesta revisão, e serve só para essa verificação.</p>
-<p>A Fly.io mantém logs de plataforma e do proxy. No deploy, o IP usado para limitar repetições chega pelo cabeçalho <code>Fly-Client-IP</code>. Se esse cabeçalho não vier, o programa usa o IP da conexão. Esse IP fica só na memória do processo, por cerca de um minuto, e não é gravado no SQLite.</p>
+<p>A Vercel e a Supabase mantêm logs de plataforma. O IP do cliente chega à Vercel com o pedido HTTP. No limite de repetições, esse IP fica só na memória do processo, por cerca de um minuto, e não é gravado no Postgres.</p>
 </section>
 <section class="doc-block">
 <h2>Por quanto tempo</h2>
@@ -141,7 +142,7 @@
 <li><strong>No seu computador:</strong> até você apagar a pasta de dados ou o arquivo. Desinstalar só o aplicativo não apaga essa pasta.</li>
 <li><strong>Identificador da instalação no servidor:</strong> enquanto o banco de cobrança existir. O programa não apaga essa linha sozinho, porque precisa reconhecer a instalação e a assinatura. Dá para pedir a exclusão quando não houver dever legal de guardar o registro.</li>
 <li><strong>Identificadores de avisos da Stripe:</strong> 90 dias, e depois o programa apaga.</li>
-<li><strong>Logs de plataforma e do proxy:</strong> ficam com a Fly.io, pelo prazo da política dela. O IP do limite de taxa não entra no banco.</li>
+<li><strong>Logs de plataforma:</strong> ficam com a Vercel e com a Supabase, pelo prazo da política de cada uma. O IP do limite de taxa não entra no banco.</li>
 <li><strong>Pagamento na Stripe:</strong> pelo tempo da política da Stripe e pelo tempo exigido para disputa de pagamento, defesa de direito e obrigação legal.</li>
 <li><strong>Este site:</strong> a escolha de idioma e de tema fica só neste navegador (<code>localneuron-language</code> e <code>localneuron-theme</code>). O site não grava essa escolha num servidor.</li>
 </ul>
@@ -157,7 +158,8 @@
 <p>Não vendemos dados pessoais e não usamos dado seu para anúncio.</p>
 <ul>
 <li><strong>Stripe</strong>, quando você paga ou abre o portal, nos termos acima.</li>
-<li><strong>Fly.io</strong>, operadora que hospeda o servidor de cobrança em <code>billing.localneuron.ai</code>, inclusive os logs de plataforma e do proxy.</li>
+<li><strong>Vercel</strong>, operadora que hospeda o servidor de cobrança em <code>billing.localneuron.ai</code>, inclusive os logs de plataforma com o IP do cliente.</li>
+<li><strong>Supabase</strong>, operadora do Postgres da cobrança na região <code>sa-east-1</code> (São Paulo), inclusive os logs de plataforma do banco.</li>
 <li><strong>GitHub</strong>, ao visitar o site, baixar o aplicativo, consultar atualização ou instalar um motor publicado lá.</li>
 <li><strong>country.is</strong>, só no caso de idioma automático descrito acima.</li>
 <li><strong>Hugging Face, Anthropic, xAI, outro computador da equipe, sites e servidores MCP</strong>, só quando você liga esses recursos.</li>
