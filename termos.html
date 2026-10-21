@@ -79,7 +79,7 @@
 </section>
 <section class="doc-block">
 <h2>Pagamento</h2>
-<p>O pagamento, quando existir, passa pela Stripe. A página de pagamento é o Checkout, no endereço da Stripe. O cartão é digitado lá. O número do cartão, a validade e o código de segurança não passam pelo aplicativo, por este site nem pelo servidor de cobrança da LocalNeuron.</p>
+<p>O servidor de cobrança e o banco de dados ficam na Supabase, no Brasil, região sa-east-1 (São Paulo). O pagamento, quando existir, passa pela Stripe. A página de pagamento é o Checkout, no endereço da Stripe. O cartão é digitado lá. O número do cartão, a validade e o código de segurança não passam pelo aplicativo, por este site nem pelo servidor de cobrança da LocalNeuron.</p>
 <p>Para trocar o meio de pagamento ou cancelar a próxima renovação, o aplicativo abre o portal do cliente da Stripe. O portal não aceita um cliente escolhido pelo navegador: ele usa a instalação autenticada pelo identificador e pelo segredo.</p>
 <p>Este site, hospedado no GitHub Pages, não executa o serviço de cobrança e não recebe o pagamento.</p>
 </section>
