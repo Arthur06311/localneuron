@@ -52,7 +52,7 @@ Conte de 1 a 200, um número por linha, sem texto extra.
 
 ## 2. Fase 1 — Wi-Fi ou Ethernet
 
-Use uma ligação só: os dois no mesmo Wi-Fi, ou os dois no mesmo switch Ethernet. Anote qual. Não precisa de cabo até um “coordenador”. O master é eleito; os dois nós já nascem capazes de sê-lo. O app não envia `--force-master`.
+Use uma conexão só: os dois no mesmo Wi-Fi, ou os dois no mesmo switch Ethernet. Anote qual. Não precisa de cabo até um “coordenador”. O master é eleito; os dois nós já nascem capazes de sê-lo. O app não envia `--force-master`.
 
 1. Nos dois: **Conectar → Rede EXO**. **Modo de conexão**: **Participar com este Mac**.
 2. No Mac A, **Copiar identificação**. No Mac B, cole no campo **Identificação da rede**. O texto começa com `neuron-` e tem 32 caracteres hexadecimais. Isso limita quem se encontra. Não é senha da API.
@@ -87,8 +87,8 @@ rdma_ctl enable
 
 Como ver se o RDMA ficou ativo:
 
-1. O LocalNeuron não mostra o tipo da ligação. Suba os dois nós de novo, como na fase 1 (mesma identificação, **Iniciar neste Mac**).
-2. No Safari do Mac A, abra `http://127.0.0.1:52415/state`. Busque na página `rdma`, `jaccl`, `MlxJaccl`, `MlxRing` e `socket`. Copie as linhas que aparecerem para as observações. Se nenhuma aparecer, escreva “tipo de ligação ausente no /state”.
+1. O LocalNeuron não mostra o tipo da conexão. Suba os dois nós de novo, como na fase 1 (mesma identificação, **Iniciar neste Mac**).
+2. No Safari do Mac A, abra `http://127.0.0.1:52415/state`. Busque na página `rdma`, `jaccl`, `MlxJaccl`, `MlxRing` e `socket`. Copie as linhas que aparecerem para as observações. Se nenhuma aparecer, escreva “tipo de conexão ausente no /state”.
 3. Se, no Terminal do sistema normal, `rdma_ctl` existir e a ajuda listar um subcomando de consulta, rode esse subcomando e cole a saída. Se o comando não existir fora da Recuperação, escreva isso. Não invente a saída.
 
 Medir de novo:
@@ -166,7 +166,7 @@ Mande de volta:
 
 1. A lista da seção 1 e esta tabela.
 2. As três caixas da seção 4, com a anotação.
-3. O texto de `/node_id` e as linhas do `/state` que citam a ligação ou o motor (`MlxRing`, `MlxJaccl`, socket, RDMA).
+3. O texto de `/node_id` e as linhas do `/state` que citam a conexão ou o motor (`MlxRing`, `MlxJaccl`, socket, RDMA).
 4. O texto de erro do cartão da instância, se aparecer.
 
 Não mande a identificação da rede, outras conversas nem capturas com arquivos pessoais.

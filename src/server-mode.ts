@@ -7,7 +7,7 @@ export type ServerRole = 'off' | 'contribute' | 'manage' | 'use';
 export type HostInfo = { platform: string; arch: string; release: string };
 export type ServerLinkKind = 'rdma' | 'tcp';
 
-// TODO(fase RDMA): não abrir ligações RDMA. O caminho desta fase é TCP.
+// TODO(fase RDMA): não abrir conexões RDMA. O caminho desta fase é TCP.
 // A linha grossa só mostra Thunderbolt ou RDMA que o EXO já reportou.
 const RDMA_LATER = 'TCP';
 

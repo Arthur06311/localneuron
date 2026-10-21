@@ -108,7 +108,7 @@ export const migrations: Migration[] = [
 ];
 
 export function futureSchemaMessage(found: number, known: number) {
-  return `Não é possível abrir este espaço: a base de dados está na versão ${found} do esquema, mais recente do que a versão ${known} conhecida por esta aplicação. Atualize a aplicação.`;
+  return `Não é possível abrir este espaço: o banco de dados está na versão ${found} do esquema, mais recente do que a versão ${known} conhecida por esta aplicação. Atualize a aplicação.`;
 }
 
 function assertOrdered(list: Migration[]) {
@@ -139,7 +139,7 @@ export async function applyMigrations(db: Sql, list: Migration[] = migrations) {
         await tx.query('INSERT INTO schema_migrations (version, name) VALUES ($1, $2)', [1, list[0].name]);
       });
     } else if (tables.has('workspace_state') || tables.has('event_log')) {
-      throw new Error('Não é possível abrir este espaço: o esquema da base de dados está incompleto.');
+      throw new Error('Não é possível abrir este espaço: o esquema do banco de dados está incompleto.');
     } else {
       await db.exec(VERSION_TABLE);
     }
