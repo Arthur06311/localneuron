@@ -6,6 +6,7 @@ import { createHash, createHmac, randomUUID, sign, timingSafeEqual } from 'node:
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import process from 'node:process';
+import { isIP } from 'node:net';
 import { pathToFileURL } from 'node:url';
 import { z } from 'zod';
 import type { Lease } from './subscription.ts';
@@ -78,34 +79,47 @@ function singleIp(value:unknown) {
   const raw=Array.isArray(value)?value[value.length-1]:value;
   if(typeof raw!=='string')return '';
   const token=raw.trim();
-  if(!token||token.length>64||token.includes(',')||!/^[0-9a-fA-F:.]+$/.test(token)||token.includes('..'))return '';
+  if(!token||token.length>64||isIP(token)===0)return '';
   return token;
 }
-function ipv4(token:string) {
-  return /^(?:25[0-5]|2[0-4]\d|[01]?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|[01]?\d?\d)){3}$/.test(token)?token:'';
-}
-/** IPv6 rate-limit key is the /64 prefix. The interface id must not open another bucket. */
-function rateLimitIp(ip:string) {
-  if(ip.includes(':')&&ip.includes('.'))return ipv4(ip.slice(ip.lastIndexOf(':')+1))||ip;
-  if(!ip.includes(':'))return ip;
-  const halves=ip.split('::');
-  if(halves.length>2)return ip;
+function ipv6Bytes(ip:string) {
+  if(isIP(ip)!==6)return null;
+  let body=ip;
+  const dotted=/^(.*:)(\d{1,3}(?:\.\d{1,3}){3})$/.exec(body);
+  if(dotted){
+    if(isIP(dotted[2])!==4)return null;
+    const [a,b,c,d]=dotted[2].split('.').map(part=>Number(part));
+    body=dotted[1]+((a<<8)|b).toString(16)+':'+((c<<8)|d).toString(16);
+  }
+  const halves=body.split('::');
+  if(halves.length>2)return null;
   const groupsOf=(part:string)=>part?part.split(':'):[];
   const head=groupsOf(halves[0]);
   const tail=halves.length===2?groupsOf(halves[1]):[];
-  if(halves.length===1&&head.length!==8)return ip;
+  if(halves.length===1&&head.length!==8)return null;
   const missing=8-head.length-tail.length;
-  if(missing<0)return ip;
+  if(missing<0)return null;
   const groups=[...head,...Array.from({length:missing},()=>'0'),...tail];
-  if(groups.length!==8||groups.some(group=>!/^[0-9a-fA-F]{1,4}$/.test(group)))return ip;
-  const prefix=groups.slice(0,4).map(group=>parseInt(group,16).toString(16));
+  if(groups.length!==8||groups.some(group=>!/^[0-9a-fA-F]{1,4}$/.test(group)))return null;
+  const bytes=new Uint8Array(16);
+  groups.forEach((group,index)=>{const value=parseInt(group,16);bytes[index*2]=value>>8;bytes[index*2+1]=value&0xff;});
+  return bytes;
+}
+/** IPv6 rate-limit key is the /64. Only an IPv4-mapped address (::ffff:a.b.c.d) becomes that IPv4. */
+function rateLimitIp(ip:string) {
+  if(!ip)return '';
+  if(isIP(ip)===4)return ip;
+  const bytes=ipv6Bytes(ip);
+  if(!bytes)return '';
+  if(bytes.subarray(0,10).every(part=>part===0)&&bytes[10]===0xff&&bytes[11]===0xff)return bytes[12]+'.'+bytes[13]+'.'+bytes[14]+'.'+bytes[15];
+  const prefix=[0,1,2,3].map(index=>((bytes[index*2]<<8)|bytes[index*2+1]).toString(16));
   let end=4;
   while(end>0&&prefix[end-1]==='0')end--;
   return end===0?'::':prefix.slice(0,end).join(':')+'::';
 }
 function clientIp(headers:Record<string,unknown>,fallback:string,mode:'supabase'|'off') {
-  const chosen=mode==='supabase'?(singleIp(headers['cf-connecting-ip'])||singleIp(headers['x-real-ip'])||fallback):fallback;
-  return rateLimitIp(chosen);
+  const fromHeader=mode==='supabase'?(rateLimitIp(singleIp(headers['cf-connecting-ip']))||rateLimitIp(singleIp(headers['x-real-ip']))):'';
+  return fromHeader||rateLimitIp(fallback)||fallback;
 }
 function publicBase(publicUrl:string) {
   const origin=new URL(publicUrl);

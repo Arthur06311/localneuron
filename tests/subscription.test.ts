@@ -492,6 +492,20 @@ test('O limite usa cf-connecting-ip, cai em x-real-ip e ignora x-forwarded-for',
   assert.equal((await post({'cf-connecting-ip':'203.0.113.8'})).statusCode,200);
   assert.equal(seen[v6+3],seen[v6+4]);
   assert.notEqual(seen[v6+3],seen[v6]);
+  assert.equal((await post({'cf-connecting-ip':'0:0:0:0:0:ffff:203.0.113.8'})).statusCode,200);
+  assert.equal((await post({'cf-connecting-ip':'::ffff:cb00:7108'})).statusCode,200);
+  assert.equal(seen[v6+5],seen[v6+3]);assert.equal(seen[v6+6],seen[v6+3]);
+  const embedded=seen.length;
+  assert.equal((await post({'cf-connecting-ip':'2001:db8:1:2::192.0.2.1'})).statusCode,200);
+  assert.equal(seen[embedded],seen[v6]);
+  assert.equal((await post({'cf-connecting-ip':'192.0.2.1'})).statusCode,200);
+  assert.notEqual(seen[embedded+1],seen[embedded]);
+  for(const bad of ['1::2::3',':::1','1:2:3:4:5:6:7:8:9','::ffff:999.1.1.1']){
+   assert.equal((await post({'cf-connecting-ip':bad})).statusCode,200);
+   assert.equal(seen[seen.length-1],seen[forwardedOnly]);
+  }
+  assert.equal((await post({'cf-connecting-ip':'::ffff:999.1.1.1','x-real-ip':'198.51.100.9'})).statusCode,200);
+  assert.equal(seen[seen.length-1],seen[2]);
  }finally{await app.close();}
  const plain=new MemoryBillingStore();const plainSeen:string[]=[];
  plain.bumpRate=async(ipHash)=>{plainSeen.push(ipHash);return 1;};
