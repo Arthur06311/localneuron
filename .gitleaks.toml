@@ -21,3 +21,23 @@ condition = "AND"
 regexTarget = "secret"
 regexes = ['''^SUA_CHAVE$''']
 paths = ['''(^|/)public/sharing\.js$''']
+
+# Falsos positivos do histórico. O scan usa --full-history, então apagar a
+# linha no arquivo atual não limpa o commit antigo. Não há force-push.
+# Os dois valores são placeholders curtos, sem credencial. O guia e o
+# exemplo atuais não repetem esses textos.
+[[allowlists]]
+description = "Placeholder antigo do webhook em docs/billing-deploy.md"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "secret"
+regexes = ['''^temporario_troque_no_passo_[0-9]+$''']
+paths = ['''(^|/)docs/billing-deploy\.md$''']
+
+[[allowlists]]
+description = "Placeholder antigo do HMAC em .env.example"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "secret"
+regexes = ['''^substitua_por_um_segredo_de_pelo_menos_32_caracteres$''']
+paths = ['''(^|/)\.env\.example$''']

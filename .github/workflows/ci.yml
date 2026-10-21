@@ -33,6 +33,19 @@ jobs:
         run: python -m unittest discover -s tests -p '*_test.py'
       - run: node scripts/verify.mjs
 
+  deno:
+    name: Deno check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Conferir as Edge Functions
+        shell: bash
+        run: deno check supabase/functions/*/index.ts
+
   versao:
     name: Versão e changelog
     runs-on: ubuntu-latest

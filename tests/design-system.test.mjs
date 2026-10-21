@@ -37,10 +37,14 @@ test('a navegação visível fala português do Brasil', () => {
   assert.match(html, /> Configurações</);
   assert.doesNotMatch(html, /> Equipas</);
   assert.doesNotMatch(html, /> Preferências</);
-  assert.match(app, /Ajustes \/ Configurações/);
-  assert.match(app, /Biblioteca \/ Modelos/);
-  assert.match(app, /Conversas \/ Chat/);
-  assert.match(app, /Conectar \/ Modo servidor/);
+  assert.match(app, /function breadcrumbLabel/);
+  assert.match(app, /\.nav-island-trigger strong/);
+  assert.match(app, /nav button\[data-page\]/);
+  assert.doesNotMatch(app, /Conversas \/ Chat/);
+  assert.doesNotMatch(app, /Biblioteca \/ Modelos/);
+  assert.doesNotMatch(app, /Ajustes \/ Configurações/);
+  assert.match(html, /<strong>Trabalhar<\/strong>/);
+  assert.match(html, /<strong>Conta<\/strong>/);
   assert.match(readFileSync('public/design-system.css', 'utf8'), /#server-mode/);
   assert.match(html, /data-page="server"/);
 });

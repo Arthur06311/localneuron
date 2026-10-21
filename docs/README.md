@@ -21,6 +21,7 @@ Este índice separa a documentação por assunto. Os caminhos do código continu
 ## Modelos e motores
 
 - [Modelos](modelos.md): catálogo, acesso, memória, licenças e downloads.
+- [Quantização](quantizacao.md): comparação das abordagens abertas e o padrão por plataforma.
 - [MLX independente](mlx-independente.md): runtime Apple Silicon e execução offline.
 - [Motor e assistente](motor-e-assistente.md): inferência, ferramentas, aprovações e controle do computador.
 - [Rede EXO](exo.md): conexão de máquinas e execução distribuída.
@@ -34,6 +35,8 @@ Este índice separa a documentação por assunto. Os caminhos do código continu
 - [Domínio Name.com](dominio-namecom.md): DNS e domínio próprio.
 - [Minha API](minha-api.md): endpoint compatível em rede privada.
 - [Operação da assinatura](subscription-operations.md): serviço Pro e Stripe.
+- [Publicar a cobrança no Supabase](billing-deploy.md): Edge Functions, preços, teste de 7 dias e modo ao vivo.
+- [Esquema da cobrança](billing-schema.md): tabelas, HMAC e idempotência.
 - [Verificação](verification.md): evidências e limites de validação.
 - [Notas da 0.27](localneuron-0.27.md): acesso lembrado, equipe e avisos de atualização.
 - [Licença do aplicativo](../LICENSE): código proprietário, de código fechado; todos os direitos reservados.

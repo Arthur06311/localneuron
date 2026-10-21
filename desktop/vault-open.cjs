@@ -63,7 +63,7 @@ async function migrateDeviceVault({ origin, token, dataDirectory, safeStorage, n
 
 async function freshDeviceVault({ origin, token, dataDirectory, safeStorage, nonce, warn = console.warn }) {
   const vaultFile = join(dataDirectory, 'vault.enc.json');
-  if (!existsSync(vaultFile)) throw new Error('Não há cofre antigo para guardar.');
+  if (!existsSync(vaultFile)) throw new Error('Não há cofre antigo para guardar');
   if (loadKey({ directory: dataDirectory, safeStorage })) throw new Error('O cofre deste computador já tem chave.');
   const secret = createSecret();
   const before = readFileSync(vaultFile);

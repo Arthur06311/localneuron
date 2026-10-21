@@ -14,6 +14,7 @@ import { CATALOG, catalogFiles, modelUrl, type CatalogModel } from './catalog.js
 import { lmStudioEndpoint, lmStudioPort, localModels, memoryStatus } from './model.js';
 import { embeddedEngine } from './embedded-engine.js';
 import { suggestStarterModel } from './starter-model.js';
+import { Quantizer, toolBeside, type QuantizeHooks } from './quantize.js';
 
 const exec = promisify(execFile);
 const GiB = 1024 ** 3;
@@ -64,6 +65,7 @@ export function admitMemory(bytes: number, available: number, pressure: number |
 }
 export class ModelLibrary {
   readonly directory: string;
+  readonly quantizer: Quantizer;
   readonly access: CatalogAccess;
   readonly catalog:CatalogModel[]=[...CATALOG];
   model(id:string){const m=this.catalog.find(m=>m.id===id);if(!m)throw new Error("Modelo fora do catálogo aprovado");return m;}
@@ -72,10 +74,12 @@ export class ModelLibrary {
   jobs: Record<string, Job> = {};
   active: { controller: AbortController; promise: Promise<void> } | null = null;
   busy = false;
+  measureMemory: () => ReturnType<typeof memoryStatus> = memoryStatus;
   private endpoint: string;
-  constructor(directory: string, private audit: Audit, private lms = findLms(), private runtime?: LocalRuntime, private hfToken:()=>string|undefined=()=>undefined, private env: NodeJS.ProcessEnv = process.env) {
+  constructor(directory: string, private audit: Audit, private lms = findLms(), private runtime?: LocalRuntime, private hfToken:()=>string|undefined=()=>undefined, private env: NodeJS.ProcessEnv = process.env, quantizeHooks?: QuantizeHooks) {
     this.endpoint = lmStudioEndpoint(lmStudioPort(env));
     this.directory = join(directory, 'models'); mkdirSync(this.directory, { recursive: true, mode: 0o700 });this.access=new CatalogAccess(this.directory,hfToken);
+    this.quantizer = new Quantizer(this.directory, runtime ? { quantize: toolBeside(runtime.binary, 'llama-quantize'), imatrix: toolBeside(runtime.binary, 'llama-imatrix'), mlxPython: runtime.mlxPython, mlxAvailable: runtime.mlxAvailable, calibration: join(runtime.root, 'runtime', 'quantize-calibration.txt') } : { quantize: '', imatrix: '', mlxPython: '', mlxAvailable: false, calibration: '' }, quantizeHooks);
     try{const saved=JSON.parse(readFileSync(join(this.directory,'hub-catalog.json'),'utf8'));if(Array.isArray(saved))for(const m of saved.slice(0,2000)){if(validSavedModel(m)&&!this.catalog.some(c=>c.id===m.id))this.catalog.push(m);}}catch{}
     try { this.jobs = JSON.parse(readFileSync(join(this.directory, 'downloads.json'), 'utf8')); } catch { /* First use. */ }
     this.runtime?.setCatalog(this.catalog);
@@ -83,6 +87,9 @@ export class ModelLibrary {
       if (!this.catalog.some(model => model.id === id)) { delete this.jobs[id]; continue; }
       if (['downloading','verifying','importing'].includes(job.state)) { job.state = 'failed'; job.error = 'Interrompido ao fechar. Continue o download para retomar os arquivos já recebidos.'; }
     }
+  }
+  assertQuantizeIdle() {
+    if (this.quantizer.running) throw new Error('Aguarde a quantização terminar ou cancele-a.');
   }
   save() { const path = join(this.directory, 'downloads.json'); writeFileSync(path + '.tmp', JSON.stringify(this.jobs), { mode: 0o600 }); renameSync(path + '.tmp', path); }
   async cli(args: string[]) {
@@ -115,7 +122,7 @@ export class ModelLibrary {
     const installed=[...nativeInstalled,...external];
     const disk = statfsSync(this.directory);
     const starter = suggestStarterModel(this.catalog, { totalMemoryBytes: totalmem(), availableMemoryBytes: status.available_memory_bytes, diskFreeBytes: disk.bavail * disk.bsize, platform: process.platform, architecture: process.arch, installedCount: installed.length }, model => { const row = this.access.get(model); return { access: row.access, support: row.support }; });
-    return { ...status, access_summary:this.access.summary(this.catalog),media_catalog:MEDIA_CATALOG, available:status.available||Boolean(this.runtime?.available)||Boolean(this.runtime?.exo.connected), integrated_available:Boolean(this.runtime?.available), mlx_available:Boolean(this.runtime?.mlxAvailable), integrated_loaded:this.runtime?.status().models||[], total_memory_bytes: totalmem(), platform: process.platform, architecture: process.arch, lms_available: Boolean(this.lms), busy: this.busy, disk_free_bytes: disk.bavail * disk.bsize, catalog: this.catalog.map(model => ({ ...model, availability:this.access.get(model),embedded:embeddedEngine({...model,format:'GGUF'},{platform:process.platform,arch:process.arch}),format: 'GGUF', context: 4096, tokenizer: 'Incluído no GGUF', source: `https://huggingface.co/${model.repo}/tree/${model.revision}`, job: this.jobs[model.id] ?? null, local_key: nativeInstalled.find(entry=>model.id.startsWith('hub-')?entry.path===modelPath(this.directory,model):(entry.path.endsWith('/'+model.file)||entry.path.endsWith('\\'+model.file)))?.key ?? installed.find(entry => entry.key === (this.jobs[model.id]?.model_key ?? `${model.id}-${model.revision.slice(0,12)}`))?.key ?? null, downloaded_file: existsSync(modelPath(this.directory,model)), fits_now: status.available_memory_bytes >= (model.ram_gib + 1) * GiB })), installed, starter };
+    return { ...status, access_summary:this.access.summary(this.catalog),media_catalog:MEDIA_CATALOG, available:status.available||Boolean(this.runtime?.available)||Boolean(this.runtime?.exo.connected), integrated_available:Boolean(this.runtime?.available), mlx_available:Boolean(this.runtime?.mlxAvailable), integrated_loaded:this.runtime?.status().models||[], total_memory_bytes: totalmem(), platform: process.platform, architecture: process.arch, lms_available: Boolean(this.lms), busy: this.busy, quantize: this.quantizer.view(), disk_free_bytes: disk.bavail * disk.bsize, catalog: this.catalog.map(model => ({ ...model, availability:this.access.get(model),embedded:embeddedEngine({...model,format:'GGUF'},{platform:process.platform,arch:process.arch}),format: 'GGUF', context: 4096, tokenizer: 'Incluído no GGUF', source: `https://huggingface.co/${model.repo}/tree/${model.revision}`, job: this.jobs[model.id] ?? null, local_key: nativeInstalled.find(entry=>model.id.startsWith('hub-')?entry.path===modelPath(this.directory,model):(entry.path.endsWith('/'+model.file)||entry.path.endsWith('\\'+model.file)))?.key ?? installed.find(entry => entry.key === (this.jobs[model.id]?.model_key ?? `${model.id}-${model.revision.slice(0,12)}`))?.key ?? null, downloaded_file: existsSync(modelPath(this.directory,model)), fits_now: status.available_memory_bytes >= (model.ram_gib + 1) * GiB })), installed, starter };
   }
   async startEngine() {
     if(this.runtime?.available)return {ok:true,engine:'integrated'};
@@ -134,7 +141,19 @@ export class ModelLibrary {
       await this.audit('model.engine.started', { endpoint: this.endpoint }); return { ok: true };
     } finally { this.busy = false; }
   }
+  private quantizationTarget(key: string) {
+    const model = this.runtime?.inventory().find(entry => entry.key === key);
+    if (!model || (model.format !== 'GGUF' && model.format !== 'MLX')) throw new Error('Só é possível quantizar um modelo GGUF ou MLX do motor integrado.');
+    return { key: model.key, format: model.format as 'GGUF' | 'MLX', path: model.path, loaded: Boolean(model.loaded_instances?.length) };
+  }
+  quantizationEstimate(key: string, preset: string) { return this.quantizer.estimate(this.quantizationTarget(key), preset); }
+  quantizeModel(key: string, preset: string) {
+    if (this.quantizer.running) throw new Error('Já existe uma quantização em andamento.');
+    if (this.busy || this.active) throw new Error('Aguarde o download ou o carregamento atual.');
+    return this.quantizer.start(this.quantizationTarget(key), preset);
+  }
   async download(id: string) {
+    if (this.quantizer.running) throw new Error('Aguarde a quantização terminar ou cancele-a.');
     const model = this.model(id);
     if (this.jobs[id]?.state === 'downloaded' && existsSync(modelPath(this.directory,model))) return this.jobs[id];
     if(model.parts && existsSync(modelFolder(this.directory,model))) throw new Error('Este conjunto já está no disco. Instale-o ou remova a pasta incompleta antes de baixar novamente.');
@@ -182,6 +201,7 @@ export class ModelLibrary {
     return { ok: true };
   }
   async install(id: string) {
+    this.assertQuantizeIdle();
     const model = this.model(id);
     if (this.busy) throw new Error('Aguarde a operação atual'); this.busy = true;
     try {
@@ -214,6 +234,7 @@ export class ModelLibrary {
     finally { this.busy = false; }
   }
   async load(key: string, context = 16384) {
+    if (this.quantizer.running) throw new Error('Aguarde a quantização terminar ou cancele-a.');
     if(this.runtime?.owns(key)){if(this.busy)throw new Error('Aguarde a operação atual');this.busy=true;try{return await this.runtime.load(key,context);}finally{this.busy=false;}}
     if (this.busy) throw new Error('Aguarde a operação atual'); this.busy = true;
     try {
@@ -224,12 +245,12 @@ export class ModelLibrary {
       if (!installed.size_bytes) throw new Error('O motor não informou o tamanho do modelo. Carregue-o manualmente no LM Studio.');
       const catalog = this.catalog.find(model => this.jobs[model.id]?.model_key === key);
       const estimate = (catalog ? catalog.ram_gib * GiB : Math.ceil(installed.size_bytes * 1.35 + GiB)) + Math.max(0,context-4096)*64*1024;
-      const memory = memoryStatus(); admitMemory(estimate, memory.available_memory_bytes, memory.pressure_free_percent);
+      const memory = this.measureMemory(); admitMemory(estimate, memory.available_memory_bytes, memory.pressure_free_percent);
       await this.audit('model.load.requested', { key, context, estimate_bytes: estimate, available_bytes: memory.available_memory_bytes, catalog_id: catalog?.id ?? null });
       const result = await this.native('/load', { model: key, context_length: context, flash_attention: true, echo_load_config: true }, 120000);
       // Some engine versions auto-fit context upward despite an explicit request.
       // Report the effective setting and recheck pressure instead of claiming a 4k cap.
-      const after = memoryStatus();
+      const after = this.measureMemory();
       try { admitMemory(0, after.available_memory_bytes, after.pressure_free_percent); }
       catch {
         await this.native('/unload', { instance_id: result.instance_id }, 30000);
@@ -254,6 +275,7 @@ export class ModelLibrary {
   }
   async stop() {
     if (this.busy) throw new Error('Aguarde o carregamento ou a instalação terminar antes de bloquear ou fechar o espaço.');
+    await this.quantizer.cancel();
     const active = this.active; active?.controller.abort(); if (active) await active.promise;await this.runtime?.close();
   }
 }

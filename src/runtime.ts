@@ -46,7 +46,7 @@ export class LocalRuntime {
   private keyFile: string;
   constructor(
     directory: string,
-    root: string,
+    readonly root: string,
     private extraRoots = [join(homedir(), ".lmstudio", "models")],
   ) {
     this.exo=new ExoRuntime(directory);

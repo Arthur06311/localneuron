@@ -10,6 +10,8 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Adicionado
 
+- O Pro passa a oferecer Mensal R$ 20,00 ou Anual R$ 150 (cerca de 37% a menos, cerca de 4,5 meses), com 7 dias grátis, uma vez por pessoa e por cartão. O teste só fica reservado quando a assinatura existe. Cartão ou e-mail repetido, guardados só como HMAC, encerra o teste na hora. O portal só cancela a renovação e atualiza o pagamento. A cobrança roda em Edge Functions e Postgres no Supabase (`sa-east-1`) e continua desligada até `subscription-config.json` receber o serviço. O passo a passo está em `docs/billing-deploy.md`.
+- A biblioteca quantiza um modelo já instalado, em GGUF com llama-quantize ou em MLX no Mac, e salva o resultado como outro modelo. O original permanece. A comparação das abordagens está em `docs/quantizacao.md`.
 - Anexos de texto e PDF passam a ser divididos em trechos, indexados no computador e consultados na conversa. Sem um modelo de embeddings, os trechos ficam guardados e a busca semântica avisa que não está disponível (#46).
 - O Modo servidor começa desligado e distingue Contribuir, Gerenciar e Só usar. O mapa lê o estado do EXO. RDMA permanece só como caminho futuro; a conexão desta fase é TCP (#57).
 - O gateway do Modo servidor escuta só na rede local, na porta 52416, com pareamento por código de seis dígitos e chave por máquina. Enquanto o EXO está ligado, a porta 52415 continua sem senha (#59).

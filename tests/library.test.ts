@@ -38,6 +38,8 @@ test('Admissão reserva folga e rejeita pressão de memória sem fallback',()=>{
 test('Gerenciador só carrega chaves instaladas, contexto curto e descarrega instâncias conhecidas',async()=>{
   const dir=mkdtempSync(join(tmpdir(),'library-test-')),events:string[]=[],sent:any[]=[];
   const manager=new ModelLibrary(dir,async type=>{events.push(type);},null);
+  const gib=1024**3;
+  manager.measureMemory=()=>({free_memory_bytes:64*gib,available_memory_bytes:64*gib,pressure_free_percent:50});
   const inventory={models:[{type:'llm',key:'small-local',size_bytes:1024,loaded_instances:[]},{type:'llm',key:'ready',size_bytes:1024,loaded_instances:[{id:'instance-ready'}]}]};
   mock.method(globalThis,'fetch',async(url:string,options:RequestInit)=>{
     assert.ok(url.startsWith('http://127.0.0.1:8080/'));assert.equal(options.redirect,'error');
