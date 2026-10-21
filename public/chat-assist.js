@@ -1,3 +1,4 @@
+import { format, t } from "./i18n.js";
 const presets = [
   [
     "Resumir documento",
@@ -107,34 +108,53 @@ export function createChatAssist({
     return d;
   }
   function toolbar() {
-    return `<div class="chat-assist-bar"><button type="button" class="quiet" data-assist="attach" title="PDF, DOCX, XLSX, texto e código · até 4 arquivos de 12 MiB">＋ Anexar</button><button type="button" class="quiet" data-assist="prompts">Comandos</button><button type="button" class="quiet" data-assist="memory">Memória</button><button type="button" class="quiet" data-assist="search">Buscar</button><label class="chat-profile"><span class="sr-only">Perfil de ferramentas</span><select id="chat-tool-profile" aria-label="Perfil de ferramentas"><option value="custom">Ferramentas personalizadas</option><option value="chat">Só conversar</option><option value="local">Arquivos · só leitura</option><option value="research">Pesquisa na internet</option></select></label><input id="chat-attachment-files" type="file" accept=".pdf,.docx,.xlsx,.csv,.txt,.md,.json,.js,.ts,.tsx,.py,.html,.css,.yaml,.yml,.rs,.go,.java,.c,.cpp" multiple hidden></div><div id="chat-attachment-drafts" class="chat-attachment-drafts" hidden></div><p id="chat-tool-hint" class="chat-tool-hint"></p>`;
+    return `<div class="chat-assist-bar"><button type="button" class="quiet" data-assist="attach" title="${t("assist.attach.title")}">${t("assist.attach")}</button><button type="button" class="quiet" data-assist="prompts">${t("assist.prompts")}</button><button type="button" class="quiet" data-assist="memory">${t("assist.memory")}</button><button type="button" class="quiet" data-assist="search">${t("assist.search")}</button><label class="chat-profile"><span class="sr-only">${t("assist.profile.label")}</span><select id="chat-tool-profile" aria-label="${t("assist.profile.label")}"><option value="custom">${t("assist.profile.custom")}</option><option value="chat">${t("assist.profile.chat")}</option><option value="local">${t("assist.profile.local")}</option><option value="research">${t("assist.profile.research")}</option></select></label><input id="chat-attachment-files" type="file" accept=".pdf,.docx,.xlsx,.csv,.txt,.md,.json,.js,.ts,.tsx,.py,.html,.css,.yaml,.yml,.rs,.go,.java,.c,.cpp" multiple hidden></div><div id="chat-attachment-drafts" class="chat-attachment-drafts" hidden></div><p id="chat-tool-hint" class="chat-tool-hint"></p>`;
   }
   function paint() {
     if (!isVisible() || !$("#chat-attachment-drafts")) return;
     const list = attachments();
     const el = $("#chat-attachment-drafts");
     el.hidden = !list.length && !uploading;
-    const html =
-      list
-        .map(
-          (a) =>
-            `<span class="chat-attachment-chip" title="${E(a.truncated ? "Leitura parcial: primeiros 50 trechos ou 100 mil caracteres." : a.pages.length + " trechos disponíveis para consulta.")}" >${E(a.name)}${a.truncated ? " · parcial" : ""}<button type="button" data-remove-attachment="${a.id}" aria-label="Remover ${E(a.name)}">×</button></span>`,
-        )
-        .join("") +
-      (uploading
-        ? '<span role="status">Lendo documento neste computador…</span>'
-        : "");
-    if (el.innerHTML !== html) el.innerHTML = html;
+    const signature = JSON.stringify([
+      uploading,
+      list.map((a) => [a.id, a.name, a.truncated, a.pages.length]),
+    ]);
+    if (el.dataset.signature !== signature) {
+      el.dataset.signature = signature;
+      const frag = document.createDocumentFragment();
+      for (const a of list) {
+        const chip = document.createElement("span");
+        chip.className = "chat-attachment-chip";
+        chip.title = a.truncated
+          ? t("assist.partialTitle")
+          : format("assist.chunksTitle", { count: a.pages.length });
+        chip.append(document.createTextNode(a.name + (a.truncated ? t("assist.partial") : "")));
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.removeAttachment = a.id;
+        button.setAttribute("aria-label", format("assist.remove", { name: a.name }));
+        button.textContent = "×";
+        chip.append(button);
+        frag.append(chip);
+      }
+      if (uploading) {
+        const status = document.createElement("span");
+        status.setAttribute("role", "status");
+        status.textContent = t("assist.reading");
+        frag.append(status);
+      }
+      el.replaceChildren(frag);
+    }
     const access = getAccess();
     const matching = Object.entries(profiles).find(([, v]) =>
       Object.entries(v).every(([k, value]) => access[k] === value),
     );
     $("#chat-tool-profile").value = matching?.[0] || "custom";
     $("#chat-tool-hint").textContent = !access.enabled
-      ? "Sem ferramentas nesta resposta."
+      ? t("assist.hint.off")
       : access.readOnly
-        ? `Somente leitura · escrita e terminal bloqueados${access.files && !getFolder() ? " · escolha uma pasta em Ferramentas para consultar arquivos" : ""}`
-        : "Ações de escrita e comandos continuam sujeitos à sua revisão.";
+        ? `${t("assist.hint.readOnly")}${access.files && !getFolder() ? t("assist.hint.needFolder") : ""}`
+        : t("assist.hint.write");
     document
       .querySelectorAll(
         "[data-assist],#chat-tool-profile,[data-remove-attachment],[data-assist-fork],[data-assist-project]",

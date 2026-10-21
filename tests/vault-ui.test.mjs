@@ -35,11 +35,15 @@ test('a abertura vai ao Chat e não pede senha, código nem cofre', () => {
   assert.match(boot, /\/vault\/skip-legacy/);
   assert.doesNotMatch(boot, /type="password"/);
   assert.match(app, /page==='chat'\)chatUI\.render/);
-  assert.match(ux, /Há uma cópia do cofre antigo/);
-  assert.match(ux, /Importar cópia com a senha/);
+  const pt = read('public/i18n/pt-BR.js');
+  assert.match(ux, /t\('settings\.vaultCopy'\)/);
+  assert.match(ux, /t\('settings\.vaultImport'\)/);
+  assert.match(ux, /t\('settings\.vault'\)/);
+  assert.match(pt, /Há uma cópia do cofre antigo/);
+  assert.match(pt, /Importar cópia com a senha/);
+  assert.match(pt, /Cofre neste computador/);
   assert.match(ux, /\/vault\/legacy/);
   assert.match(ux, /import-legacy/);
-  assert.match(ux, /Cofre neste computador/);
   assert.match(main, /LOCALNEURON_DEVICE_NONCE/);
   assert.match(main, /openDeviceVault/);
   assert.match(main, /loadURL\(localSession\.url\)/);

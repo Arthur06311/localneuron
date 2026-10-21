@@ -3,6 +3,7 @@ const { join } = require('node:path');
 // RunAsNode stays on: the desktop process starts the local server with
 // ELECTRON_RUN_AS_NODE. Asar fuses stay off because that child is plain Node
 // and cannot read an asar archive. The other fuses close injectors.
+// WasmTrapHandlers stays Enabled, which is Electron's default.
 const DESIRED_FUSES = Object.freeze({
   runAsNode: true,
   enableCookieEncryption: true,
@@ -12,6 +13,7 @@ const DESIRED_FUSES = Object.freeze({
   onlyLoadAppFromAsar: false,
   loadBrowserProcessSpecificV8Snapshot: false,
   grantFileProtocolExtraPrivileges: false,
+  wasmTrapHandlers: true,
 });
 
 function electronBinary(outputDir, platform) {
@@ -31,6 +33,7 @@ function fuseFlipConfig(FuseV1Options, FuseVersion) {
     [FuseV1Options.OnlyLoadAppFromAsar]: DESIRED_FUSES.onlyLoadAppFromAsar,
     [FuseV1Options.LoadBrowserProcessSpecificV8Snapshot]: DESIRED_FUSES.loadBrowserProcessSpecificV8Snapshot,
     [FuseV1Options.GrantFileProtocolExtraPrivileges]: DESIRED_FUSES.grantFileProtocolExtraPrivileges,
+    [FuseV1Options.WasmTrapHandlers]: DESIRED_FUSES.wasmTrapHandlers,
   };
 }
 

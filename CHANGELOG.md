@@ -10,6 +10,7 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Adicionado
 
+- A interface do aplicativo passa a ter inglês, além do português do Brasil. O padrão segue o idioma do sistema: o que começa com `pt` continua em pt-BR. Em Configurações, Idioma oferece Automático, Português (Brasil) e English. Também dá para forçar com `?lang=en` ou `LOCALNEURON_LANG`. O Chat, a navegação (incluindo o caminho Trabalhar / Conta) e Configurações entram na tradução.
 - O Pro passa a oferecer Mensal R$ 20,00 ou Anual R$ 150 (cerca de 37% a menos, cerca de 4,5 meses), com 7 dias grátis, uma vez por pessoa e por cartão. O teste só fica reservado quando a assinatura existe. Cartão ou e-mail repetido, guardados só como HMAC, encerra o teste na hora. O portal só cancela a renovação e atualiza o pagamento. A cobrança roda em Edge Functions e Postgres no Supabase (`sa-east-1`) e continua desligada até `subscription-config.json` receber o serviço. O passo a passo está em `docs/billing-deploy.md`.
 - A biblioteca quantiza um modelo já instalado, em GGUF com llama-quantize ou em MLX no Mac, e salva o resultado como outro modelo. O original permanece. A comparação das abordagens está em `docs/quantizacao.md`.
 - Anexos de texto e PDF passam a ser divididos em trechos, indexados no computador e consultados na conversa. Sem um modelo de embeddings, os trechos ficam guardados e a busca semântica avisa que não está disponível (#46).
@@ -22,6 +23,7 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 ### Alterado
 
 - As mensagens ao abrir um espaço dizem “banco de dados”.
+- No Chat, o seletor de modelo e o nome da IA na mensagem traduzem os sufixos curtos integrado, MLX integrado, pasta externa e Rede EXO. Em inglês, integrado fica built-in.
 - Uma conexão MCP pode ser editada em Conexões. Dá para corrigir o comando, os argumentos e a opção rede confiável. A validação é a mesma de uma conexão nova. O token permanece se o campo ficar vazio e o endereço não mudar de origem. Trocar a origem sem um token novo apaga o antigo. Remover token apaga o token guardado. A lista de conexões não devolve comando nem argumentos; eles só aparecem ao editar.
 - O navegador da IA aplica a mesma política de endereço público ao WebSocket (`ws` e `wss`).
 - Uma conexão MCP local deixa de aceitar um shell como comando (`/bin/bash`, `cmd.exe` e equivalentes). O comando precisa ser o caminho absoluto do programa, e os argumentos vão no campo separado. Uma conexão já salva que apontava para um shell falha no próximo teste até ser editada em Conexões: aponte o comando para o programa e passe os argumentos à parte.
