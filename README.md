@@ -53,6 +53,8 @@ Os modelos são baixados dentro do app, separadamente. O Mac ARM64 não roda em 
 
 **Personalidade opcional:** em Configurações, a opção “Usar a personalidade LocalNeuron” começa desligada. As instruções dos seus bots são preservadas.
 
+**Idioma:** português do Brasil ou inglês. A tela segue o idioma do sistema; em Configurações dá para fixar Automático, Português (Brasil) ou English. Veja [como trocar o idioma](docs/configuracao.md#idioma).
+
 ## Motores locais
 
 | Motor | Para quê | Plataformas |

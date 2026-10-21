@@ -1,3 +1,4 @@
+import { t } from "./i18n.js";
 const presets = [
   [
     "Resumir documento",
@@ -107,7 +108,7 @@ export function createChatAssist({
     return d;
   }
   function toolbar() {
-    return `<div class="chat-assist-bar"><button type="button" class="quiet" data-assist="attach" title="PDF, DOCX, XLSX, texto e código · até 4 arquivos de 12 MiB">＋ Anexar</button><button type="button" class="quiet" data-assist="prompts">Comandos</button><button type="button" class="quiet" data-assist="memory">Memória</button><button type="button" class="quiet" data-assist="search">Buscar</button><label class="chat-profile"><span class="sr-only">Perfil de ferramentas</span><select id="chat-tool-profile" aria-label="Perfil de ferramentas"><option value="custom">Ferramentas personalizadas</option><option value="chat">Só conversar</option><option value="local">Arquivos · só leitura</option><option value="research">Pesquisa na internet</option></select></label><input id="chat-attachment-files" type="file" accept=".pdf,.docx,.xlsx,.csv,.txt,.md,.json,.js,.ts,.tsx,.py,.html,.css,.yaml,.yml,.rs,.go,.java,.c,.cpp" multiple hidden></div><div id="chat-attachment-drafts" class="chat-attachment-drafts" hidden></div><p id="chat-tool-hint" class="chat-tool-hint"></p>`;
+    return `<div class="chat-assist-bar"><button type="button" class="quiet" data-assist="attach" title="${t("assist.attach.title")}">${t("assist.attach")}</button><button type="button" class="quiet" data-assist="prompts">${t("assist.prompts")}</button><button type="button" class="quiet" data-assist="memory">${t("assist.memory")}</button><button type="button" class="quiet" data-assist="search">${t("assist.search")}</button><label class="chat-profile"><span class="sr-only">${t("assist.profile.label")}</span><select id="chat-tool-profile" aria-label="${t("assist.profile.label")}"><option value="custom">${t("assist.profile.custom")}</option><option value="chat">${t("assist.profile.chat")}</option><option value="local">${t("assist.profile.local")}</option><option value="research">${t("assist.profile.research")}</option></select></label><input id="chat-attachment-files" type="file" accept=".pdf,.docx,.xlsx,.csv,.txt,.md,.json,.js,.ts,.tsx,.py,.html,.css,.yaml,.yml,.rs,.go,.java,.c,.cpp" multiple hidden></div><div id="chat-attachment-drafts" class="chat-attachment-drafts" hidden></div><p id="chat-tool-hint" class="chat-tool-hint"></p>`;
   }
   function paint() {
     if (!isVisible() || !$("#chat-attachment-drafts")) return;
@@ -118,11 +119,11 @@ export function createChatAssist({
       list
         .map(
           (a) =>
-            `<span class="chat-attachment-chip" title="${E(a.truncated ? "Leitura parcial: primeiros 50 trechos ou 100 mil caracteres." : a.pages.length + " trechos disponíveis para consulta.")}" >${E(a.name)}${a.truncated ? " · parcial" : ""}<button type="button" data-remove-attachment="${a.id}" aria-label="Remover ${E(a.name)}">×</button></span>`,
+            `<span class="chat-attachment-chip" title="${E(a.truncated ? t("assist.partialTitle") : t("assist.chunksTitle", { count: a.pages.length }))}" >${E(a.name)}${a.truncated ? t("assist.partial") : ""}<button type="button" data-remove-attachment="${a.id}" aria-label="${t("assist.remove", { name: E(a.name) })}">×</button></span>`,
         )
         .join("") +
       (uploading
-        ? '<span role="status">Lendo documento neste computador…</span>'
+        ? `<span role="status">${t("assist.reading")}</span>`
         : "");
     if (el.innerHTML !== html) el.innerHTML = html;
     const access = getAccess();
@@ -131,10 +132,10 @@ export function createChatAssist({
     );
     $("#chat-tool-profile").value = matching?.[0] || "custom";
     $("#chat-tool-hint").textContent = !access.enabled
-      ? "Sem ferramentas nesta resposta."
+      ? t("assist.hint.off")
       : access.readOnly
-        ? `Somente leitura · escrita e terminal bloqueados${access.files && !getFolder() ? " · escolha uma pasta em Ferramentas para consultar arquivos" : ""}`
-        : "Ações de escrita e comandos continuam sujeitos à sua revisão.";
+        ? `${t("assist.hint.readOnly")}${access.files && !getFolder() ? t("assist.hint.needFolder") : ""}`
+        : t("assist.hint.write");
     document
       .querySelectorAll(
         "[data-assist],#chat-tool-profile,[data-remove-attachment],[data-assist-fork],[data-assist-project]",

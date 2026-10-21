@@ -1,4 +1,5 @@
 import { icon } from "./icons.js";
+import { t } from "./i18n.js";
 export const USE_CASES = {
  writing:{name:'Escrever e revisar',free:['Converse com a IA e ajuste o texto a cada pedido.'],pro:['Prepare o pedido com um atalho.','Receba uma segunda passagem de revisão.','Compare a primeira versão e exporte a entrega.'],action:'Começar uma entrega',template:'starter-brief'},
  knowledge:{name:'Trabalhar com documentos',free:['Anexe documentos a uma conversa e faça perguntas.'],pro:['Reúna os materiais em um projeto.','Consulte trechos com referências identificadas.','Reutilize o contexto em novas tarefas e lotes.'],action:'Preparar meu projeto',template:'starter-study'},
@@ -17,7 +18,7 @@ export function memberBenefits(E) {
 }
 export function applyMembership(state) {
  const active=Boolean(state?.active);document.body.dataset.plan=active?'pro':'free';
- document.querySelectorAll('[data-plan-badge]').forEach(el=>el.textContent=active?'PRO':'GRÁTIS');
- const chip=document.querySelector('[data-membership-label]');if(chip)chip.textContent=active?(state.license_kind==='test'?'Pro em teste':'Pro ativo'):'Conhecer o Pro';
- const detail=document.querySelector('[data-membership-detail]');if(detail)detail.textContent=active?'Revisão, projetos e API avançada':'Mais ferramentas para suas IAs';
+ document.querySelectorAll('[data-plan-badge]').forEach(el=>el.textContent=active?t('shell.planPro'):t('shell.planFree'));
+ const chip=document.querySelector('[data-membership-label]');if(chip)chip.textContent=active?(state.license_kind==='test'?t('shell.proTrial'):t('shell.proActive')):t('shell.proMeet');
+ const detail=document.querySelector('[data-membership-detail]');if(detail)detail.textContent=active?t('shell.proDetail'):t('shell.proFreeDetail');
 }

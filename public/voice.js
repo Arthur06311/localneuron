@@ -1,3 +1,4 @@
+import { t } from './i18n.js';
 const mic='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/></svg>';
 const stopIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="3"/></svg>';
 export function createVoice({api,toast,escape,insert,isVisible,captureTarget}){
@@ -8,17 +9,17 @@ export function createVoice({api,toast,escape,insert,isVisible,captureTarget}){
  function paint(){
   const b=$('[data-chat-voice]');if(!b)return;
   b.innerHTML=recorder?stopIcon:starting||transcribing?'<span class="voice-spinner"></span>':mic;
-  const label=recorder?'Terminar gravação':transcribing?'Transcrevendo sua fala':starting?'Abrindo microfone':'Gravar mensagem';
+  const label=recorder?t('voice.stop'):transcribing?t('voice.transcribing'):starting?t('voice.opening'):t('chat.voice.record');
   b.title=label;b.setAttribute('aria-label',label);b.setAttribute('aria-pressed',String(Boolean(recorder)));b.disabled=starting||transcribing;b.classList.toggle('recording',Boolean(recorder));
   const panel=$('[data-voice-panel]');if(!panel)return;panel.hidden=!(recorder||starting||transcribing||retry);
   if(!panel.hidden){
    const seconds=recorder?Math.min(85,Math.floor((Date.now()-recorder.at)/1000)):0;
-   const label=recorder?`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')} / 1:25`:transcribing?'Transcrevendo no seu computador…':starting?'Preparando microfone…':'Áudio preservado para tentar novamente';
+   const label=recorder?`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')} / 1:25`:transcribing?t('voice.time.transcribing'):starting?t('voice.time.opening'):t('voice.time.kept');
    panel.querySelector('[data-voice-time]').textContent=label;
    panel.querySelector('[data-voice-discard]').hidden=starting||transcribing;
    panel.querySelector('[data-voice-retry]').hidden=!retry||transcribing;
    panel.querySelector('.voice-wave').hidden=!recorder;
-   panel.querySelector('[data-voice-hint]').textContent=recorder?'Fale normalmente. Toque no quadrado para terminar.':retry&&!transcribing?'Você pode tentar a mesma gravação novamente ou descartá-la.':'O texto aparecerá na mensagem para você revisar.';
+   panel.querySelector('[data-voice-hint]').textContent=recorder?t('voice.hint.recording'):retry&&!transcribing?t('voice.hint.retry'):t('voice.hint.ready');
    if(recorder){const amp=Math.min(1,recorder.level*12);panel.querySelectorAll('.voice-wave i').forEach((bar,i)=>bar.style.height=(4+amp*(12+14*Math.abs(Math.sin(Date.now()/160+i))))+'px');}
   }
  }

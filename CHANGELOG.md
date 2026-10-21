@@ -10,6 +10,7 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Adicionado
 
+- A interface do aplicativo passa a ter inglês, além do português do Brasil. O padrão segue o idioma do sistema: o que começa com `pt` continua em pt-BR. Em Configurações, Idioma oferece Automático, Português (Brasil) e English. Também dá para forçar com `?lang=en` ou `LOCALNEURON_LANG`. O Chat, a navegação (incluindo o caminho Trabalhar / Conta) e Configurações entram na tradução.
 - O Pro passa a oferecer Mensal R$ 20,00 ou Anual R$ 150 (cerca de 37% a menos, cerca de 4,5 meses), com 7 dias grátis, uma vez por pessoa e por cartão. O teste só fica reservado quando a assinatura existe. Cartão ou e-mail repetido, guardados só como HMAC, encerra o teste na hora. O portal só cancela a renovação e atualiza o pagamento. A cobrança roda em Edge Functions e Postgres no Supabase (`sa-east-1`) e continua desligada até `subscription-config.json` receber o serviço. O passo a passo está em `docs/billing-deploy.md`.
 - A biblioteca quantiza um modelo já instalado, em GGUF com llama-quantize ou em MLX no Mac, e salva o resultado como outro modelo. O original permanece. A comparação das abordagens está em `docs/quantizacao.md`.
 - Anexos de texto e PDF passam a ser divididos em trechos, indexados no computador e consultados na conversa. Sem um modelo de embeddings, os trechos ficam guardados e a busca semântica avisa que não está disponível (#46).
