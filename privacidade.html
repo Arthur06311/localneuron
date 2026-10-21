@@ -110,13 +110,13 @@
 <li><strong>Anthropic e xAI.</strong> Só se você criar o provedor, confirmar que o texto sai do computador e enviar a mensagem. Sem isso, nada é enviado. Base: consentimento específico (art. 33, VIII) e, quando o operador as adota, as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 (art. 33, II).</li>
 <li><strong>country.is.</strong> No idioma automático, quando o idioma do navegador não é um dos sete do site, o navegador envia só o IP, para sugerir o idioma pelo país aproximado. A base desse tratamento e dessa transferência é o legítimo interesse (art. 7º, IX da LGPD). Não há consentimento prévio. Escolher o idioma à mão impede essa consulta.</li>
 <li><strong>Stripe.</strong> Pagamento e portal do cliente, quando a compra estiver aberta. O cartão é digitado no site da Stripe. Base: cláusulas do contrato com a Stripe, inclusive as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando adotadas (art. 33, II), e execução da assinatura (art. 33, IX).</li>
-<li><strong>Supabase.</strong> Operadora do servidor de cobrança (Edge Functions) e do Postgres, os dois no Brasil, região <code>sa-east-1</code> (São Paulo), em <code>billing.localneuron.ai</code>. A Supabase mantém logs de plataforma, inclusive o IP do cliente que chega com o pedido HTTP, e pode tratá-los fora do Brasil. Esse IP não entra no Postgres. Base: cláusulas do contrato com a operadora, inclusive as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando adotadas (art. 33, II), e execução da assinatura (art. 33, IX).</li>
+<li><strong>Supabase.</strong> Operadora do servidor de cobrança (Edge Functions) e do Postgres, os dois no Brasil, região <code>sa-east-1</code> (São Paulo), em <code>hifnfveklpskbtxyeqza.supabase.co</code>. O IP em claro não é guardado. Para limitar repetições, fica só um HMAC do IP, de mão única e com chave separada, por cerca de 2 minutos, e depois é apagado. A Supabase mantém os próprios logs de acesso, que podem incluir o IP e ser tratados fora do Brasil. Base: cláusulas do contrato com a operadora, inclusive as cláusulas-padrão da Resolução CD/ANPD nº 19/2024 quando adotadas (art. 33, II), e execução da assinatura (art. 33, IX).</li>
 </ul>
 <p>O country.is não depende de consentimento prévio. Nos recursos que você liga, o envio para fora só ocorre depois dessa escolha.</p>
 </section>
 <section class="doc-block">
 <h2>O que o servidor de cobrança guarda</h2>
-<p>O servidor de cobrança e o banco de dados ficam na Supabase, no Brasil, região <code>sa-east-1</code> (São Paulo). O servidor é uma Edge Function em <code>billing.localneuron.ai</code>. O banco é Postgres. Ele não acompanha o aplicativo para computador e não roda neste site. O registro de uma instalação só é criado quando o Checkout é iniciado.</p>
+<p>O servidor de cobrança e o banco de dados ficam na Supabase, no Brasil, região <code>sa-east-1</code> (São Paulo). O servidor é uma Edge Function em <code>hifnfveklpskbtxyeqza.supabase.co</code>. O banco é Postgres. Ele não acompanha o aplicativo para computador e não roda neste site. O registro de uma instalação só é criado quando o Checkout é iniciado.</p>
 <p>A tabela <code>devices</code> guarda estas colunas:</p>
 <ul>
 <li><code>id</code>, o identificador aleatório da instalação;</li>
@@ -133,7 +133,7 @@
 <p>A tabela <code>events</code> guarda o identificador do aviso da Stripe (<code>id</code>) e o momento em que foi processado (<code>processed</code>).</p>
 <p>Não há coluna de nome, e-mail em claro, endereço ou número de cartão. O e-mail que você informar no pagamento fica na Stripe, não nesse banco.</p>
 <p>A política do teste grátis é de uso único, por pessoa e por cartão. Para impedir um segundo teste, o servidor guarda o registro <code>billing.trial_identities</code>: os hashes com chave (HMAC) do e-mail e da impressão digital do cartão, e o identificador da assinatura. Não guarda e-mail nem cartão em claro. A base é o legítimo interesse, para prevenção de fraude (art. 7º, IX da LGPD). O registro permanece enquanto for necessário para essa prevenção e, no máximo, por 5 anos; depois é apagado.</p>
-<p>A Supabase mantém logs de plataforma. O IP do cliente chega à Supabase com o pedido HTTP à Edge Function. Esse IP não é gravado no Postgres.</p>
+<p>O IP em claro não é guardado. Para limitar repetições, fica só um HMAC do IP, de mão única e com chave separada, por cerca de 2 minutos, e depois é apagado. A Supabase mantém os próprios logs de acesso.</p>
 </section>
 <section class="doc-block">
 <h2>Por quanto tempo</h2>
@@ -141,7 +141,7 @@
 <li><strong>No seu computador:</strong> até você apagar a pasta de dados ou o arquivo. Desinstalar só o aplicativo não apaga essa pasta.</li>
 <li><strong>Identificador da instalação no servidor:</strong> enquanto o banco de cobrança existir. O programa não apaga essa linha sozinho, porque precisa reconhecer a instalação e a assinatura. Dá para pedir a exclusão quando não houver dever legal de guardar o registro.</li>
 <li><strong>Identificadores de avisos da Stripe:</strong> 90 dias, e depois o programa apaga.</li>
-<li><strong>Logs de plataforma:</strong> ficam com a Supabase, pelo prazo da política dela. O IP do cliente não entra no banco.</li>
+<li><strong>Logs de acesso da plataforma:</strong> ficam com a Supabase, pelo prazo da política dela. O IP em claro não é guardado no banco. Para limitar repetições, fica só um HMAC do IP, de mão única e com chave separada, por cerca de 2 minutos, e depois é apagado.</li>
 <li><strong>Registro <code>billing.trial_identities</code>:</strong> enquanto for necessário para impedir abuso do teste grátis e, no máximo, por 5 anos; depois é apagado.</li>
 <li><strong>Pagamento na Stripe:</strong> pelo tempo da política da Stripe e pelo tempo exigido para disputa de pagamento, defesa de direito e obrigação legal.</li>
 <li><strong>Este site:</strong> a escolha de idioma e de tema fica só neste navegador (<code>localneuron-language</code> e <code>localneuron-theme</code>). O site não grava essa escolha num servidor.</li>
