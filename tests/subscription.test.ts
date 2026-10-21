@@ -303,12 +303,20 @@ test('Postgres usa o pooler 6543 em sa-east-1, verify-full, e a migração não 
  const fn=readFileSync(resolve('supabase/functions/billing/index.ts'),'utf8');assert.match(fn,/starting \?\?=/);assert.doesNotMatch(fn,/SERVICE_ROLE/);
  const hook=readFileSync(resolve('supabase/functions/stripe-webhook/index.ts'),'utf8');assert.match(hook,/constructEventAsync/);assert.match(hook,/createSubtleCryptoProvider/);assert.match(hook,/starting \?\?=/);assert.match(hook,/apiVersion: stripeApiVersion/);
  const billingDeno=readFileSync(resolve('supabase/functions/billing/deno.json'),'utf8');const hookDeno=readFileSync(resolve('supabase/functions/stripe-webhook/deno.json'),'utf8');
- assert.match(billingDeno,/sloppy-imports/);assert.match(hookDeno,/sloppy-imports/);assert.match(billingDeno,/npm:fastify@5\.12\.7/);assert.match(hookDeno,/npm:postgres@3\.4\.9/);
- assert.match(readFileSync(resolve('deno.json'),'utf8'),/sloppy-imports/);assert.match(hook,/npm:stripe@18\.0\.0/);
+ assert.doesNotMatch(billingDeno,/sloppy-imports/);assert.doesNotMatch(hookDeno,/sloppy-imports/);assert.match(billingDeno,/npm:fastify@5\.12\.7/);assert.match(hookDeno,/npm:postgres@3\.4\.9/);
+ assert.doesNotMatch(readFileSync(resolve('deno.json'),'utf8'),/sloppy-imports/);assert.match(hook,/npm:stripe@18\.0\.0/);
+ const serviceSrc=readFileSync(resolve('src/billing-service.ts'),'utf8');const storeSrc=readFileSync(resolve('src/billing-store.ts'),'utf8');
+ assert.match(serviceSrc,/from '\.\/billing-store\.ts'/);assert.match(storeSrc,/from '\.\/billing-ca\.ts'/);assert.doesNotMatch(serviceSrc,/x-forwarded-for/);
+ assert.match(readFileSync(resolve('dist/src/billing-service.js'),'utf8'),/from ["']\.\/billing-store\.js["']/);
+ assert.match(readFileSync(resolve('dist/src/billing-store.js'),'utf8'),/from ["']\.\/billing-ca\.js["']/);
+ const roleSql=readFileSync(resolve('supabase/migrations/20261021010000_role_and_rate.sql'),'utf8');
+ assert.match(roleSql,/create role billing_app nologin noinherit nosuperuser nobypassrls/);
+ assert.match(roleSql,/alter role billing_app with nologin noinherit nobypassrls;/);
+ assert.doesNotMatch(roleSql,/alter role billing_app with nologin noinherit nosuperuser/);
  assert.match(readFileSync(resolve('.github/workflows/ci.yml'),'utf8'),/deno check supabase\/functions\/\*\/index\.ts/);
  assert.match(readFileSync(resolve('.gitignore'),'utf8'),/supabase\/\.temp\//);
- assert.doesNotMatch(readFileSync(resolve('src/billing-service.ts'),'utf8'),/billing\.localneuron\.ai/);
- const deploy=readFileSync(resolve('docs/billing-deploy.md'),'utf8');assert.doesNotMatch(deploy,/billing\.localneuron\.ai/);assert.match(deploy,/--api-version=2025-03-31\.basil/);assert.match(deploy,/500\.000/);assert.match(deploy,/LOCALNEURON_BILLING_TRUST_PROXY=off/);assert.match(deploy,/hop da direita/);
+ assert.doesNotMatch(serviceSrc,/billing\.localneuron\.ai/);
+ const deploy=readFileSync(resolve('docs/billing-deploy.md'),'utf8');assert.doesNotMatch(deploy,/billing\.localneuron\.ai/);assert.match(deploy,/--api-version=2025-03-31\.basil/);assert.match(deploy,/500\.000/);assert.match(deploy,/LOCALNEURON_BILLING_TRUST_PROXY=off/);assert.match(deploy,/cf-connecting-ip/);assert.match(deploy,/203\.0\.113\.50/);assert.match(deploy,/42501/);assert.doesNotMatch(deploy,/hop da direita/);
  assert.equal((readFileSync(resolve('supabase/config.toml'),'utf8').match(/verify_jwt = false/g)||[]).length,2);
  assert.equal(existsSync('vercel.json'),false);assert.equal(existsSync('api/billing.js'),false);assert.equal(existsSync('billing/migrations/20261021000000_init.sql'),false);
  assert.equal(existsSync('fly.toml'),false);assert.equal(existsSync('billing/Dockerfile'),false);assert.equal(existsSync('billing/docker-entrypoint.sh'),false);assert.equal(existsSync('.dockerignore'),false);
@@ -408,7 +416,7 @@ test('O limite durável vale entre instâncias e cai para a memória se o banco 
   assert.equal((await post(fallback)).statusCode,429);
  }finally{await fallback.close();rmSync(dir,{recursive:true,force:true});}
 });
-test('O limite usa o hop direito de x-forwarded-for e ignora x-real-ip',async()=>{
+test('O limite usa cf-connecting-ip, cai em x-real-ip e ignora x-forwarded-for',async()=>{
  const dir=temporary(),device=randomUUID(),now=Date.now();
  const stripe=async(path:string)=>{
   if(path==='prices/price_month')return monthlyPrice();
@@ -421,23 +429,38 @@ test('O limite usa o hop direito de x-forwarded-for e ignora x-real-ip',async()=
  const original=store.bumpRate.bind(store);
  store.bumpRate=async(ipHash,route,windowStart)=>{seen.push(ipHash);return original(ipHash,route,windowStart);};
  const app=await createBillingService(billingConfig(dir),stripe,()=>now,store,{LOCALNEURON_BILLING_TRUST_PROXY:'supabase'});
- const post=(forwarded?:string,real?:string)=>app.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),...(forwarded?{'x-forwarded-for':forwarded}:{}),...(real?{'x-real-ip':real}:{})},payload:{device}});
+ const post=(extra:Record<string,string>)=>app.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),...extra},payload:{device}});
  try{
-  assert.equal((await post('9.9.9.9, 203.0.113.5','1.2.3.4')).statusCode,200);
-  assert.equal((await post('8.8.8.8, 203.0.113.5','9.9.9.9')).statusCode,200);
+  assert.equal((await post({'cf-connecting-ip':'203.0.113.5','x-real-ip':'1.2.3.4','x-forwarded-for':'9.9.9.9'})).statusCode,200);
+  assert.equal((await post({'cf-connecting-ip':'203.0.113.5','x-real-ip':'9.9.9.9','x-forwarded-for':'8.8.8.8'})).statusCode,200);
   assert.equal(seen[0],seen[1]);assert.match(seen[0],/^[a-f0-9]{64}$/);
-  assert.equal((await post('198.51.100.9')).statusCode,200);
+  assert.equal((await post({'cf-connecting-ip':'198.51.100.9','x-forwarded-for':'203.0.113.5'})).statusCode,200);
   assert.notEqual(seen[2],seen[0]);
-  const before=seen.length;
-  assert.equal((await post(undefined,'203.0.113.9')).statusCode,200);
-  assert.notEqual(seen[before],seen[0]);assert.notEqual(seen[before],seen[2]);
- }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+  const realOnly=seen.length;
+  assert.equal((await post({'x-real-ip':'203.0.113.9','x-forwarded-for':'198.51.100.9'})).statusCode,200);
+  assert.notEqual(seen[realOnly],seen[0]);assert.notEqual(seen[realOnly],seen[2]);
+  assert.equal((await post({'cf-connecting-ip':'203.0.113.5, 198.51.100.1','x-real-ip':'203.0.113.9'})).statusCode,200);
+  assert.equal(seen[realOnly+1],seen[realOnly]);
+  const forwardedOnly=seen.length;
+  assert.equal((await post({'x-forwarded-for':'192.0.2.50'})).statusCode,200);
+  assert.equal((await post({})).statusCode,200);
+  assert.equal(seen[forwardedOnly],seen[forwardedOnly+1]);
+  assert.notEqual(seen[forwardedOnly],seen[0]);assert.notEqual(seen[forwardedOnly],seen[realOnly]);
+ }finally{await app.close();}
+ const plain=new MemoryBillingStore();const plainSeen:string[]=[];
+ plain.bumpRate=async(ipHash)=>{plainSeen.push(ipHash);return 1;};
+ const unset=await createBillingService(billingConfig(dir),stripe,()=>now,plain,{});
+ try{
+  assert.equal((await unset.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'cf-connecting-ip':'203.0.113.5','x-forwarded-for':'192.0.2.50'},payload:{device}})).statusCode,200);
+  assert.equal((await unset.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'cf-connecting-ip':'198.51.100.9','x-forwarded-for':'192.0.2.50'},payload:{device}})).statusCode,200);
+  assert.notEqual(plainSeen[0],plainSeen[1]);
+ }finally{await unset.close();}
  const offStore=new MemoryBillingStore();const offSeen:string[]=[];
- offStore.bumpRate=async(ipHash,route,windowStart)=>{offSeen.push(ipHash);return 1;};
+ offStore.bumpRate=async(ipHash)=>{offSeen.push(ipHash);return 1;};
  const off=await createBillingService(billingConfig(dir),stripe,()=>now,offStore,{LOCALNEURON_BILLING_TRUST_PROXY:'off',SUPABASE_URL:'https://hifnfveklpskbtxyeqza.supabase.co'});
  try{
-  assert.equal((await off.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'x-forwarded-for':'9.9.9.9, 203.0.113.5'},payload:{device}})).statusCode,200);
-  assert.equal((await off.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'x-forwarded-for':'8.8.8.8, 198.51.100.9'},payload:{device}})).statusCode,200);
+  assert.equal((await off.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'cf-connecting-ip':'203.0.113.5','x-real-ip':'198.51.100.9','x-forwarded-for':'9.9.9.9'},payload:{device}})).statusCode,200);
+  assert.equal((await off.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'cf-connecting-ip':'198.51.100.8','x-real-ip':'203.0.113.9','x-forwarded-for':'8.8.8.8'},payload:{device}})).statusCode,200);
   assert.equal(offSeen[0],offSeen[1]);
  }finally{await off.close();rmSync(dir,{recursive:true,force:true});}
 });

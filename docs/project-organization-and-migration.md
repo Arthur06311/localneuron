@@ -214,7 +214,7 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) fica separado do app l
 | `LOCALNEURON_BILLING_RATE_HMAC_KEY` | Segredo separado do HMAC do limite. Mínimo de 32 caracteres e diferente da chave do teste. | Somente billing |
 | `LOCALNEURON_BILLING_HOST` | Endereço de escuta de `npm run billing` | Não; padrão `127.0.0.1` |
 | `LOCALNEURON_BILLING_PORT` | Porta local do serviço de cobrança | Não; padrão `4330`. A função Supabase não usa esta porta |
-| `LOCALNEURON_BILLING_TRUST_PROXY` | `supabase` para ler só o hop mais à direita de `x-forwarded-for`. `off` ignora o cabeçalho mesmo com `SUPABASE_URL`. `x-real-ip` é ignorado | Não; `SUPABASE_URL` em `.supabase.co` já liga esse modo |
+| `LOCALNEURON_BILLING_TRUST_PROXY` | `supabase` (padrão, também sem a variável) lê `cf-connecting-ip` e, se faltar, `x-real-ip`. Nunca lê `x-forwarded-for`. `off` força o socket e vira um balde compartilhado | Não; o padrão já é `supabase` |
 | `LOCALNEURON_BILLING_DB_CA` | PEM ou caminho do certificado público do Postgres, se não for o pacote | Não |
 | `HF_HOME` / `HF_HUB_CACHE` | Cache Hugging Face | Hoje ignoradas: o motor de música define esses caminhos dentro da própria pasta |
 

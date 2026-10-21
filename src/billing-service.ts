@@ -8,8 +8,8 @@ import { resolve } from 'node:path';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import { z } from 'zod';
-import type { Lease } from './subscription.js';
-import { createPostgresStore, MemoryBillingStore, type BillingStore } from './billing-store.js';
+import type { Lease } from './subscription.ts';
+import { createPostgresStore, MemoryBillingStore, type BillingStore } from './billing-store.ts';
 const digest=(v:string)=>createHash('sha256').update(v).digest('hex');
 const eventSchema=z.object({id:z.string().max(200),type:z.string().max(200),data:z.object({object:z.record(z.string(),z.any())})});
 export function verifyWebhook(raw:Buffer, header:string, secret:string, now=Date.now()) {
@@ -65,17 +65,19 @@ export function billingConfigFromEnv(env:Env=process.env):BillingConfig {
   if(parsed.LOCALNEURON_BILLING_RATE_HMAC_KEY===parsed.LOCALNEURON_BILLING_TRIAL_HMAC_KEY)throw Error('LOCALNEURON_BILLING_RATE_HMAC_KEY precisa ser diferente de LOCALNEURON_BILLING_TRIAL_HMAC_KEY.');
   return {databaseUrl:parsed.DATABASE_URL,secretKey:parsed.STRIPE_SECRET_KEY,webhookSecret:parsed.STRIPE_WEBHOOK_SECRET,monthlyPriceId:parsed.STRIPE_MONTHLY_PRICE_ID,yearlyPriceId:parsed.STRIPE_YEARLY_PRICE_ID,privateKey:readPrivateKey(env),publicUrl:parsed.LOCALNEURON_BILLING_PUBLIC_URL,trialHmacKey:parsed.LOCALNEURON_BILLING_TRIAL_HMAC_KEY,rateHmacKey:parsed.LOCALNEURON_BILLING_RATE_HMAC_KEY};
 }
-export function trustBillingProxy(env:Env=process.env) {
-  if(env.LOCALNEURON_BILLING_TRUST_PROXY==='off')return false;
-  return env.LOCALNEURON_BILLING_TRUST_PROXY==='supabase'||String(env.SUPABASE_URL??'').includes('.supabase.co');
+export function billingProxyMode(env:Env=process.env):'supabase'|'off' {
+  return env.LOCALNEURON_BILLING_TRUST_PROXY==='off'?'off':'supabase';
 }
-/** Rightmost X-Forwarded-For hop. Supabase does not document a sanitized client IP, and x-real-ip is a single spoofable value. */
-function clientIp(forwarded:unknown,fallback:string,trust:boolean) {
-  if(!trust||typeof forwarded!=='string')return fallback;
-  const hops=forwarded.split(',').map(part=>part.trim()).filter(Boolean);
-  const value=hops.length?hops[hops.length-1]:'';
-  if(!value||value.length>64||!/^[0-9a-fA-F:.]+$/.test(value)||value.includes('..'))return fallback;
-  return value;
+function singleIp(value:unknown) {
+  const raw=Array.isArray(value)?value[value.length-1]:value;
+  if(typeof raw!=='string')return '';
+  const token=raw.trim();
+  if(!token||token.length>64||token.includes(',')||!/^[0-9a-fA-F:.]+$/.test(token)||token.includes('..'))return '';
+  return token;
+}
+function clientIp(headers:Record<string,unknown>,fallback:string,mode:'supabase'|'off') {
+  if(mode!=='supabase')return fallback;
+  return singleIp(headers['cf-connecting-ip'])||singleIp(headers['x-real-ip'])||fallback;
 }
 function publicBase(publicUrl:string) {
   const origin=new URL(publicUrl);
@@ -108,7 +110,7 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
   if(validateApprovedPrice(yearly)!=='yearly')throw Error('O preço anual do Pro precisa ser fixo: R$ 150 em BRL por ano, sem cobrança por uso.');
   const priceId:Record<BillingPlan,string>={monthly:config.monthlyPriceId,yearly:config.yearlyPriceId};
   const db=store??(config.databaseUrl?createPostgresStore(config.databaseUrl,undefined,env):new MemoryBillingStore());
-  const trust=trustBillingProxy(env);
+  const proxyMode=billingProxyMode(env);
   const app=Fastify({logger:false,bodyLimit:256*1024,trustProxy:false});
   const limited={config:{rateLimit:{max:60,timeWindow:'1 minute'}}};
   const hits=new Map<string,number>();
@@ -145,7 +147,7 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
     reply.header('Cache-Control','no-store').header('X-Content-Type-Options','nosniff').header('Referrer-Policy','no-referrer').header('Content-Security-Policy',"default-src 'none'; frame-ancestors 'none'");
     if(req.headers.origin)return reply.code(403).send({error:'Use o aplicativo LocalNeuron.'});
   });
-  await app.register(rateLimit,{global:true,max:60,timeWindow:'1 minute',store:DurableRateStore as any,allowList:(req:any)=>['/health','/billing/health','/billing/webhook'].includes(String(req.url).split('?')[0]),keyGenerator:(req:any)=>clientIp(req.headers['x-forwarded-for'],req.ip,trust),errorResponseBuilder:()=>Object.assign(Error('Aguarde antes de tentar novamente.'),{statusCode:429})});
+  await app.register(rateLimit,{global:true,max:60,timeWindow:'1 minute',store:DurableRateStore as any,allowList:(req:any)=>['/health','/billing/health','/billing/webhook'].includes(String(req.url).split('?')[0]),keyGenerator:(req:any)=>clientIp(req.headers,req.ip,proxyMode),errorResponseBuilder:()=>Object.assign(Error('Aguarde antes de tentar novamente.'),{statusCode:429})});
   app.setErrorHandler((_e,req,reply)=>{const status=(_e as any).statusCode||400;return reply.code(status).send({error:status===429?'Aguarde antes de tentar novamente.':status===401?'Não autorizado.':'Não foi possível concluir a operação de assinatura.'});});
   app.addHook('onClose',async()=>db.close());
   const row=(id:string)=>db.getDevice(id);

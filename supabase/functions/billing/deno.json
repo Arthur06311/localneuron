@@ -1,5 +1,4 @@
 {
-  "unstable": ["sloppy-imports"],
   "nodeModulesDir": "none",
   "imports": {
     "fastify": "npm:fastify@5.12.7",
