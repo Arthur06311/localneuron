@@ -265,7 +265,8 @@ test('Elegibilidade desconhecida não anuncia o teste e a página só mostra os 
   local.install(signLease(lease(local.snapshot().device,now),privateKey));assert.equal(local.snapshot().trial_eligible,false);await local.refreshEligibility();assert.equal(calls,0);
   const idle=new Subscription(dir+'-off',testConfig,()=>now);await idle.refreshEligibility();assert.equal(calls,0);
   const page=readFileSync(resolve('public/subscription.js'),'utf8');
-  assert.match(page,/trial=Boolean\(state\.configured&&!managing&&!state\.trial_repeat&&\(state\.trial_eligible\|\|!state\.trial_checked\)\)/);
+  assert.match(page,/trial=Boolean\(state\.configured&&!managing&&!state\.trial_repeat&&state\.trial_checked&&state\.trial_eligible\)/);
+  assert.doesNotMatch(page,/!state\.trial_checked/);
   assert.match(page,/trial\?'<p class="trial-note">7 dias grátis<\/p>':''/);
   assert.match(page,/uma vez por pessoa e por cartão/);
   assert.match(page,/O teste grátis desta pessoa ou deste cartão já foi usado e terminou agora/);
@@ -293,10 +294,12 @@ test('Postgres usa o pooler 6543 em sa-east-1, verify-full, e a migração não 
  assert.throws(()=>createPostgresStore('postgresql://billing_app.projeto:senha@db.projeto.supabase.co:6543/postgres',refuse),/sa-east-1/);
  assert.throws(()=>createPostgresStore('postgresql://postgres.projeto:senha@aws-0-sa-east-1.pooler.supabase.com:6543/postgres',refuse),/billing_app/);
  assert.throws(()=>createPostgresStore('postgresql://local:local@127.0.0.1:5432/postgres',refuse),/6543/);
- const sql=['20261021000000_init.sql','20261021010000_role_and_rate.sql','20261021020000_keep_alive.sql'].map(name=>readFileSync(resolve('supabase/migrations',name),'utf8')).join('\n');
+ const sql=['20261021000000_init.sql','20261021010000_role_and_rate.sql','20261021020000_keep_alive.sql','20261021030000_rate_window_purge.sql'].map(name=>readFileSync(resolve('supabase/migrations',name),'utf8')).join('\n');
  assert.match(sql,/billing\.devices/);assert.match(sql,/billing\.events/);assert.match(sql,/billing\.trial_identities/);assert.match(sql,/billing_app/);assert.match(sql,/rate_windows/);assert.match(sql,/created bigint/);
  assert.match(sql,/pg_cron/);assert.match(sql,/billing-keep-alive/);assert.match(sql,/billing-purge-events/);assert.match(sql,/billing-purge-identities/);assert.match(sql,/for all to billing_app/);
  assert.match(sql,/enable row level security/);assert.doesNotMatch(sql,/fingerprint|email/i);
+ const ratePurge=readFileSync(resolve('supabase/migrations/20261021030000_rate_window_purge.sql'),'utf8');
+ assert.match(ratePurge,/billing-purge-rates/);assert.match(ratePurge,/\*\/2 \* \* \* \*/);assert.doesNotMatch(readFileSync(resolve('supabase/migrations/20261021020000_keep_alive.sql'),'utf8'),/\*\/2 \* \* \* \*/);
  const fn=readFileSync(resolve('supabase/functions/billing/index.ts'),'utf8');assert.match(fn,/starting \?\?=/);assert.doesNotMatch(fn,/SERVICE_ROLE/);
  const hook=readFileSync(resolve('supabase/functions/stripe-webhook/index.ts'),'utf8');assert.match(hook,/constructEventAsync/);assert.match(hook,/createSubtleCryptoProvider/);assert.match(hook,/starting \?\?=/);assert.match(hook,/apiVersion: stripeApiVersion/);
  const billingDeno=readFileSync(resolve('supabase/functions/billing/deno.json'),'utf8');const hookDeno=readFileSync(resolve('supabase/functions/stripe-webhook/deno.json'),'utf8');
@@ -305,7 +308,7 @@ test('Postgres usa o pooler 6543 em sa-east-1, verify-full, e a migração não 
  assert.match(readFileSync(resolve('.github/workflows/ci.yml'),'utf8'),/deno check supabase\/functions\/\*\/index\.ts/);
  assert.match(readFileSync(resolve('.gitignore'),'utf8'),/supabase\/\.temp\//);
  assert.doesNotMatch(readFileSync(resolve('src/billing-service.ts'),'utf8'),/billing\.localneuron\.ai/);
- const deploy=readFileSync(resolve('docs/billing-deploy.md'),'utf8');assert.doesNotMatch(deploy,/billing\.localneuron\.ai/);assert.match(deploy,/--api-version=2025-03-31\.basil/);assert.match(deploy,/500\.000/);
+ const deploy=readFileSync(resolve('docs/billing-deploy.md'),'utf8');assert.doesNotMatch(deploy,/billing\.localneuron\.ai/);assert.match(deploy,/--api-version=2025-03-31\.basil/);assert.match(deploy,/500\.000/);assert.match(deploy,/LOCALNEURON_BILLING_TRUST_PROXY=off/);assert.match(deploy,/hop da direita/);
  assert.equal((readFileSync(resolve('supabase/config.toml'),'utf8').match(/verify_jwt = false/g)||[]).length,2);
  assert.equal(existsSync('vercel.json'),false);assert.equal(existsSync('api/billing.js'),false);assert.equal(existsSync('billing/migrations/20261021000000_init.sql'),false);
  assert.equal(existsSync('fly.toml'),false);assert.equal(existsSync('billing/Dockerfile'),false);assert.equal(existsSync('billing/docker-entrypoint.sh'),false);assert.equal(existsSync('.dockerignore'),false);
@@ -429,8 +432,16 @@ test('O limite usa o hop direito de x-forwarded-for e ignora x-real-ip',async()=
   assert.equal((await post(undefined,'203.0.113.9')).statusCode,200);
   assert.notEqual(seen[before],seen[0]);assert.notEqual(seen[before],seen[2]);
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+ const offStore=new MemoryBillingStore();const offSeen:string[]=[];
+ offStore.bumpRate=async(ipHash,route,windowStart)=>{offSeen.push(ipHash);return 1;};
+ const off=await createBillingService(billingConfig(dir),stripe,()=>now,offStore,{LOCALNEURON_BILLING_TRUST_PROXY:'off',SUPABASE_URL:'https://hifnfveklpskbtxyeqza.supabase.co'});
+ try{
+  assert.equal((await off.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'x-forwarded-for':'9.9.9.9, 203.0.113.5'},payload:{device}})).statusCode,200);
+  assert.equal((await off.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),'x-forwarded-for':'8.8.8.8, 198.51.100.9'},payload:{device}})).statusCode,200);
+  assert.equal(offSeen[0],offSeen[1]);
+ }finally{await off.close();rmSync(dir,{recursive:true,force:true});}
 });
-test('Reembolso integral cancela a assinatura e o parcial não',async()=>{
+test('Reembolso integral cancela a assinatura e cobrança sem fatura de assinatura é reconhecida',async()=>{
  const dir=temporary(),now=Date.now();const deleted:{path:string;key?:string;method?:string}[]=[];
  const stripe=async(path:string,_body?:Record<string,string>,key?:string,method?:string)=>{
   if(path==='prices/price_month')return monthlyPrice();
@@ -438,7 +449,10 @@ test('Reembolso integral cancela a assinatura e o parcial não',async()=>{
   if(path.startsWith('invoice_payments?')&&path.includes('payment[payment_intent]=pi_full'))return {data:[{invoice:'in_1',payment:{type:'payment_intent',payment_intent:'pi_full'}}]};
   if(path.startsWith('invoice_payments?')&&path.includes('payment[payment_intent]=pi_done'))return {data:[{invoice:'in_done',payment:{type:'payment_intent',payment_intent:'pi_done'}}]};
   if(path.startsWith('invoice_payments?')&&path.includes('payment[payment_intent]=pi_fail'))return {data:[{invoice:'in_fail',payment:{type:'payment_intent',payment_intent:'pi_fail'}}]};
+  if(path.startsWith('invoice_payments?')&&path.includes('payment[payment_intent]=pi_loose'))return {data:[]};
+  if(path.startsWith('invoice_payments?')&&path.includes('payment[payment_intent]=pi_plain'))return {data:[{invoice:'in_plain',payment:{type:'payment_intent',payment_intent:'pi_plain'}}]};
   if(path==='invoices/in_1')return {parent:{subscription_details:{subscription:'sub_r'}}};
+  if(path==='invoices/in_plain')return {};
   if(path==='invoices/in_done')return {parent:{subscription_details:{subscription:'sub_done'}}};
   if(path==='invoices/in_fail')return {parent:{subscription_details:{subscription:'sub_fail'}}};
   if(method==='DELETE'){if(path.endsWith('sub_fail'))throw Error('falhou');deleted.push({path,key,method});return {status:'canceled'};}
@@ -448,16 +462,22 @@ test('Reembolso integral cancela a assinatura e o parcial não',async()=>{
  const store=new MemoryBillingStore();
  const app=await createBillingService(billingConfig(dir),stripe,()=>now,store);
  const post=(id:string,object:any)=>{const raw=JSON.stringify({id,type:'charge.refunded',data:{object}}),ts=Math.floor(now/1000),signature='t='+ts+',v1='+createHmac('sha256','webhook-test').update(ts+'.'+raw).digest('hex');return app.inject({method:'POST',url:'/billing/webhook',headers:{'content-type':'application/json','stripe-signature':signature},payload:raw});};
+ const logs:string[]=[];const originalError=console.error;console.error=(...args:unknown[])=>{logs.push(args.map(String).join(' '));};
  try{
   assert.equal((await post('evt_partial',{refunded:false,payment_intent:'pi_partial'})).statusCode,200);assert.equal(deleted.length,0);
   assert.equal((await post('evt_full',{refunded:true,payment_intent:'pi_full'})).statusCode,200);
   assert.equal(deleted[0].path,'subscriptions/sub_r');assert.equal(deleted[0].method,'DELETE');assert.equal(deleted[0].key,'ln-refund-evt_full');
   assert.equal((await post('evt_done',{refunded:true,payment_intent:'pi_done'})).statusCode,200);assert.equal(deleted.length,1);
   assert.notEqual((await post('evt_fail',{refunded:true,payment_intent:'pi_fail'})).statusCode,200);
-  assert.notEqual((await post('evt_invoice',{refunded:true,invoice:'in_1'})).statusCode,200);
-  assert.equal(deleted.length,1);assert.equal(await store.hasEvent('evt_fail'),false);assert.equal(await store.hasEvent('evt_invoice'),false);assert.equal(await store.hasEvent('evt_full'),true);
-  assert.equal(JSON.stringify([...store.events]).includes('invoice'),false);
- }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+  assert.equal((await post('evt_loose',{refunded:true,payment_intent:'pi_loose'})).statusCode,200);
+  assert.equal((await post('evt_plain',{refunded:true,payment_intent:'pi_plain'})).statusCode,200);
+  assert.equal((await post('evt_bare',{refunded:true,invoice:'in_1'})).statusCode,200);
+  assert.equal(deleted.length,1);
+  assert.equal(await store.hasEvent('evt_fail'),false);assert.equal(await store.hasEvent('evt_full'),true);
+  assert.equal(await store.hasEvent('evt_loose'),true);assert.equal(await store.hasEvent('evt_plain'),true);assert.equal(await store.hasEvent('evt_bare'),true);
+  assert.match(logs.join('\n'),/sem fatura de assinatura/);assert.equal(logs.filter(line=>/pi_|in_/.test(line)).join(' || '),'');
+  assert.equal(JSON.stringify([...store.events]).includes('invoice'),false);assert.equal(JSON.stringify([...store.events]).includes('in_1'),false);
+ }finally{console.error=originalError;await app.close();rmSync(dir,{recursive:true,force:true});}
 });
 test('A URL das funções junta o caminho e fixa São Paulo',async()=>{
  const dir=temporary(),original=globalThis.fetch;

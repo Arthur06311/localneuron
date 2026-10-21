@@ -79,9 +79,9 @@ supabase link --project-ref hifnfveklpskbtxyeqza
 supabase db push
 ```
 
-`supabase db push` aplica, nesta ordem, `supabase/migrations/20261021000000_init.sql`, `supabase/migrations/20261021010000_role_and_rate.sql` e `supabase/migrations/20261021020000_keep_alive.sql`. Não rode esse SQL pela porta `6543`: o pooler de transação não serve para DDL e rejeita prepared statements. A conexão direta do plano Free (`db.<ref>.supabase.co:5432`) é só IPv6. O modo sessão (porta `5432` no pooler) também não serve para a função.
+`supabase db push` aplica, nesta ordem, `supabase/migrations/20261021000000_init.sql`, `supabase/migrations/20261021010000_role_and_rate.sql`, `supabase/migrations/20261021020000_keep_alive.sql` e `supabase/migrations/20261021030000_rate_window_purge.sql`. Não rode esse SQL pela porta `6543`: o pooler de transação não serve para DDL e rejeita prepared statements. A conexão direta do plano Free (`db.<ref>.supabase.co:5432`) é só IPv6. O modo sessão (porta `5432` no pooler) também não serve para a função.
 
-O desenho das tabelas está em [billing-schema.md](billing-schema.md). `billing.devices` só tem as colunas da instalação e do Checkout. A linha nasce quando o Checkout começa. `billing.events` só tem id e a hora, e o job apaga o que tiver mais de 90 dias. `billing.trial_identities` guarda o HMAC e o id da assinatura, com a data de criação, e o job apaga o que tiver mais de 5 × 365 dias. `billing.rate_windows` guarda o HMAC do endereço usado no limite, a rota e a janela. Esse HMAC usa `LOCALNEURON_BILLING_RATE_HMAC_KEY`, uma chave diferente da chave do teste. O IP em claro não entra no Postgres. O código apaga janelas com mais de cerca de dois minutos, no máximo uma vez por janela, e o job `billing-purge-rates` repete essa limpeza a cada quinze minutos.
+O desenho das tabelas está em [billing-schema.md](billing-schema.md). `billing.devices` só tem as colunas da instalação e do Checkout. A linha nasce quando o Checkout começa. `billing.events` só tem id e a hora, e o job apaga o que tiver mais de 90 dias. `billing.trial_identities` guarda o HMAC e o id da assinatura, com a data de criação, e o job apaga o que tiver mais de 5 × 365 dias. `billing.rate_windows` guarda o HMAC do endereço usado no limite, a rota e a janela. Esse HMAC usa `LOCALNEURON_BILLING_RATE_HMAC_KEY`, uma chave diferente da chave do teste. O IP em claro não entra no Postgres. O código apaga janelas com mais de cerca de dois minutos, no máximo uma vez por janela, e o job `billing-purge-rates` repete essa limpeza a cada dois minutos.
 
 No SQL Editor, como dono do banco, dê login ao papel. Troque a senha curta abaixo por uma senha sua e não a grave no Git:
 
@@ -109,6 +109,10 @@ Crie `supabase/.env.billing` no seu computador. Esse nome já entra no `.gitigno
 `LOCALNEURON_BILLING_PUBLIC_URL` é `https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing`, sem usuário, sem query e sem fragmento. `LOCALNEURON_BILLING_TRUST_PROXY` é `supabase`. Há duas chaves de HMAC. As duas saem de `openssl rand -hex 32` e precisam ser diferentes. `LOCALNEURON_BILLING_TRIAL_HMAC_KEY` cobre cartão e e-mail do teste. `LOCALNEURON_BILLING_RATE_HMAC_KEY` cobre só o endereço do limite. Gere cada uma uma vez. Não troque a do teste depois: trocar faria o teste antigo parecer novo. Não coloque a chave `anon` nem a `service_role` nesse arquivo. As funções não leem `SUPABASE_SERVICE_ROLE_KEY`.
 
 A documentação do Supabase não descreve um cabeçalho de IP já limpo nas Edge Functions. `Sb-Forwarded-For` é do Auth, opcional e só com a chave secreta; não é o cabeçalho das funções. `x-real-ip` é um valor único. Se o gateway o encaminhar, o cliente pode tê-lo escrito, então o serviço o ignora. Com `LOCALNEURON_BILLING_TRUST_PROXY=supabase` (ou com `SUPABASE_URL` em `.supabase.co`), o limite usa só o hop mais à direita de `x-forwarded-for`, se for um IP de até 64 caracteres. Quando a Cloudflare está no caminho, ela acrescenta o par observado no fim da lista; o hop da esquerda pode ser forjado. Se o gateway do Supabase não acrescentar o par, o hop da direita ainda pode ter vindo do cliente. O valor entra só no HMAC da chave de limite e não é gravado em claro. Sem cabeçalho válido, o limite cai no endereço do socket. Esse balde compartilhado é mais estrito do que uma chave forjada.
+
+Depois do deploy, confira a cadeia real antes de confiar nela. Em duas redes diferentes, chame `https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing/health?forceFunctionRegion=sa-east-1` e abra o log da função no painel do Supabase. Procure o cabeçalho `x-forwarded-for` dessa invocação. A lista é separada por vírgulas. O hop da esquerda pode ter sido escrito por quem chamou. O hop da direita precisa ser o endereço público da máquina que fez o pedido, e precisa mudar na segunda rede. Não copie esse endereço para o Git, para o banco nem para o chat.
+
+Se o hop da direita for o mesmo nas duas redes, ele é um proxy compartilhado, não o cliente. Nesse caso o limite juntaria pessoas diferentes num balde só, ou usaria um endereço que não identifica ninguém. A saída é desligar a leitura do cabeçalho: em `supabase/.env.billing`, defina `LOCALNEURON_BILLING_TRUST_PROXY=off` e rode de novo `supabase functions deploy billing`. `off` vale mesmo com `SUPABASE_URL` em `.supabase.co`. O limite passa a usar o endereço do socket, um balde único e mais estrito, e ignora `x-forwarded-for`. Não troque o código para o hop da esquerda.
 
 ```bash
 supabase secrets set --env-file supabase/.env.billing
@@ -148,7 +152,7 @@ Eventos, os sete:
 - `invoice.payment_failed`
 - `charge.refunded`
 
-A API `2025-03-31.basil` tirou `charge.invoice`. O cliente HTTP e o construtor do webhook ficam nessa versão (`Stripe-Version` e `apiVersion`). Um reembolso integral chega com `payment_intent`. O serviço lista `invoice_payments` por esse payment intent, lê a fatura e cancela a assinatura em `parent.subscription_details.subscription`. Se essa cadeia falhar, o evento não é gravado e a Stripe tenta de novo. Um reembolso parcial não cancela. Crie o endpoint com a mesma versão:
+A API `2025-03-31.basil` tirou `charge.invoice`. O cliente HTTP e o construtor do webhook ficam nessa versão (`Stripe-Version` e `apiVersion`). Um reembolso integral de assinatura chega com `payment_intent`. O serviço lista `invoice_payments` por esse payment intent, lê a fatura e cancela a assinatura em `parent.subscription_details.subscription`. Uma cobrança reembolsada sem `payment_intent`, sem fatura ou sem assinatura nessa fatura é registrada no log e respondida com sucesso, para a Stripe não repetir até desligar o endpoint. Falha de rede ou falha ao cancelar uma assinatura encontrada não grava o evento, e a Stripe tenta de novo. Um reembolso parcial não cancela. Crie o endpoint com a mesma versão:
 
 ```bash
 stripe webhook_endpoints create \
@@ -185,7 +189,7 @@ Deixe `subscription-config.json` nulo no Git. No terminal que abre o aplicativo,
 
 Confira, com cartão de teste da Stripe:
 
-- Mensal R$ 20,00 e Anual R$ 150. Na primeira abertura de Meu plano, a frase de 7 dias grátis aparece antes da consulta voltar. Se a consulta falhar ou disser que não há teste, a frase some. Quem já usou o teste vê o aviso de que ele terminou, sem a oferta.
+- Mensal R$ 20,00 e Anual R$ 150. A frase de 7 dias grátis só aparece em Meu plano quando a consulta já guardada diz que a instalação pode receber o teste. Na primeira abertura, sem essa consulta, o texto fica neutro: a pessoa escolhe Mensal ou Anual, sem a oferta. Quem já assinou não vê os 7 dias antes da consulta. Se a consulta falhar ou disser que não há teste, a frase continua oculta. Quem já usou o teste vê o aviso de que ele terminou, sem a oferta.
 - Abrir o chat ou a central Pro não dispara essa consulta. Ela só sai de Meu plano, no máximo a cada dez minutos, e não trava a tela. Falha de rede esconde os 7 dias.
 - Trocar Mensal/Anual antes de pagar, ou deixar a sessão expirar, não gasta o teste.
 - A linha em `billing.devices` só nasce no Checkout. A elegibilidade de uma instalação nova não grava linha.

@@ -66,6 +66,7 @@ export function billingConfigFromEnv(env:Env=process.env):BillingConfig {
   return {databaseUrl:parsed.DATABASE_URL,secretKey:parsed.STRIPE_SECRET_KEY,webhookSecret:parsed.STRIPE_WEBHOOK_SECRET,monthlyPriceId:parsed.STRIPE_MONTHLY_PRICE_ID,yearlyPriceId:parsed.STRIPE_YEARLY_PRICE_ID,privateKey:readPrivateKey(env),publicUrl:parsed.LOCALNEURON_BILLING_PUBLIC_URL,trialHmacKey:parsed.LOCALNEURON_BILLING_TRIAL_HMAC_KEY,rateHmacKey:parsed.LOCALNEURON_BILLING_RATE_HMAC_KEY};
 }
 export function trustBillingProxy(env:Env=process.env) {
+  if(env.LOCALNEURON_BILLING_TRUST_PROXY==='off')return false;
   return env.LOCALNEURON_BILLING_TRUST_PROXY==='supabase'||String(env.SUPABASE_URL??'').includes('.supabase.co');
 }
 /** Rightmost X-Forwarded-For hop. Supabase does not document a sanitized client IP, and x-real-ip is a single spoofable value. */
@@ -108,7 +109,7 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
   const priceId:Record<BillingPlan,string>={monthly:config.monthlyPriceId,yearly:config.yearlyPriceId};
   const db=store??(config.databaseUrl?createPostgresStore(config.databaseUrl,undefined,env):new MemoryBillingStore());
   const trust=trustBillingProxy(env);
-  const app=Fastify({logger:false,bodyLimit:256*1024,trustProxy:'loopback'});
+  const app=Fastify({logger:false,bodyLimit:256*1024,trustProxy:false});
   const limited={config:{rateLimit:{max:60,timeWindow:'1 minute'}}};
   const hits=new Map<string,number>();
   let lastPurge=0;
@@ -223,20 +224,23 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
     }
     return entitlement(deviceId,sub);
   }
+  function acknowledgeUnlinkedRefund(eventId:string) {
+    console.error('Reembolso sem fatura de assinatura; evento reconhecido sem cancelar.',eventId);
+  }
   async function cancelIfRefunded(object:any, eventId:string) {
     if(object?.refunded!==true)return;
     const paymentIntent=typeof object.payment_intent==='string'?object.payment_intent:typeof object.payment_intent?.id==='string'?object.payment_intent.id:'';
-    if(!paymentIntent)throw Error('Reembolso sem payment_intent.');
+    if(!paymentIntent){acknowledgeUnlinkedRefund(eventId);return;}
     const listed=await stripe('invoice_payments?payment[type]=payment_intent&payment[payment_intent]='+encodeURIComponent(paymentIntent));
     const rows=Array.isArray(listed?.data)?listed.data:[];
     const row=rows.find((item:any)=>{const intent=item?.payment?.payment_intent;const id=typeof intent==='string'?intent:intent?.id;return id===paymentIntent;});
     const invoiceRaw=row?.invoice;
     const invoiceId=typeof invoiceRaw==='string'?invoiceRaw:typeof invoiceRaw?.id==='string'?invoiceRaw.id:'';
-    if(!invoiceId)throw Error('Reembolso sem fatura.');
+    if(!invoiceId){acknowledgeUnlinkedRefund(eventId);return;}
     const invoice=await stripe('invoices/'+encodeURIComponent(invoiceId));
     const raw=invoice?.parent?.subscription_details?.subscription;
     const subscriptionId=typeof raw==='string'?raw:typeof raw?.id==='string'?raw.id:'';
-    if(!subscriptionId)throw Error('Reembolso sem assinatura.');
+    if(!subscriptionId){acknowledgeUnlinkedRefund(eventId);return;}
     const current=await stripe('subscriptions/'+encodeURIComponent(subscriptionId));
     if(current?.status==='canceled')return;
     await stripe('subscriptions/'+encodeURIComponent(subscriptionId),undefined,'ln-refund-'+eventId,'DELETE');
