@@ -28,6 +28,24 @@ test('navigation is grouped into five discoverable islands',async()=>{
   assert.match(css,/\.nav-island:not\(\[data-open="true"\]\) \.nav-island-menu\{display:none/);
 });
 
+test('the breadcrumb uses the island name from the navigation',async()=>{
+  const html=await readFile(resolve(root,'public/index.html'),'utf8');
+  const js=await readFile(resolve(root,'public/app.js'),'utf8');
+  const sections=html.split('<section class="nav-island"').slice(1).map(section=>section.split('</section>')[0]);
+  const island=(page,view)=>{
+    const section=sections.find(item=>view?item.includes(`data-page="${page}"`)&&item.includes(`data-equipes-view="${view}"`):item.includes(`data-page="${page}"`));
+    return section?.match(/<strong>([^<]+)<\/strong>/)?.[1];
+  };
+  assert.equal(island('chat'),'Trabalhar');
+  assert.equal(island('models'),'Trabalhar');
+  assert.equal(island('settings'),'Conta');
+  assert.equal(island('server'),'Conectar');
+  assert.match(js,/function breadcrumbLabel/);
+  assert.match(js,/nav-island-trigger strong/);
+  assert.doesNotMatch(js,/Conversas \/ Chat/);
+  assert.doesNotMatch(js,/Biblioteca \/ Modelos/);
+});
+
 test('every former destination remains present inside an island',async()=>{
   const html=await readFile(resolve(root,'public/index.html'),'utf8');
   for(const page of ['chat','team','models','equipes','photo','studio','music','editor','connections','exo','server','sharing','pro','subscription','wizard','settings']){
