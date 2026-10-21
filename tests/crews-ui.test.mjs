@@ -30,9 +30,12 @@ test('a ilha Equipes segue a especificação: navegação, conversa, teclado e t
   assert.match(html, /\/equipes\.css/);
   assert.match(html, /\/tokens\.css/);
   assert.match(js, /equipes:'teams'/);
-  assert.match(js, /Equipes \/ Visão da equipe/);
-  assert.match(js, /Equipes \/ Conversas/);
+  assert.match(js, /breadcrumbLabel\(\)/);
+  assert.match(js, /nav-island-trigger strong/);
   assert.doesNotMatch(js, /Equipes \/ Equipes/);
+  const teamsMenu = html.slice(teams, create);
+  assert.match(teamsMenu, /Visão da equipe/);
+  assert.match(teamsMenu, /Conversas/);
   assert.ok(html.includes('Visão da equipe'));
   for (const text of ['Conversa da equipe', 'Pedido para a equipe', 'Nenhuma equipe', 'Modelos grandes', 'Nada fica público por padrão', '← Equipes', 'role="log"', 'role="listbox"', 'role="alert"', 'aria-atomic="false"', 'alt=""', 'type="password"', 'autocomplete="off"', "toLocaleString('pt-BR')", '/crews/talk', 'ArrowDown', 'Home', 'End', 'shiftKey']) assert.ok(ui.includes(text), text);
   assert.match(page, /var\(--bg\)/);

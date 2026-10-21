@@ -74,6 +74,7 @@ export class ModelLibrary {
   jobs: Record<string, Job> = {};
   active: { controller: AbortController; promise: Promise<void> } | null = null;
   busy = false;
+  measureMemory: () => ReturnType<typeof memoryStatus> = memoryStatus;
   private endpoint: string;
   constructor(directory: string, private audit: Audit, private lms = findLms(), private runtime?: LocalRuntime, private hfToken:()=>string|undefined=()=>undefined, private env: NodeJS.ProcessEnv = process.env, quantizeHooks?: QuantizeHooks) {
     this.endpoint = lmStudioEndpoint(lmStudioPort(env));
@@ -244,12 +245,12 @@ export class ModelLibrary {
       if (!installed.size_bytes) throw new Error('O motor não informou o tamanho do modelo. Carregue-o manualmente no LM Studio.');
       const catalog = this.catalog.find(model => this.jobs[model.id]?.model_key === key);
       const estimate = (catalog ? catalog.ram_gib * GiB : Math.ceil(installed.size_bytes * 1.35 + GiB)) + Math.max(0,context-4096)*64*1024;
-      const memory = memoryStatus(); admitMemory(estimate, memory.available_memory_bytes, memory.pressure_free_percent);
+      const memory = this.measureMemory(); admitMemory(estimate, memory.available_memory_bytes, memory.pressure_free_percent);
       await this.audit('model.load.requested', { key, context, estimate_bytes: estimate, available_bytes: memory.available_memory_bytes, catalog_id: catalog?.id ?? null });
       const result = await this.native('/load', { model: key, context_length: context, flash_attention: true, echo_load_config: true }, 120000);
       // Some engine versions auto-fit context upward despite an explicit request.
       // Report the effective setting and recheck pressure instead of claiming a 4k cap.
-      const after = memoryStatus();
+      const after = this.measureMemory();
       try { admitMemory(0, after.available_memory_bytes, after.pressure_free_percent); }
       catch {
         await this.native('/unload', { instance_id: result.instance_id }, 30000);
