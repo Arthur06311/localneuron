@@ -17,7 +17,7 @@
 <p>O assistente salva a conclusão ao chegar ao último passo. Para refazê-lo, use <strong>Minha equipe → Mais opções da equipe → Repetir configuração</strong>. Isso preserva perfil, conversas e bots existentes, sem obrigar a refazer tudo na próxima abertura.</p>
 </section>
 <section><h2 id="avisos-de-novas-versoes">Avisos de novas versões</h2>
-<p>A partir da 0.27, o aplicativo avisa quando encontra uma versão mais recente no manifesto público do GitHub (endereço independente do domínio do site). Consulte <strong>Preferências → Atualizações</strong> para verificar manualmente, ler novidades ou desativar a consulta automática. A consulta ocorre ao abrir e a cada seis horas, com cache, sem enviar conversas, arquivos ou identificadores do espaço. A hospedagem recebe a requisição de rede normal, incluindo IP. Falhas de conexão não bloqueiam o uso offline.</p>
+<p>A partir da 0.27, o aplicativo avisa quando encontra uma versão mais recente no manifesto público do GitHub (endereço independente do domínio do site). A consulta automática nasce desligada. Em <strong>Preferências → Atualizações</strong> você liga o aviso, lê novidades ou verifica na hora. Com o aviso ligado, a consulta ocorre no máximo a cada seis horas, sem enviar conversas, arquivos ou identificadores do espaço. A hospedagem recebe a requisição de rede normal, incluindo IP. Falhas de conexão não bloqueiam o uso offline.</p>
 <p><strong>Agora não</strong> dispensa o aviso daquela versão. Uma versão posterior volta a ser avisada. O instalador é baixado pelo link; não há instalação automática. Quem usa 0.26 ou anterior precisa instalar a 0.27 uma vez para receber os avisos futuros.</p>
 </section>
 <section><h2 id="requisitos">Requisitos</h2>
@@ -150,11 +150,11 @@
 <section><h2 id="conexoes-mcp">Conexões MCP</h2>
 <p>MCP permite que a IA use ferramentas expostas por um servidor compatível, como acesso autorizado a documentos ou serviços.</p>
 <p>Adicione o servidor HTTP/stdio em <strong>Conexões</strong>, configure a autenticação exigida, teste e selecione quais bots podem usá-lo. Tokens ficam no cofre. OAuth com PKCE depende do suporte do servidor, cadastro do cliente e sua autorização no provedor.</p>
-<p>O fato de uma marca aparecer no catálogo não conecta automaticamente sua conta. Gmail, Drive, Supabase, Vercel e outros serviços precisam de servidor MCP compatível e credenciais/autorização válidas. Confira as permissões solicitadas e revogue conexões que não usa. Cada chamada mantém os controles de revisão aplicáveis.</p>
+<p>O fato de uma marca aparecer no catálogo não conecta automaticamente sua conta. Gmail, Drive, Supabase e outros serviços precisam de servidor MCP compatível e credenciais/autorização válidas. Confira as permissões solicitadas e revogue conexões que não usa. Cada chamada mantém os controles de revisão aplicáveis.</p>
 </section>
 <section><h2 id="pro">Pro</h2>
 <p>O plano Pro organiza recursos avançados de projetos, entregas, fila, revisões e API. O aplicativo valida uma licença assinada e exibe status/validade.</p>
-<p>A <strong>cobrança pública ainda não está ativada</strong> nesta alfa. A instalação pública não contém a licença de teste do proprietário. Não há compra pelo GitHub Pages. O download e a execução básica dos modelos locais compatíveis não exigem uma assinatura de provedor de IA.</p>
+<p>A <strong>cobrança pública ainda não está ativada</strong> nesta alfa. A instalação pública não contém a licença de teste do proprietário. Não há compra pelo GitHub Pages. Quando a compra abrir, o pagamento será na Stripe e o servidor e o banco de dados da cobrança ficarão na Supabase, no Brasil, região sa-east-1 (São Paulo). O download e a execução básica dos modelos locais compatíveis não exigem uma assinatura de provedor de IA.</p>
 <p>Pro não muda os pesos do modelo nem torna qualquer IA automaticamente mais inteligente. Os ganhos vêm das ferramentas e da organização do trabalho. A disponibilidade comercial depende da configuração e homologação do serviço de assinatura.</p>
 </section>
 <section><h2 id="dados-e-backup">Dados e backup</h2>
@@ -183,4 +183,4 @@
 <p>Autorize o microfone no sistema, escolha a entrada correta e confira o modelo de transcrição. A gravação vira rascunho para revisão antes do envio.</p>
 <h3 id="preciso-reportar-um-erro">Preciso reportar um erro</h3>
 <p>O suporte é pelas <a href="https://github.com/Arthur06311/localneuron/issues">issues do repositório</a>. Inclua versão do app, sistema, modelo ou motor, passos e a mensagem de erro. Remova senhas, tokens, dados pessoais e prompts privados. Vulnerabilidades com conteúdo sensível não devem ser publicadas em issues abertas.</p>
-</section><p class="guide-top-links"><a href="./#download">Baixar o LocalNeuron</a><a href="https://github.com/Arthur06311/localneuron/issues">Reportar um problema</a><a href="#main">Voltar ao início ↑</a></p></main></div><footer><a class="brand" href="./">LocalNeuron</a><p>Sua IA. Seu computador.</p><a href="./#privacidade">Idioma e privacidade</a><span>0.28.1 · Alfa</span></footer><script src="./theme.js"></script></body></html>
+</section><p class="guide-top-links"><a href="./#download">Baixar o LocalNeuron</a><a href="https://github.com/Arthur06311/localneuron/issues">Reportar um problema</a><a href="#main">Voltar ao início ↑</a></p></main></div><footer><a class="brand" href="./">LocalNeuron</a><p>Sua IA. Seu computador.</p><a href="./#privacidade">Idioma e privacidade</a><nav aria-label="Documentos legais"><a href="./termos.html">Termos de Uso</a><a href="./privacidade.html">Política de Privacidade</a><a href="./reembolso.html">Cancelamento e reembolso</a></nav><span>0.28.1 · Alfa</span></footer><script src="./theme.js"></script></body></html>
