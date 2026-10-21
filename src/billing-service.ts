@@ -1,9 +1,11 @@
 /** Run on the publisher's HTTPS server. Never distribute its private key with the desktop app. */
 import Fastify from 'fastify';
 import rateLimit from '@fastify/rate-limit';
+import { Buffer } from 'node:buffer';
 import { createHash, createHmac, randomUUID, sign, timingSafeEqual } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import { z } from 'zod';
 import type { Lease } from './subscription.js';
@@ -25,7 +27,7 @@ export function trialIdentityHmac(kind:'card'|'email', value:string, key:string)
   return createHmac('sha256',key).update(kind+'\0'+normalized).digest('hex');
 }
 export type BillingPlan='monthly'|'yearly';
-export type BillingConfig={databaseUrl?:string;secretKey:string;webhookSecret:string;monthlyPriceId:string;yearlyPriceId:string;privateKey:string;publicUrl:string;trialHmacKey:string};
+export type BillingConfig={databaseUrl?:string;secretKey:string;webhookSecret:string;monthlyPriceId:string;yearlyPriceId:string;privateKey:string;publicUrl:string;trialHmacKey:string;rateHmacKey:string};
 export const approvedPlans=Object.freeze({
   monthly:Object.freeze({currency:'brl',unitAmount:2000,interval:'month',intervalCount:1}),
   yearly:Object.freeze({currency:'brl',unitAmount:15000,interval:'year',intervalCount:1}),
@@ -41,31 +43,36 @@ export function validateApprovedPrice(price:any):BillingPlan {
 }
 type StripeMethod='GET'|'POST'|'DELETE';
 type StripeCall=(path:string,body?:Record<string,string>,idempotency?:string,method?:StripeMethod)=>Promise<any>;
+/** Pinned for the REST client and the webhook constructor. charge.invoice is gone in this version. */
+export const stripeApiVersion='2025-03-31.basil' as const;
 export function stripeClient(secret:string):StripeCall {
   return async(path,body,idempotency,method)=>{
     const verb=method??(body?'POST':'GET');
-    const response=await fetch('https://api.stripe.com/v1/'+path,{method:verb,redirect:'error',signal:AbortSignal.timeout(15000),headers:{authorization:'Bearer '+secret,'Stripe-Version':'2025-03-31.basil',...(body?{'content-type':'application/x-www-form-urlencoded'}:{}),...(idempotency?{'Idempotency-Key':idempotency}:{})},body:body?new URLSearchParams(body):undefined});
+    const response=await fetch('https://api.stripe.com/v1/'+path,{method:verb,redirect:'error',signal:AbortSignal.timeout(15000),headers:{authorization:'Bearer '+secret,'Stripe-Version':stripeApiVersion,...(body?{'content-type':'application/x-www-form-urlencoded'}:{}),...(idempotency?{'Idempotency-Key':idempotency}:{})},body:body?new URLSearchParams(body):undefined});
     if(!response.ok)throw Error('O provedor de pagamentos está indisponível.');
     const text=await response.text();if(text.length>1024**2)throw Error('Resposta de pagamento excessiva.');return text?JSON.parse(text):{};
   };
 }
-export function readPrivateKey(env:NodeJS.ProcessEnv=process.env) {
+type Env=Record<string,string|undefined>;
+export function readPrivateKey(env:Env=process.env) {
   const inline=env.LOCALNEURON_LICENSE_PRIVATE_KEY;
   if(typeof inline==='string'&&inline.trim())return inline.replace(/\\n/g,'\n');
   if(env.LOCALNEURON_LICENSE_PRIVATE_KEY_FILE)return readFileSync(env.LOCALNEURON_LICENSE_PRIVATE_KEY_FILE,'utf8');
   throw Error('Configure LOCALNEURON_LICENSE_PRIVATE_KEY ou LOCALNEURON_LICENSE_PRIVATE_KEY_FILE.');
 }
-export function billingConfigFromEnv(env:NodeJS.ProcessEnv=process.env):BillingConfig {
-  const parsed=z.object({DATABASE_URL:z.string().min(1),STRIPE_SECRET_KEY:z.string().min(1),STRIPE_WEBHOOK_SECRET:z.string().min(1),STRIPE_MONTHLY_PRICE_ID:z.string().min(1),STRIPE_YEARLY_PRICE_ID:z.string().min(1),LOCALNEURON_BILLING_PUBLIC_URL:z.string().url(),LOCALNEURON_BILLING_TRIAL_HMAC_KEY:z.string().min(32)}).parse(env);
-  return {databaseUrl:parsed.DATABASE_URL,secretKey:parsed.STRIPE_SECRET_KEY,webhookSecret:parsed.STRIPE_WEBHOOK_SECRET,monthlyPriceId:parsed.STRIPE_MONTHLY_PRICE_ID,yearlyPriceId:parsed.STRIPE_YEARLY_PRICE_ID,privateKey:readPrivateKey(env),publicUrl:parsed.LOCALNEURON_BILLING_PUBLIC_URL,trialHmacKey:parsed.LOCALNEURON_BILLING_TRIAL_HMAC_KEY};
+export function billingConfigFromEnv(env:Env=process.env):BillingConfig {
+  const parsed=z.object({DATABASE_URL:z.string().min(1),STRIPE_SECRET_KEY:z.string().min(1),STRIPE_WEBHOOK_SECRET:z.string().min(1),STRIPE_MONTHLY_PRICE_ID:z.string().min(1),STRIPE_YEARLY_PRICE_ID:z.string().min(1),LOCALNEURON_BILLING_PUBLIC_URL:z.string().url(),LOCALNEURON_BILLING_TRIAL_HMAC_KEY:z.string().min(32),LOCALNEURON_BILLING_RATE_HMAC_KEY:z.string().min(32)}).parse(env);
+  if(parsed.LOCALNEURON_BILLING_RATE_HMAC_KEY===parsed.LOCALNEURON_BILLING_TRIAL_HMAC_KEY)throw Error('LOCALNEURON_BILLING_RATE_HMAC_KEY precisa ser diferente de LOCALNEURON_BILLING_TRIAL_HMAC_KEY.');
+  return {databaseUrl:parsed.DATABASE_URL,secretKey:parsed.STRIPE_SECRET_KEY,webhookSecret:parsed.STRIPE_WEBHOOK_SECRET,monthlyPriceId:parsed.STRIPE_MONTHLY_PRICE_ID,yearlyPriceId:parsed.STRIPE_YEARLY_PRICE_ID,privateKey:readPrivateKey(env),publicUrl:parsed.LOCALNEURON_BILLING_PUBLIC_URL,trialHmacKey:parsed.LOCALNEURON_BILLING_TRIAL_HMAC_KEY,rateHmacKey:parsed.LOCALNEURON_BILLING_RATE_HMAC_KEY};
 }
-export function trustBillingProxy(env:NodeJS.ProcessEnv=process.env) {
+export function trustBillingProxy(env:Env=process.env) {
   return env.LOCALNEURON_BILLING_TRUST_PROXY==='supabase'||String(env.SUPABASE_URL??'').includes('.supabase.co');
 }
-function clientIp(real:unknown,forwarded:unknown,fallback:string,trust:boolean) {
-  if(!trust)return fallback;
-  const raw=typeof real==='string'&&real.trim()?real:typeof forwarded==='string'?forwarded.split(',')[0]:'';
-  const value=raw.trim();
+/** Rightmost X-Forwarded-For hop. Supabase does not document a sanitized client IP, and x-real-ip is a single spoofable value. */
+function clientIp(forwarded:unknown,fallback:string,trust:boolean) {
+  if(!trust||typeof forwarded!=='string')return fallback;
+  const hops=forwarded.split(',').map(part=>part.trim()).filter(Boolean);
+  const value=hops.length?hops[hops.length-1]:'';
   if(!value||value.length>64||!/^[0-9a-fA-F:.]+$/.test(value)||value.includes('..'))return fallback;
   return value;
 }
@@ -87,8 +94,10 @@ function billingLinks(base:URL) {
 }
 const hadTrial=(sub:any)=>Boolean(sub&&(sub.status==='trialing'||sub.trial_start||sub.trial_end));
 const verifiedHandlers=new WeakMap<object,(event:z.infer<typeof eventSchema>)=>Promise<{received:boolean}>>();
-export async function createBillingService(config:BillingConfig, stripe:StripeCall=stripeClient(config.secretKey), now=Date.now, store?:BillingStore, env:NodeJS.ProcessEnv=process.env) {
+export async function createBillingService(config:BillingConfig, stripe:StripeCall=stripeClient(config.secretKey), now=Date.now, store?:BillingStore, env:Env=process.env) {
   if(typeof config.trialHmacKey!=='string'||config.trialHmacKey.length<32)throw Error('Configure LOCALNEURON_BILLING_TRIAL_HMAC_KEY com pelo menos 32 caracteres.');
+  if(typeof config.rateHmacKey!=='string'||config.rateHmacKey.length<32)throw Error('Configure LOCALNEURON_BILLING_RATE_HMAC_KEY com pelo menos 32 caracteres.');
+  if(config.rateHmacKey===config.trialHmacKey)throw Error('LOCALNEURON_BILLING_RATE_HMAC_KEY precisa ser diferente de LOCALNEURON_BILLING_TRIAL_HMAC_KEY.');
   if(config.monthlyPriceId===config.yearlyPriceId)throw Error('Os preços mensal e anual precisam ser identificadores diferentes.');
   const origin=publicBase(config.publicUrl);
   const links=billingLinks(origin);
@@ -117,7 +126,7 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
       const nowMs=now();
       const windowStart=Math.floor(nowMs/windowMs)*windowMs;
       const ttl=Math.max(1,windowStart+windowMs-nowMs);
-      const ipHash=createHmac('sha256',config.trialHmacKey).update('ip\0'+String(key)).digest('hex');
+      const ipHash=createHmac('sha256',config.rateHmacKey).update('ip\0'+String(key)).digest('hex');
       const cacheKey=ipHash+'\0'+this.route+'\0'+windowStart;
       const cached=hits.get(cacheKey);
       if(cached!==undefined&&cached>max){cb(null,{current:cached,ttl});return;}
@@ -135,7 +144,7 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
     reply.header('Cache-Control','no-store').header('X-Content-Type-Options','nosniff').header('Referrer-Policy','no-referrer').header('Content-Security-Policy',"default-src 'none'; frame-ancestors 'none'");
     if(req.headers.origin)return reply.code(403).send({error:'Use o aplicativo LocalNeuron.'});
   });
-  await app.register(rateLimit,{global:true,max:60,timeWindow:'1 minute',store:DurableRateStore as any,allowList:(req:any)=>['/health','/billing/health','/billing/webhook'].includes(String(req.url).split('?')[0]),keyGenerator:(req:any)=>clientIp(req.headers['x-real-ip'],req.headers['x-forwarded-for'],req.ip,trust),errorResponseBuilder:()=>Object.assign(Error('Aguarde antes de tentar novamente.'),{statusCode:429})});
+  await app.register(rateLimit,{global:true,max:60,timeWindow:'1 minute',store:DurableRateStore as any,allowList:(req:any)=>['/health','/billing/health','/billing/webhook'].includes(String(req.url).split('?')[0]),keyGenerator:(req:any)=>clientIp(req.headers['x-forwarded-for'],req.ip,trust),errorResponseBuilder:()=>Object.assign(Error('Aguarde antes de tentar novamente.'),{statusCode:429})});
   app.setErrorHandler((_e,req,reply)=>{const status=(_e as any).statusCode||400;return reply.code(status).send({error:status===429?'Aguarde antes de tentar novamente.':status===401?'Não autorizado.':'Não foi possível concluir a operação de assinatura.'});});
   app.addHook('onClose',async()=>db.close());
   const row=(id:string)=>db.getDevice(id);
@@ -216,12 +225,18 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
   }
   async function cancelIfRefunded(object:any, eventId:string) {
     if(object?.refunded!==true)return;
-    const invoiceId=typeof object.invoice==='string'?object.invoice:typeof object.invoice?.id==='string'?object.invoice.id:'';
-    if(!invoiceId)return;
+    const paymentIntent=typeof object.payment_intent==='string'?object.payment_intent:typeof object.payment_intent?.id==='string'?object.payment_intent.id:'';
+    if(!paymentIntent)throw Error('Reembolso sem payment_intent.');
+    const listed=await stripe('invoice_payments?payment[type]=payment_intent&payment[payment_intent]='+encodeURIComponent(paymentIntent));
+    const rows=Array.isArray(listed?.data)?listed.data:[];
+    const row=rows.find((item:any)=>{const intent=item?.payment?.payment_intent;const id=typeof intent==='string'?intent:intent?.id;return id===paymentIntent;});
+    const invoiceRaw=row?.invoice;
+    const invoiceId=typeof invoiceRaw==='string'?invoiceRaw:typeof invoiceRaw?.id==='string'?invoiceRaw.id:'';
+    if(!invoiceId)throw Error('Reembolso sem fatura.');
     const invoice=await stripe('invoices/'+encodeURIComponent(invoiceId));
-    const raw=invoice?.parent?.subscription_details?.subscription??invoice?.subscription;
+    const raw=invoice?.parent?.subscription_details?.subscription;
     const subscriptionId=typeof raw==='string'?raw:typeof raw?.id==='string'?raw.id:'';
-    if(!subscriptionId)return;
+    if(!subscriptionId)throw Error('Reembolso sem assinatura.');
     const current=await stripe('subscriptions/'+encodeURIComponent(subscriptionId));
     if(current?.status==='canceled')return;
     await stripe('subscriptions/'+encodeURIComponent(subscriptionId),undefined,'ln-refund-'+eventId,'DELETE');
@@ -280,8 +295,8 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
   app.post('/billing/refresh',limited,refresh);
   app.post('/billing/subscription',limited,refresh);
   app.post('/billing/portal',limited,async req=>{const d=await authenticate(req);return exclusive(d.id,async()=>{await subscription(d.id);const customer=(await row(d.id))?.customer;if(!customer)throw Error('Sem assinatura.');const portal=await stripe('billing_portal/sessions',{customer,return_url:links.success});return {url:portal.url};});});
-  app.get('/billing/success',async(_req,reply)=>reply.type('text/html; charset=utf-8').send('<!doctype html><html lang="pt-BR"><meta name="viewport" content="width=device-width"><title>LocalNeuron Pro</title><h1>Volte ao LocalNeuron</h1><p>Em Meu plano, clique em Atualizar assinatura. Nos 7 dias grátis, o Pro é liberado depois que a assinatura é confirmada. Fora do teste, o Pro é liberado após a confirmação do pagamento.</p></html>'));
-  app.get('/billing/cancel',async(_req,reply)=>reply.type('text/html; charset=utf-8').send('<!doctype html><html lang="pt-BR"><meta name="viewport" content="width=device-width"><title>LocalNeuron</title><h1>Você pode continuar com o Grátis</h1><p>Volte ao LocalNeuron para conversar com suas IAs.</p></html>'));
+  app.get('/billing/success',async(_req,reply)=>reply.type('text/plain; charset=utf-8').send('Volte ao LocalNeuron\n\nEm Meu plano, clique em Atualizar assinatura. Nos 7 dias grátis, o Pro é liberado depois que a assinatura é confirmada. Fora do teste, o Pro é liberado após a confirmação do pagamento.\n'));
+  app.get('/billing/cancel',async(_req,reply)=>reply.type('text/plain; charset=utf-8').send('Você pode continuar com o Grátis\n\nVolte ao LocalNeuron para conversar com suas IAs.\n'));
   await app.register(async scope=>{
     scope.removeContentTypeParser('application/json');scope.addContentTypeParser('application/json',{parseAs:'buffer'},(_req,body,done)=>done(null,body));
     scope.post('/billing/webhook',async(req)=>{
@@ -296,14 +311,14 @@ export async function applyVerifiedStripeEvent(app:object, event:unknown) {
   if(!handler)throw Error('Serviço de cobrança indisponível.');
   return handler(eventSchema.parse(event));
 }
-export async function createBillingFromEnv(env:NodeJS.ProcessEnv=process.env) {
+export async function createBillingFromEnv(env:Env=process.env) {
   const config=billingConfigFromEnv(env);
   return createBillingService(config,stripeClient(config.secretKey),Date.now,undefined,env);
 }
 /** Map a Supabase function URL onto the Fastify route. The raw client address stays out of Postgres. */
 export function billingFunctionPath(url?:string):string {
   let parsed:URL;
-  try{parsed=new URL(url&&url.length?url:'/','https://billing.localneuron.ai');}catch{return '/';}
+  try{parsed=new URL(url&&url.length?url:'/','https://hifnfveklpskbtxyeqza.supabase.co');}catch{return '/';}
   let path=parsed.pathname.replace(/\/+$/,'')||'/';
   const marker='/functions/v1/billing';
   const at=path.indexOf(marker);

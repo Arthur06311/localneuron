@@ -70,7 +70,7 @@ export class Subscription {
     const now = this.now(), rollback = now < this.state.last_seen - 300_000;
     if (now > this.state.last_seen + 60_000) { this.state.last_seen=now; this.save(); }
     const active = !rollback && Boolean(this.lease?.status==='active' && now >= this.lease.issued_at-300_000 && now < this.lease.expires_at);
-    return {plan:active?'pro':'free',active,license_kind:this.lease?.subscription==='local-owner-test'?'test':'subscription',configured:Boolean(this.config.publicKey&&this.config.serviceUrl),device:this.state.device,status:rollback?'clock_error':active?(this.lease!.cancel_at_period_end?'canceling':'active'):this.lease?.status==='past_due'?'past_due':this.lease?.status==='canceled'?'canceled':this.lease?'expired':'free',period_end:this.lease?.period_end??null,offline_until:this.lease?.expires_at??null,checked_at:this.state.checked_at??null,trial_eligible:!active&&this.state.trial_eligible===true,trial_repeat:this.state.trial_repeat===true,error:rollback?'Confira a data e a hora do computador.':this.error,features:premiumFeatures};
+    return {plan:active?'pro':'free',active,license_kind:this.lease?.subscription==='local-owner-test'?'test':'subscription',configured:Boolean(this.config.publicKey&&this.config.serviceUrl),device:this.state.device,status:rollback?'clock_error':active?(this.lease!.cancel_at_period_end?'canceling':'active'):this.lease?.status==='past_due'?'past_due':this.lease?.status==='canceled'?'canceled':this.lease?'expired':'free',period_end:this.lease?.period_end??null,offline_until:this.lease?.expires_at??null,checked_at:this.state.checked_at??null,trial_eligible:!active&&this.state.trial_eligible===true,trial_checked:typeof this.state.eligibility_checked_at==='number',trial_repeat:this.state.trial_repeat===true,error:rollback?'Confira a data e a hora do computador.':this.error,features:premiumFeatures};
   }
   get active() { return this.snapshot().active; }
   require(feature: PremiumFeature) { if (!this.active) throw new ProRequired(feature); }
@@ -113,7 +113,7 @@ export class Subscription {
   }
   async refresh() {
     if(this.refreshing)return this.refreshing;
-    this.refreshing=(async()=>{try{const value=await this.request('/billing/refresh');if(value?.trial_repeat===true)this.state.trial_repeat=true;else delete this.state.trial_repeat;if(typeof value.token==='string')return this.install(value.token);if(value.status==='free'){this.lease=undefined;delete this.state.token;this.state.checked_at=this.now();this.state.trial_eligible=false;delete this.state.eligibility_checked_at;this.error='';this.save();return this.snapshot();}throw Error('Resposta de assinatura inválida.');}catch(e){this.error=(e as Error).message;throw e;}finally{this.refreshing=undefined;}})();return this.refreshing;
+    this.refreshing=(async()=>{try{const value=await this.request('/billing/refresh');if(value?.trial_repeat===true)this.state.trial_repeat=true;else delete this.state.trial_repeat;if(typeof value.token==='string')return this.install(value.token);if(value.status==='free'){this.lease=undefined;delete this.state.token;this.state.checked_at=this.now();this.state.trial_eligible=false;if(this.state.trial_repeat)this.state.eligibility_checked_at=this.now();else delete this.state.eligibility_checked_at;this.error='';this.save();return this.snapshot();}throw Error('Resposta de assinatura inválida.');}catch(e){this.error=(e as Error).message;throw e;}finally{this.refreshing=undefined;}})();return this.refreshing;
   }
 }
 

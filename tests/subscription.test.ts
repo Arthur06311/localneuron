@@ -19,7 +19,8 @@ const day=86400_000;
 const monthlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:2000,billing_scheme:'per_unit',recurring:{interval:'month',interval_count:1,usage_type:'licensed'}});
 const yearlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:15000,billing_scheme:'per_unit',recurring:{interval:'year',interval_count:1,usage_type:'licensed'}});
 const trialHmacKey='hmac-de-teste-com-32-caracteres-ou-mais';
-const billingConfig=(_dir:string)=>({secretKey:'test',webhookSecret:'webhook-test',monthlyPriceId:'price_month',yearlyPriceId:'price_year',privateKey,publicUrl:'https://billing.example.com',trialHmacKey});
+const rateHmacKey='hmac-de-limite-com-32-caracteres-ou-mais';
+const billingConfig=(_dir:string)=>({secretKey:'test',webhookSecret:'webhook-test',monthlyPriceId:'price_month',yearlyPriceId:'price_year',privateKey,publicUrl:'https://billing.example.com',trialHmacKey,rateHmacKey});
 function lease(device:string,now:number):Lease {return {version:1,audience:'localneuron-pro',device,subscription:'sub_test',status:'active',issued_at:now,expires_at:now+7*day,period_end:now+30*day,cancel_at_period_end:false};}
 test('Licença assinada: offline, reinício, expiração, cancelamento e relógio',()=>{
  const dir=temporary();let now=Date.now();const initial=now;
@@ -257,14 +258,14 @@ test('Cartão ou e-mail repetido encerra o teste sem gravar o valor',async()=>{
 test('Elegibilidade desconhecida não anuncia o teste e a página só mostra os 7 dias para quem pode',async()=>{
  const dir=temporary(),original=globalThis.fetch;let now=Date.now();const {readFileSync}=await import('node:fs');
  try{const local=new Subscription(dir,{...testConfig,serviceUrl:'https://billing.example.com/'},()=>now);
-  assert.equal(local.snapshot().trial_eligible,false);
-  let calls=0;globalThis.fetch=async()=>{calls++;throw Error('offline');};await local.refreshEligibility();await local.refreshEligibility();assert.equal(local.snapshot().trial_eligible,false);assert.equal(calls,1);
+  assert.equal(local.snapshot().trial_eligible,false);assert.equal(local.snapshot().trial_checked,false);
+  let calls=0;globalThis.fetch=async()=>{calls++;throw Error('offline');};await local.refreshEligibility();await local.refreshEligibility();assert.equal(local.snapshot().trial_eligible,false);assert.equal(local.snapshot().trial_checked,true);assert.equal(calls,1);
   now+=11*60_000;globalThis.fetch=async()=>new Response(JSON.stringify({trial_eligible:true}));await local.refreshEligibility();assert.equal(local.snapshot().trial_eligible,true);
   calls=0;globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({trial_eligible:true}));};
   local.install(signLease(lease(local.snapshot().device,now),privateKey));assert.equal(local.snapshot().trial_eligible,false);await local.refreshEligibility();assert.equal(calls,0);
   const idle=new Subscription(dir+'-off',testConfig,()=>now);await idle.refreshEligibility();assert.equal(calls,0);
   const page=readFileSync(resolve('public/subscription.js'),'utf8');
-  assert.match(page,/trial=Boolean\(state\.configured&&state\.trial_eligible&&!managing\)/);
+  assert.match(page,/trial=Boolean\(state\.configured&&!managing&&!state\.trial_repeat&&\(state\.trial_eligible\|\|!state\.trial_checked\)\)/);
   assert.match(page,/trial\?'<p class="trial-note">7 dias grátis<\/p>':''/);
   assert.match(page,/uma vez por pessoa e por cartão/);
   assert.match(page,/O teste grátis desta pessoa ou deste cartão já foi usado e terminou agora/);
@@ -273,7 +274,10 @@ test('Elegibilidade desconhecida não anuncia o teste e a página só mostra os 
 });
 test('O serviço exige a chave de HMAC do teste',async()=>{
  const dir=temporary();
- try{await assert.rejects(()=>createBillingService({...billingConfig(dir),trialHmacKey:'curta'},async()=>monthlyPrice()),/32/);}
+ try{await assert.rejects(()=>createBillingService({...billingConfig(dir),trialHmacKey:'curta'},async()=>monthlyPrice()),/32/);
+  await assert.rejects(()=>createBillingService({...billingConfig(dir),rateHmacKey:'curta'},async()=>monthlyPrice()),/RATE_HMAC_KEY/);
+  await assert.rejects(()=>createBillingService({...billingConfig(dir),rateHmacKey:trialHmacKey},async()=>monthlyPrice()),/diferente/);
+ }
  finally{rmSync(dir,{recursive:true,force:true});}
 });
 test('Postgres usa o pooler 6543 em sa-east-1, verify-full, e a migração não guarda cartão',async()=>{
@@ -294,7 +298,14 @@ test('Postgres usa o pooler 6543 em sa-east-1, verify-full, e a migração não 
  assert.match(sql,/pg_cron/);assert.match(sql,/billing-keep-alive/);assert.match(sql,/billing-purge-events/);assert.match(sql,/billing-purge-identities/);assert.match(sql,/for all to billing_app/);
  assert.match(sql,/enable row level security/);assert.doesNotMatch(sql,/fingerprint|email/i);
  const fn=readFileSync(resolve('supabase/functions/billing/index.ts'),'utf8');assert.match(fn,/starting \?\?=/);assert.doesNotMatch(fn,/SERVICE_ROLE/);
- const hook=readFileSync(resolve('supabase/functions/stripe-webhook/index.ts'),'utf8');assert.match(hook,/constructEventAsync/);assert.match(hook,/createSubtleCryptoProvider/);assert.match(hook,/starting \?\?=/);
+ const hook=readFileSync(resolve('supabase/functions/stripe-webhook/index.ts'),'utf8');assert.match(hook,/constructEventAsync/);assert.match(hook,/createSubtleCryptoProvider/);assert.match(hook,/starting \?\?=/);assert.match(hook,/apiVersion: stripeApiVersion/);
+ const billingDeno=readFileSync(resolve('supabase/functions/billing/deno.json'),'utf8');const hookDeno=readFileSync(resolve('supabase/functions/stripe-webhook/deno.json'),'utf8');
+ assert.match(billingDeno,/sloppy-imports/);assert.match(hookDeno,/sloppy-imports/);assert.match(billingDeno,/npm:fastify@5\.12\.7/);assert.match(hookDeno,/npm:postgres@3\.4\.9/);
+ assert.match(readFileSync(resolve('deno.json'),'utf8'),/sloppy-imports/);assert.match(hook,/npm:stripe@18\.0\.0/);
+ assert.match(readFileSync(resolve('.github/workflows/ci.yml'),'utf8'),/deno check supabase\/functions\/\*\/index\.ts/);
+ assert.match(readFileSync(resolve('.gitignore'),'utf8'),/supabase\/\.temp\//);
+ assert.doesNotMatch(readFileSync(resolve('src/billing-service.ts'),'utf8'),/billing\.localneuron\.ai/);
+ const deploy=readFileSync(resolve('docs/billing-deploy.md'),'utf8');assert.doesNotMatch(deploy,/billing\.localneuron\.ai/);assert.match(deploy,/--api-version=2025-03-31\.basil/);assert.match(deploy,/500\.000/);
  assert.equal((readFileSync(resolve('supabase/config.toml'),'utf8').match(/verify_jwt = false/g)||[]).length,2);
  assert.equal(existsSync('vercel.json'),false);assert.equal(existsSync('api/billing.js'),false);assert.equal(existsSync('billing/migrations/20261021000000_init.sql'),false);
  assert.equal(existsSync('fly.toml'),false);assert.equal(existsSync('billing/Dockerfile'),false);assert.equal(existsSync('billing/docker-entrypoint.sh'),false);assert.equal(existsSync('.dockerignore'),false);
@@ -394,14 +405,42 @@ test('O limite durável vale entre instâncias e cai para a memória se o banco 
   assert.equal((await post(fallback)).statusCode,429);
  }finally{await fallback.close();rmSync(dir,{recursive:true,force:true});}
 });
+test('O limite usa o hop direito de x-forwarded-for e ignora x-real-ip',async()=>{
+ const dir=temporary(),device=randomUUID(),now=Date.now();
+ const stripe=async(path:string)=>{
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='checkout/sessions')return {id:'cs_hop',url:'https://checkout.stripe.com/c/hop',expires_at:(now+day)/1000};
+  if(path==='checkout/sessions/cs_hop')return {status:'open',mode:'subscription',client_reference_id:device};
+  throw Error(path);
+ };
+ const store=new MemoryBillingStore();const seen:string[]=[];
+ const original=store.bumpRate.bind(store);
+ store.bumpRate=async(ipHash,route,windowStart)=>{seen.push(ipHash);return original(ipHash,route,windowStart);};
+ const app=await createBillingService(billingConfig(dir),stripe,()=>now,store,{LOCALNEURON_BILLING_TRUST_PROXY:'supabase'});
+ const post=(forwarded?:string,real?:string)=>app.inject({method:'POST',url:'/billing/checkout',headers:{authorization:'Bearer '+'d'.repeat(64),...(forwarded?{'x-forwarded-for':forwarded}:{}),...(real?{'x-real-ip':real}:{})},payload:{device}});
+ try{
+  assert.equal((await post('9.9.9.9, 203.0.113.5','1.2.3.4')).statusCode,200);
+  assert.equal((await post('8.8.8.8, 203.0.113.5','9.9.9.9')).statusCode,200);
+  assert.equal(seen[0],seen[1]);assert.match(seen[0],/^[a-f0-9]{64}$/);
+  assert.equal((await post('198.51.100.9')).statusCode,200);
+  assert.notEqual(seen[2],seen[0]);
+  const before=seen.length;
+  assert.equal((await post(undefined,'203.0.113.9')).statusCode,200);
+  assert.notEqual(seen[before],seen[0]);assert.notEqual(seen[before],seen[2]);
+ }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
 test('Reembolso integral cancela a assinatura e o parcial não',async()=>{
  const dir=temporary(),now=Date.now();const deleted:{path:string;key?:string;method?:string}[]=[];
  const stripe=async(path:string,_body?:Record<string,string>,key?:string,method?:string)=>{
   if(path==='prices/price_month')return monthlyPrice();
   if(path==='prices/price_year')return yearlyPrice();
+  if(path.startsWith('invoice_payments?')&&path.includes('payment[payment_intent]=pi_full'))return {data:[{invoice:'in_1',payment:{type:'payment_intent',payment_intent:'pi_full'}}]};
+  if(path.startsWith('invoice_payments?')&&path.includes('payment[payment_intent]=pi_done'))return {data:[{invoice:'in_done',payment:{type:'payment_intent',payment_intent:'pi_done'}}]};
+  if(path.startsWith('invoice_payments?')&&path.includes('payment[payment_intent]=pi_fail'))return {data:[{invoice:'in_fail',payment:{type:'payment_intent',payment_intent:'pi_fail'}}]};
   if(path==='invoices/in_1')return {parent:{subscription_details:{subscription:'sub_r'}}};
-  if(path==='invoices/in_done')return {subscription:'sub_done'};
-  if(path==='invoices/in_fail')return {subscription:'sub_fail'};
+  if(path==='invoices/in_done')return {parent:{subscription_details:{subscription:'sub_done'}}};
+  if(path==='invoices/in_fail')return {parent:{subscription_details:{subscription:'sub_fail'}}};
   if(method==='DELETE'){if(path.endsWith('sub_fail'))throw Error('falhou');deleted.push({path,key,method});return {status:'canceled'};}
   if(path.startsWith('subscriptions/'))return {id:path.split('/')[1],status:path.includes('sub_done')?'canceled':'active'};
   throw Error(path);
@@ -410,12 +449,13 @@ test('Reembolso integral cancela a assinatura e o parcial não',async()=>{
  const app=await createBillingService(billingConfig(dir),stripe,()=>now,store);
  const post=(id:string,object:any)=>{const raw=JSON.stringify({id,type:'charge.refunded',data:{object}}),ts=Math.floor(now/1000),signature='t='+ts+',v1='+createHmac('sha256','webhook-test').update(ts+'.'+raw).digest('hex');return app.inject({method:'POST',url:'/billing/webhook',headers:{'content-type':'application/json','stripe-signature':signature},payload:raw});};
  try{
-  assert.equal((await post('evt_partial',{refunded:false,invoice:'in_partial'})).statusCode,200);assert.equal(deleted.length,0);
-  assert.equal((await post('evt_full',{refunded:true,invoice:'in_1'})).statusCode,200);
+  assert.equal((await post('evt_partial',{refunded:false,payment_intent:'pi_partial'})).statusCode,200);assert.equal(deleted.length,0);
+  assert.equal((await post('evt_full',{refunded:true,payment_intent:'pi_full'})).statusCode,200);
   assert.equal(deleted[0].path,'subscriptions/sub_r');assert.equal(deleted[0].method,'DELETE');assert.equal(deleted[0].key,'ln-refund-evt_full');
-  assert.equal((await post('evt_done',{refunded:true,invoice:'in_done'})).statusCode,200);assert.equal(deleted.length,1);
-  assert.notEqual((await post('evt_fail',{refunded:true,invoice:'in_fail'})).statusCode,200);
-  assert.equal(await store.hasEvent('evt_fail'),false);assert.equal(await store.hasEvent('evt_full'),true);
+  assert.equal((await post('evt_done',{refunded:true,payment_intent:'pi_done'})).statusCode,200);assert.equal(deleted.length,1);
+  assert.notEqual((await post('evt_fail',{refunded:true,payment_intent:'pi_fail'})).statusCode,200);
+  assert.notEqual((await post('evt_invoice',{refunded:true,invoice:'in_1'})).statusCode,200);
+  assert.equal(deleted.length,1);assert.equal(await store.hasEvent('evt_fail'),false);assert.equal(await store.hasEvent('evt_invoice'),false);assert.equal(await store.hasEvent('evt_full'),true);
   assert.equal(JSON.stringify([...store.events]).includes('invoice'),false);
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
@@ -430,7 +470,7 @@ test('A URL das funções junta o caminho e fixa São Paulo',async()=>{
   assert.equal((await local.checkout('yearly')).url,'https://checkout.stripe.com/c/year');
   assert.match(sent,/\/functions\/v1\/billing\/checkout\?forceFunctionRegion=sa-east-1$/);assert.equal(region,'sa-east-1');
   globalThis.fetch=async()=>new Response(JSON.stringify({status:'free',trial_repeat:true}));
-  await local.refresh();assert.equal(local.snapshot().trial_repeat,true);
+  await local.refresh();assert.equal(local.snapshot().trial_repeat,true);assert.equal(local.snapshot().trial_checked,true);assert.equal(local.snapshot().trial_eligible,false);
   const again=new Subscription(dir,{...testConfig,serviceUrl:'https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing'},()=>Date.now());
   assert.equal(again.snapshot().trial_repeat,true);
  }finally{globalThis.fetch=original;rmSync(dir,{recursive:true,force:true});}
@@ -444,7 +484,7 @@ test('Meu plano consulta a elegibilidade sem travar o chat',async()=>{
  try{
   assert.equal((await app.inject({method:'GET',url:'/v1/subscription',headers})).statusCode,200);assert.equal(calls,0);
   const started=Date.now();const plan=await app.inject({method:'GET',url:'/v1/subscription?intent=plan',headers});
-  assert.ok(Date.now()-started<1000);assert.equal(plan.json().trial_eligible,false);assert.equal(calls,1);
+  assert.ok(Date.now()-started<1000);assert.equal(plan.json().trial_eligible,false);assert.equal(plan.json().trial_checked,false);assert.equal(calls,1);
   release();let seen=false;
   for(let i=0;i<40&&!seen;i++){await new Promise(r=>setTimeout(r,25));seen=(await app.inject({method:'GET',url:'/v1/subscription',headers})).json().trial_eligible===true;}
   assert.equal(seen,true);assert.equal(calls,1);
@@ -469,6 +509,8 @@ test('A URL pública das funções pede a região de São Paulo',async()=>{
   assert.match(body.success_url,/\/functions\/v1\/billing\/success\?forceFunctionRegion=sa-east-1/);
   assert.match(body.cancel_url,/forceFunctionRegion=sa-east-1/);
   assert.equal(body.client_reference_id,device);
+  const page=await app.inject({method:'GET',url:'/billing/success'});
+  assert.match(String(page.headers['content-type']),/text\/plain/);assert.doesNotMatch(page.body,/<html/i);
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
 test('Produção recusa iniciar sem DATABASE_URL',()=>{

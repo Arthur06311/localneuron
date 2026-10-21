@@ -188,7 +188,7 @@ O código atual não é um serviço multiusuário pronto para ficar exposto dire
 - política de retenção e exclusão de dados;
 - processo de assinatura/notarização e atualização segura dos clientes.
 
-O serviço de cobrança Stripe (`src/billing-service.ts`) fica separado do app local, nas Edge Functions do Supabase, em `sa-east-1`. O domínio `billing.localneuron.ai` é posterior. As variáveis necessárias são `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_YEARLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY` (ou `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` no computador), `LOCALNEURON_BILLING_PUBLIC_URL` e `LOCALNEURON_BILLING_TRIAL_HMAC_KEY`. Elas nunca devem entrar no Git ou no bundle do desktop. A chave de HMAC não revela cartão nem e-mail: o banco guarda só o HMAC. O passo a passo está em [billing-deploy.md](billing-deploy.md) e o esquema em [billing-schema.md](billing-schema.md).
+O serviço de cobrança Stripe (`src/billing-service.ts`) fica separado do app local, nas Edge Functions do Supabase, em `sa-east-1`, em `https://hifnfveklpskbtxyeqza.supabase.co/functions/v1/billing`. Não há domínio próprio. As variáveis necessárias são `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_YEARLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY` (ou `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` no computador), `LOCALNEURON_BILLING_PUBLIC_URL`, `LOCALNEURON_BILLING_TRIAL_HMAC_KEY` e `LOCALNEURON_BILLING_RATE_HMAC_KEY`. Elas nunca devem entrar no Git ou no bundle do desktop. As chaves de HMAC não revelam cartão, e-mail nem IP: o banco guarda só o HMAC. O passo a passo está em [billing-deploy.md](billing-deploy.md) e o esquema em [billing-schema.md](billing-schema.md).
 
 ## 6. Configuração e variáveis importantes
 
@@ -211,9 +211,10 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) fica separado do app l
 | `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` | Caminho do arquivo PEM no computador. A variável acima ganha se as duas existirem | Somente billing |
 | `LOCALNEURON_BILLING_PUBLIC_URL` | URL pública HTTPS do serviço de cobrança | Somente billing |
 | `LOCALNEURON_BILLING_TRIAL_HMAC_KEY` | Segredo do HMAC de cartão e e-mail do teste. Mínimo de 32 caracteres. Não é o valor em claro. | Somente billing |
+| `LOCALNEURON_BILLING_RATE_HMAC_KEY` | Segredo separado do HMAC do limite. Mínimo de 32 caracteres e diferente da chave do teste. | Somente billing |
 | `LOCALNEURON_BILLING_HOST` | Endereço de escuta de `npm run billing` | Não; padrão `127.0.0.1` |
 | `LOCALNEURON_BILLING_PORT` | Porta local do serviço de cobrança | Não; padrão `4330`. A função Supabase não usa esta porta |
-| `LOCALNEURON_BILLING_TRUST_PROXY` | `supabase` para ler `x-real-ip` ou o primeiro hop de `x-forwarded-for` | Não; `SUPABASE_URL` em `.supabase.co` já liga esse modo |
+| `LOCALNEURON_BILLING_TRUST_PROXY` | `supabase` para ler só o hop mais à direita de `x-forwarded-for`. `x-real-ip` é ignorado | Não; `SUPABASE_URL` em `.supabase.co` já liga esse modo |
 | `LOCALNEURON_BILLING_DB_CA` | PEM ou caminho do certificado público do Postgres, se não for o pacote | Não |
 | `HF_HOME` / `HF_HUB_CACHE` | Cache Hugging Face | Hoje ignoradas: o motor de música define esses caminhos dentro da própria pasta |
 

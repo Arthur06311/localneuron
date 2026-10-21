@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs';
+import process from 'node:process';
 import postgres from 'postgres';
 import { supabaseRootCa } from './billing-ca.js';
+type Env = Record<string, string | undefined>;
 
 export type DeviceRow = {
   id: string;
@@ -92,7 +94,7 @@ export class MemoryBillingStore implements BillingStore {
 }
 
 /** Certificado público, ou o PEM/caminho em LOCALNEURON_BILLING_DB_CA. verify-full exige o CA e o nome do host. */
-export function billingDbCa(env: NodeJS.ProcessEnv = process.env): string {
+export function billingDbCa(env: Env = process.env): string {
   const raw = env.LOCALNEURON_BILLING_DB_CA;
   if (typeof raw !== 'string' || !raw.trim()) return supabaseRootCa;
   const text = raw.replace(/\\n/g, '\n');
@@ -102,7 +104,7 @@ export function billingDbCa(env: NodeJS.ProcessEnv = process.env): string {
   throw Error('LOCALNEURON_BILLING_DB_CA precisa ser um PEM ou o caminho do certificado.');
 }
 
-export function supabasePoolOptions(env: NodeJS.ProcessEnv = process.env) {
+export function supabasePoolOptions(env: Env = process.env) {
   return Object.freeze({
     prepare: false as const,
     max: 1,
@@ -141,7 +143,7 @@ function mapDevice(row: any): DeviceRow {
   };
 }
 
-export function createPostgresStore(databaseUrl: string, connect?: typeof postgres, env: NodeJS.ProcessEnv = process.env): BillingStore {
+export function createPostgresStore(databaseUrl: string, connect?: typeof postgres, env: Env = process.env): BillingStore {
   assertTransactionPoolerUrl(databaseUrl);
   assertSaoPauloHost(databaseUrl);
   assertBillingRole(databaseUrl);

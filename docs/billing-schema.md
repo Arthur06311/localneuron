@@ -15,11 +15,11 @@ Schema `billing`. Ele fica fora do `public` para não aparecer na Data API do Su
 | `billing.devices` | Uma instalação, criada só quando o Checkout começa. O segredo guardado é o SHA-256 do token local, nunca o token. |
 | `billing.events` | Id do evento Stripe já processado e a hora. Só essas duas colunas. O job apaga depois de 90 dias. |
 | `billing.trial_identities` | HMAC-SHA256, o id da assinatura que o viu primeiro e `created` para a retenção. |
-| `billing.rate_windows` | HMAC do endereço de rede, a rota, o início da janela e a contagem. Não há coluna de IP. |
+| `billing.rate_windows` | HMAC do hop usado no limite, com a chave própria `LOCALNEURON_BILLING_RATE_HMAC_KEY`, a rota, o início da janela e a contagem. Não há coluna de IP. |
 
 `billing.devices` tem só `id`, `secret`, `checkout`, `checkout_url`, `checkout_expires`, `checkout_attempt`, `checkout_plan`, `customer`, `subscription` e `trial_used`. Não há coluna de nome, de cartão nem de e-mail.
 
-`billing.trial_identities` não guarda o valor em claro. O job `billing-purge-identities` apaga linhas com `created` anterior a 5 × 365 dias. `billing-purge-events` apaga eventos com mais de 90 dias. `billing-purge-rates` apaga janelas com mais de cerca de dois minutos. `billing-keep-alive` chama a saúde da função uma vez por dia. Os quatro usam `pg_cron`. Um projeto pausado não executa o cron; restaure no painel.
+`billing.trial_identities` não guarda o valor em claro. A chave desse HMAC é `LOCALNEURON_BILLING_TRIAL_HMAC_KEY`. A coluna `ip_hash` de `billing.rate_windows` usa outra chave, `LOCALNEURON_BILLING_RATE_HMAC_KEY`. O hop é o mais à direita de `x-forwarded-for` quando o proxy do Supabase está ligado; sem hop válido, o limite usa o endereço do socket. O job `billing-purge-identities` apaga linhas com `created` anterior a 5 × 365 dias. `billing-purge-events` apaga eventos com mais de 90 dias. `billing-purge-rates` apaga janelas com `window_start` anterior a cerca de dois minutos (`120000` ms), a cada quinze minutos. O processo também chama essa limpeza no máximo uma vez por janela. `billing-keep-alive` chama a saúde da função uma vez por dia. Os quatro usam `pg_cron`. Um projeto pausado não executa o cron; restaure no painel.
 
 ## Idempotência
 

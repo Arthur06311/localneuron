@@ -1,5 +1,9 @@
-import Stripe from 'npm:stripe@17.7.0';
-import { applyVerifiedStripeEvent, createBillingFromEnv } from '../../../src/billing-service.ts';
+import Stripe from 'npm:stripe@18.0.0';
+import {
+  applyVerifiedStripeEvent,
+  createBillingFromEnv,
+  stripeApiVersion,
+} from '../../../src/billing-service.ts';
 
 let starting: Promise<Awaited<ReturnType<typeof createBillingFromEnv>>> | undefined;
 
@@ -14,6 +18,7 @@ Deno.serve(async (request) => {
     const body = await request.text();
     const signature = request.headers.get('stripe-signature') ?? '';
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
+      apiVersion: stripeApiVersion,
       httpClient: Stripe.createFetchHttpClient(),
     });
     const event = await stripe.webhooks.constructEventAsync(
