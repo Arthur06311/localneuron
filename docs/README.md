@@ -21,6 +21,7 @@ Este índice separa a documentação por assunto. Os caminhos do código continu
 ## Modelos e motores
 
 - [Modelos](modelos.md): catálogo, acesso, memória, licenças e downloads.
+- [Quantização](quantizacao.md): comparação das abordagens abertas e o padrão por plataforma.
 - [MLX independente](mlx-independente.md): runtime Apple Silicon e execução offline.
 - [Motor e assistente](motor-e-assistente.md): inferência, ferramentas, aprovações e controle do computador.
 - [Rede EXO](exo.md): conexão de máquinas e execução distribuída.

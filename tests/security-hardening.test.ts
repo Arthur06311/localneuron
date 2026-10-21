@@ -13,12 +13,13 @@ import { exoPreviewPath } from '../src/server-gateway.js';
 import { startupMessage } from '../src/startup-errors.js';
 import { Core } from '../src/core.js';
 
-const { hostClass, isLoopbackPeer, isPublicHttpUrl } = createRequire(import.meta.url)(
+const { hostClass, isLoopbackPeer, isPublicHttpUrl, isAgentRequestUrl } = createRequire(import.meta.url)(
   resolve('desktop/public-url.cjs'),
 ) as {
   hostClass: (hostname: string) => string;
   isLoopbackPeer: (ip: string) => boolean;
   isPublicHttpUrl: (value: string) => boolean;
+  isAgentRequestUrl: (value: string) => boolean;
 };
 
 test('Classificação de host é a mesma no desktop e no servidor', () => {
@@ -58,6 +59,11 @@ test('Classificação de host é a mesma no desktop e no servidor', () => {
   assert.equal(isLoopbackPeer('::ffff:127.0.0.1'), true);
   assert.equal(isLoopbackPeer('8.8.8.8'), false);
   assert.equal(isLoopbackPeer(''), false);
+  assert.equal(isAgentRequestUrl('wss://example.com/socket'), true);
+  assert.equal(isAgentRequestUrl('ws://example.com/socket'), true);
+  assert.equal(isAgentRequestUrl('wss://127.0.0.1/socket'), false);
+  assert.equal(isAgentRequestUrl('ws://192.168.0.8/socket'), false);
+  assert.equal(isAgentRequestUrl('wss://user:secret@example.com/socket'), false);
 });
 
 test('Executável local recusa shell e aceita o Node absoluto', () => {

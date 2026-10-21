@@ -11,8 +11,9 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 ### Adicionado
 
 - O Pro passa a oferecer Mensal R$ 20,00 ou Anual R$ 150 (cerca de 37% a menos, cerca de 4,5 meses), com 7 dias grátis. O teste só fica reservado quando a assinatura existe. Cartão ou e-mail repetido, guardados só como HMAC, encerra o teste na hora. Quem já assina troca Mensal e Anual no portal. A cobrança continua desligada até `subscription-config.json` receber o serviço. O passo a passo de publicação no Fly.io está em `docs/billing-deploy.md`.
+- A biblioteca quantiza um modelo já instalado, em GGUF com llama-quantize ou em MLX no Mac, e salva o resultado como outro modelo. O original permanece. A comparação das abordagens está em `docs/quantizacao.md`.
 - Anexos de texto e PDF passam a ser divididos em trechos, indexados no computador e consultados na conversa. Sem um modelo de embeddings, os trechos ficam guardados e a busca semântica avisa que não está disponível (#46).
-- O Modo servidor começa desligado e distingue Contribuir, Gerenciar e Só usar. O mapa lê o estado do EXO. RDMA permanece só como caminho futuro; a ligação desta fase é TCP (#57).
+- O Modo servidor começa desligado e distingue Contribuir, Gerenciar e Só usar. O mapa lê o estado do EXO. RDMA permanece só como caminho futuro; a conexão desta fase é TCP (#57).
 - O gateway do Modo servidor escuta só na rede local, na porta 52416, com pareamento por código de seis dígitos e chave por máquina. Enquanto o EXO está ligado, a porta 52415 continua sem senha (#59).
 - O site ganha SEO, página 404 e a escolha do idioma pelo navegador (#62).
 - A especificação da ilha Equipes entra em `docs/design/equipes/`, com marcas e mockup. Minha equipe permanece (#66).
@@ -20,8 +21,10 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Alterado
 
-- Uma conexão MCP local deixa de aceitar um shell como comando (`/bin/bash`, `cmd.exe` e equivalentes). O comando precisa ser o caminho absoluto do programa, e os argumentos vão no campo separado. Uma conexão já salva que apontava para um shell falha no próximo teste até ser editada: aponte o comando para o programa e passe os argumentos à parte.
-- HTTPS de uma conexão MCP para IP privado ou VPN (Tailscale) só funciona se a conexão estiver marcada como rede confiável. A opção nasce desligada. Uma conexão antiga nessa situação precisa ser editada e marcada.
+- Uma conexão MCP pode ser editada em Conexões. Dá para corrigir o comando, os argumentos e a opção rede confiável. A validação é a mesma de uma conexão nova. O token permanece se o campo ficar vazio e o endereço não mudar de origem. Trocar a origem sem um token novo apaga o antigo. Remover token apaga o token guardado. A lista de conexões não devolve comando nem argumentos; eles só aparecem ao editar.
+- O navegador da IA aplica a mesma política de endereço público ao WebSocket (`ws` e `wss`).
+- Uma conexão MCP local deixa de aceitar um shell como comando (`/bin/bash`, `cmd.exe` e equivalentes). O comando precisa ser o caminho absoluto do programa, e os argumentos vão no campo separado. Uma conexão já salva que apontava para um shell falha no próximo teste até ser editada em Conexões: aponte o comando para o programa e passe os argumentos à parte.
+- HTTPS de uma conexão MCP para IP privado ou VPN (Tailscale) só funciona se a conexão estiver marcada como rede confiável. A opção nasce desligada. Uma conexão antiga nessa situação pode ser editada em Conexões e marcada.
 
 - O aplicativo abre direto no Chat, na primeira execução e na atualização. A confirmação da senha do cofre antigo deixa de aparecer: a cópia datada é guardada sozinha, sem pedir senha, código ou PIN, e pode ser importada depois em Configurações.
 - O aplicativo abre direto, sem tela de desbloqueio; a chave do cofre fica no armazenamento seguro do sistema. Quem ainda tem senha confirma uma vez, e a interface deixa de oferecer desbloqueio e senha (#50).

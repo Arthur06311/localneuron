@@ -1,7 +1,7 @@
 const GiB = 1024 ** 3;
 /** Folga para o sistema antes de sugerir um modelo. */
 export const STARTER_RESERVE_BYTES = Math.round(1.5 * GiB);
-/** Margem de disco além do ficheiro do modelo. */
+/** Margem de disco além do arquivo do modelo. */
 export const STARTER_DISK_MARGIN_BYTES = GiB;
 /**
  * Teto de RAM estimada do modelo conforme a RAM total do computador.

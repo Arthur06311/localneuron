@@ -21,7 +21,7 @@ try {
   // Explicit inclusion avoids packaging vaults, sessions, model weights or workspace data.
   for(const file of ['package.json','package-lock.json','LICENSE','subscription-config.json','dist','desktop','public','workflows','THIRD_PARTY.md','licenses']) cpSync(join(root,file),join(source,file),{recursive:true,...(file==='public'?{filter:runtimeFilter}:{})});
   mkdirSync(join(source,'runtime'),{recursive:true});
-  for(const file of ['manifest.json','LICENSE.llama.cpp','tools-manifest.json','LICENSE.whisper.cpp'])cpSync(join(root,'runtime',file),join(source,'runtime',file));
+  for(const file of ['manifest.json','LICENSE.llama.cpp','tools-manifest.json','LICENSE.whisper.cpp','quantize-calibration.txt'])cpSync(join(root,'runtime',file),join(source,'runtime',file));
   cpSync(join(root,'runtime','tools-'+platform+'-'+arch),join(source,'runtime','tools-'+platform+'-'+arch),{recursive:true,verbatimSymlinks:true,filter:runtimeFilter});
   cpSync(join(root,'runtime',platform+'-'+arch),join(source,'runtime',platform+'-'+arch),{recursive:true,verbatimSymlinks:true});
   execFileSync(process.platform==='win32'?'npm.cmd':'npm',['ci','--os='+platform,'--cpu='+arch,'--omit=dev','--ignore-scripts','--no-audit','--no-fund'],{cwd:source,stdio:'inherit',shell:process.platform==='win32'});

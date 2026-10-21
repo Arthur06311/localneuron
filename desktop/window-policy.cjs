@@ -1,4 +1,4 @@
-const { isPublicHttpUrl, isAgentHttpUrl } = require('./public-url.cjs');
+const { isPublicHttpUrl, isAgentHttpUrl, isAgentRequestUrl } = require('./public-url.cjs');
 
 const SECURE_WEB_PREFERENCES = Object.freeze({
   nodeIntegration: false,
@@ -78,6 +78,19 @@ function createAgentWindow(BrowserWindow, { resolveHost } = {}) {
     webPreferences: agentWebPreferences(),
   });
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  if (typeof resolveHost === 'function') {
+    const ses = window.webContents && window.webContents.session;
+    const webRequest = ses && ses.webRequest;
+    if (webRequest && typeof webRequest.onBeforeRequest === 'function' && !webRequest.__localneuronAgentDns) {
+      webRequest.__localneuronAgentDns = true;
+      webRequest.onBeforeRequest({ urls: ['http://*/*', 'https://*/*', 'ws://*/*', 'wss://*/*'] }, (details, callback) => {
+        if (!isAgentRequestUrl(details.url)) { callback({ cancel: true }); return; }
+        let hostname = '';
+        try { hostname = new URL(details.url).hostname; } catch { callback({ cancel: true }); return; }
+        Promise.resolve(resolveHost(hostname)).then(ok => callback({ cancel: !ok })).catch(() => callback({ cancel: true }));
+      });
+    }
+  }
   const stopNavigation = () => {
     if (typeof window.isDestroyed === 'function' && window.isDestroyed()) return;
     if (window.webContents && typeof window.webContents.stop === 'function') window.webContents.stop();

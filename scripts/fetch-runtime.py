@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Obtain only the pinned official llama.cpp runtime; never download model weights."""
+"""Obtain only the pinned official llama.cpp runtime; never download model weights.
+
+The same archive includes llama-quantize and llama-imatrix next to llama-server.
+The in-app quantizer uses those binaries and does not download another runtime.
+"""
 import hashlib, io, json, platform, sys, tarfile, tempfile, urllib.request, zipfile, shutil
 from pathlib import Path
 root = Path(__file__).resolve().parents[1]

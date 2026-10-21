@@ -211,14 +211,14 @@ export function createCrews({ api, escape: E, toast, isVisible = () => true }) {
       <dialog class="crews-modal" id="crew-config">
         <form id="crew-remote">
           <h2>Configurar coordenador…</h2>
-          <p class="notice">Esta ligação pode sair deste computador. Confirme o aviso antes de salvar. Nada fica público por padrão e o token fica só no cofre.</p>
+          <p class="notice">Esta conexão pode sair deste computador. Confirme o aviso antes de salvar. Nada fica público por padrão e o token fica só no cofre.</p>
           <label>Provedor<select name="kind"><option value="anthropic">Anthropic</option><option value="xai">xAI</option><option value="openai">Outro computador</option><option value="exo">EXO em loopback</option></select></label>
           <label>Nome<input name="label" required maxlength="80" value="Coordenador"></label>
           <label>Modelo do provedor<input name="model" required maxlength="120" placeholder="claude-sonnet ou o id no outro computador"></label>
           <label>Endereço<input name="endpoint" maxlength="300" placeholder="https://192.168.1.20/v1 ou http://127.0.0.1:52415"></label>
           <label>Token<input name="token" type="password" autocomplete="off" maxlength="500"></label>
           <label class="crews-check"><input name="acknowledged" type="checkbox" required>Compreendo que o pedido pode sair deste computador.</label>
-          <label class="crews-check"><input name="confirm_remote" type="checkbox" required>Confirmo esta ligação.</label>
+          <label class="crews-check"><input name="confirm_remote" type="checkbox" required>Confirmo esta conexão.</label>
           <label class="crews-check"><input name="trusted_network" type="checkbox">Esta é uma rede privada confiável.</label>
           <div class="crews-actions"><button class="primary" type="submit">Salvar</button><button type="button" id="crew-config-close">Fechar</button></div>
         </form>
