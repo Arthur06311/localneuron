@@ -35,7 +35,7 @@ test('chave ausente em inglês volta ao português e o Chat em pt-BR não muda',
   useLocale('en');
   try {
     assert.equal(t('i18n.fallbackProbe'), 'texto só em português');
-    assert.equal(t('missing.key'), 'missing.key');
+    assert.equal(t('missing.key'), '');
     assert.equal(t('chat.welcome.title'), 'How can I help?');
     assert.equal(t('chat.welcome.eyebrow'), 'YOUR LOCAL ASSISTANT');
     assert.equal(t('nav.work'), 'Work');

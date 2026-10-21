@@ -23,18 +23,29 @@ function queryLang(query) {
   return params.get('lang') || '';
 }
 
+function chosenLocale(value) {
+  const choice = normalizeChoice(value);
+  if (choice === 'en') return 'en';
+  if (choice === 'pt-BR') return 'pt-BR';
+  return '';
+}
+
 export function resolveLocale({ query = '', storage = '', env = '', system = '', desktopLocale = '' } = {}) {
-  const fromQuery = normalizeChoice(queryLang(query));
-  if (fromQuery === 'pt-BR' || fromQuery === 'en') return fromQuery;
-  const fromEnv = normalizeChoice(env);
-  if (fromEnv === 'pt-BR' || fromEnv === 'en') return fromEnv;
-  const saved = normalizeChoice(storage);
-  if (saved === 'pt-BR' || saved === 'en') return saved;
+  const fromQuery = chosenLocale(queryLang(query));
+  if (fromQuery === 'en') return 'en';
+  if (fromQuery === 'pt-BR') return 'pt-BR';
+  const fromEnv = chosenLocale(env);
+  if (fromEnv === 'en') return 'en';
+  if (fromEnv === 'pt-BR') return 'pt-BR';
+  const saved = chosenLocale(storage);
+  if (saved === 'en') return 'en';
+  if (saved === 'pt-BR') return 'pt-BR';
   return localeFromLanguage(desktopLocale || system);
 }
 
 export function useLocale(locale) {
-  active = locale === 'en' ? 'en' : 'pt-BR';
+  if (locale === 'en') active = 'en';
+  else active = 'pt-BR';
   return active;
 }
 
@@ -58,11 +69,22 @@ export function saveLanguagePreference(value) {
   return stored;
 }
 
+function bundle() {
+  if (active === 'en') return catalogs.en;
+  return catalogs['pt-BR'];
+}
+
+function catalogText(key) {
+  const primary = bundle()[key];
+  if (typeof primary === 'string') return primary;
+  const fallback = catalogs['pt-BR'][key];
+  return typeof fallback === 'string' ? fallback : '';
+}
+
 export function t(key, vars) {
-  const translated = catalogs[active]?.[key];
-  let text = translated ?? catalogs['pt-BR'][key] ?? key;
+  let text = catalogText(key);
   if (vars) {
-    for (const [name, value] of Object.entries(vars)) text = text.replaceAll(`{${name}}`, String(value));
+    for (const [name, value] of Object.entries(vars)) text = text.replaceAll(`{${name}}`, String(value ?? ''));
   }
   return text;
 }
@@ -74,14 +96,21 @@ export function applyDocument(doc = typeof document === 'undefined' ? undefined 
   if (title) title.textContent = t('meta.title');
   const description = doc.querySelector('meta[name="description"]');
   if (description) description.setAttribute('content', t('meta.description'));
-  doc.querySelectorAll('[data-i18n]').forEach(node => { node.textContent = t(node.getAttribute('data-i18n')); });
+  const write = (node, attr, apply) => {
+    const name = node.getAttribute(attr);
+    if (typeof name !== 'string' || !Object.hasOwn(catalogs['pt-BR'], name)) return;
+    const primary = bundle()[name];
+    const text = typeof primary === 'string' ? primary : catalogs['pt-BR'][name];
+    if (typeof text === 'string') apply(text);
+  };
+  doc.querySelectorAll('[data-i18n]').forEach(node => { write(node, 'data-i18n', text => { node.textContent = text; }); });
   doc.querySelectorAll('[data-i18n-strong]').forEach(node => {
     const strong = node.querySelector('strong');
-    if (strong) strong.textContent = t(node.getAttribute('data-i18n-strong'));
+    if (strong) write(node, 'data-i18n-strong', text => { strong.textContent = text; });
   });
-  doc.querySelectorAll('[data-i18n-aria]').forEach(node => { node.setAttribute('aria-label', t(node.getAttribute('data-i18n-aria'))); });
-  doc.querySelectorAll('[data-i18n-title]').forEach(node => { node.setAttribute('title', t(node.getAttribute('data-i18n-title'))); });
-  doc.querySelectorAll('[data-i18n-placeholder]').forEach(node => { node.setAttribute('placeholder', t(node.getAttribute('data-i18n-placeholder'))); });
+  doc.querySelectorAll('[data-i18n-aria]').forEach(node => { write(node, 'data-i18n-aria', text => { node.setAttribute('aria-label', text); }); });
+  doc.querySelectorAll('[data-i18n-title]').forEach(node => { write(node, 'data-i18n-title', text => { node.setAttribute('title', text); }); });
+  doc.querySelectorAll('[data-i18n-placeholder]').forEach(node => { write(node, 'data-i18n-placeholder', text => { node.setAttribute('placeholder', text); }); });
   return active;
 }
 
