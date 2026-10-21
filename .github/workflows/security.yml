@@ -31,7 +31,9 @@ jobs:
 
       # Binário oficial, fixado por versão e SHA-256. A gitleaks-action comenta
       # no pull request e consulta a API de pulls; o CLI fica em contents: read
-      # e varre o histórico inteiro do clone, não só o diff do evento.
+      # e varre o histórico inteiro do commit em checkout, não só o diff do
+      # evento. O padrão do gitleaks inclui --all. Com fetch-depth 0 isso também
+      # varre ramos remotos que não entram neste merge.
       - name: Instalar gitleaks 8.30.1
         env:
           GITLEAKS_VERSION: "8.30.1"
@@ -49,7 +51,7 @@ jobs:
           rm -f "${archive}" gitleaks
 
       - name: Detectar segredos no histórico
-        run: gitleaks detect --source . --config .gitleaks.toml --verbose --redact --exit-code 1
+        run: gitleaks detect --source . --config .gitleaks.toml --verbose --redact --exit-code 1 --log-opts="--full-history --diff-filter=tuxdb"
 
   npm-audit:
     name: npm audit
