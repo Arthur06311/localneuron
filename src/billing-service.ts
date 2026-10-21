@@ -1,5 +1,6 @@
 /** Run on the publisher's HTTPS server. Never distribute its private key with the desktop app. */
 import Fastify from 'fastify';
+import rateLimit from '@fastify/rate-limit';
 import { createHash, createHmac, randomUUID, sign, timingSafeEqual } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -74,18 +75,13 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
   const priceId:Record<BillingPlan,string>={monthly:config.monthlyPriceId,yearly:config.yearlyPriceId};
   const db=store??(config.databaseUrl?createPostgresStore(config.databaseUrl):new MemoryBillingStore());
   const app=Fastify({logger:false,bodyLimit:256*1024,trustProxy:'loopback'});
-  const rate=new Map<string,{count:number;until:number}>();
+  const limited={config:{rateLimit:{max:60,timeWindow:'1 minute'}}};
   app.addHook('onRequest',async(req,reply)=>{
     reply.header('Cache-Control','no-store').header('X-Content-Type-Options','nosniff').header('Referrer-Policy','no-referrer').header('Content-Security-Policy',"default-src 'none'; frame-ancestors 'none'");
     if(req.headers.origin)return reply.code(403).send({error:'Use o aplicativo LocalNeuron.'});
-    const path=req.url.split('?')[0];
-    if(path==='/billing/webhook'||path==='/health')return;
-    for(const [key,value]of rate)if(value.until<now())rate.delete(key);
-    const ip=clientIp(req.headers['x-real-ip'],req.headers['x-forwarded-for'],req.ip);
-    const value=rate.get(ip)||{count:0,until:now()+60_000};value.count++;rate.set(ip,value);
-    if(value.count>60||rate.size>10000)return reply.code(429).send({error:'Aguarde antes de tentar novamente.'});
   });
-  app.setErrorHandler((e,req,reply)=>reply.code((e as any).statusCode||400).send({error:'Não foi possível concluir a operação de assinatura.'}));
+  await app.register(rateLimit,{global:true,max:60,timeWindow:'1 minute',allowList:(req:any)=>['/health','/billing/webhook'].includes(String(req.url).split('?')[0]),keyGenerator:(req:any)=>clientIp(req.headers['x-real-ip'],req.headers['x-forwarded-for'],req.ip),errorResponseBuilder:()=>Object.assign(Error('Aguarde antes de tentar novamente.'),{statusCode:429})});
+  app.setErrorHandler((e,req,reply)=>{const status=(e as any).statusCode||400;return reply.code(status).send({error:status===429?'Aguarde antes de tentar novamente.':'Não foi possível concluir a operação de assinatura.'});});
   app.addHook('onClose',async()=>db.close());
   const row=(id:string)=>db.getDevice(id);
   const markTrial=(id:string)=>db.markTrial(id);
@@ -152,7 +148,7 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
     return {token:signLease(lease,config.privateKey)};
   }
   app.get('/health',async()=>({ok:true}));
-  app.post('/billing/checkout',async req=>{const d=await authenticate(req,true);return exclusive(d.id,async()=>{
+  app.post('/billing/checkout',limited,async req=>{const d=await authenticate(req,true);return exclusive(d.id,async()=>{
     const plan=d.requestedPlan as BillingPlan;
     const current=await subscription(d.id);
     if(current&&['active','trialing','past_due','unpaid','incomplete','paused'].includes(current.status)){
@@ -168,9 +164,9 @@ export async function createBillingService(config:BillingConfig, stripe:StripeCa
     const checkout=await stripe('checkout/sessions',{mode:'subscription','line_items[0][price]':priceId[plan],'line_items[0][quantity]':'1',client_reference_id:d.id,'subscription_data[metadata][device]':d.id,'metadata[device]':d.id,success_url:origin.origin+'/billing/success',cancel_url:origin.origin+'/billing/cancel',payment_method_collection:'always',locale:'pt-BR',...(grantTrial?{'subscription_data[trial_period_days]':'7'}:{}),...(fresh.customer?{customer:fresh.customer}:{})},'ln-'+d.id+'-'+attempt);
     await db.updateDevice(d.id,{checkout:checkout.id,checkout_url:checkout.url,checkout_expires:checkout.expires_at*1000,checkout_attempt:null,checkout_plan:plan,subscription:null});return {url:checkout.url};
   });});
-  app.post('/billing/eligibility',async req=>{const d=await authenticate(req,true);return exclusive(d.id,async()=>{const fresh=await row(d.id);if(!fresh)throw Error('Instalação não encontrada.');return {trial_eligible:!(fresh.trial_used||await customerUsedTrial(fresh))};});});
-  app.post('/billing/refresh',async req=>{const d=await authenticate(req);return exclusive(d.id,async()=>entitlement(d.id,await subscription(d.id)));});
-  app.post('/billing/portal',async req=>{const d=await authenticate(req);return exclusive(d.id,async()=>{await subscription(d.id);const customer=(await row(d.id))?.customer;if(!customer)throw Error('Sem assinatura.');const portal=await stripe('billing_portal/sessions',{customer,return_url:origin.origin+'/billing/success'});return {url:portal.url};});});
+  app.post('/billing/eligibility',limited,async req=>{const d=await authenticate(req,true);return exclusive(d.id,async()=>{const fresh=await row(d.id);if(!fresh)throw Error('Instalação não encontrada.');return {trial_eligible:!(fresh.trial_used||await customerUsedTrial(fresh))};});});
+  app.post('/billing/refresh',limited,async req=>{const d=await authenticate(req);return exclusive(d.id,async()=>entitlement(d.id,await subscription(d.id)));});
+  app.post('/billing/portal',limited,async req=>{const d=await authenticate(req);return exclusive(d.id,async()=>{await subscription(d.id);const customer=(await row(d.id))?.customer;if(!customer)throw Error('Sem assinatura.');const portal=await stripe('billing_portal/sessions',{customer,return_url:origin.origin+'/billing/success'});return {url:portal.url};});});
   app.get('/billing/success',async(_req,reply)=>reply.type('text/html; charset=utf-8').send('<!doctype html><html lang="pt-BR"><meta name="viewport" content="width=device-width"><title>LocalNeuron Pro</title><h1>Volte ao LocalNeuron</h1><p>Em Meu plano, clique em Atualizar assinatura. Nos 7 dias grátis, o Pro é liberado depois que a assinatura é confirmada. Fora do teste, o Pro é liberado após a confirmação do pagamento.</p></html>'));
   app.get('/billing/cancel',async(_req,reply)=>reply.type('text/html; charset=utf-8').send('<!doctype html><html lang="pt-BR"><meta name="viewport" content="width=device-width"><title>LocalNeuron</title><h1>Você pode continuar com o Grátis</h1><p>Volte ao LocalNeuron para conversar com suas IAs.</p></html>'));
   await app.register(async scope=>{

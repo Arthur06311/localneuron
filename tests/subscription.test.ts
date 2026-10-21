@@ -304,6 +304,26 @@ test('A função da Vercel entrega o corpo cru do webhook na rota pública',asyn
   assert.equal(health.statusCode,200);assert.match(health.body,/"ok":true/);
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
+test('Checkout autenticado para no 60º pedido e saúde continua livre',async()=>{
+ const dir=temporary(),device=randomUUID(),now=Date.now();
+ const stripe=async(path:string)=>{
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='checkout/sessions')return {id:'cs_rate',url:'https://checkout.stripe.com/c/rate',expires_at:(now+day)/1000};
+  if(path==='checkout/sessions/cs_rate')return {status:'open',mode:'subscription',client_reference_id:device};
+  throw Error(path);
+ };
+ const app=await createBillingService(billingConfig(dir),stripe,()=>now);
+ const headers={authorization:'Bearer '+'a'.repeat(64)};
+ const checkout=()=>app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device}});
+ try{
+  for(let i=0;i<60;i++)assert.equal((await checkout()).statusCode,200);
+  const blocked=await checkout();
+  assert.equal(blocked.statusCode,429);assert.match(blocked.body,/Aguarde antes de tentar novamente/);
+  assert.equal((await app.inject({method:'GET',url:'/health'})).statusCode,200);
+  assert.equal((await app.inject({method:'POST',url:'/billing/checkout',headers:{...headers,origin:'https://evil.example'},payload:{device}})).statusCode,403);
+ }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
 test('Produção recusa iniciar sem DATABASE_URL',()=>{
  assert.throws(()=>billingConfigFromEnv({}),/DATABASE_URL/);
 });
