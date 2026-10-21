@@ -282,6 +282,7 @@ test('Fuses deixam o servidor local de pé e fecham os injetores', () => {
   assert.equal(config[FuseV1Options.OnlyLoadAppFromAsar], false);
   assert.equal(config[FuseV1Options.LoadBrowserProcessSpecificV8Snapshot], false);
   assert.equal(config[FuseV1Options.GrantFileProtocolExtraPrivileges], false);
+  assert.equal(config[FuseV1Options.WasmTrapHandlers], true);
   assert.equal(DESIRED_FUSES.runAsNode, true);
   assert.equal(electronBinary('/out', 'linux'), join('/out', 'LocalNeuron'));
   assert.equal(electronBinary('/out', 'win32'), join('/out', 'LocalNeuron.exe'));

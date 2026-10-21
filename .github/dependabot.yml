@@ -4,15 +4,18 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    # Fora do grupo semanal. O typescript-eslint@8 exige typescript >=4.8.4 <6.1.0
-    # e o TypeScript 7 não expõe a API JavaScript que o ESLint usa: o npm ci
-    # falha com ERESOLVE. O 5.x e o 6.0.x continuam no grupo.
+    # O typescript-eslint@8 exige typescript >=4.8.4 <6.1.0 e o TypeScript 7
+    # não expõe a API JavaScript que o ESLint usa: o npm ci falha com ERESOLVE.
+    # Ficamos no TypeScript 5.x: semver-major fica de fora (o 6.0.x deixa de
+    # ser proposto) e >=6.1.0 continua ignorado.
     # O PGlite >=0.4 pede dump/restore. O 0.5 usa PostgreSQL 18 e não abre o
     # diretório gravado pelo 0.3.16 (PostgreSQL 17); um bump no grupo poderia
     # impedir a leitura das bases já existentes. Os patches 0.3.x continuam no grupo.
     ignore:
       - dependency-name: "typescript"
         versions: [">=6.1.0"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "@electric-sql/pglite"
         versions: [">=0.4.0"]
     groups:
