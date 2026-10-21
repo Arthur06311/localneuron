@@ -156,7 +156,7 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   let lastPlanRefresh=0;
   app.get('/v1/subscription',async()=>{const state=subscription.snapshot();if(state.configured&&state.checked_at&&Date.now()-state.checked_at>86400_000&&Date.now()-lastPlanRefresh>1800_000){lastPlanRefresh=Date.now();void subscription.refresh().catch(()=>{});}return state;});
   app.post('/v1/subscription/refresh',async()=>subscription.refresh());
-  app.post('/v1/subscription/checkout',async()=>subscription.checkout());
+  app.post('/v1/subscription/checkout',async request=>{const {plan}=z.strictObject({plan:z.enum(['monthly','yearly']).optional()}).parse(body(request)??{});return subscription.checkout(plan??'monthly');});
   app.post('/v1/subscription/portal',async()=>subscription.portal());
   app.post('/v1/subscription/studio',async()=>({ok:true}));
   app.post('/v1/pro/optimize',async request=>{const v=optimizationSchema.parse(body(request));const model=(await library.snapshot()).installed.find(m=>m.key===v.key);if(!model)throw Error('Escolha um modelo instalado.');const result=optimizeContext(model,memoryStatus().available_memory_bytes,v.mode,v.options);pro.profile(v.key,result.options);return result;});

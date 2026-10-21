@@ -10,6 +10,7 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 
 ### Adicionado
 
+- O Pro passa a oferecer Mensal R$ 29,90 ou Anual R$ 299, com 7 dias grátis uma vez por instalação. A cobrança continua desligada até `subscription-config.json` receber o serviço. O passo a passo de publicação no Fly.io está em `docs/billing-deploy.md`.
 - Anexos de texto e PDF passam a ser divididos em trechos, indexados no computador e consultados na conversa. Sem um modelo de embeddings, os trechos ficam guardados e a busca semântica avisa que não está disponível (#46).
 - O Modo servidor começa desligado e distingue Contribuir, Gerenciar e Só usar. O mapa lê o estado do EXO. RDMA permanece só como caminho futuro; a ligação desta fase é TCP (#57).
 - O gateway do Modo servidor escuta só na rede local, na porta 52416, com pareamento por código de seis dígitos e chave por máquina. Enquanto o EXO está ligado, a porta 52415 continua sem senha (#59).

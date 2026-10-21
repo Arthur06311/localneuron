@@ -68,17 +68,20 @@ export class Subscription {
     if (lease.issued_at > this.now()+300_000 || lease.issued_at < (this.lease?.issued_at??0)) throw Error('Licença antiga ou com data futura.');
     this.lease=lease; this.state.token=token; this.state.checked_at=this.now(); this.error=''; this.save(); return this.snapshot();
   }
-  private async request(path: string) {
+  private async request(path: string, extra: Record<string, string> = {}) {
     if (!this.config.serviceUrl || !this.config.publicKey) throw Error('Assinaturas em preparação. Nenhuma cobrança está habilitada.');
     const url=new URL(this.config.serviceUrl);
     if(url.protocol!=='https:' || url.username || url.password || url.search || url.hash) throw Error('Endereço de assinatura inválido.');
-    const response=await fetch(new URL(path,url),{method:'POST',redirect:'error',signal:AbortSignal.timeout(15000),headers:{'content-type':'application/json',authorization:'Bearer '+this.state.secret},body:JSON.stringify({device:this.state.device})});
+    const response=await fetch(new URL(path,url),{method:'POST',redirect:'error',signal:AbortSignal.timeout(15000),headers:{'content-type':'application/json',authorization:'Bearer '+this.state.secret},body:JSON.stringify({device:this.state.device,...extra})});
     if(!response.ok) throw Error(response.status===429?'Aguarde um minuto e tente novamente.':'Não foi possível consultar sua assinatura. Tente novamente.');
     const text=await response.text(); if(text.length>16000)throw Error('Resposta de assinatura inválida.'); return JSON.parse(text);
   }
-  async checkout() { return this.external('/billing/checkout','checkout.stripe.com'); }
+  async checkout(plan: 'monthly' | 'yearly' = 'monthly') {
+    if(plan!=='monthly'&&plan!=='yearly') throw Error('Escolha o plano mensal ou o anual.');
+    return this.external('/billing/checkout','checkout.stripe.com',{plan});
+  }
   async portal() { return this.external('/billing/portal','billing.stripe.com'); }
-  private async external(path: string, host: string) { const value=await this.request(path);const url=new URL(value.url);if(url.protocol!=='https:'||url.hostname!==host||url.username||url.password||url.port)throw Error('Endereço de pagamento inválido.');return {url:url.href}; }
+  private async external(path: string, host: string, extra: Record<string, string> = {}) { const value=await this.request(path,extra);const url=new URL(value.url);if(url.protocol!=='https:'||url.hostname!==host||url.username||url.password||url.port)throw Error('Endereço de pagamento inválido.');return {url:url.href}; }
   async refresh() {
     if(this.refreshing)return this.refreshing;
     this.refreshing=(async()=>{try{const value=await this.request('/billing/refresh');if(typeof value.token==='string')return this.install(value.token);if(value.status==='free'){this.lease=undefined;delete this.state.token;this.state.checked_at=this.now();this.error='';this.save();return this.snapshot();}throw Error('Resposta de assinatura inválida.');}catch(e){this.error=(e as Error).message;throw e;}finally{this.refreshing=undefined;}})();return this.refreshing;

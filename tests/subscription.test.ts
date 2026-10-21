@@ -5,7 +5,7 @@ import {join,resolve} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createHmac,generateKeyPairSync,randomUUID} from 'node:crypto';
 import {Subscription,requiredFeature,verifyLease,type Lease} from '../src/subscription.js';
-import {createBillingService,signLease,verifyWebhook,validateMonthlyPrice} from '../src/billing-service.js';
+import {createBillingService,signLease,verifyWebhook,validateApprovedPrice} from '../src/billing-service.js';
 import {optimizeContext} from '../src/optimization.js';
 import {optionsSchema} from '../src/inference.js';
 import {Core} from '../src/core.js';
@@ -14,6 +14,9 @@ import {testKeys,testConfig,activateTestPro} from './subscription-fixture.js';
 const privateKey=testKeys.privateKey.export({type:'pkcs8',format:'pem'}).toString();
 const temporary=()=>mkdtempSync(join(tmpdir(),'neuron-subscription-'));
 const day=86400_000;
+const monthlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:2990,billing_scheme:'per_unit',recurring:{interval:'month',interval_count:1,usage_type:'licensed'}});
+const yearlyPrice=()=>({active:true,type:'recurring',currency:'brl',unit_amount:29900,billing_scheme:'per_unit',recurring:{interval:'year',interval_count:1,usage_type:'licensed'}});
+const billingConfig=(dir:string)=>({database:join(dir,'billing.sqlite'),secretKey:'test',webhookSecret:'webhook-test',monthlyPriceId:'price_month',yearlyPriceId:'price_year',privateKey,publicUrl:'https://billing.example.com'});
 function lease(device:string,now:number):Lease {return {version:1,audience:'localneuron-pro',device,subscription:'sub_test',status:'active',issued_at:now,expires_at:now+7*day,period_end:now+30*day,cancel_at_period_end:false};}
 test('Licença assinada: offline, reinício, expiração, cancelamento e relógio',()=>{
  const dir=temporary();let now=Date.now();const initial=now;
@@ -65,16 +68,17 @@ test('Cobrança mensal: checkout único, confirmação, portal, renovação, fal
  const dir=temporary(),device=randomUUID(),now=Date.now();let paid=false,status='active',cancel=false,creates=0,period=now+30*day;const calls:any[]=[];
  const stripe=async(path:string,body?:Record<string,string>,key?:string)=>{
   calls.push({path,body,key});
-  if(path==='prices/price_month')return {active:true,type:'recurring',currency:'brl',unit_amount:2990,billing_scheme:'per_unit',recurring:{interval:'month',interval_count:1,usage_type:'licensed'}};
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
   if(path==='checkout/sessions'){creates++;return {id:'cs_test',url:'https://checkout.stripe.com/c/test',expires_at:(now+day)/1000};}
   if(path==='checkout/sessions/cs_test')return {status:paid?'complete':'open',mode:'subscription',client_reference_id:device,customer:'cus_test',subscription:'sub_test'};
   if(path.startsWith('subscriptions/'))return {id:'sub_test',customer:'cus_test',metadata:{device},status,cancel_at_period_end:cancel,latest_invoice:{status:paid?'paid':'open'},items:{data:[{price:{id:'price_month'},current_period_end:period/1000}]}};
   if(path==='billing_portal/sessions')return {url:'https://billing.stripe.com/p/session/test'};
   throw Error(path);
  };
- const app=await createBillingService({database:join(dir,'billing.sqlite'),secretKey:'test',webhookSecret:'webhook-test',priceId:'price_month',privateKey,publicUrl:'https://billing.example.com'},stripe,()=>now);
+ const app=await createBillingService(billingConfig(dir),stripe,()=>now);
  const headers={authorization:'Bearer '+'a'.repeat(64)};const post=(path:string)=>app.inject({method:'POST',url:'/billing/'+path,headers,payload:{device}});
- try{const [a,b]=await Promise.all([post('checkout'),post('checkout')]);assert.equal(a.statusCode,200);assert.equal(b.statusCode,200);assert.equal(creates,1);assert.equal((await post('refresh')).json().status,'free');
+ try{const [a,b]=await Promise.all([post('checkout'),post('checkout')]);assert.equal(a.statusCode,200);assert.equal(b.statusCode,200);assert.equal(creates,1);const created=calls.find(c=>c.path==='checkout/sessions');assert.equal(created.body['line_items[0][price]'],'price_month');assert.equal(created.body['subscription_data[trial_period_days]'],'7');assert.equal((await post('refresh')).json().status,'free');
  const wrong=await app.inject({method:'POST',url:'/billing/portal',headers:{authorization:'Bearer '+'b'.repeat(64)},payload:{device}});assert.equal(wrong.statusCode,401);
  paid=true;let data=(await post('refresh')).json();assert.equal(verifyLease(data.token,testConfig.publicKey,device).status,'active');assert.equal((await post('checkout')).statusCode,400);
  assert.equal((await post('portal')).statusCode,200);assert.equal(calls.find(c=>c.path==='billing_portal/sessions').body.customer,'cus_test');
@@ -86,11 +90,107 @@ test('Cobrança mensal: checkout único, confirmação, portal, renovação, fal
  assert.equal(verifyLease((await post('refresh')).json().token,testConfig.publicKey,device).status,'active');
  }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
 });
-test('Preço aprovado: aceita R$ 29,90 mensal e recusa moeda, valor, periodicidade e cobrança por uso incorretos',()=>{
- const price={active:true,type:'recurring',currency:'brl',unit_amount:2990,billing_scheme:'per_unit',recurring:{interval:'month',interval_count:1,usage_type:'licensed'}};
- assert.doesNotThrow(()=>validateMonthlyPrice(price));
- for(const change of [{active:false},{type:'one_time'},{currency:'usd'},{unit_amount:29900},{unit_amount:null},{billing_scheme:'tiered'},{transform_quantity:{divide_by:5,round:'up'}},{recurring:{...price.recurring,interval:'year'}},{recurring:{...price.recurring,interval_count:3}},{recurring:{...price.recurring,usage_type:'metered'}}])
-  assert.throws(()=>validateMonthlyPrice({...price,...change}),/29,90/);
+test('Lista de preços: aceita mensal BRL 2990 e anual BRL 29900 e recusa combinações fora da lista',async()=>{
+ const monthly=monthlyPrice(),yearly=yearlyPrice();
+ assert.equal(validateApprovedPrice(monthly),'monthly');assert.equal(validateApprovedPrice(yearly),'yearly');
+ for(const price of [{...monthly,active:false},{...monthly,type:'one_time'},{...monthly,currency:'usd'},{...monthly,unit_amount:29900},{...monthly,unit_amount:null},{...yearly,unit_amount:2990},{...monthly,billing_scheme:'tiered'},{...monthly,transform_quantity:{divide_by:5,round:'up'}},{...monthly,recurring:{...monthly.recurring,interval:'year'}},{...yearly,recurring:{...yearly.recurring,interval:'month'}},{...monthly,recurring:{...monthly.recurring,interval_count:3}},{...yearly,recurring:{...yearly.recurring,interval_count:12}},{...monthly,recurring:{...monthly.recurring,usage_type:'metered'}}])
+  assert.throws(()=>validateApprovedPrice(price),/2990|29900/);
+ const dir=temporary();
+ try{
+  const wrong=async(path:string)=>{if(path==='prices/price_month')return {...monthly,unit_amount:1000};if(path==='prices/price_year')return yearly;throw Error(path);};
+  await assert.rejects(()=>createBillingService(billingConfig(dir),wrong),/2990|29900/);
+  const swapped=async(path:string)=>{if(path==='prices/price_month')return yearly;if(path==='prices/price_year')return yearly;throw Error(path);};
+  await assert.rejects(()=>createBillingService(billingConfig(dir),swapped),/29,90/);
+  await assert.rejects(()=>createBillingService({...billingConfig(dir),yearlyPriceId:'price_month'},async()=>monthly),/diferentes/);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+test('Checkout anual usa o preço de R$ 299 e inclui 7 dias de teste',async()=>{
+ const dir=temporary(),device=randomUUID(),now=Date.now(),calls:any[]=[];
+ const stripe=async(path:string,body?:Record<string,string>)=>{
+  calls.push({path,body});
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='checkout/sessions')return {id:'cs_year',url:'https://checkout.stripe.com/c/year',expires_at:(now+day)/1000};
+  throw Error(path);
+ };
+ const app=await createBillingService(billingConfig(dir),stripe,()=>now);
+ const headers={authorization:'Bearer '+'c'.repeat(64)};
+ try{
+  const response=await app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device,plan:'yearly'}});
+  assert.equal(response.statusCode,200);assert.equal(response.json().url,'https://checkout.stripe.com/c/year');
+  const body=calls.find(c=>c.path==='checkout/sessions').body;
+  assert.equal(body.mode,'subscription');assert.equal(body['line_items[0][price]'],'price_year');assert.equal(body['line_items[0][quantity]'],'1');
+  assert.equal(body['subscription_data[trial_period_days]'],'7');assert.equal(body['subscription_data[metadata][device]'],device);
+  assert.equal(body.payment_method_collection,'always');assert.equal(body.locale,'pt-BR');
+  assert.equal((await app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device,plan:'vitalicio'}})).statusCode,400);
+  assert.equal((await app.inject({method:'GET',url:'/health'})).json().ok,true);
+ }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('Status trialing conta como licença ativa, sem exigir fatura paga',async()=>{
+ const dir=temporary(),device=randomUUID();let now=Date.now(),status='trialing',trialEnd=now+7*day,invoice='open',paused:any=null;
+ const stripe=async(path:string)=>{
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='checkout/sessions')return {id:'cs_trial',url:'https://checkout.stripe.com/c/trial',expires_at:(now+day)/1000};
+  if(path==='checkout/sessions/cs_trial')return {status:'complete',mode:'subscription',client_reference_id:device,customer:'cus_trial',subscription:'sub_trial'};
+  if(path.startsWith('subscriptions/sub_trial'))return {id:'sub_trial',customer:'cus_trial',metadata:{device},status,cancel_at_period_end:false,trial_end:trialEnd/1000,pause_collection:paused,latest_invoice:{status:invoice},items:{data:[{price:{id:'price_year'},current_period_end:(now+365*day)/1000}]}};
+  throw Error(path);
+ };
+ const app=await createBillingService(billingConfig(dir),stripe,()=>now);
+ const headers={authorization:'Bearer '+'d'.repeat(64)};const post=()=>app.inject({method:'POST',url:'/billing/refresh',headers,payload:{device}});
+ try{
+  assert.equal((await app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device,plan:'yearly'}})).statusCode,200);
+  const lease=verifyLease((await post()).json().token,testConfig.publicKey,device);
+  assert.equal(lease.status,'active');assert.ok(lease.expires_at<=trialEnd);assert.ok(lease.expires_at>now);assert.ok(lease.expires_at-lease.issued_at<=7*day);assert.equal(lease.period_end,trialEnd);
+  status='active';invoice='open';const unpaid=verifyLease((await post()).json().token,testConfig.publicKey,device);assert.notEqual(unpaid.status,'active');
+  status='trialing';invoice='open';paused={behavior:'void'};assert.notEqual(verifyLease((await post()).json().token,testConfig.publicKey,device).status,'active');
+  paused=null;trialEnd=now-1000;assert.notEqual(verifyLease((await post()).json().token,testConfig.publicKey,device).status,'active');
+ }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('O teste de 7 dias é único por instalação e por cliente',async()=>{
+ const dir=temporary(),device=randomUUID();let now=Date.now(),sessions=0;const calls:any[]=[];
+ const stripe=async(path:string,body?:Record<string,string>)=>{
+  calls.push({path,body});
+  if(path==='prices/price_month')return monthlyPrice();
+  if(path==='prices/price_year')return yearlyPrice();
+  if(path==='checkout/sessions'){sessions++;return {id:'cs_'+sessions,url:'https://checkout.stripe.com/c/'+sessions,expires_at:(now+3600_000)/1000};}
+  if(path.endsWith('/expire'))return {id:'expired',status:'expired'};
+  if(path.startsWith('checkout/sessions/'))return {status:'expired',mode:'subscription',client_reference_id:device};
+  if(path.startsWith('subscriptions?'))return {data:[{id:'sub_old',status:'canceled',trial_end:1}],has_more:false};
+  throw Error(path);
+ };
+ const app=await createBillingService(billingConfig(dir),stripe,()=>now);
+ const headers={authorization:'Bearer '+'e'.repeat(64)};
+ const checkout=()=>app.inject({method:'POST',url:'/billing/checkout',headers,payload:{device,plan:'monthly'}});
+ const sessionBodies=()=>calls.filter(c=>c.path==='checkout/sessions').map(c=>c.body);
+ try{
+  assert.equal((await checkout()).statusCode,200);
+  assert.equal(sessionBodies()[0]['subscription_data[trial_period_days]'],'7');
+  now+=2*day;
+  assert.equal((await checkout()).statusCode,200);
+  assert.equal(sessionBodies()[1]['subscription_data[trial_period_days]'],undefined);
+  assert.equal(sessionBodies()[1]['line_items[0][price]'],'price_month');
+  const {DatabaseSync}=await import('node:sqlite');
+  const db=new DatabaseSync(join(dir,'billing.sqlite'));
+  db.prepare('UPDATE devices SET trial_used=0, customer=?, checkout=NULL, checkout_url=NULL, checkout_expires=0, subscription=NULL WHERE id=?').run('cus_prior',device);
+  db.exec('PRAGMA wal_checkpoint(TRUNCATE)');
+  db.close();
+  now+=2*day;
+  assert.equal((await checkout()).statusCode,200);
+  assert.equal(sessionBodies()[2]['subscription_data[trial_period_days]'],undefined);
+  assert.equal(calls.some(c=>c.path==='subscriptions?customer=cus_prior&status=all&limit=100'),true);
+  const check=new DatabaseSync(join(dir,'billing.sqlite'));
+  assert.equal((check.prepare('SELECT trial_used FROM devices WHERE id=?').get(device) as any).trial_used,1);
+  check.close();
+ }finally{await app.close();rmSync(dir,{recursive:true,force:true});}
+});
+test('O aplicativo envia o plano anual ao Checkout',async()=>{
+ const dir=temporary(),original=globalThis.fetch;
+ try{const local=new Subscription(dir,{...testConfig,serviceUrl:'https://billing.example.com/'},()=>Date.now());let sent:any;
+  globalThis.fetch=async(_url,init)=>{sent=JSON.parse(String((init as RequestInit).body));return new Response(JSON.stringify({url:'https://checkout.stripe.com/c/year'}));};
+  assert.equal((await local.checkout('yearly')).url,'https://checkout.stripe.com/c/year');assert.equal(sent.plan,'yearly');assert.equal(sent.device,local.snapshot().device);
+  await assert.rejects(()=>local.checkout('vitalicio' as 'monthly'),/mensal ou o anual/);
+ }finally{globalThis.fetch=original;rmSync(dir,{recursive:true,force:true});}
 });
 test('Falha de rede não destrói licença offline válida; checkout nunca instala licença',async()=>{
  const dir=temporary(),now=Date.now(),original=globalThis.fetch;

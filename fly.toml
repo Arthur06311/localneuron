@@ -1,0 +1,40 @@
+# Serviço de cobrança do LocalNeuron Pro. Não coloca segredo neste arquivo.
+# Uma máquina só: o SQLite fica no volume e o volume só monta em uma máquina.
+app = "localneuron-billing"
+primary_region = "gru"
+
+[build]
+  dockerfile = "billing/Dockerfile"
+
+[env]
+  LOCALNEURON_BILLING_HOST = "0.0.0.0"
+  LOCALNEURON_BILLING_PORT = "4330"
+  LOCALNEURON_BILLING_DB = "/data/billing.sqlite"
+  LOCALNEURON_BILLING_PUBLIC_URL = "https://billing.localneuron.ai"
+  LOCALNEURON_BILLING_TRUST_PROXY = "fly"
+
+[http_service]
+  internal_port = 4330
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "30s"
+    interval = "15s"
+    method = "GET"
+    path = "/health"
+    timeout = "5s"
+
+[mounts]
+  source = "localneuron_billing"
+  destination = "/data"
+  initial_size = "1gb"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "256mb"

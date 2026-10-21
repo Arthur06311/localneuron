@@ -20,6 +20,7 @@
     "desktop": "electron desktop/main.cjs",
     "package": "npm run build && node scripts/package-desktop.mjs",
     "billing": "node dist/src/billing-service.js",
+    "license-keys": "node scripts/generate-license-keys.mjs",
     "test:linux-installer": "python3 tests/linux_installer_test.py && python3 tests/linux_gui_installer_test.py"
   },
   "dependencies": {

@@ -100,7 +100,7 @@ O `.gitignore` já exclui segredos, bancos, modelos, logs, builds e runtimes esp
 - `src/editor.ts` e `desktop/resolve-bridge.py`: plano de edição e ponte para o DaVinci Resolve Studio.
 - `src/pro.ts` e `src/pro-documents.ts`: projetos, tarefas, templates, exportações, backups e diagnósticos Pro.
 - `src/subscription.ts`: licença, recursos premium e verificação local.
-- `src/billing-service.ts`: serviço separado para Stripe, preço mensal validado em BRL e emissão de licença assinada.
+- `src/billing-service.ts`: serviço separado para Stripe, preços mensal e anual validados em BRL, teste de 7 dias e emissão de licença assinada.
 - `subscription-config.json`: configuração pública; não contém chave privada.
 
 ### Interface
@@ -188,7 +188,7 @@ O código atual não é um serviço multiusuário pronto para ficar exposto dire
 - política de retenção e exclusão de dados;
 - processo de assinatura/notarização e atualização segura dos clientes.
 
-O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do app local. As variáveis necessárias são `LOCALNEURON_BILLING_DB`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` e `LOCALNEURON_BILLING_PUBLIC_URL`. Elas nunca devem entrar no Git ou no bundle do desktop.
+O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do app local. As variáveis necessárias são `LOCALNEURON_BILLING_DB`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_YEARLY_PRICE_ID`, `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` e `LOCALNEURON_BILLING_PUBLIC_URL`. Elas nunca devem entrar no Git ou no bundle do desktop. A hospedagem prevista é o Fly.io, em `billing.localneuron.ai`; o passo a passo está em [billing-deploy.md](billing-deploy.md).
 
 ## 6. Configuração e variáveis importantes
 
@@ -205,10 +205,13 @@ O serviço de cobrança Stripe (`src/billing-service.ts`) deve ficar separado do
 | `LOCALNEURON_BILLING_DB` | Banco do serviço de cobrança | Somente billing |
 | `STRIPE_SECRET_KEY` | Chave secreta Stripe | Somente billing |
 | `STRIPE_WEBHOOK_SECRET` | Assinatura de webhook | Somente billing |
-| `STRIPE_MONTHLY_PRICE_ID` | Preço mensal do Pro | Somente billing |
+| `STRIPE_MONTHLY_PRICE_ID` | Preço mensal do Pro (BRL 2990) | Somente billing |
+| `STRIPE_YEARLY_PRICE_ID` | Preço anual do Pro (BRL 29900) | Somente billing |
 | `LOCALNEURON_LICENSE_PRIVATE_KEY_FILE` | Caminho do arquivo PEM da chave privada de licença | Somente billing |
 | `LOCALNEURON_BILLING_PUBLIC_URL` | URL pública HTTPS do serviço de cobrança | Somente billing |
+| `LOCALNEURON_BILLING_HOST` | Endereço de escuta do serviço de cobrança | Não; padrão `127.0.0.1`. No Fly, `0.0.0.0` |
 | `LOCALNEURON_BILLING_PORT` | Porta local do serviço de cobrança | Não; padrão `4330` |
+| `LOCALNEURON_BILLING_TRUST_PROXY` | `fly` para usar o IP do cabeçalho `Fly-Client-IP` | Não; fora do Fly o padrão é loopback |
 | `HF_HOME` / `HF_HUB_CACHE` | Cache Hugging Face | Hoje ignoradas: o motor de música define esses caminhos dentro da própria pasta |
 
 O arquivo [`.env.example`](../.env.example) lista essas variáveis com valores de exemplo. O app não lê `.env` automaticamente: exporte as variáveis no shell, no gerenciador de serviços ou no cofre de segredos do servidor.
