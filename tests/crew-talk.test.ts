@@ -192,7 +192,7 @@ test('uma segunda conversa recebe 409 enquanto a primeira ainda decorre', async 
     assert.equal(talk.busy, true);
     await assert.rejects(() => talk.start('segundo pedido', new AbortController().signal), (error: Error & { statusCode?: number }) => {
       assert.equal(error.statusCode, 409);
-      assert.match(error.message, /já está a decorrer/);
+      assert.match(error.message, /em andamento/);
       return true;
     });
     release();

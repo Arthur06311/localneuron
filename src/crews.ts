@@ -50,7 +50,7 @@ function iso(value: unknown) {
 }
 
 /**
- * A ilha Equipas não cria outra lista de especialistas.
+ * A ilha Equipes não cria outra lista de especialistas.
  * Nome, papel, instruções, memória e modelo continuam no bot de Minha equipe.
  * Aqui ficam só o vínculo, o mascote, as não lidas, o provedor e a conversa.
  */
@@ -90,13 +90,13 @@ export class Crews {
 
   private async requireMember(botId: string) {
     const member = (await this.memberRows()).find(row => row.bot_id === botId);
-    if (!member) throw new Error('Este bot ainda não está na equipa.');
+    if (!member) throw new Error('Este bot ainda não está na equipe.');
     return member;
   }
 
   private async requireBot(botId: string) {
     const bot = (await this.experience.snapshot()).bots.find(item => item.id === botId);
-    if (!bot) throw new Error('Bot não encontrado. A equipa usa os bots de Minha equipe.');
+    if (!bot) throw new Error('Bot não encontrado. A equipe usa os bots de Minha equipe.');
     return bot;
   }
 
@@ -136,7 +136,7 @@ export class Crews {
     const bots = (await this.experience.snapshot()).bots;
     return {
       source: 'experience' as const,
-      relation: 'A ilha Equipas usa os bots de Minha equipe. Não cria uma segunda lista de especialistas.',
+      relation: 'A ilha Equipes usa os bots de Minha equipe. Não cria uma segunda lista de especialistas.',
       settings,
       members: members.map(member => {
         const bot = bots.find(item => item.id === member.bot_id);
@@ -172,7 +172,7 @@ export class Crews {
 
   async linkTeam() {
     const work = (await this.experience.snapshot()).bots.filter(bot => bot.area === 'work');
-    if (!work.length) throw new Error('Ative a equipa de trabalho em Minha equipe. A ilha Equipas usa esses bots e não cria outra lista.');
+    if (!work.length) throw new Error('Ative a equipe de trabalho em Minha equipe. A ilha Equipes usa esses bots e não cria outra lista.');
     const existing = await this.memberRows();
     const have = new Set(existing.map(row => row.bot_id));
     const already = existing.some(row => row.coordinator);
@@ -189,7 +189,7 @@ export class Crews {
   async addMember(input: { bot_id: string; mascot?: CrewMascot; coordinator?: boolean }) {
     const bot = await this.requireBot(input.bot_id);
     const rows = await this.memberRows();
-    if (rows.some(row => row.bot_id === bot.id)) throw new Error('Este bot já está na equipa.');
+    if (rows.some(row => row.bot_id === bot.id)) throw new Error('Este bot já está na equipe.');
     const coordinator = input.coordinator === true || rows.length === 0;
     await this.db.transaction(async tx => {
       if (coordinator) await tx.query('UPDATE crew_members SET coordinator = false WHERE coordinator');
@@ -200,7 +200,7 @@ export class Crews {
 
   async updateMember(botId: string, patch: { mascot?: CrewMascot; coordinator?: boolean; provider_id?: string }) {
     const member = await this.requireMember(botId);
-    if (patch.coordinator === false) throw new Error('Escolha outro coordenador. A equipa mantém sempre um.');
+    if (patch.coordinator === false) throw new Error('Escolha outro coordenador. A equipe mantém sempre um.');
     const coordinator = patch.coordinator ?? member.coordinator;
     const provider = await this.requireProvider(patch.provider_id ?? member.provider_id);
     const bot = await this.requireBot(botId);
@@ -215,7 +215,7 @@ export class Crews {
   async removeMember(botId: string) {
     const rows = await this.memberRows();
     const member = rows.find(row => row.bot_id === botId);
-    if (!member) throw new Error('Este bot ainda não está na equipa.');
+    if (!member) throw new Error('Este bot ainda não está na equipe.');
     if (member.coordinator && rows.length > 1) throw new Error('Escolha outro coordenador antes de retirar este.');
     await this.db.query('DELETE FROM crew_members WHERE bot_id = $1', [botId]);
     return { ok: true as const };

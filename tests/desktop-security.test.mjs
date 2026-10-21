@@ -218,6 +218,29 @@ test('Link externo só abre depois que o DNS confirma um endereço público', as
   assert.equal(agent.loaded, undefined);
 });
 
+test('O navegador da IA segura o pedido até o DNS confirmar o destino', async () => {
+  class AgentWindow extends fakeBrowserWindow() {
+    constructor(options) {
+      super(options);
+      this.webContents.session = { webRequest: { onBeforeRequest(filter, listener) { this.filter = filter; this.listener = listener; } } };
+    }
+  }
+  const agent = createAgentWindow(AgentWindow, { resolveHost: async hostname => hostname === 'example.com' });
+  const listener = agent.webContents.session.webRequest.listener;
+  assert.deepEqual(agent.webContents.session.webRequest.filter.urls, ['http://*/*', 'https://*/*']);
+  const decisions = [];
+  listener({ url: 'http://192.168.0.8/' }, result => decisions.push(['private', result]));
+  listener({ url: 'https://example.com/a' }, result => decisions.push(['public', result]));
+  listener({ url: 'https://rebind.example/a' }, result => decisions.push(['rebind', result]));
+  assert.deepEqual(decisions, [['private', { cancel: true }]]);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(decisions, [
+    ['private', { cancel: true }],
+    ['public', { cancel: false }],
+    ['rebind', { cancel: true }],
+  ]);
+});
+
 test('Fuses deixam o servidor local de pé e fecham os injetores', () => {
   const { FuseV1Options, FuseVersion } = require('@electron/fuses');
   const { DESIRED_FUSES, fuseFlipConfig, electronBinary } = require(resolve('desktop/fuses.cjs'));

@@ -91,9 +91,9 @@ A API para outro aplicativo é um listener **separado**, com chave própria, por
 Atividades das ferramentas ficam na mensagem assinada e incluem estado, descrição e referências dos arquivos exportados. O conteúdo bruto de raciocínio não é exposto. IDs de modelos integrados começam com `gguf:`; a biblioteca carrega esses arquivos no runtime próprio. Todas essas rotas administrativas mantêm autenticação local, cofre, Host e Origin.
 
 
-## Equipas
+## Equipes
 
-A ilha Equipas não cria outra lista de especialistas. `bot_id` aponta para um bot já existente em Minha equipe. Nome, papel, instruções, memória e modelo continuam nesse bot. A migração `equipas sobre os bots existentes` guarda o vínculo, o mascote, as mensagens, os limites (`max_rounds`, `max_tokens`) e os provedores.
+A ilha Equipes não cria outra lista de especialistas. `bot_id` aponta para um bot já existente em Minha equipe. Nome, papel, instruções, memória e modelo continuam nesse bot. A migração `equipas sobre os bots existentes` guarda o vínculo, o mascote, as mensagens, os limites (`max_rounds`, `max_tokens`) e os provedores.
 
 Rotas autenticadas, cofre aberto, com limite por rota (`global: false`): leitura 120/min e escrita 30/min. Acima do teto a resposta é 429.
 
@@ -107,7 +107,7 @@ Rotas autenticadas, cofre aberto, com limite por rota (`global: false`): leitura
 - `POST /v1/crews/settings`: `{max_rounds, max_tokens}`.
 - `POST|PATCH|DELETE /v1/crews/providers`: metadados do provedor. O token vai para o cofre cifrado e a resposta só devolve `has_token` e `token_hint`.
 
-A sugestão prefere um modelo local de 7B a 14B que caiba na RAM, com os mesmos tetos do início rápido (2, 4, 8 ou 12 GiB conforme a RAM total), 1,5 GiB de folga e 1 GiB de margem de disco. Não recomenda 70B ou mais. O EXO da equipa só aceita loopback. Esta API não abre a Minha API nem o EXO na rede.
+A sugestão prefere um modelo local de 7B a 14B que caiba na RAM, com os mesmos tetos do início rápido (2, 4, 8 ou 12 GiB conforme a RAM total), 1,5 GiB de folga e 1 GiB de margem de disco. Não recomenda 70B ou mais. O EXO da equipe só aceita loopback. Esta API não abre a Minha API nem o EXO na rede.
 
 ### MLX
 

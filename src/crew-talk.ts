@@ -83,9 +83,9 @@ export async function runCrewTalk(crews: Crews, complete: TalkComplete, content:
     return { botId: member.bot_id, name: member.name || 'Agente', role: member.role, instructions: member.instructions, model, providerId: member.provider_id, coordinator: member.coordinator, channel };
   });
   const coordinator = seats.find(seat => seat.coordinator);
-  if (!coordinator) throw new Error('A equipa precisa de um coordenador.');
+  if (!coordinator) throw new Error('A equipe precisa de um coordenador.');
   const coordinatorProvider = providers.get(coordinator.providerId);
-  if (coordinator.channel === 'closed' && coordinator.model.startsWith('exo:')) throw new Error('O EXO da equipa fica só em loopback (127.0.0.1). Esta opção não abre a rede.');
+  if (coordinator.channel === 'closed' && coordinator.model.startsWith('exo:')) throw new Error('O EXO da equipe fica só em loopback (127.0.0.1). Esta opção não abre a rede.');
   if (coordinator.channel === 'closed' && coordinatorProvider && coordinatorProvider.kind !== 'local' && !coordinatorProvider.model) throw new Error('Indique o modelo deste provedor.');
   if (coordinator.channel === 'closed' && !coordinator.model) throw new Error('Escolha um modelo para o coordenador antes de começar a conversa.');
   if (coordinator.channel === 'closed') throw new Error('O coordenador precisa de um modelo neste computador ou de um provedor confirmado.');
@@ -111,7 +111,7 @@ export async function runCrewTalk(crews: Crews, complete: TalkComplete, content:
       return finish(crews, 'self', round, used, settings.max_rounds, settings.max_tokens);
     }
     if (!target) {
-      await crews.recordNotice('O coordenador pediu alguém que não está na equipa. A ronda para aqui.', round);
+      await crews.recordNotice('O coordenador pediu alguém que não está na equipe. A ronda para aqui.', round);
       return finish(crews, 'done', round, used, settings.max_rounds, settings.max_tokens);
     }
     if (target.channel !== 'local') {
@@ -202,7 +202,7 @@ export class CrewTalk {
 }
 
 function busyError() {
-  const error = new Error('A conversa da equipa já está a decorrer.') as Error & { statusCode: number };
+  const error = new Error('A conversa da equipe já está em andamento.') as Error & { statusCode: number };
   error.statusCode = 409;
   return error;
 }

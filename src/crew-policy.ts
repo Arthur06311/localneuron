@@ -133,7 +133,7 @@ export function planProvider(input: unknown): ProviderPlan {
   if (value.kind === 'exo') {
     const parsed = parseEndpoint((value.endpoint && value.endpoint.trim()) || 'http://127.0.0.1:52415');
     if (parsed.hostClass !== 'loopback' || parsed.protocol !== 'http:' || parsed.base !== parsed.origin) {
-      throw new Error('O EXO da equipa fica só em loopback (127.0.0.1). Esta opção não abre a rede.');
+      throw new Error('O EXO da equipe fica só em loopback (127.0.0.1). Esta opção não abre a rede.');
     }
     return { kind: 'exo', label: value.label, endpoint: parsed.origin, model, leaves_computer: false, trusted_network: false, acknowledged: Boolean(value.acknowledged), confirm_remote: false, enabled, token: null };
   }

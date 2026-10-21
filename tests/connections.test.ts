@@ -128,3 +128,37 @@ test('HTTPS privado ou VPN só passa com rede confiável, e o loopback continua 
  await assert.rejects(()=>assertMcpResolved(new URL('https://127.0.0.1/mcp'),true,resolver),/recusado/);
  await assertMcpResolved(new URL('https://printer.local/mcp'),true,async()=>{throw new Error('mdns');});
 });
+
+function storedConnection(dir:string,vault:Vault){const key=createHash('sha256').update(vault.key('service')).update('localneuron-mcp-v1').digest(),v=JSON.parse(readFileSync(join(dir,'connections.enc.json'),'utf8')),d=createDecipheriv('aes-256-gcm',key,Buffer.from(v.iv,'hex'));d.setAuthTag(Buffer.from(v.tag,'hex'));return JSON.parse(Buffer.concat([d.update(Buffer.from(v.data,'base64')),d.final()]).toString()) as {id:string;token:string;command:string;url:string;args:string[];trusted_network:boolean}[];}
+
+test('editar conexão valida como uma nova e preserva o token omitido',async()=>{
+ const dir=mkdtempSync(join(tmpdir(),'neuron-mcp-edit-')),vault=new Vault(dir);vault.initialize('senha-de-testes-mcp');
+ const file=join(dir,'server.mjs');const sdk=resolve('node_modules/@modelcontextprotocol/sdk/dist/esm');
+ writeFileSync(file,`import {McpServer} from ${JSON.stringify('file://'+sdk+'/server/mcp.js')};import {StdioServerTransport} from ${JSON.stringify('file://'+sdk+'/server/stdio.js')};const s=new McpServer({name:'fixture',version:'1'});s.registerTool('hello',{description:'Teste local',annotations:{readOnlyHint:true}},async()=>({content:[{type:'text',text:'Olá do servidor MCP'}]}));await s.connect(new StdioServerTransport());`);
+ const c=new Connections(dir,vault);
+ try{
+  const row=await c.add({name:'Fixture',command:process.execPath,args:[file],token:'credencial-ficticia-secreta'});
+  assert.equal(row?.connected,true);
+  const other=await c.add({name:'Outra',command:process.execPath,args:[file,'--outra'],token:'outra-credencial-ficticia'});
+  assert.equal(other?.connected,true);
+  await assert.rejects(()=>c.update(row!.id,{name:'Fixture',command:process.execPath,args:[file,'--outra']}),/já foi adicionado/);
+  assert.deepEqual(storedConnection(dir,vault).find(item=>item.id===row!.id)?.args,[file]);
+  const edited=await c.update(row!.id,{name:'Fixture editada',command:process.execPath,args:[file],trusted_network:true});
+  assert.equal(edited?.name,'Fixture editada');
+  assert.equal(edited?.trusted_network,true);
+  assert.equal(edited?.command,process.execPath);
+  assert.deepEqual(edited?.args,[file]);
+  assert.equal(edited?.connected,true);
+  assert.equal(storedConnection(dir,vault).find(item=>item.id===row!.id)?.token,'credencial-ficticia-secreta');
+  await assert.rejects(()=>c.update(row!.id,{name:'Shell',command:'/bin/bash',args:['-c','id']}),/shell|absoluto/);
+  await assert.rejects(()=>c.update(row!.id,{name:'Privada',url:'https://192.168.1.5/mcp',command:'',args:[],trusted_network:false}),/HTTPS com nome público/);
+  const kept=storedConnection(dir,vault).find(item=>item.id===row!.id);
+  assert.equal(kept?.command,process.execPath);
+  assert.equal(kept?.url,'');
+  assert.equal(kept?.trusted_network,true);
+  const replaced=await c.update(row!.id,{name:'Fixture editada',command:process.execPath,args:[file],token:'token-novo-de-teste',trusted_network:false});
+  assert.equal(replaced?.trusted_network,false);
+  assert.equal(storedConnection(dir,vault).find(item=>item.id===row!.id)?.token,'token-novo-de-teste');
+  assert.equal(readFileSync(join(dir,'connections.enc.json'),'utf8').includes('token-novo-de-teste'),false);
+ }finally{await c.close();rmSync(dir,{recursive:true,force:true});}
+});

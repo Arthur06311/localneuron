@@ -34,7 +34,7 @@ function splitHostPort(header:string):{hostname:string;port:string}|null{
   if(value.startsWith('[')){const end=value.indexOf(']');if(end<1)return null;const rest=value.slice(end+1);if(rest!==''&&!rest.startsWith(':'))return null;return {hostname:value.slice(1,end),port:rest.startsWith(':')?rest.slice(1):''};}
   const colon=value.lastIndexOf(':');if(colon<=0)return null;return {hostname:value.slice(0,colon),port:value.slice(colon+1)};
 }
-/** Em loopback, 127.0.0.1, localhost e [::1] são o mesmo computador. host.docker.internal fica de fora: um contentor não pode apresentar-se como a API local. Na rede da casa só vale o endereço anunciado. */
+/** Em loopback, 127.0.0.1, localhost e [::1] são o mesmo computador. host.docker.internal fica de fora: um contêiner não pode se passar pela API local. Na rede da casa, o Host precisa ser o endereço anunciado. */
 export function gatewayHostAllowed(header:string|undefined,boundHost:string,port:number){
   if(!header||header!==header.trim()||/\s/.test(header))return false;
   const parsed=splitHostPort(header);if(!parsed||parsed.port!==String(port))return false;
