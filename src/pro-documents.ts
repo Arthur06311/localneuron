@@ -4,6 +4,7 @@ import { load } from "cheerio";
 import ExcelJS from "exceljs";
 import { Document, Packer, Paragraph, HeadingLevel } from "docx";
 import { createRequire } from "node:module";
+import { loadPdfjs } from "./pdf-canvas.js";
 const PptxGenJS = createRequire(import.meta.url)("pptxgenjs");
 export type Page = { location: string; text: string };
 export function checkedZip(data: Buffer) {
@@ -26,7 +27,7 @@ export async function extractDocument(
   const ext = extname(name).toLowerCase();
   let pages: Page[] = [];
   if (ext === ".pdf") {
-    const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    const { getDocument } = await loadPdfjs();
     const task = getDocument({
       data: new Uint8Array(data),
       useSystemFonts: true,
