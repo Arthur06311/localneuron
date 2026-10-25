@@ -28,7 +28,7 @@
     "@fastify/rate-limit": "11.2.1",
     "@modelcontextprotocol/sdk": "1.32.1",
     "cheerio": "1.2.0",
-    "docx": "9.12.0",
+    "docx": "9.13.0",
     "dompurify": "3.4.17",
     "exceljs": "4.4.0",
     "fastify": "5.12.7",
@@ -46,13 +46,13 @@
     "@electron/packager": "20.3.0",
     "@eslint/js": "10.0.1",
     "@types/node": "26.6.5",
-    "electron": "44.9.0",
+    "electron": "45.0.0",
     "eslint": "10.13.0",
     "eslint-config-prettier": "10.1.8",
     "globals": "17.13.0",
     "prettier": "3.9.10",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.71.2"
+    "typescript-eslint": "8.72.0"
   },
   "author": "LocalNeuron",
   "overrides": {
