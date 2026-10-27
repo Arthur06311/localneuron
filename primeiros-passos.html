@@ -56,7 +56,7 @@
 <section class="doc-block">
 <h2>2. Primeira abertura</h2>
 <ol>
-<li>Abra o LocalNeuron. No login do aplicativo desktop, marque <strong>Lembrar meu acesso neste computador</strong>. A credencial é cifrada pelo armazenamento seguro do sistema; não é guardada no navegador. Quem usa sua sessão do computador poderá abrir o espaço. A opção é voluntária e pode ser desligada em <strong>Preferências → Acesso neste computador</strong>. O botão <strong>Bloquear aplicativo</strong> continua bloqueando a sessão atual.</li>
+<li>Abra o LocalNeuron. O aplicativo entra direto no Chat. A chave do cofre é aleatória e fica cifrada no armazenamento seguro do sistema: Keychain no macOS, DPAPI no Windows e libsecret no Linux. Não há senha para criar nem para lembrar. Se já havia um cofre com senha, o app guarda sozinho uma cópia datada desse cofre antigo e abre com a chave da máquina. Nada dessa cópia é apagado. Em <strong>Configurações</strong>, a cópia pode ser importada depois, com a senha de então.</li>
 <li>Siga o assistente: confira a RAM e o disco, escolha o perfil e revise as recomendações.</li>
 <li>Para refazer depois: Minha equipe → Mais opções da equipe → Repetir configuração. Perfil, conversas e membros são preservados.</li>
 </ol>
@@ -77,7 +77,7 @@
 <ol>
 <li>Quando o download terminar, abra o Chat e selecione o modelo.</li>
 <li>Escreva a mensagem. Na primeira vez, carregar o modelo na memória pode demorar.</li>
-<li>Ative Ferramentas → Usar offline para desligar a internet e o terminal das ferramentas. O app avisa que o chat, o computador e os arquivos continuam locais. Esse botão não desliga os canais de Minha equipe: Anthropic e Grok (xAI) enviam o texto para o serviço, e outro computador envia o texto para fora quando o endereço não é deste computador. O EXO dessa equipe usa só o endereço deste computador (127.0.0.1).</li>
+<li>Ative Ferramentas → Usar offline para desligar a internet e o terminal das ferramentas. O app avisa que o chat, o computador e os arquivos continuam locais. Esse botão não desliga os canais de Minha equipe: Anthropic e Grok (xAI) enviam o texto para o serviço, e outro computador envia o texto para fora quando o endereço não é deste computador. O EXO dessa equipe usa só o endereço deste computador (127.0.0.1). Em Equipes, membros com backend Anthropic ou Grok enviam o pedido ao provedor escolhido.</li>
 <li>Use Parar para interromper uma resposta. Liberar memória tira o modelo da RAM sem apagá-lo do disco.</li>
 </ol>
 </section>
@@ -100,7 +100,7 @@
 </ol>
 <h3>Restaurar</h3>
 <ol>
-<li>Abra o LocalNeuron e vá em Preferências.</li>
+<li>Abra o LocalNeuron e vá em Configurações.</li>
 <li>Clique em Abrir uma pasta de dados existente.</li>
 <li>Selecione a pasta que contém <code>workspace/</code>. O app procura <code>workspace/vault.enc.json</code>.</li>
 <li>O app reabre esse espaço. A pasta atual fica intacta.</li>
@@ -109,7 +109,7 @@
 </section>
 <section class="doc-block">
 <h2>7. Atualizar</h2>
-<p>Feche o app, instale a versão nova e substitua só o aplicativo. Não apague a pasta de dados. Desde a 0.27, o app avisa em Preferências → Atualizações.</p>
+<p>Feche o app, instale a versão nova e substitua só o aplicativo. Não apague a pasta de dados. Desde a 0.27, o app avisa em Configurações → Atualizações.</p>
 </section>
 <p class="guide-top-links"><a href="./#download">Baixar</a><a href="./#faq">Perguntas frequentes</a><a href="https://github.com/Arthur06311/localneuron/issues">Abrir uma issue</a></p>
 </main>
