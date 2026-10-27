@@ -121,6 +121,8 @@ export default {
   'settings.updatesChecked': 'Última consulta: {when}',
   'settings.updatesNever': 'Ainda não consultado.',
   'settings.updatesCheck': 'Verificar agora',
+  'settings.updatesRetry': 'Tentar de novo',
+  'settings.updatesError': 'Não foi possível verificar atualizações. Verifique sua conexão.',
   'settings.updatesVersions': 'Ver versões',
   'settings.vault': 'Cofre neste computador',
   'settings.vaultHelp': 'O aplicativo abre direto. A chave do cofre é aleatória e fica cifrada no armazenamento seguro do sistema. Não há senha para criar nem para lembrar.',
