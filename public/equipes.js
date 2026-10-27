@@ -348,7 +348,7 @@ export function createEquipes({ api, escape: E, toast, isVisible = () => true, v
     const info = runtime();
     const states = crew.members.map(statusOf);
     const state = states.some(item => item.status === 'atencao') ? 'atencao' : states.some(item => item.status === 'trabalhando') ? 'trabalhando' : states.every(item => item.status === 'concluido') ? 'concluido' : 'pronto';
-    return `<div class="eq-actions"><button type="button" class="primary" id="eq-create">Nova equipe</button></div><div class="eq-cards"><button type="button" class="eq-card" data-eq-open="conversas" aria-current="page"><strong>Equipe</strong><span>${tokens(crew.members.length)} membros</span><span>${E(info.model)}</span><span>${STATUS_MARK[state]} ${STATUS_WORD[state]}</span></button></div>${mixed() ? '' : '<p class="eq-note">Modelos grandes — EXO, API em outro computador, Anthropic e Grok — ficam em Avançado e não estão em uso.</p>'}`;
+    return `<div class="eq-actions"><button type="button" class="primary" id="eq-create">Nova equipe</button></div><div class="eq-cards"><button type="button" class="eq-card" data-eq-open="conversas" aria-current="true"><strong>Equipe</strong><span>${tokens(crew.members.length)} membros</span><span>${E(info.model)}</span><span>${STATUS_MARK[state]} ${STATUS_WORD[state]}</span></button></div>${mixed() ? '' : '<p class="eq-note">Modelos grandes — EXO, API em outro computador, Anthropic e Grok — ficam em Avançado e não estão em uso.</p>'}`;
   }
 
   function paint(messages) {

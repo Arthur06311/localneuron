@@ -102,9 +102,12 @@ test('navigation, islands and the current marker meet WCAG 2.1 AA',async()=>{
   assert.match(js,/setAttribute\('aria-current','page'\)/);
   assert.match(js,/dataset\.equipesView===equipesView/);
   assert.match(equipes,/eq-option\[aria-selected="true"\]::after\{content:"Atual" \/ ""/);
-  assert.match(equipes,/eq-card\[aria-current="page"\]::after\{content:"Atual" \/ ""/);
+  assert.match(equipes,/eq-card\[aria-current="true"\]/);
+  assert.doesNotMatch(equipes,/eq-card\[aria-current="page"\]/);
   assert.match(equipes,/color:var\(--ink\)/);
   assert.match(equipes,/:focus-visible\{outline:3px solid var\(--focus\)/);
-  assert.match(equipesJs,/aria-current="page"/);
-  assert.doesNotMatch(equipesJs,/aria-current="true"/);
+  const card=equipesJs.match(/<button type="button" class="eq-card"[^>]*>/)?.[0]??'';
+  assert.match(card,/aria-current="true"/);
+  assert.doesNotMatch(card,/aria-current="page"/);
+  assert.doesNotMatch(equipesJs,/class="eq-card"[^>]*aria-current="page"/);
 });

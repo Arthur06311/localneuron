@@ -73,9 +73,9 @@ html[lang="en"] .eq-option[aria-selected="true"]::after{content:"Current" / ""}
 .eq-empty h2{margin:0 0 var(--space-2);color:var(--ink);font-size:15px}
 .eq-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--space-3)}
 .eq-card{display:grid;gap:6px;min-height:120px;padding:var(--space-4);border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--panel);text-align:left;color:var(--ink)}
-.eq-card[aria-current="page"]{box-shadow:inset 2px 0 0 var(--accent)}
-.eq-card[aria-current="page"]::after{content:"Atual" / "";justify-self:start;font-size:var(--text-xs);font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
-html[lang="en"] .eq-card[aria-current="page"]::after{content:"Current" / ""}
+.eq-card[aria-current="true"]{box-shadow:inset 2px 0 0 var(--accent)}
+.eq-card[aria-current="true"]::after{content:"Atual" / "";justify-self:start;font-size:var(--text-xs);font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
+html[lang="en"] .eq-card[aria-current="true"]::after{content:"Current" / ""}
 .eq-dialog{width:min(480px,calc(100vw - 32px));border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--panel);color:var(--ink);padding:var(--space-4)}
 .eq-dialog::backdrop{background:#0008}
 .eq-dialog h2{margin:0 0 var(--space-2);font-size:15px}

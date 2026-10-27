@@ -555,5 +555,4 @@ dialog::backdrop { background: color-mix(in srgb, var(--bg) 35%, #000); }
 .premium-sidebar-card button:focus-visible {
   outline: 3px solid var(--focus) !important;
   outline-offset: 2px;
-  box-shadow: inset 0 0 0 2px var(--focus);
 }
