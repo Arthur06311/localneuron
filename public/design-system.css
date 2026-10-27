@@ -158,6 +158,12 @@ main { margin-left: 232px; }
   border-radius: 6px;
 }
 
+.nav-island[data-current="true"] .nav-island-trigger,
+.nav-island[data-current="true"] .nav-island-trigger strong,
+.nav-island[data-current="true"] .nav-island-icon {
+  color: var(--ink) !important;
+}
+
 .nav-island-menu { padding: 0 4px 8px; }
 
 .nav-island-menu button {
@@ -183,7 +189,18 @@ main { margin-left: 232px; }
   color: var(--ink) !important;
 }
 
-.nav-island-menu button.active::after { content: none !important; }
+.nav-island-menu button.active::after {
+  content: "Atual" / "";
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+html[lang="en"] .nav-island-menu button.active::after { content: "Current" / ""; }
 .nav-island-menu button.active [data-icon] { color: var(--ink) !important; }
 
 .sidebar-bottom, body.chat-page .sidebar-bottom {
@@ -530,4 +547,12 @@ dialog::backdrop { background: color-mix(in srgb, var(--bg) 35%, #000); }
   .sidebar, body.chat-page .sidebar { width: 100%; border-right: 0; }
   main, body.chat-page main { margin-left: 0; }
   body.chat-page .chat-composer textarea, input, select, textarea { font-size: 16px; }
+}
+
+.sidebar .brand:focus-visible,
+.sidebar nav .nav-island-trigger:focus-visible,
+.sidebar nav .nav-island-menu button:focus-visible,
+.premium-sidebar-card button:focus-visible {
+  outline: 3px solid var(--focus) !important;
+  outline-offset: 2px;
 }

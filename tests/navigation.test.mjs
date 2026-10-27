@@ -52,3 +52,62 @@ test('every former destination remains present inside an island',async()=>{
     assert.match(html,new RegExp(`data-page="${page}"`),`Missing page ${page}`);
   }
 });
+
+function lin(channel){const c=channel/255;return c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4;}
+function contrast(front,back){
+  const lum=hex=>{const n=hex.slice(1);const channels=[0,2,4].map(i=>lin(parseInt(n.slice(i,i+2),16)));return 0.2126*channels[0]+0.7152*channels[1]+0.0722*channels[2];};
+  const light=Math.max(lum(front),lum(back)),dark=Math.min(lum(front),lum(back));
+  return (light+0.05)/(dark+0.05);
+}
+function tokenBlock(css,header){
+  const start=css.indexOf(header);
+  assert.ok(start>=0,header);
+  return css.slice(start,css.indexOf('}',start));
+}
+function token(block,name){
+  const found=block.match(new RegExp(`${name}:\\s*(#[0-9a-fA-F]{6})`));
+  assert.ok(found,name);
+  return found[1].toLowerCase();
+}
+
+test('navigation, islands and the current marker meet WCAG 2.1 AA',async()=>{
+  const tokens=await readFile(resolve(root,'public/tokens.css'),'utf8');
+  const shell=await readFile(resolve(root,'public/design-system.css'),'utf8');
+  const nav=await readFile(resolve(root,'public/navigation.css'),'utf8');
+  const js=await readFile(resolve(root,'public/app.js'),'utf8');
+  const equipes=await readFile(resolve(root,'public/equipes.css'),'utf8');
+  const equipesJs=await readFile(resolve(root,'public/equipes.js'),'utf8');
+  const light=tokenBlock(tokens,':root');
+  const dark=tokenBlock(tokens,'html[data-theme="dark"]');
+  for(const theme of [light,dark]){
+    const ink=token(theme,'--ink'),muted=token(theme,'--muted'),panel=token(theme,'--panel'),panel2=token(theme,'--panel2'),accent=token(theme,'--accent');
+    assert.ok(contrast(ink,panel)>=4.5);
+    assert.ok(contrast(ink,panel2)>=4.5);
+    assert.ok(contrast(muted,panel)>=4.5);
+    assert.ok(contrast(muted,panel2)>=4.5);
+    assert.ok(contrast(accent,panel)>=3);
+    assert.ok(contrast(accent,panel2)>=3);
+  }
+  assert.match(light,/--focus:\s*var\(--accent\)/);
+  assert.match(dark,/--focus:\s*var\(--accent\)/);
+  assert.match(shell,/nav-island\[data-current="true"\][\s\S]*color:\s*var\(--ink\) !important/);
+  assert.match(shell,/button\.active::after \{[^}]*content: "Atual" \/ ""/);
+  assert.match(shell,/button\.active::after \{[^}]*color: var\(--ink\)/);
+  assert.doesNotMatch(shell,/button\.active::after \{[^}]*content: none/);
+  assert.match(shell,/html\[lang="en"\] \.nav-island-menu button\.active::after \{ content: "Current" \/ ""/);
+  assert.match(shell,/\.sidebar nav \.nav-island-trigger:focus-visible/);
+  assert.match(shell,/\.sidebar nav \.nav-island-menu button:focus-visible/);
+  assert.match(shell,/outline: 3px solid var\(--focus\) !important/);
+  assert.match(nav,/content:"Atual" \/ ""/);
+  assert.match(js,/setAttribute\('aria-current','page'\)/);
+  assert.match(js,/dataset\.equipesView===equipesView/);
+  assert.match(equipes,/eq-option\[aria-selected="true"\]::after\{content:"Atual" \/ ""/);
+  assert.match(equipes,/eq-card\[aria-current="true"\]/);
+  assert.doesNotMatch(equipes,/eq-card\[aria-current="page"\]/);
+  assert.match(equipes,/color:var\(--ink\)/);
+  assert.match(equipes,/:focus-visible\{outline:3px solid var\(--focus\)/);
+  const card=equipesJs.match(/<button type="button" class="eq-card"[^>]*>/)?.[0]??'';
+  assert.match(card,/aria-current="true"/);
+  assert.doesNotMatch(card,/aria-current="page"/);
+  assert.doesNotMatch(equipesJs,/class="eq-card"[^>]*aria-current="page"/);
+});
