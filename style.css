@@ -111,6 +111,16 @@ h3{font-size:15px;margin:0}
 .checksum code,.install-command{display:block;overflow-wrap:anywhere;font-size:11px;line-height:1.5;color:var(--muted);padding-top:4px}
 .download-alternative{display:inline-flex;margin-top:8px;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:13px;min-height:32px;align-items:center}
 .download-note{color:var(--muted);font-size:13px;grid-column:1/-1;margin:4px 0 0}
+.install-guide{grid-column:1/-1;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.install-heading{margin:0 0 12px;font-size:15px}
+.install-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.install-cols article{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.install-cols h4{margin:0 0 10px;font-size:14px;font-weight:600}
+.install-steps{margin:0;padding:0;list-style:none;counter-reset:install;display:grid;gap:8px}
+.install-steps li{counter-increment:install;display:grid;grid-template-columns:1.75rem minmax(0,1fr);gap:8px;align-items:baseline;color:var(--muted);font-size:13px}
+.install-steps li::before{content:counter(install,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--muted)}
+.install-steps strong{color:var(--ink);font-weight:600}
+.install-steps code{font-family:var(--mono);font-size:12px;color:var(--ink)}
 
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px}
 table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.5}
@@ -172,7 +182,7 @@ main.doc{max-width:980px;margin:0 auto;padding:28px 20px 72px}
 html[lang=ja] h1,html[lang=zh-CN] h1{letter-spacing:0}
 
 @media(max-width:900px){
-.hero,.split,.download-section,.cards,.guide-shell,.page-grid{grid-template-columns:1fr}
+.hero,.split,.download-section,.cards,.guide-shell,.page-grid,.install-cols{grid-template-columns:1fr}
 .section-heading,.docs-banner,.closing{display:block}
 .docs-banner .button,.closing a{margin-top:12px}
 }

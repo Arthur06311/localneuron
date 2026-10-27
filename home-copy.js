@@ -89,7 +89,14 @@ faqExoA: "Yes, with Modo servidor and Rede EXO, on Apple Silicon Macs with macOS
 faqSupQ: "How do I ask for support?",
 faqSupA: "Support goes through the <a href=\"https://github.com/Arthur06311/localneuron/issues\">repository issues</a>. Include the version, system, model or engine, steps and the error message. Remove passwords, tokens, personal data and private prompts. Do not publish vulnerabilities that contain sensitive content in an open issue.",
 faqOssQ: "Is LocalNeuron open source?",
-faqOssA: "No. It is proprietary, closed-source software, all rights reserved (© 2026 Arthur Pinheiro Kriger). Third-party components and models keep their own licenses."
+faqOssA: "No. It is proprietary, closed-source software, all rights reserved (© 2026 Arthur Pinheiro Kriger). Third-party components and models keep their own licenses.",
+installHeading: "How to install on Mac and Windows",
+installMac1: "Open the downloaded <code>.dmg</code> file.",
+installMac2: "Drag LocalNeuron into the Applications folder.",
+installMac3: "If macOS shows a warning when you open it: go to <strong>System Settings → Privacy & Security</strong> and choose <strong>Open Anyway</strong>.",
+installWin1: "Run the installer (Setup).",
+installWin2: "Follow the installation wizard.",
+installWin3: "If SmartScreen appears: <strong>More info</strong> → <strong>Run anyway</strong>."
 },
 es: {
 linuxPackages: "Linux: DEB, AppImage y Arch",
