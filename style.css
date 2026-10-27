@@ -119,6 +119,8 @@ h3{font-size:15px;margin:0}
 .install-steps{margin:0;padding:0;list-style:none;counter-reset:install;display:grid;gap:8px}
 .install-steps li{counter-increment:install;display:grid;grid-template-columns:1.75rem minmax(0,1fr);gap:8px;align-items:baseline;color:var(--muted);font-size:13px}
 .install-steps li::before{content:counter(install,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--muted)}
+.install-steps li>span{min-width:0}
+.install-steps strong,.install-steps code{display:inline}
 .install-steps strong{color:var(--ink);font-weight:600}
 .install-steps code{font-family:var(--mono);font-size:12px;color:var(--ink)}
 

@@ -93,7 +93,8 @@ faqOssA: "No. It is proprietary, closed-source software, all rights reserved (©
 installHeading: "How to install on Mac and Windows",
 installMac1: "Open the downloaded <code>.dmg</code> file.",
 installMac2: "Drag LocalNeuron into the Applications folder.",
-installMac3: "If macOS shows a warning when you open it: go to <strong>System Settings → Privacy & Security</strong> and choose <strong>Open Anyway</strong>.",
+installMac3: "Try opening the app once. If macOS shows a warning, go to <strong>System Settings → Privacy & Security</strong> and choose <strong>Open Anyway</strong>.",
+installMac4: "Then confirm with <strong>Open</strong>.",
 installWin1: "Run the installer (Setup).",
 installWin2: "Follow the installation wizard.",
 installWin3: "If SmartScreen appears: <strong>More info</strong> → <strong>Run anyway</strong>."
@@ -188,7 +189,15 @@ faqExoA: "Sí, con Modo servidor y Rede EXO, en Macs Apple Silicon con macOS 26.
 faqSupQ: "¿Cómo pido soporte?",
 faqSupA: "El soporte es por las <a href=\"https://github.com/Arthur06311/localneuron/issues\">issues del repositorio</a>. Incluye versión, sistema, modelo o motor, pasos y el mensaje de error. Quita contraseñas, tokens, datos personales y prompts privados. No publiques vulnerabilidades con contenido sensible en una issue abierta.",
 faqOssQ: "¿LocalNeuron es de código abierto?",
-faqOssA: "No. Es software propietario, de código cerrado, con todos los derechos reservados (© 2026 Arthur Pinheiro Kriger). Los componentes de terceros y los modelos mantienen sus propias licencias."
+faqOssA: "No. Es software propietario, de código cerrado, con todos los derechos reservados (© 2026 Arthur Pinheiro Kriger). Los componentes de terceros y los modelos mantienen sus propias licencias.",
+installHeading: "Cómo instalar en el Mac y en Windows",
+installMac1: "Abre el archivo <code>.dmg</code> descargado.",
+installMac2: "Arrastra LocalNeuron a la carpeta Aplicaciones.",
+installMac3: "Intenta abrir la app una vez. Si macOS muestra un aviso, ve a <strong>Ajustes del Sistema → Privacidad y seguridad</strong> y elige <strong>Abrir de todas formas</strong>.",
+installMac4: "Después, confirma con <strong>Abrir</strong>.",
+installWin1: "Ejecuta el instalador (Setup).",
+installWin2: "Sigue el asistente de instalación.",
+installWin3: "Si aparece SmartScreen: <strong>Más información</strong> → <strong>Ejecutar de todas formas</strong>."
 },
 fr: {
 linuxPackages: "Linux : DEB, AppImage et Arch",
@@ -280,7 +289,15 @@ faqExoA: "Oui, avec Modo servidor et Rede EXO, sur des Mac Apple Silicon avec ma
 faqSupQ: "Comment demander de l’aide ?",
 faqSupA: "L’assistance passe par les <a href=\"https://github.com/Arthur06311/localneuron/issues\">issues du dépôt</a>. Indiquez la version, le système, le modèle ou le moteur, les étapes et le message d’erreur. Retirez les mots de passe, les jetons, les données personnelles et les prompts privés. Ne publiez pas une vulnérabilité au contenu sensible dans une issue ouverte.",
 faqOssQ: "LocalNeuron est-il open source ?",
-faqOssA: "Non. C’est un logiciel propriétaire, à code fermé, tous droits réservés (© 2026 Arthur Pinheiro Kriger). Les composants tiers et les modèles conservent leurs propres licences."
+faqOssA: "Non. C’est un logiciel propriétaire, à code fermé, tous droits réservés (© 2026 Arthur Pinheiro Kriger). Les composants tiers et les modèles conservent leurs propres licences.",
+installHeading: "Comment installer sur Mac et sur Windows",
+installMac1: "Ouvrez le fichier <code>.dmg</code> téléchargé.",
+installMac2: "Glissez LocalNeuron dans le dossier Applications.",
+installMac3: "Essayez d’ouvrir l’app une fois. Si macOS affiche un avertissement, allez dans <strong>Réglages Système → Confidentialité et sécurité</strong> et choisissez <strong>Ouvrir quand même</strong>.",
+installMac4: "Ensuite, confirmez avec <strong>Ouvrir</strong>.",
+installWin1: "Lancez le programme d’installation (Setup).",
+installWin2: "Suivez l’assistant d’installation.",
+installWin3: "Si SmartScreen s’affiche : <strong>Informations complémentaires</strong> → <strong>Exécuter quand même</strong>."
 },
 de: {
 linuxPackages: "Linux: DEB, AppImage und Arch",
@@ -372,7 +389,15 @@ faqExoA: "Ja, mit Modo servidor und Rede EXO, auf Apple-Silicon-Macs mit macOS 2
 faqSupQ: "Wie bitte ich um Unterstützung?",
 faqSupA: "Unterstützung läuft über die <a href=\"https://github.com/Arthur06311/localneuron/issues\">Issues des Repositorys</a>. Nenne Version, System, Modell oder Engine, Schritte und die Fehlermeldung. Entferne Passwörter, Tokens, persönliche Daten und private Prompts. Veröffentliche keine Schwachstelle mit sensiblem Inhalt in einem offenen Issue.",
 faqOssQ: "Ist LocalNeuron Open Source?",
-faqOssA: "Nein. Es ist proprietäre Software mit geschlossenem Quelltext, alle Rechte vorbehalten (© 2026 Arthur Pinheiro Kriger). Komponenten Dritter und Modelle behalten ihre eigenen Lizenzen."
+faqOssA: "Nein. Es ist proprietäre Software mit geschlossenem Quelltext, alle Rechte vorbehalten (© 2026 Arthur Pinheiro Kriger). Komponenten Dritter und Modelle behalten ihre eigenen Lizenzen.",
+installHeading: "So installierst du auf dem Mac und unter Windows",
+installMac1: "Öffne die heruntergeladene <code>.dmg</code>-Datei.",
+installMac2: "Ziehe LocalNeuron in den Ordner Programme.",
+installMac3: "Öffne die App einmal. Wenn macOS eine Warnung zeigt, gehe zu <strong>Systemeinstellungen → Datenschutz & Sicherheit</strong> und wähle <strong>Dennoch öffnen</strong>.",
+installMac4: "Bestätige danach mit <strong>Öffnen</strong>.",
+installWin1: "Starte das Installationsprogramm (Setup).",
+installWin2: "Folge dem Installationsassistenten.",
+installWin3: "Wenn SmartScreen erscheint: <strong>Weitere Informationen</strong> → <strong>Trotzdem ausführen</strong>."
 },
 ja: {
 linuxPackages: "Linux: DEB、AppImage、Arch",
@@ -464,7 +489,15 @@ faqExoA: "動かせます。Modo servidor と Rede EXO で、macOS 26.2 以降�
 faqSupQ: "サポートはどう頼みますか？",
 faqSupA: "サポートは<a href=\"https://github.com/Arthur06311/localneuron/issues\">リポジトリの issue</a>です。バージョン、システム、モデルまたはエンジン、手順、エラーメッセージを書いてください。パスワード、トークン、個人データ、非公開のプロンプトは除いてください。機微な内容を含む脆弱性を、開いた issue に出さないでください。",
 faqOssQ: "LocalNeuron はオープンソースですか？",
-faqOssA: "いいえ。プロプライエタリで、ソースは非公開です。無断転載を禁じます（© 2026 Arthur Pinheiro Kriger）。第三者の部品とモデルは、それぞれのライセンスに従います。"
+faqOssA: "いいえ。プロプライエタリで、ソースは非公開です。無断転載を禁じます（© 2026 Arthur Pinheiro Kriger）。第三者の部品とモデルは、それぞれのライセンスに従います。",
+installHeading: "Mac と Windows でのインストール",
+installMac1: "ダウンロードした <code>.dmg</code> を開きます。",
+installMac2: "LocalNeuron をアプリケーションフォルダへドラッグします。",
+installMac3: "アプリを一度開いてみます。macOS が警告を出したら、<strong>システム設定 → プライバシーとセキュリティ</strong>で<strong>このまま開く</strong>を選びます。",
+installMac4: "その後の確認では、<strong>開く</strong>を選びます。",
+installWin1: "インストーラー（Setup）を実行します。",
+installWin2: "インストール手順に従います。",
+installWin3: "SmartScreen が出たら：<strong>詳細情報</strong> → <strong>実行</strong>。"
 },
 zh: {
 linuxPackages: "Linux：DEB、AppImage 和 Arch",
@@ -556,6 +589,14 @@ faqExoA: "可以，用 Modo servidor 和 Rede EXO，在 macOS 26.2 或更新的 
 faqSupQ: "如何寻求支持？",
 faqSupA: "支持通过<a href=\"https://github.com/Arthur06311/localneuron/issues\">仓库的 issue</a>。请写上版本、系统、模型或引擎、步骤和错误信息。去掉密码、令牌、个人数据和私人提示。不要把含有敏感内容的漏洞发到公开的 issue 里。",
 faqOssQ: "LocalNeuron 是开源的吗？",
-faqOssA: "不是。它是专有软件，源代码不公开，保留所有权利（© 2026 Arthur Pinheiro Kriger）。第三方组件和模型保留各自的许可证。"
+faqOssA: "不是。它是专有软件，源代码不公开，保留所有权利（© 2026 Arthur Pinheiro Kriger）。第三方组件和模型保留各自的许可证。",
+installHeading: "如何在 Mac 和 Windows 上安装",
+installMac1: "打开下载的 <code>.dmg</code> 文件。",
+installMac2: "将 LocalNeuron 拖到“应用程序”文件夹。",
+installMac3: "先尝试打开一次应用。如果 macOS 出现警告，前往<strong>系统设置 → 隐私与安全性</strong>，选择<strong>仍要打开</strong>。",
+installMac4: "随后在确认中选择<strong>打开</strong>。",
+installWin1: "运行安装程序（Setup）。",
+installWin2: "按照安装向导操作。",
+installWin3: "如果出现 SmartScreen：<strong>更多信息</strong> → <strong>仍要运行</strong>。"
 }
 };
