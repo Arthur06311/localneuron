@@ -108,8 +108,12 @@ test('Aviso persiste, respeita desativação e volta na próxima versão; offlin
   assert.equal(updates.status().automatic,false);
   offline=true;
   await updates.check(true);
-  assert.match(updates.status().error,/offline/);
+  assert.equal(updates.status().error,'Não foi possível verificar atualizações. Verifique sua conexão.');
   assert.equal(updates.status().release?.version,'0.29.0');
+  assert.equal(updates.status().available,true);
+  offline=false;
+  await updates.check(true);
+  assert.equal(updates.status().error,'');
   assert.equal(updates.status().available,true);
   assert.equal(new Updates(dir,'0.29.0',fetcher,macTarget).status().available,false);
  }finally{rmSync(dir,{recursive:true,force:true});}
@@ -122,7 +126,7 @@ test('Manifesto excessivo ou inválido não produz link de instalação',async()
   await updates.check(true);
   assert.equal(updates.status().release,null);
   assert.equal(updates.status().available,false);
-  assert.ok(updates.status().error);
+  assert.equal(updates.status().error,'Não foi possível verificar atualizações. Verifique sua conexão.');
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
 

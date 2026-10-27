@@ -120,6 +120,8 @@ export default {
   'settings.updatesChecked': 'Last check: {when}',
   'settings.updatesNever': 'Not checked yet.',
   'settings.updatesCheck': 'Check now',
+  'settings.updatesRetry': 'Try again',
+  'settings.updatesError': 'Could not check for updates. Check your connection.',
   'settings.updatesVersions': 'View versions',
   'settings.vault': 'Vault on this computer',
   'settings.vaultHelp': 'The app opens directly. The vault key is random and stays encrypted in the system’s secure storage. There is no password to create or remember.',
