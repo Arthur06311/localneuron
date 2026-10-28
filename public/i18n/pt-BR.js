@@ -311,6 +311,7 @@ export default {
   'chat.welcome.eyebrow': 'SEU ASSISTENTE LOCAL',
   'chat.welcome.title': 'Como posso ajudar?',
   'chat.welcome.body': 'Converse, escreva e resolva tarefas com seus modelos de IA.',
+  'chat.welcome.offline': 'Funciona sem internet: tudo roda no seu computador',
   'chat.suggest.explain.label': 'Entender um assunto',
   'chat.suggest.explain.prompt': 'Explique um assunto complicado com exemplos simples. Comece me perguntando qual assunto.',
   'chat.suggest.edit.label': 'Melhorar um texto',
