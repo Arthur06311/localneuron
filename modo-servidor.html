@@ -39,11 +39,11 @@
 <section class="doc-block" data-i18n="srvJoin">
 <h2>Como cada computador participa</h2>
 <dl class="facts">
-<div><dt>Estado</dt><dd>Há dois modos. Participar com este Mac empresta RAM e GPU ao modelo. Controlar um EXO existente só comanda a rede, pelo endereço privado na porta 52415, e não soma RAM.</dd></div>
+<div><dt>Estado</dt><dd>Há dois modos na Rede EXO. Participar com este Mac empresta RAM e GPU ao modelo. Controlar um EXO existente só comanda a rede, pelo endereço privado na porta 52415, e não soma RAM. O gateway do Modo servidor escuta só na rede local, na porta 52416.</dd></div>
 <div><dt>Limite</dt><dd>Participar pede Mac Apple Silicon com macOS 26.2 ou mais recente. No Windows, só o modo de controlar está disponível. No Linux, o LocalNeuron não instala o motor. Quem quiser participar instala o EXO pelo projeto oficial.</dd></div>
 <div><dt>Garantia</dt><dd>Controlar não acrescenta a RAM desta máquina à rede.</dd></div>
 </dl>
-<p><strong>A partir da próxima versão.</strong> Contribuir, Gerenciar e Só usar ainda não estão no instalador 0.28.1. Nesta versão, use Participar com este Mac ou Controlar um EXO existente.</p>
+<p>O Modo servidor distingue Contribuir, Gerenciar e Só usar. O gateway escuta na porta 52416, só em endereço privado, com pareamento por código de 6 dígitos e uma chave por máquina. Participar com este Mac e Controlar um EXO existente continuam na Rede EXO.</p>
 </section>
 
 <section class="doc-block" data-i18n="srvConnect">
@@ -57,7 +57,7 @@
 </ol>
 <p>A primeira preparação precisa de internet para baixar o modelo. Depois, Iniciar sem internet usa modelos já baixados.</p>
 <p class="note">A identificação da rede (<code>neuron-</code> e 32 caracteres hexadecimais) só define quais nós se encontram. Não é senha e não cifra o tráfego.</p>
-<p><strong>A partir da próxima versão.</strong> O pareamento por código de 6 dígitos ainda não está no instalador 0.28.1. Nesta versão, os Macs se encontram pela identificação da rede.</p>
+<p>O pareamento do gateway usa um código de 6 dígitos. Cada máquina fica com uma chave própria no cofre. Os outros computadores falam com a porta 52416, não com a porta 52415. Enquanto o EXO estiver ligado, a porta 52415 continua na rede local, sem senha.</p>
 </section>
 
 <section class="doc-block" data-i18n="srvExpose">
@@ -67,13 +67,14 @@
 <thead><tr><th>O quê</th><th>Porta</th><th>Exposição</th></tr></thead>
 <tbody>
 <tr><td>API e painel do EXO</td><td>52415</td><td>No EXO 1.0.71, ao iniciar o nó, fica aberta em todas as interfaces IPv4, sem senha e sem cifra, enquanto o nó estiver ligado. O app mostra um aviso durante esse tempo.</td></tr>
+<tr><td>Gateway do Modo servidor</td><td>52416</td><td>Só na rede local, em endereço privado. Pareamento por código de 6 dígitos e chave por máquina. A escuta recusa IP público e 0.0.0.0.</td></tr>
 <tr><td>Descoberta entre nós</td><td>automática na rede local</td><td>No EXO 1.0.71, os Macs se encontram na mesma rede.</td></tr>
 <tr><td>Mensagens e partes do modelo</td><td>—</td><td>Circulam entre os nós da rede.</td></tr>
 <tr><td>Painel do LocalNeuron</td><td>4318 no desktop</td><td>Apenas 127.0.0.1, com sessão.</td></tr>
 <tr><td>Minha API</td><td>4320</td><td>Desligada por padrão. Separada do EXO.</td></tr>
 </tbody></table></div>
 <ul>
-<li>Bloquear o aplicativo desliga a exposição e encerra o nó se ele estava acessível pela rede.</li>
+<li>Fechar o aplicativo desliga o gateway da porta 52416 e encerra o nó se ele estava acessível pela rede.</li>
 <li>Desconectar encerra o EXO iniciado pelo LocalNeuron. Liberar modelo tira a instância da rede, sem apagar os arquivos, e afeta quem estiver usando nos outros Macs.</li>
 <li>O EXO não dá controle de tela, arquivos, desligamento nem instalação remota.</li>
 </ul>
