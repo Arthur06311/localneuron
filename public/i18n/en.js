@@ -310,6 +310,7 @@ export default {
   'chat.welcome.eyebrow': 'YOUR LOCAL ASSISTANT',
   'chat.welcome.title': 'How can I help?',
   'chat.welcome.body': 'Chat, write, and work through tasks with your AI models.',
+  'chat.welcome.offline': 'Works without internet: everything runs on your computer',
   'chat.suggest.explain.label': 'Understand a subject',
   'chat.suggest.explain.prompt': 'Explain a complicated subject with simple examples. Start by asking me which subject.',
   'chat.suggest.edit.label': 'Improve a piece of writing',

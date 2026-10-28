@@ -1,4 +1,5 @@
 import { format, setText, t, textLocale } from "./i18n.js";
+import { writeChatOfflineLine } from "./chat-offline-line.js";
 import { writeChatModelLabel } from "./chat-model-label.js";
 import { mascotHTML } from "./mascot.js";
 import { replySpeedText } from "./reply-speed.js";
@@ -244,6 +245,9 @@ export function createChatUI({
     if (node.textContent !== next) setText(node, key, vars);
   }
   function fillRenderedMessages(root, rendered) {
+    root.querySelectorAll("[data-chat-offline]").forEach((node) => {
+      writeChatOfflineLine(node);
+    });
     root.querySelectorAll("[data-i18n-steps]").forEach((node) => {
       const message = rendered[Number(node.dataset.i18nSteps)];
       paintText(node, "chat.steps", { count: message?.activities?.length || 0 });
@@ -444,7 +448,7 @@ export function createChatUI({
             return `<article class="chat-message ${m.role}" data-message-id="${m.id}">${m.role === "assistant" && index === messages.length - 1 ? mascotHTML(m.error || m.status === "error" || m.status === "stopped" ? "attention" : m.status === "pending" ? "thinking" : "success", "reply") : ""}<strong>${m.role === "user" ? t("chat.you") : `<span data-chat-model="${index}"></span>`}</strong><div class="message-text">${m.role === "assistant" ? markdown(m.content || "") : escape(m.content)}</div>${m.status === "pending" && !m.content ? `<p class="thinking-label">${m.phase === "thinking" ? t("chat.thinking") : t("chat.preparingReply")}</p>` : ""}${m.error ? `<p class="message-error">${escape(m.error)}</p>` : ""}${m.activities?.length ? `<details class="tool-activity" ${m.status === "pending" ? "open" : ""}><summary><span data-i18n-steps="${index}"></span></summary>${m.activities.map((a, step) => `<div class="tool-step"><span>${a.status === "complete" ? "✓" : a.status === "error" || a.status === "denied" ? "!" : "◌"}</span><div><strong>${escape(a.label)}</strong><small>${escape(a.detail || { running: t("chat.step.running"), approval: t("chat.step.approval"), complete: t("chat.step.complete"), denied: t("chat.step.denied"), error: t("chat.step.error") }[a.status] || a.status)}</small>${a.artifact ? `<a class="quiet" href="/v1/assistant/artifacts/${escape(a.artifact)}" download><span data-i18n-download="${index}" data-i18n-step="${step}"></span></a>${a.previous_artifact ? ` <a class="quiet" href="/v1/assistant/artifacts/${escape(a.previous_artifact)}" download>${t("chat.previousFile")}</a>` : ""}` : ""}</div></div>`).join("")}</details>` : ""}${stats ? `<div class="answer-stats"><span data-i18n-stats="${index}"></span></div>` : ""}${replySpeedText(m.stats)}${assist.extras(m)}<div class="answer-actions">${assist.actions(m)}${m.content ? `<button class="quiet" data-chat-copy="${m.id}">${t("chat.copy")}</button>` : ""}${m.role === "assistant" && index === messages.length - 1 && m.status !== "pending" ? `<button class="quiet" data-chat-retry>${t("chat.retry")}</button>${stats?.finish_reason === "length" ? `<button class="quiet" data-chat-continue>${t("chat.continue")}</button>` : ""}` : ""}${m.versions?.length ? `<details><summary><span data-i18n-previous="${index}"></span></summary>${m.versions.map((v) => `<div class="previous-answer">${markdown(v.content || v.error || t("chat.interrupted"))}</div>`).join("")}</details>` : ""}</div></article>`;
           })
           .join("")
-      : `<div class="chat-welcome">${mascotHTML("welcome", "chat")}<span class="eyebrow">${t("chat.welcome.eyebrow")}</span><h2>${t("chat.welcome.title")}</h2><p>${t("chat.welcome.body")}</p><div class="chat-suggestions"><button data-chat-example="${t("chat.suggest.explain.prompt")}">${t("chat.suggest.explain.label")}</button><button data-chat-example="${t("chat.suggest.edit.prompt")}">${t("chat.suggest.edit.label")}</button><button data-chat-example="${t("chat.suggest.idea.prompt")}">${t("chat.suggest.idea.label")}</button></div>${!preferred ? `<button class="primary" data-chat-library>${t("chat.firstModel")}</button>` : ""}</div>`;
+      : `<div class="chat-welcome">${mascotHTML("welcome", "chat")}<span class="eyebrow">${t("chat.welcome.eyebrow")}</span><h2>${t("chat.welcome.title")}</h2><p>${t("chat.welcome.body")}</p><p class="chat-offline-line" data-chat-offline></p><div class="chat-suggestions"><button data-chat-example="${t("chat.suggest.explain.prompt")}">${t("chat.suggest.explain.label")}</button><button data-chat-example="${t("chat.suggest.edit.prompt")}">${t("chat.suggest.edit.label")}</button><button data-chat-example="${t("chat.suggest.idea.prompt")}">${t("chat.suggest.idea.label")}</button></div>${!preferred ? `<button class="primary" data-chat-library>${t("chat.firstModel")}</button>` : ""}</div>`;
     if (html !== lastHTML) {
       target.innerHTML = html;
       lastHTML = html;

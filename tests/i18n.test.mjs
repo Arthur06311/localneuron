@@ -39,6 +39,7 @@ test('chave ausente em inglês volta ao português e o Chat em pt-BR não muda',
     assert.equal(t('missing.key'), '');
     assert.equal(t('chat.welcome.title'), 'How can I help?');
     assert.equal(t('chat.welcome.eyebrow'), 'YOUR LOCAL ASSISTANT');
+    assert.equal(t('chat.welcome.offline'), 'Works without internet: everything runs on your computer');
     assert.equal(t('nav.work'), 'Work');
     assert.equal(t('nav.account'), 'Account');
     assert.equal(format('chat.internet.on', { unused: 'x' }), 'Internet on');
@@ -47,6 +48,7 @@ test('chave ausente em inglês volta ao português e o Chat em pt-BR não muda',
   }
   assert.equal(t('chat.welcome.title'), 'Como posso ajudar?');
   assert.equal(t('chat.welcome.eyebrow'), 'SEU ASSISTENTE LOCAL');
+  assert.equal(t('chat.welcome.offline'), 'Funciona sem internet: tudo roda no seu computador');
   assert.equal(t('chat.internet.on'), 'Internet habilitada');
   assert.equal(t('chat.internet.off'), 'Internet desligada');
   assert.equal(t('nav.work'), 'Trabalhar');

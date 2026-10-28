@@ -402,6 +402,16 @@ body.chat-page .chat-composer textarea {
 }
 
 .chat-welcome p { color: var(--muted); font-size: 13px; max-width: 42em; }
+body.chat-page .chat-welcome p:has(+ .chat-offline-line) { margin-bottom: 6px; }
+body.chat-page .chat-welcome p.chat-offline-line {
+  margin: 0 auto 16px;
+  max-width: 36em;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
 .chat-welcome .neuron-mascot-chat { width: 28px; height: 28px; margin: 0 0 8px; }
 .chat-suggestions button { border-radius: 6px; box-shadow: none; background: var(--panel); }
 
