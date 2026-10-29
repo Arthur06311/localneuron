@@ -35,6 +35,11 @@ export function createPro({ api, escape: E, toast, isVisible, navigate }) {
       FORBID_TAGS: ["img", "iframe", "style", "script"],
       FORBID_ATTR: ["style"],
     });
+  function needsPro(feature) {
+    if (state?.subscription?.active) return false;
+    document.dispatchEvent(new CustomEvent("localneuron:pro-required", { detail: { feature } }));
+    return true;
+  }
   function download(blob, name) {
     const url = URL.createObjectURL(blob),
       a = document.createElement("a");
@@ -345,6 +350,7 @@ export function createPro({ api, escape: E, toast, isVisible, navigate }) {
     if (button) button.disabled = true;
     try {
       if (e.target.id === "pro-compose") {
+        if (needsPro("jobs")) return;
         const kind = $("#pro-kind").value;
         await api("/pro/jobs", {
           method: "POST",
@@ -385,6 +391,7 @@ export function createPro({ api, escape: E, toast, isVisible, navigate }) {
             .join("") || "<p>Nenhum trecho correspondente.</p>";
       }
       if (e.target.id === "pro-profile") {
+        if (needsPro("performance")) return;
         await api("/pro/profiles", {
           method: "POST",
           body: {
@@ -468,9 +475,10 @@ export function createPro({ api, escape: E, toast, isVisible, navigate }) {
   });
   document.addEventListener("change", async (e) => {
     if(e.target.closest("#pro-compose"))rememberDraft();
-    if (e.target.dataset.proPriority) { try { await api('/pro/jobs/'+e.target.dataset.proPriority+'/priority',{method:'POST',body:{priority:Number(e.target.value)}}); await refresh(); } catch(error){toast(error.message);} }
+    if (e.target.dataset.proPriority) { try { if(needsPro('jobs')){await refresh();return;} await api('/pro/jobs/'+e.target.dataset.proPriority+'/priority',{method:'POST',body:{priority:Number(e.target.value)}}); await refresh(); } catch(error){toast(error.message);} }
     if (e.target.id === "pro-kind") kindOptions();
     if (!["pro-files", "pro-folder"].includes(e.target.id)) return;
+    if (needsPro("projects")) { e.target.value = ""; return; }
     const files = [...e.target.files]
       .filter(
         (f) =>
@@ -522,7 +530,7 @@ export function createPro({ api, escape: E, toast, isVisible, navigate }) {
     try {
       if(b.dataset.premiumCase){b.closest('.premium-proof').outerHTML=benefitComparison(E,b.dataset.premiumCase);return;}
       if(b.dataset.proQuickStart){
-        if(!state.subscription?.active){document.dispatchEvent(new CustomEvent('localneuron:pro-required',{detail:{feature:'projects'}}));return;}
+        if(needsPro('projects'))return;
         const starter=STARTERS.find(t=>t.id===b.dataset.proQuickStart);if(!starter)return;
         if(dirty)await saveEditor();rememberDraft();
         const el=dialog('Prepare seu projeto',`<p class="muted">${E(starter.name)} · o pedido ficará pronto para você conferir.</p><label>Onde trabalhar<select name="project"><option value="new">Criar um novo projeto</option>${state.projects.map(p=>`<option value="${p.id}" ${p.id===current?'selected':''}>${E(p.name)}</option>`).join('')}</select></label><label data-new-project-name>Nome do novo projeto<input name="name" maxlength="100" value="${E(starter.name)}"></label><div class="premium-prepare-note"><span class="premium-seal">✦ PRO</span><p>Modo <strong>Com revisão</strong> preparado. Você pode mudar o modo, anexar arquivos e escolher a IA antes de executar.</p></div>`,async el=>{
@@ -533,10 +541,10 @@ export function createPro({ api, escape: E, toast, isVisible, navigate }) {
         });
         const select=el.querySelector('[name=project]'),name=el.querySelector('[data-new-project-name]');const sync=()=>{name.hidden=select.value!=='new';el.querySelector('[name=name]').required=select.value==='new';};select.onchange=sync;sync();el.querySelector('[type=submit]').textContent='Preparar pedido →';return;
       }
-      if(b.hasAttribute('data-pro-focus')) { $('.pro-app').classList.toggle('pro-focus'); b.textContent=$('.pro-app').classList.contains('pro-focus')?'Sair do foco':'Modo foco'; return; }
-      if(b.dataset.proQueue) { await api('/pro/queue',{method:'POST',body:{paused:b.dataset.proQueue==='true'}}); await reload(); return; }
+      if(b.hasAttribute('data-pro-focus')) { if(needsPro('jobs'))return; $('.pro-app').classList.toggle('pro-focus'); b.textContent=$('.pro-app').classList.contains('pro-focus')?'Sair do foco':'Modo foco'; return; }
+      if(b.dataset.proQueue) { if(needsPro('jobs'))return; await api('/pro/queue',{method:'POST',body:{paused:b.dataset.proQueue==='true'}}); await reload(); return; }
       if(b.dataset.proDeleteTemplate) { await api('/pro/templates/'+b.dataset.proDeleteTemplate,{method:'DELETE'}); await reload(); return; }
-      if(b.hasAttribute('data-pro-new-template')) { dialog('Criar atalho de trabalho','<label>Nome<input name="name" maxlength="100" required></label><label>Pedido reutilizável<textarea name="prompt" rows="8" maxlength="16000" required></textarea></label>',async el=>{const f=new FormData(el.querySelector('form'));await api('/pro/templates',{method:'POST',body:{name:f.get('name'),prompt:f.get('prompt')}});await reload();});return; }
+      if(b.hasAttribute('data-pro-new-template')) { if(needsPro('projects'))return; dialog('Criar atalho de trabalho','<label>Nome<input name="name" maxlength="100" required></label><label>Pedido reutilizável<textarea name="prompt" rows="8" maxlength="16000" required></textarea></label>',async el=>{const f=new FormData(el.querySelector('form'));await api('/pro/templates',{method:'POST',body:{name:f.get('name'),prompt:f.get('prompt')}});await reload();});return; }
       if(b.dataset.proTemplate) {
         const t=[...STARTERS,...state.templates].find(t=>t.id===b.dataset.proTemplate);if(!t)return;
         if(dirty)await saveEditor();
@@ -648,7 +656,7 @@ export function createPro({ api, escape: E, toast, isVisible, navigate }) {
         await reload();
       }
       const action = b.dataset.pro;
-      if (action === "new-project" && !state.subscription?.active) { document.dispatchEvent(new CustomEvent("localneuron:pro-required",{detail:{feature:"projects"}})); return; }
+      if (action === "new-project" && needsPro("projects")) return;
       if (action === "new-project")
         dialog(
           "Novo projeto",
@@ -741,6 +749,7 @@ export function createPro({ api, escape: E, toast, isVisible, navigate }) {
           project().name.replace(/[^\p{L}\p{N} _-]/gu, "") + "." + format,
         );
       }
+      if ((action === "upload" || action === "folder" || action === "new-assistant" || action === "new-automation") && needsPro("projects")) return;
       if (action === "upload") $("#pro-files").click();
       if (action === "folder") $("#pro-folder").click();
       if (action === "new-assistant") assistantForm();

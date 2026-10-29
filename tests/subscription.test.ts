@@ -30,6 +30,9 @@ test('Licença assinada: offline, reinício, expiração, cancelamento e relógi
  local.install(signLease({...lease(local.snapshot().device,now),status:'past_due',expires_at:now},privateKey));assert.equal(local.active,false);assert.equal(local.snapshot().status,'past_due');
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
+test('Sem URL e chave pública, o Checkout não cobra e o Pro continua exigido',async()=>{
+ const dir=temporary();try{const local=new Subscription(dir,{});await assert.rejects(()=>local.checkout('monthly'),/Pro ativo/);assert.equal(local.snapshot().plan,'free');assert.equal(local.snapshot().configured,false);}finally{rmSync(dir,{recursive:true,force:true});}
+});
 test('Recusa adulteração, outra chave/dispositivo, licença antiga/futura e prazo excessivo',()=>{
  const dir=temporary(),now=Date.now();try{const local=new Subscription(dir,testConfig,()=>now),valid=lease(local.snapshot().device,now),token=signLease(valid,privateKey);local.install(token);
  const other=generateKeyPairSync('ed25519').privateKey.export({format:'pem',type:'pkcs8'}).toString();
@@ -266,6 +269,10 @@ test('Elegibilidade desconhecida não anuncia o teste e a página só mostra os 
   const idle=new Subscription(dir+'-off',testConfig,()=>now);await idle.refreshEligibility();assert.equal(calls,0);
   const page=readFileSync(resolve('public/subscription.js'),'utf8');
   assert.match(page,/trial=Boolean\(state\.configured&&!managing&&!state\.trial_repeat&&state\.trial_checked&&state\.trial_eligible\)/);
+  assert.doesNotMatch(page,/Em preparação|venda ainda não foi ativada|Assinar Pro/);
+  assert.match(page,/Recursos avançados exigem o Pro ativo/);
+  assert.match(page,/A compra abre neste aplicativo/);
+  assert.match(page,/Esta compilação não inicia cobrança/);
   assert.doesNotMatch(page,/!state\.trial_checked/);
   assert.match(page,/trial\?'<p class="trial-note">7 dias grátis<\/p>':''/);
   assert.match(page,/uma vez por pessoa e por cartão/);

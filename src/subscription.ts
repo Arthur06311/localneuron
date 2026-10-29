@@ -81,7 +81,7 @@ export class Subscription {
     this.lease=lease; this.state.token=token; this.state.checked_at=this.now(); this.state.trial_eligible=false; delete this.state.eligibility_checked_at; this.error=''; this.save(); return this.snapshot();
   }
   private async request(path: string, extra: Record<string, string> = {}) {
-    if (!this.config.serviceUrl || !this.config.publicKey) throw Error('Assinaturas em preparação. Nenhuma cobrança está habilitada.');
+    if (!this.config.serviceUrl || !this.config.publicKey) throw Error('A cobrança desta instalação ainda não está ligada. Os recursos avançados continuam exigindo o Pro ativo.');
     const url=new URL(this.config.serviceUrl);
     const base=url.pathname.replace(/\/$/,'')||'/';
     const allowed=base==='/'||base==='/billing'||base.endsWith('/functions/v1/billing');
