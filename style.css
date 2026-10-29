@@ -57,6 +57,7 @@ h3{font-size:15px;margin:0}
 .hero-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;align-items:center}
 .hero-downloads{display:flex;flex-wrap:wrap;gap:8px}
 .hero-downloads .button{min-width:168px;align-items:flex-start;flex-direction:column;gap:2px;padding:8px 12px}
+.hero-downloads .button.ghost{flex-direction:row;align-items:center;align-self:center;justify-content:center;font-weight:600}
 .btn-meta{font-weight:500;font-size:12px;color:var(--meta)}
 .hero-visual{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:12px 12px 0;min-width:0}
 .visual-caption,.visual-footer{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px;font-family:var(--mono)}
