@@ -1,5 +1,6 @@
 export const homeCopy = {
 en: {
+watchDemo: "Watch a 30s demo<span class=\"sr-only\"> (opens in a new tab)</span>",
 linuxPackages: "Linux: DEB, AppImage and Arch",
 rdmaReq: "Cabling illustration on the Modo servidor page. RDMA is not part of 0.28.1. RDMA requires macOS 26.2+ and Thunderbolt 5.",
 rdmaDiagram: "The drawings below are a cabling illustration, not a screen of the app. RDMA is not part of 0.28.1. RDMA requires macOS 26.2+ and Thunderbolt 5.",
@@ -100,6 +101,7 @@ installWin2: "Follow the installation wizard.",
 installWin3: "If SmartScreen appears: <strong>More info</strong> → <strong>Run anyway</strong>."
 },
 es: {
+watchDemo: "Ver demo en 30s<span class=\"sr-only\"> (se abre en una pestaña nueva)</span>",
 linuxPackages: "Linux: DEB, AppImage y Arch",
 rdmaReq: "Ilustración de cableado en la página Modo servidor. RDMA no forma parte de la 0.28.1. RDMA requiere macOS 26.2+ y Thunderbolt 5.",
 rdmaDiagram: "Los dibujos de abajo son una ilustración de cableado, no una pantalla de la app. RDMA no forma parte de la 0.28.1. RDMA requiere macOS 26.2+ y Thunderbolt 5.",
@@ -200,6 +202,7 @@ installWin2: "Sigue el asistente de instalación.",
 installWin3: "Si aparece SmartScreen: <strong>Más información</strong> → <strong>Ejecutar de todas formas</strong>."
 },
 fr: {
+watchDemo: "Voir la démo en 30 s<span class=\"sr-only\"> (s’ouvre dans un nouvel onglet)</span>",
 linuxPackages: "Linux : DEB, AppImage et Arch",
 rdmaReq: "Illustration de câblage sur la page Modo servidor. RDMA ne fait pas partie de la 0.28.1. RDMA exige macOS 26.2+ et Thunderbolt 5.",
 rdmaDiagram: "Les dessins ci-dessous illustrent le câblage, pas un écran de l’app. RDMA ne fait pas partie de la 0.28.1. RDMA exige macOS 26.2+ et Thunderbolt 5.",
@@ -300,6 +303,7 @@ installWin2: "Suivez l’assistant d’installation.",
 installWin3: "Si SmartScreen s’affiche : <strong>Informations complémentaires</strong> → <strong>Exécuter quand même</strong>."
 },
 de: {
+watchDemo: "Demo in 30 s ansehen<span class=\"sr-only\"> (öffnet sich in einem neuen Tab)</span>",
 linuxPackages: "Linux: DEB, AppImage und Arch",
 rdmaReq: "Verkabelungszeichnung auf der Seite Modo servidor. RDMA gehört nicht zu 0.28.1. RDMA braucht macOS 26.2+ und Thunderbolt 5.",
 rdmaDiagram: "Die Zeichnungen unten zeigen die Verkabelung, nicht einen Bildschirm der App. RDMA gehört nicht zu 0.28.1. RDMA braucht macOS 26.2+ und Thunderbolt 5.",
@@ -400,6 +404,7 @@ installWin2: "Folge dem Installationsassistenten.",
 installWin3: "Wenn SmartScreen erscheint: <strong>Weitere Informationen</strong> → <strong>Trotzdem ausführen</strong>."
 },
 ja: {
+watchDemo: "30秒のデモを見る<span class=\"sr-only\">（新しいタブで開きます）</span>",
 linuxPackages: "Linux: DEB、AppImage、Arch",
 rdmaReq: "Modo servidor のページにある配線図です。RDMA は 0.28.1 には含まれません。RDMA には macOS 26.2 以降と Thunderbolt 5 が必要です。",
 rdmaDiagram: "下の図は配線の説明であり、アプリの画面ではありません。RDMA は 0.28.1 には含まれません。RDMA には macOS 26.2 以降と Thunderbolt 5 が必要です。",
@@ -500,6 +505,7 @@ installWin2: "インストール手順に従います。",
 installWin3: "SmartScreen が出たら：<strong>詳細情報</strong> → <strong>実行</strong>。"
 },
 zh: {
+watchDemo: "观看 30 秒演示<span class=\"sr-only\">（在新标签页中打开）</span>",
 linuxPackages: "Linux：DEB、AppImage 和 Arch",
 rdmaReq: "Modo servidor 页面上的布线图。RDMA 不属于 0.28.1。RDMA 需要 macOS 26.2 或更高版本以及 Thunderbolt 5。",
 rdmaDiagram: "下面的图是布线示意，不是应用界面。RDMA 不属于 0.28.1。RDMA 需要 macOS 26.2 或更高版本以及 Thunderbolt 5。",
