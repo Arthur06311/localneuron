@@ -1,3 +1,13 @@
+import { t } from "./i18n.js";
+import {
+  NARRATION_SAMPLE_TEXT,
+  hasSavedNarrationVoice,
+  markNarrationIntro,
+  narrationIntroMode,
+  narrationSampleMarkup,
+  narrationSettingsMarkup,
+  narrationSettingsPlatform,
+} from "./narration-sample.js";
 import {
   uid,
   duration,
@@ -26,7 +36,11 @@ export function createStudioPro({
   let active = false,
     cancelled = false,
     interval = null,
-    proJob = null;
+    proJob = null,
+    sampleToken = 0,
+    sampleContext = null,
+    sampleSource = null;
+  const narrationKnownAtStart = hasSavedNarrationVoice(localStorage);
   const download = (blob, name) => {
     const url = URL.createObjectURL(blob),
       a = document.createElement("a");
@@ -76,8 +90,103 @@ export function createStudioPro({
       )
       .map((a) => `<option value="${a.id}">${E(a.name)}</option>`)
       .join("");
+  function haltNarrationSample() {
+    try {
+      sampleSource?.stop();
+    } catch {
+      /* a amostra já tinha terminado */
+    }
+    sampleSource = null;
+    const context = sampleContext;
+    sampleContext = null;
+    if (context && context.state !== "closed")
+      void context.close().catch(() => {});
+  }
+  function cancelNarrationSample() {
+    sampleToken += 1;
+    haltNarrationSample();
+  }
+  function paintNarrationIntro(slot, voice) {
+    if (!slot || !voice) return;
+    const mode = narrationIntroMode(localStorage, voice, narrationKnownAtStart);
+    if (mode === "sample") {
+      const label =
+        voice.voices?.find((item) => item.id === voice.id)?.name ||
+        voice.voices?.find((item) => item.brazilian)?.name ||
+        voice.name ||
+        "";
+      slot.innerHTML = narrationSampleMarkup(E, label);
+    } else if (mode === "settings") {
+      slot.innerHTML = narrationSettingsMarkup(
+        E,
+        narrationSettingsPlatform(voice.engine),
+        voice.message || "",
+      );
+    } else if (voice.message) {
+      slot.innerHTML = `<section class="notice narration-voice-hint" role="status"><h3>${E(t("narration.unavailable.title"))}</h3><p>${E(voice.message)}</p></section>`;
+    } else slot.innerHTML = "";
+  }
+  async function playNarrationSample() {
+    const token = ++sampleToken;
+    haltNarrationSample();
+    const button = document.querySelector("[data-pro-media='narration-sample']");
+    const live = document.querySelector("#narration-sample-status");
+    if (button) {
+      button.disabled = true;
+      button.setAttribute("aria-busy", "true");
+    }
+    if (live) live.textContent = t("narration.sample.playing");
+    let context = null;
+    try {
+      context = new AudioContext();
+      sampleContext = context;
+      await context.resume();
+      if (token !== sampleToken) return;
+      const chosen = $("#studio-voice-id")?.value;
+      const result = await api("/pro/media/speak", {
+        method: "POST",
+        body: {
+          text: NARRATION_SAMPLE_TEXT,
+          speed: 1,
+          voice: chosen && chosen !== "faber-pt-br" ? chosen : undefined,
+        },
+      });
+      if (token !== sampleToken || !$("#studio-pro-dialog")?.open) return;
+      const response = await fetch(result.file);
+      if (!response.ok) throw Error(t("narration.sample.failed"));
+      const buffer = await context.decodeAudioData(await response.arrayBuffer());
+      if (token !== sampleToken || context.state === "closed") return;
+      const source = context.createBufferSource();
+      source.buffer = buffer;
+      source.connect(context.destination);
+      sampleSource = source;
+      source.onended = () => {
+        if (sampleSource === source) sampleSource = null;
+        if (live?.isConnected) live.textContent = t("narration.sample.done");
+        if (sampleContext === context) {
+          sampleContext = null;
+          void context.close().catch(() => {});
+        }
+      };
+      source.start(0, 0, Math.min(buffer.duration, 6.5));
+      markNarrationIntro(localStorage, "heard");
+    } catch (error) {
+      if (token !== sampleToken) return;
+      const message = error?.message || t("narration.sample.failed");
+      if (live?.isConnected) live.textContent = message;
+      toast(message);
+    } finally {
+      if (button?.isConnected) {
+        button.disabled = false;
+        button.removeAttribute("aria-busy");
+      }
+      if (token !== sampleToken && context && sampleContext !== context)
+        void context.close().catch(() => {});
+    }
+  }
   async function page(name) {
     if (active) return;
+    cancelNarrationSample();
     clearInterval(interval);
     document
       .querySelectorAll("[data-pro-media-tab]")
@@ -99,9 +208,22 @@ export function createStudioPro({
       if (remembered === "faber-pt-br" && selected)
         localStorage.setItem("localneuron-tts-voice", selected);
       const note = v.notice ? `<p>${E(v.notice)}</p>` : "";
-      if (!v.ready) {
-        body.innerHTML = `<h3>Narração no seu computador</h3><p>${E(v.message || "A narração por voz do sistema não está disponível.")}</p>${note}`;
+      const mode = narrationIntroMode(localStorage, v, narrationKnownAtStart);
+      if (mode === "settings") {
+        body.innerHTML =
+          narrationSettingsMarkup(
+            E,
+            narrationSettingsPlatform(v.engine),
+            v.message || "",
+          ) + note;
+      } else if (!v.ready) {
+        body.innerHTML = `<h3>${E(t("narration.unavailable.title"))}</h3><p>${E(v.message || t("narration.unavailable.body"))}</p>${note}`;
       } else {
+        const current = v.voices.find((voice) => voice.id === selected);
+        const sample =
+          mode === "sample"
+            ? narrationSampleMarkup(E, current?.name || v.name || "")
+            : "";
         const options = [...v.voices]
           .sort((a, b) => Number(b.brazilian) - Number(a.brazilian))
           .map(
@@ -109,7 +231,7 @@ export function createStudioPro({
               `<option value="${E(voice.id)}" ${voice.id === selected ? "selected" : ""}>${E(voice.name)} · ${E(voice.language)}</option>`,
           )
           .join("");
-        body.innerHTML = `<h3>Narração no seu computador</h3><p>Voz do sistema${v.portuguese ? " · português brasileiro" : ""}. Nada é baixado pelo LocalNeuron.</p>${note}<label>Voz<select id="studio-voice-id">${options}</select></label><label>Texto da narração<textarea id="studio-voice-text" rows="5" maxlength="4000" placeholder="Escreva a narração…"></textarea></label><label>Velocidade<input id="studio-voice-speed" type="range" min="0.5" max="2" step="0.1" value="1"></label><button class="primary" data-pro-media="narrate">Gerar e adicionar ao vídeo</button>`;
+        body.innerHTML = `${sample}<h3>Narração no seu computador</h3><p>Voz do sistema${v.portuguese ? " · português brasileiro" : ""}. Nada é baixado pelo LocalNeuron.</p>${note}<label>Voz<select id="studio-voice-id">${options}</select></label><label>Texto da narração<textarea id="studio-voice-text" rows="5" maxlength="4000" placeholder="Escreva a narração…"></textarea></label><label>Velocidade<input id="studio-voice-speed" type="range" min="0.5" max="2" step="0.1" value="1"></label><button class="primary" data-pro-media="narrate">Gerar e adicionar ao vídeo</button>`;
       }
     }
     if (name === "captions")
@@ -168,8 +290,23 @@ export function createStudioPro({
             null,
             2,
           ),
-      )}</textarea></label><label>Visual<select id="studio-story-model"><option value="sd15">Imagens · Stable Diffusion 1.5</option><option value="wan21">Clipes curtos · Wan 2.1 experimental</option></select></label><label class="studio-check"><input type="checkbox" id="studio-story-voice"> Incluir narração com a voz do sistema</label><button class="primary" data-pro-media="story-generate">Gerar cenas e montar no projeto</button><p>A montagem será adicionada ao projeto atual; depois revise e exporte.</p>`;
+      )}</textarea></label><label class="studio-check"><input type="checkbox" id="studio-story-voice"> Incluir narração com a voz do sistema</label><div id="narration-story-intro"></div><button class="primary" data-pro-media="story-generate">Gerar cenas e montar no projeto</button><p>A montagem será adicionada ao projeto atual; depois revise e exporte.</p>`;
     }
+  }
+  function showStoryNarrationIntro(checked) {
+    const slot = $("#narration-story-intro");
+    if (!slot) return;
+    if (!checked) {
+      cancelNarrationSample();
+      slot.innerHTML = "";
+      return;
+    }
+    api("/pro/media")
+      .then((media) => {
+        if (slot.isConnected && $("#studio-story-voice")?.checked)
+          paintNarrationIntro(slot, media.voice);
+      })
+      .catch(() => {});
   }
   async function run(fn) {
     if (active) return;
@@ -231,6 +368,7 @@ export function createStudioPro({
     throw Error("A geração excedeu o tempo esperado.");
   }
   async function narrate(text, speed = 1, start = time(), voice) {
+    cancelNarrationSample();
     status("Gerando narração com a voz do sistema…");
     const remembered = localStorage.getItem("localneuron-tts-voice");
     const result = await api("/pro/media/speak", {
@@ -256,6 +394,8 @@ export function createStudioPro({
         volume: 1,
       }),
     );
+    markNarrationIntro(localStorage, "used");
+    document.querySelector(".narration-sample")?.remove();
     return meta;
   }
   function wavChunk(audio, start, end) {
@@ -513,6 +653,7 @@ export function createStudioPro({
         (error) => toast(error.message),
       );
     }
+    if (e.target.id === "studio-story-voice") showStoryNarrationIntro(e.target.checked);
   });
   document.addEventListener("click", async (e) => {
     const b = e.target.closest("button");
@@ -532,6 +673,10 @@ export function createStudioPro({
     }
     const action = b.dataset.proMedia;
     if (!action) return;
+    if (action === "narration-sample") {
+      void playNarrationSample();
+      return;
+    }
     if (action === "clear-mask") {
       $("#studio-mask").getContext("2d").clearRect(0, 0, 512, 512);
       return;
@@ -879,6 +1024,7 @@ export function createStudioPro({
       }
   }
   function stop() {
+    cancelNarrationSample();
     clearInterval(interval);
     if (active) {
       cancelled = true;
