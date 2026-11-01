@@ -137,6 +137,24 @@ td{color:var(--muted)}
 .prose pre code{border:0;background:none;padding:0}
 .note{border-left:2px solid var(--accent);padding:8px 12px;background:var(--panel);border-radius:0 6px 6px 0;color:var(--muted)}
 
+.offline-block{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:20px;align-items:start;padding:28px 0}
+.offline-intro .lede{margin:8px 0 0;color:var(--muted);max-width:42ch}
+.offline-panel{padding:16px 18px;display:grid;gap:14px}
+.offline-trigger{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.offline-trigger-label{margin:0;font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.offline-arrow{display:grid;place-items:center;color:var(--muted)}
+.offline-arrow svg{width:20px;height:20px}
+.offline-icon{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;background:var(--panel2);flex-shrink:0}
+.offline-icon svg{width:18px;height:18px}
+.offline-icon-warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 35%,var(--line))}
+.offline-icon-ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,var(--line))}
+.offline-mod-icon{width:28px;height:28px;display:grid;place-items:center;color:var(--ink);border:1px solid var(--line);border-radius:6px;background:var(--bg);flex-shrink:0}
+.offline-mod-icon svg{width:15px;height:15px}
+.offline-checklist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.offline-checklist li{display:grid;grid-template-columns:32px 28px minmax(0,1fr);gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);font-weight:500}
+.offline-caveat{margin:0;font-size:13px}
+.offline-actions{margin:0}
+
 .faq-list{display:grid;gap:8px}
 .faq details,.prose details{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:10px 12px}
 .faq summary,.prose summary{font-weight:600;min-height:32px;display:flex;align-items:center}
@@ -185,7 +203,7 @@ main.doc{max-width:980px;margin:0 auto;padding:28px 20px 72px}
 html[lang=ja] h1,html[lang=zh-CN] h1{letter-spacing:0}
 
 @media(max-width:900px){
-.hero,.split,.download-section,.cards,.guide-shell,.page-grid,.install-cols{grid-template-columns:1fr}
+.hero,.split,.download-section,.cards,.guide-shell,.page-grid,.install-cols,.offline-block{grid-template-columns:1fr}
 .section-heading,.docs-banner,.closing{display:block}
 .docs-banner .button,.closing a{margin-top:12px}
 }
