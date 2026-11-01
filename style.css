@@ -57,6 +57,7 @@ h3{font-size:15px;margin:0}
 .hero-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;align-items:center}
 .hero-downloads{display:flex;flex-wrap:wrap;gap:8px}
 .hero-downloads .button{min-width:168px;align-items:flex-start;flex-direction:column;gap:2px;padding:8px 12px}
+.hero-downloads .button.ghost{flex-direction:row;align-items:center;align-self:center;justify-content:center;font-weight:600}
 .btn-meta{font-weight:500;font-size:12px;color:var(--meta)}
 .hero-visual{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:12px 12px 0;min-width:0}
 .visual-caption,.visual-footer{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px;font-family:var(--mono)}
@@ -111,6 +112,18 @@ h3{font-size:15px;margin:0}
 .checksum code,.install-command{display:block;overflow-wrap:anywhere;font-size:11px;line-height:1.5;color:var(--muted);padding-top:4px}
 .download-alternative{display:inline-flex;margin-top:8px;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:13px;min-height:32px;align-items:center}
 .download-note{color:var(--muted);font-size:13px;grid-column:1/-1;margin:4px 0 0}
+.install-guide{grid-column:1/-1;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.install-heading{margin:0 0 12px;font-size:15px}
+.install-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.install-cols article{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.install-cols h4{margin:0 0 10px;font-size:14px;font-weight:600}
+.install-steps{margin:0;padding:0;list-style:none;counter-reset:install;display:grid;gap:8px}
+.install-steps li{counter-increment:install;display:grid;grid-template-columns:1.75rem minmax(0,1fr);gap:8px;align-items:baseline;color:var(--muted);font-size:13px}
+.install-steps li::before{content:counter(install,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--muted)}
+.install-steps li>span{min-width:0}
+.install-steps strong,.install-steps code{display:inline}
+.install-steps strong{color:var(--ink);font-weight:600}
+.install-steps code{font-family:var(--mono);font-size:12px;color:var(--ink)}
 
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px}
 table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.5}
@@ -123,6 +136,24 @@ td{color:var(--muted)}
 .prose pre{overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px}
 .prose pre code{border:0;background:none;padding:0}
 .note{border-left:2px solid var(--accent);padding:8px 12px;background:var(--panel);border-radius:0 6px 6px 0;color:var(--muted)}
+
+.offline-block{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:20px;align-items:start}
+.offline-intro .lede{margin:8px 0 0;color:var(--muted);max-width:42ch}
+.offline-panel{padding:16px 18px;display:grid;gap:14px}
+.offline-trigger{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.offline-trigger-label{margin:0;font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.offline-arrow{display:grid;place-items:center;color:var(--muted)}
+.offline-arrow svg{width:20px;height:20px}
+.offline-icon{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;background:var(--panel2);flex-shrink:0}
+.offline-icon svg{width:18px;height:18px}
+.offline-icon-warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 35%,var(--line))}
+.offline-icon-ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,var(--line))}
+.offline-mod-icon{width:28px;height:28px;display:grid;place-items:center;color:var(--ink);border:1px solid var(--line);border-radius:6px;background:var(--bg);flex-shrink:0}
+.offline-mod-icon svg{width:15px;height:15px}
+.offline-checklist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.offline-checklist li{display:grid;grid-template-columns:32px 28px minmax(0,1fr);gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);font-weight:500}
+.offline-caveat{margin:0;font-size:13px}
+.offline-actions{margin:0}
 
 .faq-list{display:grid;gap:8px}
 .faq details,.prose details{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:10px 12px}
@@ -179,7 +210,7 @@ main.doc{max-width:980px;margin:0 auto;padding:28px 20px 72px}
 html[lang=ja] h1,html[lang=zh-CN] h1{letter-spacing:0}
 
 @media(max-width:900px){
-.hero,.split,.download-section,.cards,.guide-shell,.page-grid{grid-template-columns:1fr}
+.hero,.split,.download-section,.cards,.guide-shell,.page-grid,.install-cols,.offline-block{grid-template-columns:1fr}
 .section-heading,.docs-banner,.closing{display:block}
 .docs-banner .button,.closing a{margin-top:12px}
 }

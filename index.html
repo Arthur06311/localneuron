@@ -40,7 +40,7 @@
 <link rel="preload" as="image" href="./product.png">
 <link rel="stylesheet" href="./style.css">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"LocalNeuron","applicationCategory":"DeveloperApplication","operatingSystem":"macOS, Windows, Linux","softwareVersion":"0.28.1","offers":{"@type":"Offer","price":"0","priceCurrency":"BRL"},"description":"Aplicativo para conversar e criar com modelos de IA no seu computador. O download não exige conta. O plano Pro é opcional e a cobrança pública ainda não está ativada."}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"LocalNeuron","applicationCategory":"DeveloperApplication","operatingSystem":"macOS, Windows, Linux","softwareVersion":"0.28.1","offers":{"@type":"Offer","price":"0","priceCurrency":"BRL"},"description":"Aplicativo para conversar e criar com modelos de IA no seu computador. O download e o uso básico não exigem conta. Os recursos avançados exigem o Pro: R$ 20 por mês ou R$ 150 por ano. A compra é no aplicativo."}
 </script>
 <script>try{var t=localStorage.getItem("localneuron-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script></head>
 <body>
@@ -75,6 +75,7 @@
 <div class="hero-downloads" id="hero-downloads">
 <a class="button" data-hero="mac" href="https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-macOS-arm64.dmg">macOS<span class="btn-meta">DMG · Apple Silicon</span></a>
 <a class="button" data-hero="windows" href="https://github.com/Arthur06311/localneuron/releases/download/v0.28.1/LocalNeuron-Windows-x64-Setup.exe">Windows<span class="btn-meta">Setup · x64</span></a>
+<a class="button ghost" href="https://youtube.com/shorts/f9h95eyxAh0" target="_blank" rel="noopener noreferrer" data-i18n="watchDemo">Ver demo em 30s<span class="sr-only"> (abre em uma nova aba)</span></a>
 </div>
 <a class="text-link" href="#download" data-i18n="linuxPackages">Linux: DEB, AppImage e Arch</a>
 <a class="text-link" href="#comecar" data-i18n="explore">Ver como começar</a>
@@ -191,6 +192,31 @@
 <p><a href="./requisitos.html" data-i18n="reqOpen">Ver requisitos por sistema</a></p>
 </div></section>
 
+<section id="funciona-offline" class="band" aria-labelledby="offline-title">
+<div class="wrap offline-block">
+<div class="offline-intro">
+<p class="eyebrow" data-i18n="offlineEyebrow">DEPOIS DA INSTALAÇÃO</p>
+<h2 id="offline-title" data-i18n="offlineTitle">Funciona offline</h2>
+<p class="lede" data-i18n="offlineLead">Com modelos e motores instalados, desligue o Wi‑Fi: chat, voz, imagem e música locais continuam neste computador.</p>
+</div>
+<div class="offline-panel panel">
+<div class="offline-trigger">
+<span class="offline-icon offline-icon-warn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5a7 7 0 0 1 14 0"/><path d="M2 12.5h20"/><path d="M8.5 16.5 12 20l3.5-3.5"/><line x1="4" y1="4" x2="20" y2="20"/></svg></span>
+<span class="offline-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+<p class="offline-trigger-label" data-i18n="offlineWifi">Wi‑Fi desligado</p>
+</div>
+<ul class="offline-checklist">
+<li><span class="offline-icon offline-icon-ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></span><span class="offline-mod-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span><span data-i18n="offlineCheckChat">Chat</span></li>
+<li><span class="offline-icon offline-icon-ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></span><span class="offline-mod-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 11v1a7 7 0 0 1-14 0v-1"/><path d="M12 19v3"/></svg></span><span data-i18n="offlineCheckVoice">Voz</span></li>
+<li><span class="offline-icon offline-icon-ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></span><span class="offline-mod-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M4 16l4-4 3 3 5-6 4 5"/></svg></span><span data-i18n="offlineCheckImage">Imagem</span></li>
+<li><span class="offline-icon offline-icon-ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></span><span class="offline-mod-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span data-i18n="offlineCheckMusic">Música</span></li>
+</ul>
+<p class="note offline-caveat" data-i18n="offlineCaveat">Na 0.28.1, em Minha equipe, Anthropic e Grok (xAI) ainda enviam texto nesses canais; um provedor OpenAI compatível em outro computador também recebe o texto. "Usar offline" desliga internet e terminal das ferramentas, não todos os serviços na nuvem.</p>
+<p class="offline-actions"><a class="button" href="#download" data-i18n="offlineCta">Baixar o app</a></p>
+</div>
+</div>
+</section>
+
 <section id="download" class="wrap download-section">
 <div class="download-heading">
 <p class="eyebrow" data-i18n="downloadLabel">PRONTO PARA COMEÇAR?</p>
@@ -201,6 +227,28 @@
 <div>
 <div class="download-list" id="downloads"><p data-i18n="loading"><a href="https://github.com/Arthur06311/localneuron/releases">Ver versões no GitHub</a></p></div>
 <p class="download-note" data-i18n="alphaNote">Versão alfa em desenvolvimento. A velocidade e os modelos disponíveis dependem do hardware. Os pacotes ainda não têm assinatura de distribuição; seu sistema pode exibir um aviso ao abrir.</p>
+</div>
+<div class="install-guide">
+<h3 class="install-heading" data-i18n="installHeading">Como instalar no Mac e no Windows</h3>
+<div class="install-cols">
+<article>
+<h4>Mac · Apple Silicon</h4>
+<ol class="install-steps">
+<li><span data-i18n="installMac1">Abra o arquivo <code>.dmg</code> baixado.</span></li>
+<li><span data-i18n="installMac2">Arraste o LocalNeuron para a pasta Aplicativos.</span></li>
+<li><span data-i18n="installMac3">Tente abrir o app uma vez. Se o macOS mostrar um aviso, vá em <strong>Ajustes do Sistema → Privacidade e Segurança</strong> e escolha <strong>Abrir Mesmo Assim</strong>.</span></li>
+<li><span data-i18n="installMac4">Em seguida, confirme com <strong>Abrir</strong>.</span></li>
+</ol>
+</article>
+<article>
+<h4>Windows</h4>
+<ol class="install-steps">
+<li><span data-i18n="installWin1">Execute o instalador (Setup).</span></li>
+<li><span data-i18n="installWin2">Siga o assistente de instalação.</span></li>
+<li><span data-i18n="installWin3">Se aparecer o SmartScreen: <strong>Mais informações</strong> → <strong>Executar assim mesmo</strong>.</span></li>
+</ol>
+</article>
+</div>
 </div>
 </section>
 
@@ -224,7 +272,7 @@
 <details><summary data-i18n="faqModQ">Quais modelos posso usar?</summary><p data-i18n="faqModA">A biblioteca tem mais de mil entradas, com variantes, e pesquisa no Hugging Face. Para texto, o app inclui llama.cpp (GGUF) e, no Mac Apple Silicon, MLX. A ficha mostra RAM estimada, tamanho, licença e motor.</p><p data-i18n="faqModA2">Nem todo modelo do catálogo roda no motor integrado. Confira se a ficha diz integrado. Para começar, escolha um modelo de texto pequeno em Q4 que caiba com folga na RAM.</p></details>
 <details><summary data-i18n="faqLmQ">Preciso do LM Studio?</summary><p data-i18n="faqLmA">Não. O LocalNeuron tem motores próprios. Se você já tem GGUFs na pasta do LM Studio, eles são reutilizados sem cópia. <a href="./compare-lm-studio.html">Veja a comparação</a>.</p></details>
 <details><summary data-i18n="faqOsQ">Em quais sistemas funciona?</summary><p data-i18n="faqOsA">macOS com Apple Silicon. Windows x64. Linux x64, nos pacotes DEB, AppImage e Arch. Mac Intel não é compatível.</p><p data-i18n="faqOsA2">O Mac é a plataforma validada com download e inferência reais. No Windows e no Linux, a validação nativa dos motores e da GPU ainda está pendente. <a href="./requisitos.html">Veja os requisitos</a>.</p></details>
-<details><summary data-i18n="faqProQ">É grátis? O que é o Pro?</summary><p data-i18n="faqProA">Baixar o app e rodar modelos locais compatíveis não exige pagamento nem conta em provedor de IA. O Pro é opcional: projetos, entregas, fila, revisões e recursos avançados, com uma licença assinada que o app valida.</p><p data-i18n="faqProA2">O Pro não muda os modelos nem deixa a IA mais inteligente. O ganho vem das ferramentas e da organização. O Pro custa R$ 20,00 por mês ou R$ 150 por ano, com 7 dias grátis (uso único). A compra está em breve, e a cobrança ainda não está ativada.</p></details>
+<details><summary data-i18n="faqProQ">É grátis? O que é o Pro?</summary><p data-i18n="faqProA">Baixar o app e rodar modelos locais compatíveis não exige pagamento nem conta em provedor de IA. O Grátis cobre o básico: modelos, chat, voz, estúdio básico e uma chave de API. Os recursos avançados exigem o Pro, com uma licença assinada que o app valida.</p><p data-i18n="faqProA2">O Pro não muda os modelos nem deixa a IA mais inteligente. O ganho vem das ferramentas e da organização. A assinatura custa R$ 20 por mês ou R$ 150 por ano, com 7 dias grátis uma vez por pessoa e por cartão. A compra é no aplicativo, em Meu plano. Este site não cobra.</p></details>
 <details><summary data-i18n="faqDataQ">Onde ficam meus dados?</summary><p data-i18n="faqDataA">Fora do aplicativo:</p><ul><li>macOS: <code>~/Library/Application Support/Colmeia/</code></li><li>Windows: <code>%APPDATA%/Colmeia/</code></li><li>Linux: <code>~/.config/Colmeia/</code> ou <code>$XDG_CONFIG_HOME/Colmeia/</code></li></ul><p data-i18n="faqDataA2">Colmeia é o nome antigo, mantido por compatibilidade. Instalações antigas no Mac podem usar a pasta <code>Colmeia-data/</code>, ao lado do app.</p></details>
 <details><summary data-i18n="faqBakQ">Como faço backup e restauração?</summary><p data-i18n="faqBakA">Feche o app e copie a pasta de dados inteira, a que contém <code>workspace/</code>. O backup só do cofre não inclui conversas, projetos nem modelos.</p><p data-i18n="faqBakA2">Para restaurar, em Preferências clique em Abrir uma pasta de dados existente e selecione a pasta que contém <code>workspace/</code>. O app abre esse espaço e deixa a pasta atual intacta. O passo a passo está em <a href="./primeiros-passos.html#backup-e-restauracao">Primeiros passos</a>.</p></details>
 <details><summary data-i18n="faqUpQ">Como recebo atualizações?</summary><p data-i18n="faqUpA">A partir da versão 0.27, o app avisa quando há uma versão nova. A consulta automática nasce desligada. Se você ligar o aviso em Preferências → Atualizações, a consulta ocorre no máximo a cada seis horas. Verificar agora consulta na hora. Não envia conversas, arquivos nem dados do seu espaço. Não há instalação automática. Quem usa a 0.26 ou anterior precisa instalar a 0.27 uma vez.</p><p data-i18n="faqUpA2">Para atualizar, feche o app e substitua só o aplicativo. Não apague a pasta de dados.</p></details>
