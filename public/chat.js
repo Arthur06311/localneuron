@@ -1,5 +1,14 @@
 import { format, setText, t, textLocale } from "./i18n.js";
 import { writeChatOfflineLine } from "./chat-offline-line.js";
+import {
+  GUEST_START_KEY,
+  guestStartHtml,
+  guestStartNext,
+  guestStartPrompt,
+  guestStartState,
+  modelForGuestStart,
+  showGuestStart,
+} from "./guest-start.js";
 import { writeChatModelLabel } from "./chat-model-label.js";
 import { mascotHTML } from "./mascot.js";
 import { replySpeedText } from "./reply-speed.js";
@@ -405,6 +414,30 @@ export function createChatUI({
     const reasoning = $("[data-option=reasoning]");
     if (reasoning) reasoning.value = options.reasoning;
   }
+  function readGuestStart() {
+    try {
+      return guestStartState(localStorage.getItem(GUEST_START_KEY));
+    } catch {
+      return "";
+    }
+  }
+  function writeGuestStart(state) {
+    try {
+      localStorage.setItem(GUEST_START_KEY, state);
+    } catch {}
+  }
+  function rememberGuestStart() {
+    const state = readGuestStart();
+    const next = guestStartNext(state, { chats });
+    if (next && next !== state) writeGuestStart(next);
+    return next || state;
+  }
+  function dismissGuestStart() {
+    writeGuestStart("dismissed");
+    lastHTML = "";
+    draw();
+    $("#chat-input")?.focus();
+  }
   function draw() {
     if (!isVisible() || !$("#chat-messages")) return;
     const query = $("#chat-search").value.toLocaleLowerCase(),
@@ -441,6 +474,7 @@ export function createChatUI({
       .join("");
     if ($("#chat-approvals").innerHTML !== approvalHTML)
       $("#chat-approvals").innerHTML = approvalHTML;
+    const guestState = rememberGuestStart();
     const html = messages.length
       ? messages
           .map((m, index) => {
@@ -448,7 +482,7 @@ export function createChatUI({
             return `<article class="chat-message ${m.role}" data-message-id="${m.id}">${m.role === "assistant" && index === messages.length - 1 ? mascotHTML(m.error || m.status === "error" || m.status === "stopped" ? "attention" : m.status === "pending" ? "thinking" : "success", "reply") : ""}<strong>${m.role === "user" ? t("chat.you") : `<span data-chat-model="${index}"></span>`}</strong><div class="message-text">${m.role === "assistant" ? markdown(m.content || "") : escape(m.content)}</div>${m.status === "pending" && !m.content ? `<p class="thinking-label">${m.phase === "thinking" ? t("chat.thinking") : t("chat.preparingReply")}</p>` : ""}${m.error ? `<p class="message-error">${escape(m.error)}</p>` : ""}${m.activities?.length ? `<details class="tool-activity" ${m.status === "pending" ? "open" : ""}><summary><span data-i18n-steps="${index}"></span></summary>${m.activities.map((a, step) => `<div class="tool-step"><span>${a.status === "complete" ? "✓" : a.status === "error" || a.status === "denied" ? "!" : "◌"}</span><div><strong>${escape(a.label)}</strong><small>${escape(a.detail || { running: t("chat.step.running"), approval: t("chat.step.approval"), complete: t("chat.step.complete"), denied: t("chat.step.denied"), error: t("chat.step.error") }[a.status] || a.status)}</small>${a.artifact ? `<a class="quiet" href="/v1/assistant/artifacts/${escape(a.artifact)}" download><span data-i18n-download="${index}" data-i18n-step="${step}"></span></a>${a.previous_artifact ? ` <a class="quiet" href="/v1/assistant/artifacts/${escape(a.previous_artifact)}" download>${t("chat.previousFile")}</a>` : ""}` : ""}</div></div>`).join("")}</details>` : ""}${stats ? `<div class="answer-stats"><span data-i18n-stats="${index}"></span></div>` : ""}${replySpeedText(m.stats)}${assist.extras(m)}<div class="answer-actions">${assist.actions(m)}${m.content ? `<button class="quiet" data-chat-copy="${m.id}">${t("chat.copy")}</button>` : ""}${m.role === "assistant" && index === messages.length - 1 && m.status !== "pending" ? `<button class="quiet" data-chat-retry>${t("chat.retry")}</button>${stats?.finish_reason === "length" ? `<button class="quiet" data-chat-continue>${t("chat.continue")}</button>` : ""}` : ""}${m.versions?.length ? `<details><summary><span data-i18n-previous="${index}"></span></summary>${m.versions.map((v) => `<div class="previous-answer">${markdown(v.content || v.error || t("chat.interrupted"))}</div>`).join("")}</details>` : ""}</div></article>`;
           })
           .join("")
-      : `<div class="chat-welcome">${mascotHTML("welcome", "chat")}<span class="eyebrow">${t("chat.welcome.eyebrow")}</span><h2>${t("chat.welcome.title")}</h2><p>${t("chat.welcome.body")}</p><p class="chat-offline-line" data-chat-offline></p><div class="chat-suggestions"><button data-chat-example="${t("chat.suggest.explain.prompt")}">${t("chat.suggest.explain.label")}</button><button data-chat-example="${t("chat.suggest.edit.prompt")}">${t("chat.suggest.edit.label")}</button><button data-chat-example="${t("chat.suggest.idea.prompt")}">${t("chat.suggest.idea.label")}</button></div>${!preferred ? `<button class="primary" data-chat-library>${t("chat.firstModel")}</button>` : ""}</div>`;
+      : `<div class="chat-welcome">${showGuestStart({ state: guestState, messages, chats }) ? guestStartHtml(escape) : ""}${mascotHTML("welcome", "chat")}<span class="eyebrow">${t("chat.welcome.eyebrow")}</span><h2>${t("chat.welcome.title")}</h2><p>${t("chat.welcome.body")}</p><p class="chat-offline-line" data-chat-offline></p><div class="chat-suggestions"><button data-chat-example="${t("chat.suggest.explain.prompt")}">${t("chat.suggest.explain.label")}</button><button data-chat-example="${t("chat.suggest.edit.prompt")}">${t("chat.suggest.edit.label")}</button><button data-chat-example="${t("chat.suggest.idea.prompt")}">${t("chat.suggest.idea.label")}</button></div>${!preferred ? `<button class="primary" data-chat-library>${t("chat.firstModel")}</button>` : ""}</div>`;
     if (html !== lastHTML) {
       target.innerHTML = html;
       lastHTML = html;
@@ -473,7 +507,8 @@ export function createChatUI({
         });
         pre.append(button);
       });
-      if (atBottom) target.scrollTop = target.scrollHeight;
+      if (target.querySelector(".guest-start")) target.scrollTop = 0;
+      else if (atBottom) target.scrollTop = target.scrollHeight;
     }
     fillRenderedMessages(target, messages);
     voice.paint();
@@ -637,6 +672,11 @@ export function createChatUI({
     syncQuick();
   });
   document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && e.target.closest?.(".guest-start")) {
+      e.preventDefault();
+      dismissGuestStart();
+      return;
+    }
     if (e.key === "Escape" && $("#chat-history") && !$("#chat-history").hidden)
       toggleHistory(false);
     if (
@@ -775,6 +815,37 @@ export function createChatUI({
         lastHTML = "";
         draw();
         $("#chat-messages").scrollTop = $("#chat-messages").scrollHeight;
+      } else if (b.dataset.guestStart) {
+        if (!isVisible() || !$("#chat-input") || preparing || pending() || voice.busy() || assist.busy()) return;
+        const prompt = guestStartPrompt(b.dataset.guestStart);
+        if (!prompt) return;
+        const input = $("#chat-input");
+        const key = modelForGuestStart({
+          installed: models?.installed || [],
+          catalog: models?.catalog || [],
+        });
+        input.value = prompt;
+        drafts.set(current || "new", prompt);
+        input.focus();
+        const select = $("#chat-model");
+        if (!key || !select) {
+          toast(t("chat.needModel"));
+          showLibrary();
+          return;
+        }
+        select.value = key;
+        if (select.value !== key) {
+          toast(t("chat.needModel"));
+          showLibrary();
+          return;
+        }
+        preferred = key;
+        localStorage.setItem("colmeia-model", preferred);
+        guidance();
+        b.disabled = true;
+        await send();
+      } else if (b.hasAttribute("data-guest-start-close")) {
+        dismissGuestStart();
       } else if (b.dataset.chatExample) {
         $("#chat-input").value = b.dataset.chatExample;
         drafts.set(current || "new", b.dataset.chatExample);
