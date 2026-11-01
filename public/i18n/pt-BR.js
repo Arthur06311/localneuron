@@ -385,7 +385,7 @@ export default {
   'narration.settings.macos': 'Abra Ajustes do Sistema, depois Acessibilidade, Conteúdo falado, e escolha uma voz do sistema em Português (Brasil).',
   'narration.settings.windows': 'Abra Configurações, depois Hora e idioma, Fala, e adicione uma voz em Português (Brasil).',
   'narration.settings.linux': 'Instale uma voz pt-BR no speech-dispatcher deste computador. O LocalNeuron não baixa vozes.',
-  'narration.settings.generic': 'Instale uma voz em português brasileiro nas definições de voz do sistema.',
+  'narration.settings.generic': 'Instale uma voz em português brasileiro nas configurações de voz do sistema.',
   'narration.settings.local': 'A narração usa só a voz instalada neste computador.',
   'narration.unavailable.title': 'Narração no seu computador',
   'narration.unavailable.body': 'A narração por voz do sistema não está disponível.',

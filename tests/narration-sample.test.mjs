@@ -111,6 +111,18 @@ test('o cartão Ouvir amostra escapa o nome da voz e traduz o botão', () => {
   }
 });
 
+test('o Roteiro mantém o seletor Visual antes da narração', () => {
+  const studio = readFileSync(new URL('../public/studio-pro.js', import.meta.url), 'utf8');
+  const visual =
+    '<label>Visual<select id="studio-story-model"><option value="sd15">Imagens · Stable Diffusion 1.5</option><option value="wan21">Clipes curtos · Wan 2.1 experimental</option></select></label>';
+  const at = studio.indexOf(visual);
+  const voice = studio.indexOf('<label class="studio-check"><input type="checkbox" id="studio-story-voice">');
+  assert.ok(at > 0);
+  assert.ok(voice > at);
+  assert.match(studio, /\$\("#studio-story-model"\)\.value/);
+  assert.match(studio, /if \(action === "narration-sample"\) \{\s*void playNarrationSample\(\);/);
+});
+
 test('o Estúdio liga a amostra à voz local e não a um serviço de nuvem', () => {
   const studio = readFileSync(new URL('../public/studio-pro.js', import.meta.url), 'utf8');
   const sample = readFileSync(new URL('../public/narration-sample.js', import.meta.url), 'utf8');

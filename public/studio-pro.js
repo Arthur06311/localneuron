@@ -290,7 +290,7 @@ export function createStudioPro({
             null,
             2,
           ),
-      )}</textarea></label><label class="studio-check"><input type="checkbox" id="studio-story-voice"> Incluir narração com a voz do sistema</label><div id="narration-story-intro"></div><button class="primary" data-pro-media="story-generate">Gerar cenas e montar no projeto</button><p>A montagem será adicionada ao projeto atual; depois revise e exporte.</p>`;
+      )}</textarea></label><label>Visual<select id="studio-story-model"><option value="sd15">Imagens · Stable Diffusion 1.5</option><option value="wan21">Clipes curtos · Wan 2.1 experimental</option></select></label><label class="studio-check"><input type="checkbox" id="studio-story-voice"> Incluir narração com a voz do sistema</label><div id="narration-story-intro"></div><button class="primary" data-pro-media="story-generate">Gerar cenas e montar no projeto</button><p>A montagem será adicionada ao projeto atual; depois revise e exporte.</p>`;
     }
   }
   function showStoryNarrationIntro(checked) {
