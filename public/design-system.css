@@ -566,3 +566,109 @@ dialog::backdrop { background: color-mix(in srgb, var(--bg) 35%, #000); }
   outline: 3px solid var(--focus) !important;
   outline-offset: 2px;
 }
+
+/* Primeira sessão: card «Comece sem conta» no chat vazio.
+   O miolo centralizado cortava o topo quando o conteúdo passava da área. */
+body.chat-page .chat-welcome:has(.guest-start) {
+  justify-content: flex-start;
+  padding-top: 8px;
+}
+body.chat-page .chat-welcome .guest-start {
+  align-self: center;
+  width: min(100%, 640px);
+  margin: 0 auto 16px;
+  padding: 14px 14px 12px;
+  text-align: left;
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  flex: none;
+}
+body.chat-page .chat-welcome .guest-start p {
+  margin: 0;
+  max-width: none;
+  text-align: left;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.guest-start-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.guest-start h3 {
+  margin: 2px 0 4px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+.guest-start-close,
+.guest-start-prompt {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+}
+.guest-start-close {
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 18px;
+  line-height: 1;
+}
+.guest-start-prompts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.guest-start-prompt {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  text-align: left;
+  background: var(--panel2);
+}
+.guest-start-prompt strong {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.guest-start-prompt small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.guest-start-note {
+  margin-top: 10px !important;
+  font-size: 12px;
+}
+.guest-start-close:hover,
+.guest-start-prompt:hover {
+  border-color: var(--accent);
+}
+.guest-start-close:focus-visible,
+.guest-start-prompt:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (max-width: 720px) {
+  body.chat-page .chat-welcome .guest-start { width: 100%; }
+  .guest-start-prompts { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guest-start, .guest-start-prompt, .guest-start-close { transition: none; }
+}
