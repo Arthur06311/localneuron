@@ -137,7 +137,7 @@ td{color:var(--muted)}
 .prose pre code{border:0;background:none;padding:0}
 .note{border-left:2px solid var(--accent);padding:8px 12px;background:var(--panel);border-radius:0 6px 6px 0;color:var(--muted)}
 
-.offline-block{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:20px;align-items:start;padding:28px 0}
+.offline-block{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:20px;align-items:start}
 .offline-intro .lede{margin:8px 0 0;color:var(--muted);max-width:42ch}
 .offline-panel{padding:16px 18px;display:grid;gap:14px}
 .offline-trigger{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
