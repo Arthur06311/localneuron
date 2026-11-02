@@ -155,8 +155,8 @@ td{color:var(--muted)}
 .offline-caveat{margin:0;font-size:13px}
 .offline-actions{margin:0}
 .demo-30-heading .lede{margin:8px 0 0;color:var(--muted);max-width:48ch}
-.demo-frames{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;list-style:none;margin:16px 0 0;padding:0;counter-reset:demo-frame}
-.demo-frames li{min-width:0;counter-increment:demo-frame}
+.demo-frames{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;list-style:none;margin:16px 0 0;padding:0}
+.demo-frames li{min-width:0}
 .demo-frame-shot{margin:0}
 .demo-frame-shot img{display:block;width:100%;aspect-ratio:440/280;object-fit:cover;background:var(--panel2)}
 .demo-frame-shot figcaption{font-weight:500;color:var(--ink)}
