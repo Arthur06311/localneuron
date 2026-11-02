@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280" role="img" aria-labelledby="t3">
+<title id="t3">Modo offline</title>
+<rect width="440" height="280" fill="#0f1114"/>
+<rect x="1" y="1" width="438" height="278" rx="7" fill="#15181c" stroke="#262b31"/>
+<text x="20" y="32" fill="#e6e8eb" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="600">Depois de instalado</text>
+<text x="20" y="50" fill="#8b929b" font-family="Inter,system-ui,sans-serif" font-size="11">Modelos e motores prontos neste computador</text>
+<rect x="20" y="72" width="400" height="52" rx="7" fill="#1b1f24" stroke="#262b31"/>
+<path d="M36 98 a10 10 0 0 1 20 0" stroke="#d6a652" stroke-width="1.8" fill="none"/>
+<line x1="32" y1="104" x2="60" y2="92" stroke="#d6a652" stroke-width="1.8"/>
+<text x="68" y="104" fill="#e6e8eb" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="500">WiFi desligado</text>
+<rect x="300" y="86" width="108" height="24" rx="5" fill="#15181c" stroke="#5fb98a"/>
+<text x="312" y="102" fill="#5fb98a" font-family="Inter,system-ui,sans-serif" font-size="10" font-weight="600">Usar offline · ON</text>
+<g font-family="Inter,system-ui,sans-serif" font-size="11">
+<rect x="20" y="140" width="192" height="44" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="52" y="167" fill="#e6e8eb">Chat</text>
+<path d="M32 158 l6 6 12-12" stroke="#5fb98a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<rect x="228" y="140" width="192" height="44" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="260" y="167" fill="#e6e8eb">Voz</text>
+<path d="M240 158 l6 6 12-12" stroke="#5fb98a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<rect x="20" y="196" width="192" height="44" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="52" y="223" fill="#e6e8eb">Imagem</text>
+<path d="M32 214 l6 6 12-12" stroke="#5fb98a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<rect x="228" y="196" width="192" height="44" rx="6" fill="#1b1f24" stroke="#262b31"/>
+<text x="260" y="223" fill="#e6e8eb">Música</text>
+<path d="M240 214 l6 6 12-12" stroke="#5fb98a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+</g>
+<text x="20" y="264" fill="#5d646d" font-family="Inter,system-ui,sans-serif" font-size="10">Sem depender da nuvem para inferência local</text>
+</svg>

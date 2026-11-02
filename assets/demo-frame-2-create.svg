@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280" role="img" aria-labelledby="t2">
+<title id="t2">Criar com IA local</title>
+<rect width="440" height="280" fill="#0f1114"/>
+<rect x="1" y="1" width="438" height="278" rx="7" fill="#15181c" stroke="#262b31"/>
+<text x="20" y="32" fill="#e6e8eb" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="600">Criar</text>
+<text x="20" y="50" fill="#8b929b" font-family="Inter,system-ui,sans-serif" font-size="11">Imagem, voz e música no mesmo app</text>
+<rect x="20" y="68" width="124" height="168" rx="7" fill="#1b1f24" stroke="#262b31"/>
+<rect x="36" y="88" width="92" height="72" rx="6" fill="#22272e" stroke="#2e343b"/>
+<circle cx="58" cy="112" r="10" fill="#7aa2f7" opacity=".35"/>
+<path d="M48 132 L68 118 L88 132" stroke="#7aa2f7" stroke-width="2" fill="none"/>
+<text x="36" y="178" fill="#e6e8eb" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="600">Imagem</text>
+<text x="36" y="196" fill="#8b929b" font-family="Inter,system-ui,sans-serif" font-size="10">stable-diffusion.cpp</text>
+<rect x="158" y="68" width="124" height="168" rx="7" fill="#1b1f24" stroke="#262b31"/>
+<path d="M182 108 v28 M196 122 h-28" stroke="#7aa2f7" stroke-width="2" stroke-linecap="round"/>
+<path d="M210 100 c0 8 6 14 14 14" stroke="#5fb98a" stroke-width="2" fill="none"/>
+<path d="M200 128 v16 M188 136 h24" stroke="#8b929b" stroke-width="1.6" stroke-linecap="round"/>
+<text x="174" y="178" fill="#e6e8eb" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="600">Voz</text>
+<text x="174" y="196" fill="#8b929b" font-family="Inter,system-ui,sans-serif" font-size="10">Whisper · transcrever</text>
+<rect x="296" y="68" width="124" height="168" rx="7" fill="#1b1f24" stroke="#262b31"/>
+<path d="M318 118 v-12 a8 8 0 0 1 16 0 v12" stroke="#e6e8eb" stroke-width="1.6" fill="none"/>
+<path d="M314 118 h28 v14 a14 14 0 0 1-28 0z" stroke="#e6e8eb" stroke-width="1.6" fill="none"/>
+<path d="M326 140 v8 M318 152 h16" stroke="#d6a652" stroke-width="2" stroke-linecap="round"/>
+<text x="312" y="178" fill="#e6e8eb" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="600">Música</text>
+<text x="312" y="196" fill="#8b929b" font-family="Inter,system-ui,sans-serif" font-size="10">ACE-Step · local</text>
+<rect x="20" y="248" width="400" height="22" rx="5" fill="#15181c" stroke="#262b31"/>
+<text x="32" y="263" fill="#5d646d" font-family="Inter,system-ui,sans-serif" font-size="10">Motores integrados · sem enviar arquivos para a nuvem</text>
+</svg>
