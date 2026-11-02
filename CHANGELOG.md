@@ -19,6 +19,9 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 - O site ganha SEO, página 404 e a escolha do idioma pelo navegador (#62).
 - A especificação da ilha Equipes entra em `docs/design/equipes/`, com marcas e mockup. Minha equipe permanece (#66).
 - Quem ainda tem cofre com senha pode **Começar sem o cofre antigo**. A cópia datada fica guardada, o Chat abre com a chave da máquina, e a cópia pode ser importada depois, nas Configurações, com a senha (#69).
+- No chat vazio, uma linha discreta diz «Funciona sem internet: tudo roda no seu computador» (#103).
+- No primeiro uso da narração, o Estúdio mostra um teste de cerca de 5 segundos com a voz em português brasileiro do sistema e o botão **Ouvir amostra**. Sem voz pt-BR, a tela indica onde instalá-la. Quem já escolheu uma voz, ouviu a amostra ou gerou uma narração não vê o teste outra vez (#109).
+- Na primeira sessão, com o chat vazio, aparece o card **Comece sem conta** com três pedidos prontos: resumir um texto, escrever um e-mail e explicar um conceito. Um clique envia o pedido ao chat neste computador, sem conta. O card some depois da primeira conversa ou quando a pessoa fecha (#110).
 
 ### Alterado
 
@@ -39,6 +42,7 @@ O fluxo de release só continua quando três valores são iguais: a tag `vX.Y.Z`
 - O site em `gh-pages` adota o visual sóbrio e o guia de instalação do Linux deixa de citar o ZIP antigo (`Instalar.zip`) (#65).
 - A ilha Equipes segue a especificação visual: visão, lista, conversa, painel e marcas. O menor modelo local vem primeiro, e modelos grandes ficam só para o coordenador, em Avançado (#67).
 - Os guias passam a chamar a tela de ajustes de Configurações, e esta seção registra os PRs já na main (#74).
+- Os recursos avançados exigem uma assinatura Pro ativa, com o diálogo de upgrade, antes de executar. O Grátis continua para conversar, baixar e rodar modelos, voz, Estúdio básico e uma chave de API. **Meu plano** deixa de dizer que o Pro está «Em preparação»: mostra Mensal R$ 20,00 e Anual R$ 150 e explica que a compra abre neste aplicativo quando a URL e a chave pública desta instalação estiverem configuradas. Esta compilação não inicia cobrança (#104).
 
 ## [0.28.1] - 2026-10-19
 
