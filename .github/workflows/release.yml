@@ -5,6 +5,7 @@ name: Release
 # Windows: depois do NSIS, assinar o instalador com signtool / Authenticode.
 # Este workflow não notariza, não assina com certificado e não lê segredo novo.
 # Não adicionar APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID, WIN_CSC_LINK nem WIN_CSC_KEY_PASSWORD aqui.
+# build de teste 9380199
 
 on:
   push:
