@@ -161,6 +161,8 @@ td{color:var(--muted)}
 .demo-frame-shot img{display:block;width:100%;aspect-ratio:440/280;object-fit:cover;background:var(--panel2)}
 .demo-frame-shot figcaption{font-weight:500;color:var(--ink)}
 .demo-30-actions{margin:14px 0 0}
+.compare-cards h3{font-size:15px;margin:0}
+.compare-cards p{font-size:14px;line-height:1.45}
 
 .faq-list{display:grid;gap:8px}
 .faq details,.prose details{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:10px 12px}
