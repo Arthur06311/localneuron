@@ -154,6 +154,15 @@ td{color:var(--muted)}
 .offline-checklist li{display:grid;grid-template-columns:32px 28px minmax(0,1fr);gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);font-weight:500}
 .offline-caveat{margin:0;font-size:13px}
 .offline-actions{margin:0}
+.demo-30-heading .lede{margin:8px 0 0;color:var(--muted);max-width:48ch}
+.demo-frames{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;list-style:none;margin:16px 0 0;padding:0}
+.demo-frames li{min-width:0}
+.demo-frame-shot{margin:0}
+.demo-frame-shot img{display:block;width:100%;aspect-ratio:440/280;object-fit:cover;background:var(--panel2)}
+.demo-frame-shot figcaption{font-weight:500;color:var(--ink)}
+.demo-30-actions{margin:14px 0 0}
+.compare-cards h3{font-size:15px;margin:0}
+.compare-cards p{font-size:14px;line-height:1.45}
 
 .faq-list{display:grid;gap:8px}
 .faq details,.prose details{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:10px 12px}
@@ -210,7 +219,7 @@ main.doc{max-width:980px;margin:0 auto;padding:28px 20px 72px}
 html[lang=ja] h1,html[lang=zh-CN] h1{letter-spacing:0}
 
 @media(max-width:900px){
-.hero,.split,.download-section,.cards,.guide-shell,.page-grid,.install-cols,.offline-block{grid-template-columns:1fr}
+.hero,.split,.download-section,.cards,.guide-shell,.page-grid,.install-cols,.offline-block,.demo-frames{grid-template-columns:1fr}
 .section-heading,.docs-banner,.closing{display:block}
 .docs-banner .button,.closing a{margin-top:12px}
 }
@@ -234,6 +243,10 @@ header{grid-template-columns:1fr;grid-template-areas:"brand" "actions" "nav"}
 .guide-header .header-actions{margin-left:0}
 .header-actions{flex-wrap:wrap}
 table{min-width:28rem}
+}
+@media(max-width:720px){
+.demo-frames{display:flex;flex-wrap:nowrap;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-left:-4px;margin-right:-4px;padding-left:4px;padding-right:4px}
+.demo-frames li{flex:0 0 min(78vw,300px);scroll-snap-align:start}
 }
 @media(max-width:640px){
 header,.guide-header,.wrap,.hero,main.doc,.guide-shell{padding-left:16px;padding-right:16px}
