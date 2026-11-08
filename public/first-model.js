@@ -1,4 +1,6 @@
-const BUSY = new Set(['downloading', 'verifying', 'importing', 'indexing', 'downloaded']);
+// `failed` entra porque «Instalar e conversar» depois de uma falha, com os arquivos no disco,
+// salta direto para `installed` enquanto a biblioteca está ocupada e os estados do meio não aparecem.
+const BUSY = new Set(['downloading', 'verifying', 'importing', 'indexing', 'downloaded', 'failed']);
 const READY = new Set(['downloaded', 'installed']);
 
 export const USUAL_READY_TOAST = 'Pronto.';

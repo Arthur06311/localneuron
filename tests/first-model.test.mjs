@@ -104,6 +104,38 @@ test('rede EXO não conta como modelo local já instalado', () => {
   assert.equal(plan.modelKey, small.key);
 });
 
+test('falha recuperada para instalado dispara o primeiro modelo', () => {
+  useLocale('pt-BR');
+  const plan = arrival({
+    jobs: [['mini', 'failed']],
+    catalog: [{ id: 'mini', name: 'Pequeno', local_key: small.key, job: { state: 'installed' } }],
+  });
+  assert.equal(plan.kind, 'first');
+  assert.equal(plan.modelKey, small.key);
+  assert.equal(plan.openChat, true);
+  assert.equal(plan.focus, true);
+  assert.deepEqual(effects(plan), [
+    ['select', small.key, 'Pequeno'],
+    ['open', small.key],
+    ['focus'],
+    ['toast', 'Pronto. Escreve algo abaixo.'],
+  ]);
+});
+
+test('falha recuperada com outro modelo local só mostra o toast habitual', () => {
+  const plan = arrival({
+    before: [large],
+    after: [large, small],
+    jobs: [['mini', 'failed']],
+    catalog: [{ id: 'mini', name: 'Pequeno', local_key: small.key, job: { state: 'installed' } }],
+    page: 'models',
+  });
+  assert.deepEqual(plan, { kind: 'toast', modelKey: small.key });
+  const calls = effects(plan);
+  assert.deepEqual(calls, [['toast', USUAL_READY_TOAST]]);
+  assert.equal(calls.some((call) => call[0] === 'open' || call[0] === 'focus' || call[0] === 'select'), false);
+});
+
 test('download ainda em curso, falha ou dois términos juntos não escolhem modelo', () => {
   assert.equal(arrival({ catalog: [{ id: 'mini', local_key: small.key, job: { state: 'downloading' } }] }), null);
   assert.equal(arrival({ jobs: [['mini', 'downloading']], catalog: [{ id: 'mini', local_key: small.key, job: { state: 'failed' } }] }), null);
