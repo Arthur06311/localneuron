@@ -340,6 +340,7 @@ export default {
   'chat.status.answering': 'Replying on this computer…',
   'chat.status.reading': 'Reading a local attachment…',
   'chat.status.hint': 'Enter sends · Shift + Enter breaks the line',
+  'chat.firstReady': 'Ready. Write something below.',
   'chat.toast.pro': 'Pro is inactive. This conversation keeps your manual settings.',
   'chat.toast.context': 'This model was prepared with {count} tokens of context. Chat will respect that limit.',
   'chat.retryPrompt': 'Generate again',
