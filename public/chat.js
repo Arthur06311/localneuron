@@ -118,6 +118,7 @@ export function createChatUI({
     current = null,
     models = null,
     preferred = localStorage.getItem("colmeia-model") || "",
+    focusWhenReady = false,
     preparing = false,
     refreshBusy = false,
     panelOpen = false,
@@ -300,7 +301,9 @@ export function createChatUI({
       writeChatModelLabel(node, installed?.display_name || message?.model || t("chat.localAi"));
     });
   }
-  async function render(model) {
+  async function render(model, options = {}) {
+    const focusAfter = Boolean(options.focusComposer);
+    focusWhenReady = focusAfter;
     if (model) preferred = model;
     $("#content").innerHTML = `<div class="loading">${t("shell.loading")}</div>`;
     try {
@@ -309,7 +312,10 @@ export function createChatUI({
         api("/model-library"),
         api("/assistant"),
       ]);
-      if (!isVisible()) return;
+      if (!isVisible()) {
+        focusWhenReady = false;
+        return;
+      }
       if (
         !models.available &&
         !models.integrated_available &&
@@ -333,17 +339,21 @@ export function createChatUI({
             name: m.display_name || m.key,
           }))
         : models.models.map((id) => ({ id, name: id }));
-      if (!available.some((m) => m.id === preferred))
-        preferred =
-          models.installed.find(
-            (m) => m.key.startsWith("gguf:") && m.size_bytes >= 1500000000,
-          )?.key ||
-          models.installed.find(
-            (m) => m.loaded_instances?.length && m.size_bytes >= 1500000000,
-          )?.key ||
-          models.installed.find((m) => m.loaded_instances?.length)?.key ||
-          available[0]?.id ||
-          "";
+      if (!available.some((m) => m.id === preferred)) {
+        if (options.pinModel && preferred)
+          available.push({ id: preferred, name: options.modelName || preferred });
+        else
+          preferred =
+            models.installed.find(
+              (m) => m.key.startsWith("gguf:") && m.size_bytes >= 1500000000,
+            )?.key ||
+            models.installed.find(
+              (m) => m.loaded_instances?.length && m.size_bytes >= 1500000000,
+            )?.key ||
+            models.installed.find((m) => m.loaded_instances?.length)?.key ||
+            available[0]?.id ||
+            "";
+      }
       $("#content").innerHTML =
         `<div class="chat-layout"><aside class="chat-history" id="chat-history" aria-label="${t('chat.history.label')}" hidden><div class="chat-history-head"><strong>${t('chat.history.title')}</strong><button class="quiet" data-chat-history aria-label="${t('chat.history.close')}">×</button></div><button class="secondary" data-chat-new>${t('chat.history.new')}</button><input id="chat-search" class="history-search" placeholder="${t('chat.history.search')}" aria-label="${t('chat.history.search')}"><div id="chat-list"></div><div id="chat-manage"></div></aside><section class="chat-main" aria-label="${t('chat.main')}"><div class="chat-model-bar"><button class="secondary" data-chat-history aria-controls="chat-history" aria-expanded="false" title="${t('chat.history.label')}">${icon("history")}<span>${t('chat.history.title')}</span></button><label for="chat-model"><span class="sr-only">${t('chat.model.label')}</span><select id="chat-model">${available.map((m) => `<option value="${escape(m.id)}" ${preferred === m.id ? "selected" : ""}></option>`).join("") || `<option value="">${t('chat.model.empty')}</option>`}</select></label><button class="secondary" data-chat-new title="${t('chat.new')}" aria-label="${t('chat.new')}">${icon("plus")}</button><button class="secondary" data-chat-settings title="${t('chat.settingsTitle')}">${icon("settings")}<span>${t('chat.settings')}</span></button></div>${!models.available ? `<div class="notice warn">${t("chat.needModel")} <button class="quiet" data-chat-library>${t("chat.openModels")}</button></div>` : ""}<div id="chat-approvals"></div><div id="chat-messages" class="chat-messages" role="log" aria-label="${t('chat.messages')}" aria-live="off" tabindex="0"></div><form id="chat-form" class="chat-composer">${assist.toolbar()}<div class="quick-controls"><button type="button" class="quick-internet" data-chat-web aria-pressed="false" title="${t('chat.web.titleOff')}">${t('chat.web.quickOff')}</button><label class="effort-control" for="chat-effort"><span>${t('chat.effort')} <output id="effort-label"></output></span><input type="range" id="chat-effort" min="0" max="4" step="1" aria-describedby="effort-help"><span id="effort-help" class="sr-only">${t('chat.effortHelp')}</span></label></div><div class="voice-panel" data-voice-panel hidden><div class="voice-recording-line"><div class="voice-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><strong data-voice-time role="status"></strong><button class="quiet" type="button" data-voice-retry hidden>${t('chat.voice.retry')}</button><button class="quiet" type="button" data-voice-discard aria-label="${t('chat.voice.discardLabel')}">${t('chat.voice.discard')}</button></div><small data-voice-hint></small></div><label class="sr-only" for="chat-input">${t('chat.input.label')}</label><textarea id="chat-input" rows="2" maxlength="131072" placeholder="${t('chat.input.placeholder')}" required></textarea><div class="composer-bottom"><div class="composer-tools"><button type="button" class="quiet" data-chat-settings title="${t('chat.tools.title')}">${t('chat.tools')}</button><button type="button" class="quiet" data-chat-bottom title="${t('chat.bottom.title')}">${t('chat.bottom')}</button><button type="button" class="quiet" data-chat-font aria-pressed="false" title="${t('chat.font')}">A＋</button></div><span id="chat-status" role="status"></span><button type="button" class="secondary" data-chat-stop hidden>${t('chat.stop')}</button><button type="button" class="voice-button" data-chat-voice aria-label="${t('chat.voice.record')}" title="${t('chat.voice.record')}"></button><button type="submit" class="primary" id="chat-send">${t('chat.send')} ${icon("arrow")}</button></div></form><p class="chat-footnote" id="chat-connection-note"></p></section></div><dialog class="chat-settings-dialog" id="chat-settings"><div class="dialog-head"><h2>${t('chat.dialog.title')}</h2><button class="icon-button" data-chat-settings-close aria-label="${t('chat.dialog.close')}">×</button></div><div class="actions"><button class="secondary" data-chat-library>${t('chat.dialog.download')}</button>${models.mlx_available ? `<button class="secondary" data-import-mlx>${t("chat.dialog.mlx")}</button>` : ""}</div><button class="quiet" data-voice-settings>${t('chat.dialog.voice')}</button><div id="model-guidance" class="model-guidance"></div>${optionsHTML()}<div class="optimization-control"><span class="plan-tag">PRO</span><label>${t("chat.optimize.label")}<select id="chat-optimization">${[['manual',t('chat.optimize.manual')],['economy',t('chat.optimize.economy')],['balanced',t('chat.optimize.balanced')],['extended',t('chat.optimize.extended')]].map(([k,l])=>`<option value="${k}" ${optimization===k?"selected":""}>${l}</option>`).join("")}</select></label><p>${t('chat.optimize.help')}</p></div>${accessHTML()}</dialog>`;
       document.querySelectorAll("#chat-model option").forEach((option) => {
@@ -365,7 +375,12 @@ export function createChatUI({
         "aria-pressed",
         String($(".chat-main").classList.contains("large-text")),
       );
+      if (focusWhenReady) {
+        focusWhenReady = false;
+        $("#chat-input")?.focus();
+      }
     } catch (error) {
+      focusWhenReady = false;
       if (isVisible())
         $("#content").innerHTML =
           `<div class="notice warn">${escape(error.message)}</div><button class="secondary" data-chat-library>${t("chat.openModelsPlain")}</button>`;
@@ -970,7 +985,34 @@ export function createChatUI({
   return {
     render,
     openConversation: id => {current=id;},
-    selectModel: id => { preferred = id; localStorage.setItem('colmeia-model', id); },
+    selectModel(id, name) {
+      if (!id) return;
+      preferred = id;
+      localStorage.setItem("colmeia-model", id);
+      const select = $("#chat-model");
+      if (!select) return;
+      let option = [...select.options].find((item) => item.value === id);
+      if (!option) {
+        option = document.createElement("option");
+        option.value = id;
+        select.append(option);
+        writeChatModelLabel(option, name || id);
+      }
+      select.value = id;
+      if (models?.installed && !models.installed.some((item) => item.key === id))
+        models.installed.push({ key: id, display_name: name || id, loaded_instances: [] });
+      if (models?.installed) guidance();
+      draw();
+    },
+    focusComposer() {
+      const input = $("#chat-input");
+      if (!input) {
+        focusWhenReady = true;
+        return;
+      }
+      focusWhenReady = false;
+      input.focus();
+    },
     stopVoice: () => {
       assist.close();
       return voice.stop();

@@ -341,6 +341,7 @@ export default {
   'chat.status.answering': 'Respondendo neste computador…',
   'chat.status.reading': 'Lendo anexo local…',
   'chat.status.hint': 'Enter envia · Shift + Enter quebra a linha',
+  'chat.firstReady': 'Pronto. Escreve algo abaixo.',
   'chat.toast.pro': 'Pro inativo. Esta conversa continua com seus ajustes manuais.',
   'chat.toast.context': 'Este modelo foi preparado com {count} tokens de contexto. O chat respeitará esse limite.',
   'chat.retryPrompt': 'Gerar novamente',
