@@ -1,5 +1,6 @@
 export const homeCopy = {
 en: {
+headline: "LocalNeuron is an app on your computer — you chat with an AI and create images, video and music, with no account and without sending that to the cloud.",
 demo30Eyebrow: "DEMO IN 30 SECONDS",
 demo30Title: "What changes in 30s",
 demo30Lead: "Three moments from the product: chat, create and keep going without the cloud.",
@@ -140,6 +141,7 @@ installWin2: "Follow the installation wizard.",
 installWin3: "If SmartScreen appears: <strong>More info</strong> → <strong>Run anyway</strong>."
 },
 es: {
+headline: "LocalNeuron es una aplicación en tu ordenador — conversas con una IA y creas imagen, vídeo y música, sin cuenta y sin enviar eso a la nube.",
 demo30Eyebrow: "DEMO EN 30 SEGUNDOS",
 demo30Title: "Qué cambia en 30s",
 demo30Lead: "Tres momentos del producto: conversar, crear y seguir sin depender de la nube.",
@@ -280,6 +282,7 @@ installWin2: "Sigue el asistente de instalación.",
 installWin3: "Si aparece SmartScreen: <strong>Más información</strong> → <strong>Ejecutar de todas formas</strong>."
 },
 fr: {
+headline: "LocalNeuron est une application sur votre ordinateur — vous discutez avec une IA et créez image, vidéo et musique, sans compte et sans envoyer cela au cloud.",
 demo30Eyebrow: "DÉMO EN 30 SECONDES",
 demo30Title: "Ce qui change en 30 s",
 demo30Lead: "Trois moments du produit : discuter, créer et continuer sans le cloud.",
@@ -420,6 +423,7 @@ installWin2: "Suivez l’assistant d’installation.",
 installWin3: "Si SmartScreen s’affiche : <strong>Informations complémentaires</strong> → <strong>Exécuter quand même</strong>."
 },
 de: {
+headline: "LocalNeuron ist eine App auf deinem Computer — du chattest mit einer KI und erstellst Bild, Video und Musik, ohne Konto und ohne das in die Cloud zu schicken.",
 demo30Eyebrow: "DEMO IN 30 SEKUNDEN",
 demo30Title: "Was sich in 30 s ändert",
 demo30Lead: "Drei Momente aus dem Produkt: chatten, gestalten und ohne Cloud weitermachen.",
@@ -560,6 +564,7 @@ installWin2: "Folge dem Installationsassistenten.",
 installWin3: "Wenn SmartScreen erscheint: <strong>Weitere Informationen</strong> → <strong>Trotzdem ausführen</strong>."
 },
 ja: {
+headline: "LocalNeuronはあなたのコンピューター上のアプリです。AIと会話し、画像・動画・音楽を作成できます。アカウント不要で、それをクラウドに送ることもありません。",
 demo30Eyebrow: "30秒デモ",
 demo30Title: "30秒で変わること",
 demo30Lead: "製品の3つの場面：会話、創作、クラウドに頼らず続ける。",
@@ -700,6 +705,7 @@ installWin2: "インストール手順に従います。",
 installWin3: "SmartScreen が出たら：<strong>詳細情報</strong> → <strong>実行</strong>。"
 },
 zh: {
+headline: "LocalNeuron 是你电脑上的应用——你与 AI 对话并创作图像、视频和音乐，无需账户，且不会把这发到云端。",
 demo30Eyebrow: "30 秒演示",
 demo30Title: "30 秒看懂变化",
 demo30Lead: "产品的三个瞬间：对话、创作、安装后无需依赖云端。",
