@@ -145,7 +145,7 @@ test('O preload expõe só os canais IPC permitidos', async () => {
   assert.equal(exposed[0].name, 'colmeiaDesktop');
   const api = exposed[0].api;
   assert.equal(Object.isFrozen(api), true);
-  assert.deepEqual(Object.keys(api).sort(), ['chooseFolder', 'lang', 'localAccess', 'locale', 'restoreWorkspace']);
+  assert.deepEqual(Object.keys(api).sort(), ['chooseFolder', 'conversationFolder', 'lang', 'localAccess', 'locale', 'restoreWorkspace']);
   for (const forbidden of ['ipcRenderer', 'require', 'shell', 'send', 'invoke', 'openExternal']) {
     assert.equal(Object.hasOwn(api, forbidden), false);
   }
@@ -153,11 +153,13 @@ test('O preload expõe só os canais IPC permitidos', async () => {
   await api.localAccess({ action: 'status', channel: 'shell' });
   await api.localAccess('suspend');
   await api.chooseFolder();
+  await api.conversationFolder('path');
   assert.deepEqual(invokes.map(call => call.channel), [
     'localneuron:restore-workspace',
     'localneuron:local-access',
     'localneuron:local-access',
     'colmeia:choose-folder',
+    'localneuron:conversation-folder',
   ]);
   assert.deepEqual(invokes[0].args, []);
   assert.deepEqual(invokes[1].args, [{ action: 'status', channel: 'shell' }]);
@@ -166,6 +168,7 @@ test('O preload expõe só os canais IPC permitidos', async () => {
   assert.deepEqual(ALLOWED_IPC_CHANNELS, [
     'localneuron:restore-workspace',
     'localneuron:local-access',
+    'localneuron:conversation-folder',
     'colmeia:choose-folder',
   ]);
   const renderer = { invoke() { throw new Error('não devia invocar'); } };
@@ -174,7 +177,9 @@ test('O preload expõe só os canais IPC permitidos', async () => {
   const source = readFileSync(resolve('desktop/preload.cjs'), 'utf8');
   assert.doesNotMatch(source, /\bshell\b/);
   assert.doesNotMatch(source, /ipcRenderer\.(send|sendSync|postMessage)/);
+  assert.doesNotMatch(source, /require\(\s*['"]\.\//);
   assert.match(source, /exposeDesktopApi\(contextBridge, ipcRenderer\)/);
+  assert.match(source, /require\('electron'\)/);
 });
 
 test('o idioma do sistema chega só como texto validado', () => {

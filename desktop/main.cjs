@@ -5,6 +5,7 @@ const { registerComputer } = require('./computer.cjs');
 const { createMainWindow } = require('./window-policy.cjs');
 const { registerLocalAccess } = require('./local-access.cjs');
 const { registerFolderPicker } = require('./folders.cjs');
+const { registerConversationFolder } = require('./conversation-folder.cjs');
 const { allowsClipboard, allowsMicrophone } = require('./permissions.cjs');
 const { sessionOrigin, desktopPort, serviceFailureMessage } = require('./session-origin.cjs');
 const { resolvesPublic } = require('./public-url.cjs');
@@ -93,6 +94,7 @@ else app.whenReady().then(async () => {
     callback({ responseHeaders });
   });
   registerFolderPicker({ipcMain,dialog,getWindow:()=>window,origin});
+  registerConversationFolder({ipcMain,shell,getWindow:()=>window,origin,dataDirectory});
   const localToken=new URL(localSession.url).hash.slice(1);
   const sessionToken=new URLSearchParams(localToken).get('session');
   registerLocalAccess({ipcMain,safeStorage,getWindow:()=>window,origin,dataDirectory,token:sessionToken,nonce:deviceNonce});
