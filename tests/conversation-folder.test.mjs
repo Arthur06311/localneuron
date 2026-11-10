@@ -99,11 +99,33 @@ test('a linha de configurações pede o caminho por IPC e desenha o texto traduz
   assert.match(app, /t\('settings\.conversations'\)/);
   assert.match(app, /t\('settings\.conversationsOpen'\)/);
   assert.match(app, /t\('settings\.conversationsMissing'\)/);
+  assert.match(app, /t\('settings\.conversationsPathError'\)/);
   assert.match(app, /conversationFolder\('path'\)/);
   assert.match(app, /conversationFolder\('open'\)/);
   assert.match(app, /pathEl\.textContent=result\.path/);
   assert.doesNotMatch(app, /\$\{result\.path\}/);
   assert.match(css, /\.settings-row/);
   assert.match(readFileSync(resolve('public/i18n/pt-BR.js'), 'utf8'), /'settings\.conversations': 'Onde ficam minhas conversas'/);
+  assert.match(readFileSync(resolve('public/i18n/pt-BR.js'), 'utf8'), /'settings\.conversationsHelp': 'O histórico das conversas fica salvo neste computador, nesta pasta\. Se você usar Anthropic ou Grok na Minha equipe, o texto dessas conversas também vai para esse serviço\.'/);
+  assert.match(readFileSync(resolve('public/i18n/en.js'), 'utf8'), /'settings\.conversationsHelp': 'Your conversation history is saved on this computer, in this folder\. If you use Anthropic or Grok in My team, the text of those conversations is also sent to that service\.'/);
   assert.match(readFileSync(resolve('public/i18n/en.js'), 'utf8'), /'settings\.conversationsOpen': 'Open folder'/);
+  assert.match(app, /conversationsPathError/);
+  assert.doesNotMatch(app.slice(app.indexOf('function showConversationFolder'), app.indexOf('function settings')), /conversationsMissing/);
+});
+
+test('o preload em sandbox repete a ponte de preload-api sem exigir o arquivo vizinho', () => {
+  const preload = readFileSync(resolve('desktop/preload.cjs'), 'utf8');
+  const api = readFileSync(resolve('desktop/preload-api.cjs'), 'utf8');
+  const bridge = source => {
+    const start = source.indexOf('const ALLOWED_IPC_CHANNELS');
+    const marker = "contextBridge.exposeInMainWorld('colmeiaDesktop', createDesktopApi(ipcRenderer, argv));";
+    const end = source.indexOf(marker);
+    assert.equal(start > 0, true);
+    assert.equal(end > start, true);
+    return source.slice(start, end + marker.length);
+  };
+  assert.equal(bridge(preload), bridge(api));
+  assert.match(preload, /require\('electron'\)/);
+  assert.doesNotMatch(preload, /require\(\s*['"]\.\//);
+  assert.match(api, /module\.exports/);
 });
