@@ -251,6 +251,25 @@ body[data-plan="pro"] .premium-top-chip { background: var(--panel); color: var(-
 .panel { padding: 16px; }
 .panel h2 { margin: 0 0 8px; }
 
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.settings-row > div { min-width: 0; }
+.settings-row h2 { margin: 0; }
+.settings-row p { margin: 4px 0 0; }
+.settings-row .conversation-path {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.settings-row .secondary { flex-shrink: 0; }
+@media (max-width: 720px) {
+  .settings-row { align-items: stretch; flex-direction: column; }
+}
+
 .machine-strip, .exo-overview {
   background: var(--panel);
   border: 1px solid var(--line);

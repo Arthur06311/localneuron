@@ -1,6 +1,9 @@
+// Main-process and tests import this file. The sandboxed preload cannot:
+// desktop/preload.cjs keeps an inline copy that only requires electron.
 const ALLOWED_IPC_CHANNELS = Object.freeze([
   'localneuron:restore-workspace',
   'localneuron:local-access',
+  'localneuron:conversation-folder',
   'colmeia:choose-folder',
 ]);
 
@@ -28,6 +31,7 @@ function createDesktopApi(ipcRenderer, argv = []) {
   return Object.freeze({
     restoreWorkspace: () => invokeAllowed(ipcRenderer, 'localneuron:restore-workspace', []),
     localAccess: action => invokeAllowed(ipcRenderer, 'localneuron:local-access', [action]),
+    conversationFolder: action => invokeAllowed(ipcRenderer, 'localneuron:conversation-folder', [action]),
     chooseFolder: () => invokeAllowed(ipcRenderer, 'colmeia:choose-folder', []),
     locale: launchHint(argv, 'localneuron-locale'),
     lang: launchHint(argv, 'localneuron-lang'),
