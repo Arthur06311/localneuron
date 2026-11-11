@@ -240,6 +240,8 @@ export default {
   'chat.settingsTitle': 'Ajustes e ferramentas',
   'chat.settings': 'Ajustes',
   'chat.needModel': 'Baixe uma IA para começar.',
+  'chat.noModelLoaded': 'Nenhum modelo carregado.',
+  'chat.chooseModel': 'Escolher modelo',
   'chat.openModels': 'Abrir modelos →',
   'chat.openModelsPlain': 'Abrir modelos',
   'chat.messages': 'Mensagens da conversa',

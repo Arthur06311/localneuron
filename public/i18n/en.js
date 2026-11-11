@@ -239,6 +239,8 @@ export default {
   'chat.settingsTitle': 'Settings and tools',
   'chat.settings': 'Settings',
   'chat.needModel': 'Download an AI to begin.',
+  'chat.noModelLoaded': 'No model loaded.',
+  'chat.chooseModel': 'Choose model',
   'chat.openModels': 'Open models →',
   'chat.openModelsPlain': 'Open models',
   'chat.messages': 'Conversation messages',
