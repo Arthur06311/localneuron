@@ -457,6 +457,29 @@ body.chat-page .chat-welcome p.chat-offline-line {
   border-color: color-mix(in srgb, var(--danger) 55%, var(--line));
 }
 
+body.chat-page .chat-no-model {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 8px;
+  padding: 8px 12px;
+}
+
+body.chat-page .chat-no-model[hidden] {
+  display: none;
+}
+
+body.chat-page .chat-no-model p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+body.chat-page .chat-no-model .secondary {
+  flex: 0 0 auto;
+}
+
 .badge.validated, .bot-ready { color: var(--ok); }
 .badge.paused, .bot-needs-model { color: var(--warn); }
 
