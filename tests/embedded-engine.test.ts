@@ -24,7 +24,13 @@ test('Motor embutido segue a plataforma: llama.cpp no GGUF e MLX só no Apple Si
 test('O catálogo mostra o selo e o filtro dos motores embutidos', () => {
   const app = readFileSync('public/app.js', 'utf8');
   const library = readFileSync('src/model-library.ts', 'utf8');
-  assert.match(app, /Motores embutidos/);
+  const filters = readFileSync('public/model-filters.js', 'utf8');
+  const pt = readFileSync('public/i18n/pt-BR.js', 'utf8');
+  const en = readFileSync('public/i18n/en.js', 'utf8');
+  assert.match(pt, /Motores embutidos/);
+  assert.match(en, /Built-in engines/);
+  assert.match(filters, /id: 'built-in'/);
+  assert.match(filters, /model\.embedded\?\.runs/);
   assert.match(app, /m\.embedded\?\.runs/);
   assert.match(app, /embedded-seal/);
   assert.match(app, /m\.embedded\.label/);
