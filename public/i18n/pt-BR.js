@@ -576,6 +576,8 @@ export default {
   'models.card.published': "Arquivo e versão publicados ↗",
   'models.results.count': "{count} modelos encontrados · exibindo {from}–{to}",
   'models.results.none': "Nenhum modelo encontrado. Tente outro uso, nome ou família.",
+  'models.results.fitsNowNone': "Nenhum modelo cabe na memória livre agora. Feche outros apps ou veja os modelos para este PC.",
+  'models.results.fitsNowAction': "Ver modelos para este PC",
   'models.results.entries': "{count} entradas no catálogo",
   'models.results.visual': "Geração visual precisa de um motor específico. Use Pronto para gerar para encontrar os perfis integrados ao Estúdio. Os outros modelos permitem baixar pesos, mas ainda exigem outra integração. Complementos não geram sozinhos.",
   'models.page.nav': "Páginas de modelos",

@@ -36,6 +36,19 @@ export function isVisualFilter(id) {
   return id === 'image' || id === 'video';
 }
 
+function fitsNowUnscoped(filterId, query, family) {
+  return filterId === 'fits-now' && query === '' && family === FAMILY_ALL;
+}
+
+export function emptyCatalogMessageKey(filterId, query = '', family = FAMILY_ALL) {
+  return fitsNowUnscoped(filterId, query, family) ? 'models.results.fitsNowNone' : 'models.results.none';
+}
+
+export function emptyCatalogAction(filterId, query = '', family = FAMILY_ALL) {
+  if (!fitsNowUnscoped(filterId, query, family)) return null;
+  return { filterId: 'this-pc', labelKey: 'models.results.fitsNowAction' };
+}
+
 export function modelMatchesFilter(model, filter, library, favorites) {
   if (filter === 'all') return true;
   if (filter === 'public-access') return model.availability?.access === 'public' || model.access === 'public';
