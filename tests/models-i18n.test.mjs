@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import ptBR from '../public/i18n/pt-BR.js';
 import en from '../public/i18n/en.js';
 import { t, useLocale } from '../public/i18n.js';
-import { FAMILY_ALL, MODEL_FILTERS, modelMatchesFilter } from '../public/model-filters.js';
+import { FAMILY_ALL, MODEL_FILTERS, emptyCatalogAction, emptyCatalogMessageKey, modelMatchesFilter } from '../public/model-filters.js';
 import { starterSuggestionHtml } from '../public/starter-model.js';
 
 const ORIGINAL_FILTERS = [
@@ -119,6 +119,47 @@ test('a lógica dos filtros ignora o idioma e o texto do rótulo', () => {
   assert.equal(app.includes("'fits-now'"), false);
   assert.match(readFileSync(resolve('public/model-filters.js'), 'utf8'), /id: 'fits-now'/);
   assert.match(readFileSync(resolve('public/model-filters.js'), 'utf8'), /id: 'this-pc'/);
+});
+
+test('Cabe agora vazio explica a memória livre e leva a Para este PC', () => {
+  assert.equal(emptyCatalogMessageKey('fits-now'), 'models.results.fitsNowNone');
+  assert.deepEqual(emptyCatalogAction('fits-now'), { filterId: 'this-pc', labelKey: 'models.results.fitsNowAction' });
+  for (const filter of MODEL_FILTERS) {
+    if (filter.id === 'fits-now') continue;
+    assert.equal(emptyCatalogMessageKey(filter.id), 'models.results.none');
+    assert.equal(emptyCatalogAction(filter.id), null);
+  }
+  assert.equal(emptyCatalogMessageKey(''), 'models.results.none');
+  assert.equal(emptyCatalogAction(undefined), null);
+
+  useLocale('pt-BR');
+  assert.equal(t('models.results.none'), 'Nenhum modelo encontrado. Tente outro uso, nome ou família.');
+  assert.equal(
+    t('models.results.fitsNowNone'),
+    'Nenhum modelo cabe na memória livre agora. Feche outros apps ou veja os modelos para este PC.',
+  );
+  assert.equal(t('models.results.fitsNowAction'), 'Ver modelos para este PC');
+  useLocale('en');
+  try {
+    assert.equal(t('models.results.none'), 'No model found. Try another use, name, or family.');
+    assert.equal(
+      t('models.results.fitsNowNone'),
+      'No model fits in free memory right now. Close other apps or see the models for this PC.',
+    );
+    assert.equal(t('models.results.fitsNowAction'), 'See models for this PC');
+  } finally {
+    useLocale('pt-BR');
+  }
+
+  const app = readFileSync(resolve('public/app.js'), 'utf8');
+  assert.match(app, /emptyCatalogAction\(modelFilter\)/);
+  assert.match(app, /t\(emptyCatalogMessageKey\(modelFilter\)\)/);
+  assert.match(app, /<button type="button" class="secondary" data-model-filter="\$\{emptyAction\.filterId\}">/);
+  assert.match(app, /button\.hasAttribute\('data-model-filter'\)/);
+  assert.match(app, /modelFilter=button\.dataset\.modelFilter/);
+  assert.equal(app.includes("'fits-now'"), false);
+  assert.equal(app.includes("'this-pc'"), false);
+  assert.equal(app.includes('models.results.none'), false);
 });
 
 test('o início rápido continua igual em pt-BR e muda em inglês', () => {

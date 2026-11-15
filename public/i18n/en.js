@@ -575,6 +575,8 @@ export default {
   'models.card.published': "Published file and version ↗",
   'models.results.count': "{count} models found · showing {from}–{to}",
   'models.results.none': "No model found. Try another use, name, or family.",
+  'models.results.fitsNowNone': "No model fits in free memory right now. Close other apps or see the models for this PC.",
+  'models.results.fitsNowAction': "See models for this PC",
   'models.results.entries': "{count} catalog entries",
   'models.results.visual': "Image and video generation needs a specific engine. Use Ready to generate to find the profiles built into Studio. The other models let you download weights, but they still need another integration. Add-ons do not generate on their own.",
   'models.page.nav': "Model pages",

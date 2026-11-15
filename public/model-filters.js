@@ -36,6 +36,15 @@ export function isVisualFilter(id) {
   return id === 'image' || id === 'video';
 }
 
+export function emptyCatalogMessageKey(filterId) {
+  return filterId === 'fits-now' ? 'models.results.fitsNowNone' : 'models.results.none';
+}
+
+export function emptyCatalogAction(filterId) {
+  if (filterId !== 'fits-now') return null;
+  return { filterId: 'this-pc', labelKey: 'models.results.fitsNowAction' };
+}
+
 export function modelMatchesFilter(model, filter, library, favorites) {
   if (filter === 'all') return true;
   if (filter === 'public-access') return model.availability?.access === 'public' || model.access === 'public';
