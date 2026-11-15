@@ -36,12 +36,16 @@ export function isVisualFilter(id) {
   return id === 'image' || id === 'video';
 }
 
-export function emptyCatalogMessageKey(filterId) {
-  return filterId === 'fits-now' ? 'models.results.fitsNowNone' : 'models.results.none';
+function fitsNowUnscoped(filterId, query, family) {
+  return filterId === 'fits-now' && query === '' && family === FAMILY_ALL;
 }
 
-export function emptyCatalogAction(filterId) {
-  if (filterId !== 'fits-now') return null;
+export function emptyCatalogMessageKey(filterId, query = '', family = FAMILY_ALL) {
+  return fitsNowUnscoped(filterId, query, family) ? 'models.results.fitsNowNone' : 'models.results.none';
+}
+
+export function emptyCatalogAction(filterId, query = '', family = FAMILY_ALL) {
+  if (!fitsNowUnscoped(filterId, query, family)) return null;
   return { filterId: 'this-pc', labelKey: 'models.results.fitsNowAction' };
 }
 

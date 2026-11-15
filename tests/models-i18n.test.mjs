@@ -152,14 +152,38 @@ test('Cabe agora vazio explica a memória livre e leva a Para este PC', () => {
   }
 
   const app = readFileSync(resolve('public/app.js'), 'utf8');
-  assert.match(app, /emptyCatalogAction\(modelFilter\)/);
-  assert.match(app, /t\(emptyCatalogMessageKey\(modelFilter\)\)/);
+  assert.match(app, /const query=normalize\(modelSearch\)\.trim\(\)/);
+  assert.match(app, /emptyCatalogAction\(modelFilter,query,modelFamily\)/);
+  assert.match(app, /t\(emptyCatalogMessageKey\(modelFilter,query,modelFamily\)\)/);
   assert.match(app, /<button type="button" class="secondary" data-model-filter="\$\{emptyAction\.filterId\}">/);
   assert.match(app, /button\.hasAttribute\('data-model-filter'\)/);
   assert.match(app, /modelFilter=button\.dataset\.modelFilter/);
   assert.equal(app.includes("'fits-now'"), false);
   assert.equal(app.includes("'this-pc'"), false);
   assert.equal(app.includes('models.results.none'), false);
+});
+
+test('busca ou família ativas no Cabe agora voltam ao aviso genérico', () => {
+  const action = { filterId: 'this-pc', labelKey: 'models.results.fitsNowAction' };
+  assert.equal(emptyCatalogMessageKey('fits-now', '', FAMILY_ALL), 'models.results.fitsNowNone');
+  assert.deepEqual(emptyCatalogAction('fits-now', '', FAMILY_ALL), action);
+
+  assert.equal(emptyCatalogMessageKey('fits-now', 'xyz', FAMILY_ALL), 'models.results.none');
+  assert.equal(emptyCatalogAction('fits-now', 'xyz', FAMILY_ALL), null);
+  assert.equal(emptyCatalogMessageKey('fits-now', 'xyz', 'Qwen'), 'models.results.none');
+  assert.equal(emptyCatalogAction('fits-now', 'xyz', 'Qwen'), null);
+
+  assert.equal(emptyCatalogMessageKey('fits-now', '', 'Qwen'), 'models.results.none');
+  assert.equal(emptyCatalogAction('fits-now', '', 'Qwen'), null);
+  assert.equal(emptyCatalogMessageKey('this-pc', '', 'Llama'), 'models.results.none');
+  assert.equal(emptyCatalogAction('all', 'xyz', FAMILY_ALL), null);
+
+  useLocale('pt-BR');
+  assert.equal(t('models.results.none'), 'Nenhum modelo encontrado. Tente outro uso, nome ou família.');
+  assert.equal(
+    t('models.results.fitsNowNone'),
+    'Nenhum modelo cabe na memória livre agora. Feche outros apps ou veja os modelos para este PC.',
+  );
 });
 
 test('o início rápido continua igual em pt-BR e muda em inglês', () => {
