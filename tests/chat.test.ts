@@ -1,7 +1,7 @@
 import {testConfig, activateTestPro} from './subscription-fixture.js';
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { Chats, localReply } from "../src/chat.js";
@@ -291,6 +291,103 @@ test("Rotas do chat mantêm sessão, origem, esquema e bloqueio do cofre", async
       423,
     );
   } finally {
+    await app.close();
+    await core.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+test("Pedido sem corpo não envia content-type JSON e excluir conversa funciona", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "colmeia-chat-delete-"));
+  const core = new Core(dir, resolve("."));
+  await core.init();
+  await core.setup("senha-teste-excluir-conversa");
+  const { app } = await createApp(
+    core,
+    "test-token",
+    undefined,
+    undefined,
+    testConfig,
+  );
+  const source = readFileSync(resolve("public/app.js"), "utf8");
+  const start = source.indexOf("async function api(");
+  const end = source.indexOf("\nfunction toast(");
+  assert.ok(start >= 0 && end > start);
+  const api = (
+    new Function(
+      "document",
+      "t",
+      `${source.slice(start, end)}\nreturn api;`,
+    ) as (
+      document: { dispatchEvent: () => void },
+      translate: (key: string) => string,
+    ) => (
+      path: string,
+      options?: {
+        method?: string;
+        body?: unknown;
+        headers?: Record<string, string>;
+      },
+    ) => Promise<any>
+  )({ dispatchEvent() {} }, () => "Não foi possível concluir");
+  const seen: {
+    url: string;
+    method: string;
+    headers: Record<string, string>;
+    body?: string;
+  }[] = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    const url = String(input);
+    const headers: Record<string, string> = {};
+    if (
+      init?.headers &&
+      !(init.headers instanceof Headers) &&
+      !Array.isArray(init.headers)
+    ) {
+      for (const [key, value] of Object.entries(init.headers)) {
+        if (typeof value === "string") headers[key] = value;
+      }
+    }
+    const body = typeof init?.body === "string" ? init.body : undefined;
+    seen.push({ url, method: init?.method || "GET", headers, body });
+    const response = await app.inject({
+      method: (init?.method || "GET") as "GET" | "POST" | "DELETE",
+      url,
+      headers: {
+        host: "127.0.0.1:4317",
+        authorization: "Bearer test-token",
+        ...headers,
+      },
+      ...(body === undefined ? {} : { payload: body }),
+    });
+    return new Response(response.body, {
+      status: response.statusCode,
+      headers: { "content-type": "application/json" },
+    });
+  };
+  try {
+    const kept = await api("/chats", { method: "POST", body: {} });
+    const removed = await api("/chats", { method: "POST", body: {} });
+    assert.equal(seen.at(-1)?.headers["content-type"], "application/json");
+    assert.equal(seen.at(-1)?.body, "{}");
+    const result = await api(`/chats/${removed.id}`, { method: "DELETE" });
+    const deletion = seen.at(-1);
+    assert.equal(deletion?.method, "DELETE");
+    assert.equal(deletion?.url, `/v1/chats/${removed.id}`);
+    assert.equal(deletion?.body, undefined);
+    assert.equal(deletion?.headers["content-type"], undefined);
+    assert.deepEqual(result, { ok: true });
+    const chats = await api("/chats");
+    assert.equal(
+      chats.some((chat: { id: string }) => chat.id === removed.id),
+      false,
+    );
+    assert.equal(
+      chats.some((chat: { id: string }) => chat.id === kept.id),
+      true,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
     await app.close();
     await core.close();
     rmSync(dir, { recursive: true, force: true });
