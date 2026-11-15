@@ -416,7 +416,12 @@ test('A interface e a rota autenticada expõem a quantização', async () => {
   const appJs = readFileSync(resolve('public/app.js'), 'utf8');
   const html = readFileSync(resolve('public/index.html'), 'utf8');
   execFileSync(process.execPath, ['--check', resolve('public/app.js')], { stdio: 'pipe' });
-  for (const label of ['Equilibrado (recomendado)', 'Menor tamanho', 'Máxima qualidade']) assert.equal(appJs.includes(label), true);
+  const pt = readFileSync(resolve('public/i18n/pt-BR.js'), 'utf8');
+  const en = readFileSync(resolve('public/i18n/en.js'), 'utf8');
+  for (const label of ['Equilibrado (recomendado)', 'Menor tamanho', 'Máxima qualidade']) assert.equal(pt.includes(label), true);
+  for (const label of ['Balanced (recommended)', 'Smaller size', 'Highest quality']) assert.equal(en.includes(label), true);
+  assert.match(appJs, /\['equilibrado','models\.quantize\.balanced'\],\['menor','models\.quantize\.smaller'\],\['qualidade','models\.quantize\.quality'\]/);
+  assert.match(appJs, /name="quantize-preset" value="\$\{id\}"/);
   assert.match(html, /id="quantize-model"/);
   assert.match(html, /id="quantize-progress-bar"/);
   assert.match(appJs, /data-quantize-cancel/);

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { t, useLocale } from '../public/i18n.js';
-import { planLocalInstallArrival, localInstallEffects, USUAL_READY_TOAST } from '../public/first-model.js';
+import { planLocalInstallArrival, localInstallEffects, usualReadyToast } from '../public/first-model.js';
 
 const small = { key: 'gguf:small', display_name: 'Pequeno', size_bytes: 100 };
 const large = { key: 'gguf:large', display_name: 'Grande', size_bytes: 9_000_000_000 };
@@ -92,9 +92,10 @@ test('o segundo modelo não navega e só mostra o toast habitual', () => {
     page: 'models',
   });
   assert.deepEqual(plan, { kind: 'toast', modelKey: small.key });
+  useLocale('pt-BR');
   const calls = effects(plan);
-  assert.deepEqual(calls, [['toast', USUAL_READY_TOAST]]);
-  assert.equal(USUAL_READY_TOAST, 'Pronto.');
+  assert.deepEqual(calls, [['toast', usualReadyToast()]]);
+  assert.equal(usualReadyToast(), 'Pronto.');
   assert.equal(calls.some((call) => call[0] === 'open' || call[0] === 'focus' || call[0] === 'select'), false);
 });
 
@@ -131,8 +132,9 @@ test('falha recuperada com outro modelo local só mostra o toast habitual', () =
     page: 'models',
   });
   assert.deepEqual(plan, { kind: 'toast', modelKey: small.key });
+  useLocale('pt-BR');
   const calls = effects(plan);
-  assert.deepEqual(calls, [['toast', USUAL_READY_TOAST]]);
+  assert.deepEqual(calls, [['toast', usualReadyToast()]]);
   assert.equal(calls.some((call) => call[0] === 'open' || call[0] === 'focus' || call[0] === 'select'), false);
 });
 
