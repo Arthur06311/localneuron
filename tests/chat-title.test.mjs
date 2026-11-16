@@ -173,7 +173,7 @@ test('fora do chat o título volta a ser LocalNeuron', () => {
   const app = readFileSync(resolve('public/app.js'), 'utf8');
   const chatSource = readFileSync(resolve('public/chat.js'), 'utf8');
   assert.match(app, /page==='chat'&&next!=='chat'\)\{chatUI\.stopVoice\(\);chatUI\.showAppTitle\(\);\}/);
-  const hidden = chatSource.match(/if \(!isVisible\(\)\) \{\n\s*showAppTitle\(\);/g) || [];
+  const hidden = chatSource.match(/if \(!isVisible\(\)\) \{\r?\n\s*showAppTitle\(\);/g) || [];
   assert.ok(hidden.length >= 2);
 });
 
