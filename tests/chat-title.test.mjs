@@ -114,6 +114,63 @@ test('trocar ou renomear a conversa atualiza o título e uma conversa já pronta
   );
 });
 
+test('erro ou interrupção não marcam o título como resposta pronta', () => {
+  useLocale('pt-BR');
+  const open = { id: 'c1', title: 'Roteiro da feira' };
+  for (const status of ['error', 'stopped']) {
+    const titles = createWindowTitle();
+    titles.update({
+      chats: [chat('c1', open.title, [{ id: 'm1', status: 'pending' }])],
+      conversation: open,
+      focused: false,
+    });
+    const ended = titles.update({
+      chats: [chat('c1', open.title, [{ id: 'm1', status }])],
+      conversation: open,
+      focused: false,
+    });
+    assert.equal(ended.responseReady, false, status);
+    assert.equal(ended.title, named(open.title), status);
+  }
+  const gone = createWindowTitle();
+  gone.update({
+    chats: [chat('c1', open.title, [{ id: 'm1', status: 'pending' }])],
+    conversation: open,
+    focused: false,
+  });
+  const removed = gone.update({ chats: [chat('c1', open.title, [])], conversation: open, focused: false });
+  assert.equal(removed.responseReady, false);
+  assert.equal(removed.title, named(open.title));
+});
+
+test('fora do chat o título volta a ser LocalNeuron', () => {
+  useLocale('pt-BR');
+  const titles = createWindowTitle();
+  const open = { id: 'c1', title: 'Roteiro da feira' };
+  const pending = [chat('c1', open.title, [{ id: 'm1', status: 'pending' }])];
+  const done = [chat('c1', open.title, [{ id: 'm1', status: 'complete' }])];
+  assert.equal(
+    titles.update({ chats: pending, conversation: open, focused: true, visible: true }).title,
+    named(open.title),
+  );
+  assert.equal(
+    titles.update({ chats: pending, conversation: open, focused: false, visible: false }).title,
+    APP,
+  );
+  const back = titles.update({ chats: done, conversation: open, focused: true, visible: true });
+  assert.equal(back.responseReady, false);
+  assert.equal(back.title, named(open.title));
+
+  const away = createWindowTitle();
+  away.update({ chats: pending, conversation: open, focused: false, visible: true });
+  const hiddenDone = away.update({ chats: done, conversation: open, focused: false, visible: false });
+  assert.equal(hiddenDone.title, APP);
+  assert.equal(hiddenDone.responseReady, false);
+  const returned = away.update({ chats: done, conversation: open, focused: false, visible: true });
+  assert.equal(returned.responseReady, false);
+  assert.equal(returned.title, named(open.title));
+});
+
 test('o chat publica o título e o Electron não bloqueia o título da página', () => {
   const chat = readFileSync(resolve('public/chat.js'), 'utf8');
   const server = readFileSync(resolve('src/server.ts'), 'utf8');
