@@ -53,7 +53,7 @@ const studioUI=createStudio({api,escape,toast,isVisible:()=>Boolean(workspace)&&
 const proUI=createPro({api,escape,toast,isVisible:()=>Boolean(workspace)&&page==='pro',navigate});
 const subscriptionUI=createSubscription({api,escape,toast,navigate,isVisible:()=>Boolean(workspace)&&page==='subscription'});
 const sharingUI=createSharingUI({api,escape,toast,isVisible:()=>Boolean(workspace)&&page==='sharing'});
-function navigate(next,model,options){if(next==='crews')next='equipes';if(page==='pro'&&next!=='pro')proUI.stop();if(page==='studio'&&next!=='studio')studioUI.stop();if(page==='chat'&&next!=='chat')chatUI.stopVoice();if(page==='sharing'&&next!=='sharing')sharingUI.clear();page=next;render(model,options);window.scrollTo(0,0);}
+function navigate(next,model,options){if(next==='crews')next='equipes';if(page==='pro'&&next!=='pro')proUI.stop();if(page==='studio'&&next!=='studio')studioUI.stop();if(page==='chat'&&next!=='chat'){chatUI.stopVoice();chatUI.showAppTitle();}if(page==='sharing'&&next!=='sharing')sharingUI.clear();page=next;render(model,options);window.scrollTo(0,0);}
 mountCommandPalette(document,{
   load:async()=>{
     try{const [chats,library]=await Promise.all([api('/chats'),api('/model-library')]);return paletteCommands({chats,models:library.installed||[]});}

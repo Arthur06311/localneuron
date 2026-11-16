@@ -167,16 +167,35 @@ export function createChatUI({
     if (windowBlurred || document.visibilityState === "hidden") return false;
     return document.hasFocus() !== false;
   }
-  function paintWindowTitle() {
+  function showAppTitle() {
     const chat = selected();
     const next = windowTitle.update({
       chats,
       conversation: chat ? { id: chat.id, title: chat.title } : null,
       focused: windowIsFocused(),
+      visible: false,
+    });
+    if (document.title !== next.title) document.title = next.title;
+  }
+  function paintWindowTitle() {
+    if (!isVisible()) {
+      showAppTitle();
+      return;
+    }
+    const chat = selected();
+    const next = windowTitle.update({
+      chats,
+      conversation: chat ? { id: chat.id, title: chat.title } : null,
+      focused: windowIsFocused(),
+      visible: true,
     });
     if (document.title !== next.title) document.title = next.title;
   }
   function restoreWindowTitle() {
+    if (!isVisible()) {
+      showAppTitle();
+      return;
+    }
     const next = windowTitle.clearReady();
     if (document.title !== next.title) document.title = next.title;
   }
@@ -1028,7 +1047,11 @@ export function createChatUI({
     }
   });
   setInterval(async () => {
-    if (!isVisible() || refreshBusy || preparing) return;
+    if (!isVisible()) {
+      showAppTitle();
+      return;
+    }
+    if (refreshBusy || preparing) return;
     refreshBusy = true;
     try {
       [chats, assistant] = await Promise.all([
@@ -1047,6 +1070,7 @@ export function createChatUI({
       current = id;
       if (selected()) paintWindowTitle();
     },
+    showAppTitle,
     selectModel(id, name) {
       if (!id) return;
       preferred = id;

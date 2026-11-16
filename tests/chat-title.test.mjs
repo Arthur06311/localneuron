@@ -169,6 +169,12 @@ test('fora do chat o título volta a ser LocalNeuron', () => {
   const returned = away.update({ chats: done, conversation: open, focused: false, visible: true });
   assert.equal(returned.responseReady, false);
   assert.equal(returned.title, named(open.title));
+
+  const app = readFileSync(resolve('public/app.js'), 'utf8');
+  const chatSource = readFileSync(resolve('public/chat.js'), 'utf8');
+  assert.match(app, /page==='chat'&&next!=='chat'\)\{chatUI\.stopVoice\(\);chatUI\.showAppTitle\(\);\}/);
+  const hidden = chatSource.match(/if \(!isVisible\(\)\) \{\n\s*showAppTitle\(\);/g) || [];
+  assert.ok(hidden.length >= 2);
 });
 
 test('o chat publica o título e o Electron não bloqueia o título da página', () => {
