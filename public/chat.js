@@ -1,5 +1,6 @@
 import { format, setText, t, textLocale } from "./i18n.js";
 import { writeChatOfflineLine } from "./chat-offline-line.js";
+import { createWindowTitle } from "./chat-title.js";
 import {
   GUEST_START_KEY,
   guestStartHtml,
@@ -160,6 +161,41 @@ export function createChatUI({
   const selected = () => chats.find((c) => c.id === current),
     pending = () =>
       chats.some((c) => c.messages.some((m) => m.status === "pending"));
+  const windowTitle = createWindowTitle();
+  let windowBlurred = document.hasFocus() === false;
+  function windowIsFocused() {
+    if (windowBlurred || document.visibilityState === "hidden") return false;
+    return document.hasFocus() !== false;
+  }
+  function paintWindowTitle() {
+    const chat = selected();
+    const next = windowTitle.update({
+      chats,
+      conversation: chat ? { id: chat.id, title: chat.title } : null,
+      focused: windowIsFocused(),
+    });
+    if (document.title !== next.title) document.title = next.title;
+  }
+  function restoreWindowTitle() {
+    const next = windowTitle.clearReady();
+    if (document.title !== next.title) document.title = next.title;
+  }
+  window.addEventListener("blur", () => {
+    windowBlurred = true;
+  });
+  window.addEventListener("focus", () => {
+    windowBlurred = false;
+    restoreWindowTitle();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      windowBlurred = true;
+      return;
+    }
+    windowBlurred = document.hasFocus() === false;
+    restoreWindowTitle();
+  });
+  paintWindowTitle();
   const assist = createChatAssist({
     api,
     E: escape,
@@ -320,6 +356,7 @@ export function createChatUI({
       ]);
       if (!isVisible()) {
         focusWhenReady = false;
+        paintWindowTitle();
         return;
       }
       if (
@@ -460,6 +497,7 @@ export function createChatUI({
     $("#chat-input")?.focus();
   }
   function draw() {
+    paintWindowTitle();
     if (!isVisible() || !$("#chat-messages")) return;
     const query = $("#chat-search").value.toLocaleLowerCase(),
       filtered = chats.filter((c) =>
@@ -1005,7 +1043,10 @@ export function createChatUI({
   }, 700);
   return {
     render,
-    openConversation: id => {current=id;},
+    openConversation: (id) => {
+      current = id;
+      if (selected()) paintWindowTitle();
+    },
     selectModel(id, name) {
       if (!id) return;
       preferred = id;

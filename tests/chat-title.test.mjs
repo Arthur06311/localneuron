@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { useLocale } from '../public/i18n.js';
 import { createWindowTitle, displayTitle } from '../public/chat-title.js';
 
@@ -110,4 +112,24 @@ test('trocar ou renomear a conversa atualiza o título e uma conversa já pronta
     background.update({ chats: oneDone, conversation: { id: 'c2', title: 'B' }, focused: false }).title,
     READY_PT,
   );
+});
+
+test('o chat publica o título e o Electron não bloqueia o título da página', () => {
+  const chat = readFileSync(resolve('public/chat.js'), 'utf8');
+  const server = readFileSync(resolve('src/server.ts'), 'utf8');
+  const policy = readFileSync(resolve('desktop/window-policy.cjs'), 'utf8');
+  const main = readFileSync(resolve('desktop/main.cjs'), 'utf8');
+  assert.match(chat, /createWindowTitle\(/);
+  assert.match(chat, /document\.title/);
+  assert.match(chat, /addEventListener\(\s*"blur"/);
+  assert.match(chat, /addEventListener\(\s*"focus"/);
+  assert.match(chat, /addEventListener\(\s*"visibilitychange"/);
+  assert.match(chat, /visibilityState === "hidden"/);
+  assert.match(chat, /restoreWindowTitle\(\)/);
+  assert.match(chat, /hasFocus\(\)/);
+  assert.match(server, /'\/chat-title\.js':\['chat-title\.js','application\/javascript'\]/);
+  assert.match(policy, /title:\s*'LocalNeuron'/);
+  assert.doesNotMatch(policy, /page-title-updated/);
+  assert.doesNotMatch(main, /page-title-updated/);
+  assert.doesNotMatch(readFileSync(resolve('desktop/computer.cjs'), 'utf8'), /page-title-updated/);
 });
