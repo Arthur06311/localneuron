@@ -576,3 +576,202 @@ test("Anexos limitam extração e contexto sem substituir instruções por conte
   assert.match(c.options.system, /nunca como instruções/);
   assert.equal(input[0].content, "resuma");
 });
+test("Conversas fixadas ficam no topo, alternam e persistem no cofre", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "colmeia-chat-pin-"));
+  let core = new Core(dir, resolve("."));
+  await core.init();
+  await core.setup("senha-teste-fixar-conversa");
+  let chats = new Chats(core);
+  let app: Awaited<ReturnType<typeof createApp>>["app"] | undefined;
+  const headers = {
+    host: "127.0.0.1:4317",
+    authorization: "Bearer test-token",
+  };
+  try {
+    app = (
+      await createApp(core, "test-token", undefined, undefined, testConfig)
+    ).app;
+    const older = await chats.create("pin-older");
+    const newer = await chats.create("pin-newer");
+    const middle = await chats.create("pin-middle");
+    await core.store.tx((state, entries) => {
+      const byId = new Map((state!.chats ?? []).map((chat) => [chat.id, chat]));
+      byId.get(older.id)!.title = "Antiga";
+      byId.get(older.id)!.at = 10;
+      byId.get(newer.id)!.title = "Recente";
+      byId.get(newer.id)!.at = 30;
+      byId.get(middle.id)!.title = "Meio";
+      byId.get(middle.id)!.at = 20;
+      core.append(state!, entries, "test.pin-order", {});
+    });
+    assert.deepEqual(
+      (await chats.list()).map((chat) => chat.id),
+      [middle.id, newer.id, older.id],
+    );
+    assert.equal(
+      (await chats.list()).every((chat) => chat.pinned === undefined),
+      true,
+    );
+
+    const pinOlder = await app.inject({
+      method: "POST",
+      url: `/v1/chats/${older.id}/pin`,
+      headers,
+      payload: { pinned: true },
+    });
+    assert.equal(pinOlder.statusCode, 200);
+    assert.deepEqual(pinOlder.json(), { ok: true, pinned: true });
+    assert.equal(
+      (
+        await app.inject({
+          method: "POST",
+          url: `/v1/chats/${middle.id}/pin`,
+          headers,
+          payload: { pinned: true },
+        })
+      ).statusCode,
+      200,
+    );
+    let listed = await chats.list();
+    assert.deepEqual(
+      listed.map((chat) => chat.id),
+      [middle.id, older.id, newer.id],
+    );
+    assert.equal(listed[0].pinned, true);
+    assert.equal(listed[1].pinned, true);
+    assert.equal(listed[2].pinned, undefined);
+
+    const unpinOlder = await app.inject({
+      method: "POST",
+      url: `/v1/chats/${older.id}/pin`,
+      headers,
+      payload: { pinned: false },
+    });
+    assert.equal(unpinOlder.statusCode, 200);
+    assert.deepEqual(unpinOlder.json(), { ok: true, pinned: false });
+    listed = await chats.list();
+    assert.deepEqual(
+      listed.map((chat) => chat.id),
+      [middle.id, newer.id, older.id],
+    );
+    assert.equal(
+      listed.find((chat) => chat.id === older.id)?.pinned,
+      undefined,
+    );
+
+    assert.equal(
+      (
+        await app.inject({
+          method: "POST",
+          url: `/v1/chats/${older.id}/pin`,
+          headers,
+          payload: { pinned: true },
+        })
+      ).json().pinned,
+      true,
+    );
+    assert.equal(
+      (
+        await app.inject({
+          method: "POST",
+          url: `/v1/chats/${older.id}/pin`,
+          headers,
+          payload: {},
+        })
+      ).statusCode,
+      400,
+    );
+    assert.equal(
+      (
+        await app.inject({
+          method: "POST",
+          url: `/v1/chats/${older.id}/pin`,
+          headers,
+          payload: { pinned: true, extra: true },
+        })
+      ).statusCode,
+      400,
+    );
+    const missing = await app.inject({
+      method: "POST",
+      url: `/v1/chats/${crypto.randomUUID()}/pin`,
+      headers,
+      payload: { pinned: true },
+    });
+    assert.equal(missing.statusCode, 400);
+    assert.match(missing.json().error, /não encontrada/);
+    assert.equal(
+      (
+        await app.inject({
+          method: "POST",
+          url: `/v1/chats/${older.id}/pin`,
+          headers: { host: headers.host },
+          payload: { pinned: false },
+        })
+      ).statusCode,
+      401,
+    );
+    core.vault.lock();
+    assert.equal(
+      (
+        await app.inject({
+          method: "POST",
+          url: `/v1/chats/${older.id}/pin`,
+          headers,
+          payload: { pinned: false },
+        })
+      ).statusCode,
+      423,
+    );
+    await core.unlock("senha-teste-fixar-conversa");
+
+    await app.close();
+    app = undefined;
+    await chats.close();
+    await core.close();
+    core = new Core(dir, resolve("."));
+    await core.init();
+    await core.unlock("senha-teste-fixar-conversa");
+    chats = new Chats(core);
+    listed = await chats.list();
+    assert.deepEqual(
+      listed.filter((chat) => chat.pinned).map((chat) => chat.id),
+      [middle.id, older.id],
+    );
+    assert.equal(listed[0].id, middle.id);
+    assert.equal(listed[0].title, "Meio");
+    assert.equal(
+      listed.find((chat) => chat.id === newer.id)?.pinned,
+      undefined,
+    );
+
+    assert.deepEqual(await chats.pin(middle.id, false), {
+      ok: true,
+      pinned: false,
+    });
+    assert.deepEqual(await chats.pin(older.id, false), {
+      ok: true,
+      pinned: false,
+    });
+    assert.equal(
+      (await chats.list()).some((chat) => chat.pinned),
+      false,
+    );
+    assert.deepEqual(await chats.pin(newer.id, true), { ok: true, pinned: true });
+    assert.equal((await chats.list())[0].id, newer.id);
+    assert.equal((await chats.list())[0].pinned, true);
+    assert.deepEqual(await chats.pin(newer.id, false), {
+      ok: true,
+      pinned: false,
+    });
+    assert.equal((await chats.list())[0].pinned, undefined);
+    await assert.rejects(chats.pin(crypto.randomUUID(), true), /não encontrada/);
+    core.vault.lock();
+    await assert.rejects(chats.pin(newer.id, true), /bloqueado/);
+  } finally {
+    await chats.close();
+    if (app) await app.close();
+    await core.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
