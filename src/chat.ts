@@ -80,7 +80,7 @@ export class Chats {
   }
   async list() {
     const state = await this.core.snapshot();
-    return (state.chats ?? []).map((chat) => ({
+    return pinnedFirst((state.chats ?? []).map((chat) => ({
       ...chat,
       messages: chat.messages.map((message) => ({
         ...message,
@@ -95,7 +95,7 @@ export class Chats {
             ? this.jobs.get(chat.id)!.content
             : message.content,
       })),
-    }));
+    })));
   }
   async create(key: string, metadata: {bot_id?:string;preferred_model?:string} = {}) {
     if (this.core.vault.locked) throw new Error("Cofre bloqueado");
@@ -384,6 +384,20 @@ export class Chats {
       },
     );
   }
+  async pin(id: string, pinned: boolean) {
+    return this.core.store.tx((state, entries) => {
+      if (!state || this.core.vault.locked) throw new Error("Cofre bloqueado");
+      const chat = state.chats?.find((c) => c.id === id);
+      if (!chat) throw new Error("Conversa não encontrada");
+      if (pinned) chat.pinned = true;
+      else delete chat.pinned;
+      this.core.append(state, entries, pinned ? "chat.pinned" : "chat.unpinned", {
+        id,
+        pinned,
+      });
+      return { ok: true, pinned: Boolean(chat.pinned) };
+    });
+  }
   async rename(id: string, title: string) {
     return this.core.store.tx((state, entries) => {
       if (!state || this.core.vault.locked) throw new Error("Cofre bloqueado");
@@ -415,4 +429,12 @@ export class Chats {
     for (const job of this.jobs.values()) job.controller.abort();
     await Promise.allSettled([...this.jobs.values()].map((job) => job.promise));
   }
+}
+
+export function pinnedFirst<T extends { pinned?: boolean; at: number }>(chats: T[]) {
+  const pinned: T[] = [];
+  const rest: T[] = [];
+  for (const chat of chats) (chat.pinned ? pinned : rest).push(chat);
+  pinned.sort((a, b) => b.at - a.at);
+  return [...pinned, ...rest];
 }

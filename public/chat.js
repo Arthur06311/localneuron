@@ -11,6 +11,7 @@ import {
   showGuestStart,
 } from "./guest-start.js";
 import { writeChatModelLabel } from "./chat-model-label.js";
+import { conversationGroups } from "./chat-list.js";
 import { noModelLoaded, noModelLoadedHtml } from "./chat-no-model.js";
 import {
   readStoredSends,
@@ -518,24 +519,36 @@ export function createChatUI({
   function draw() {
     paintWindowTitle();
     if (!isVisible() || !$("#chat-messages")) return;
-    const query = $("#chat-search").value.toLocaleLowerCase(),
-      filtered = chats.filter((c) =>
-        c.title.toLocaleLowerCase().includes(query),
-      );
-    const groups=new Map();for(const c of [...filtered].sort((a,b)=>b.at-a.at)){const key=c.preferred_model||c.messages.findLast(m=>m.model)?.model||t('chat.noModel');if(!groups.has(key))groups.set(key,[]);groups.get(key).push(c);}
-    const groupList=[...groups];const listHTML=groupList.map(([key,items],group)=>`<details open class="chat-model-group"><summary><span data-chat-group="${group}"></span> · ${items.length}</summary>${items.map(c=>`<button data-chat-id="${c.id}" class="${c.id===current?'selected':''}">${escape(c.title)}${c.bot_id?' · Bot':''}${c.messages.some(m=>m.status==='pending')?' · …':''}</button>`).join('')}</details>`).join('')||`<p class="muted">${t('chat.none')}</p>`;
+    const groups = conversationGroups(chats, $("#chat-search").value, t("chat.noModel"));
+    const listHTML =
+      groups
+        .map((group, index) => {
+          const summary = group.pinned
+            ? `<summary class="chat-pin-summary">${icon("pin")}<span>${t("chat.pinned")}</span> · ${group.items.length}</summary>`
+            : `<summary><span data-chat-group="${index}"></span> · ${group.items.length}</summary>`;
+          const items = group.items
+            .map(
+              (c) =>
+                `<button data-chat-id="${c.id}" class="${c.id === current ? "selected" : ""}${c.pinned ? " pinned" : ""}">${c.pinned ? icon("pin") : ""}${escape(c.title)}${c.bot_id ? " · Bot" : ""}${c.messages.some((m) => m.status === "pending") ? " · …" : ""}</button>`,
+            )
+            .join("");
+          return `<details open class="chat-model-group${group.pinned ? " chat-pin-group" : ""}">${summary}${items}</details>`;
+        })
+        .join("") || `<p class="muted">${t("chat.none")}</p>`;
     const list = $("#chat-list");
     if (list.dataset.skeleton !== listHTML) {
       list.dataset.skeleton = listHTML;
       list.innerHTML = listHTML;
     }
     list.querySelectorAll("[data-chat-group]").forEach((node) => {
-      const [key] = groupList[Number(node.dataset.chatGroup)] || [];
-      const installed = models?.installed?.find((item) => item.key === key);
-      writeChatModelLabel(node, installed?.display_name || key || "");
+      const group = groups[Number(node.dataset.chatGroup)];
+      if (!group || group.pinned) return;
+      const installed = models?.installed?.find((item) => item.key === group.id);
+      writeChatModelLabel(node, installed?.display_name || group.id || "");
     });
+    const pinnedNow = Boolean(selected()?.pinned);
     const manageHTML = current
-      ? `<button class="quiet" data-chat-rename>${t('chat.rename')}</button><button class="quiet" data-chat-export>${t('chat.export')}</button><button class="quiet" data-chat-delete>${t('chat.delete')}</button>`
+      ? `<button class="quiet" data-chat-pin aria-pressed="${pinnedNow ? "true" : "false"}">${icon("pin")}${pinnedNow ? t("chat.unpin") : t("chat.pin")}</button><button class="quiet" data-chat-rename>${t('chat.rename')}</button><button class="quiet" data-chat-export>${t('chat.export')}</button><button class="quiet" data-chat-delete>${t('chat.delete')}</button>`
       : "";
     if ($("#chat-manage").innerHTML !== manageHTML)
       $("#chat-manage").innerHTML = manageHTML;
@@ -965,6 +978,15 @@ export function createChatUI({
         options = { ...defaults };
         localStorage.setItem("colmeia-generation", JSON.stringify(options));
         await render();
+      } else if (b.hasAttribute("data-chat-pin")) {
+        const chat = selected();
+        if (!chat || !current) return;
+        await api(`/chats/${current}/pin`, {
+          method: "POST",
+          body: { pinned: !chat.pinned },
+        });
+        chats = await api("/chats");
+        draw();
       } else if (b.hasAttribute("data-chat-rename")) {
         const title = await renameDialog(selected()?.title || "");
         if (title?.trim()) {
