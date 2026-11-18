@@ -50,6 +50,9 @@ h1{font-size:clamp(28px,4vw,40px);margin:0}h1 em{font-style:normal;color:var(--a
 h2{font-size:clamp(20px,2.4vw,26px);margin:0}
 h3{font-size:15px;margin:0}
 .lede{color:var(--muted);max-width:62ch;margin:12px 0 0}
+h1,h2,h3,h4,.lede,.eyebrow,.ph-kicker,.closing p{text-wrap:balance}
+p,li{text-wrap:pretty}
+.brand,.button,.theme-toggle,.text-link,nav a,.guide-nav a,button,select,.sr-only,.skip{text-wrap-style:auto}
 .platforms{margin:14px 0 0;color:var(--muted);font-size:13px}
 .platforms span{margin:0 6px}
 
