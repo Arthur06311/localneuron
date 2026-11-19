@@ -237,6 +237,7 @@ export default {
   'chat.model.externalFolder': 'pasta externa',
   'chat.model.exoNetwork': 'Rede EXO',
   'chat.new': 'Nova conversa',
+  'chat.new.title': 'Nova conversa ({shortcut})',
   'chat.settingsTitle': 'Ajustes e ferramentas',
   'chat.settings': 'Ajustes',
   'chat.needModel': 'Baixe uma IA para começar.',
