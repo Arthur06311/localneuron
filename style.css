@@ -258,3 +258,65 @@ header,.guide-header,.wrap,.hero,main.doc,.guide-shell{padding-left:16px;padding
 footer .brand{width:100%}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+@media (forced-colors: active) {
+:root { forced-color-adjust: auto }
+.button,
+.download-action,
+.theme-toggle,
+.cards article,
+.shot,
+.panel,
+.chip,
+.model-names span,
+.download-card,
+.install-guide,
+.install-cols article,
+.faq details,
+.prose details,
+.guide-nav,
+.doc-block,
+.diagram,
+.hero-visual,
+.product-image,
+.my-team-list li,
+.offline-checklist li,
+.offline-icon,
+.offline-mod-icon,
+.os-icon,
+.closing a,
+.prose code,
+.prose pre,
+.skip:focus,
+dialog,
+dialog > button {
+  border: 1px solid ButtonText;
+  forced-color-adjust: auto;
+}
+.language { border-width: 0; padding: 0; background-color: transparent; forced-color-adjust: auto }
+.language select,
+select {
+  border: 1px solid ButtonText;
+  background-color: Field;
+  color: FieldText;
+  min-height: 36px;
+  padding: 6px 8px;
+  forced-color-adjust: auto;
+}
+.button.ghost { border: 1px solid ButtonText }
+.download-card.recommended { border-color: Highlight }
+.my-team-list li::before { background: Highlight; forced-color-adjust: auto }
+:focus-visible { outline: 2px solid Highlight; outline-offset: 2px }
+nav a:hover:not(:focus-visible),
+.guide-nav a:hover:not(:focus-visible),
+nav a[aria-current="page"],
+.guide-nav a[aria-current] { outline: 1px solid ButtonText }
+.diagram svg rect { fill: Canvas; stroke: currentColor; forced-color-adjust: auto }
+.diagram svg rect:not([stroke]) { stroke: none }
+.diagram svg :is(line, path, circle, polyline, polygon) { stroke: currentColor; fill: none; forced-color-adjust: auto }
+.diagram svg text { fill: currentColor; stroke: none; forced-color-adjust: auto }
+.ph svg,
+.os-icon svg,
+.offline-icon svg,
+.offline-mod-icon svg,
+.offline-arrow svg { stroke: currentColor; fill: none; forced-color-adjust: auto }
+}
