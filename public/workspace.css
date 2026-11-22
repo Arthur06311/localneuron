@@ -38,6 +38,8 @@ body.chat-page #chat-list{overflow:auto;flex:1;min-height:0}
 body.chat-page #chat-manage{display:flex;gap:10px;flex-wrap:wrap}
 body.chat-page #chat-manage [data-chat-pin]{display:inline-flex;align-items:center;gap:5px}
 body.chat-page #chat-manage [data-chat-pin] .ui-icon{width:14px;height:14px}
+body.chat-page .answer-actions [data-chat-edit]{display:inline-flex;align-items:center;gap:4px}
+body.chat-page .answer-actions [data-chat-edit] .ui-icon{width:13px;height:13px}
 body.chat-page #chat-manage [data-chat-pin][aria-pressed=true]{color:var(--accent)}
 #chat-list .chat-pin-group{margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 #chat-list .chat-pin-summary{font-size:11px;font-weight:650;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}

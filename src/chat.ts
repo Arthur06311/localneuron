@@ -127,6 +127,7 @@ export class Chats {
     toolAccess?: unknown,
     attachmentValues: unknown[] = [],
     modelKey?: string,
+    editId = "",
   ) {
     if (this.core.vault.locked) throw new Error("Cofre bloqueado");
     const options = optionsSchema.parse(settings || {}),
@@ -134,8 +135,14 @@ export class Chats {
     if (attachmentValues.length > 4)
       throw Error("Use até quatro anexos por mensagem.");
     const attachments = attachmentValues.map((a) => attachmentSchema.parse(a));
-    if (retry && attachments.length)
-      throw Error("Gerar novamente usa os anexos da mensagem original.");
+    if (retry && editId)
+      throw new Error("Escolha gerar novamente ou editar a mensagem.");
+    if ((retry || editId) && attachments.length)
+      throw Error(
+        retry
+          ? "Gerar novamente usa os anexos da mensagem original."
+          : "A edição mantém os anexos da mensagem original.",
+      );
     let fresh = false;
     const result = await this.core.idempotent(
       key,
@@ -149,6 +156,7 @@ export class Chats {
         access_json: JSON.stringify(access),
         attachments_json: JSON.stringify(attachments),
         retry,
+        ...(editId ? { edit: editId } : {}),
       },
       (state, entries) => {
         const chat = state.chats?.find((c) => c.id === id);
@@ -180,7 +188,21 @@ export class Chats {
           (!chat.messages.length || chat.messages.at(-1)?.role !== "assistant")
         )
           throw new Error("Nenhuma resposta disponível para gerar novamente.");
-        const user: ChatMessage = {
+        let edited: ChatMessage | undefined;
+        if (editId) {
+          const index = chat.messages.findIndex((m) => m.id === editId);
+          const reply = chat.messages.at(-1);
+          if (
+            index !== chat.messages.length - 2 ||
+            chat.messages[index]?.role !== "user" ||
+            reply?.role !== "assistant"
+          )
+            throw new Error("Só a última mensagem sua pode ser editada.");
+          edited = chat.messages[index];
+          edited.content = content;
+          edited.at = Date.now();
+        }
+        const user: ChatMessage = edited ?? {
           id: randomUUID(),
           role: "user",
           ...(attachments.length ? { attachments } : {}),
@@ -198,14 +220,14 @@ export class Chats {
           at: Date.now(),
           status: "pending",
         };
-        if (retry) {
+        if (retry || editId) {
           const previous = chat.messages.pop()!;
           const { versions, ...last } = previous;
           answer.versions = [...(versions || []), last].slice(-20);
         } else chat.messages.push(user);
         chat.messages.push(answer);
         chat.at = user.at;
-        if (!retry && chat.messages.length === 2)
+        if (!retry && !editId && chat.messages.length === 2)
           chat.title =
             content.slice(0, 65) + (chat.forked_from ? " · alternativa" : "");
         this.core.append(state, entries, "chat.sent", {

@@ -317,6 +317,8 @@ export default {
   'chat.stats.omitted': '{count} older messages outside the current context',
   'chat.stats.length': 'reply limit reached',
   'chat.copy': 'Copy',
+  'chat.edit': 'Edit',
+  'chat.edit.placeholder': 'Edit the message… Esc cancels',
   'chat.retry': '↻ Generate again',
   'chat.continue': 'Continue',
   'chat.previous': '{count} earlier replies',

@@ -468,12 +468,12 @@ export async function createApp(core: Core, token = randomBytes(32).toString('he
   app.get('/v1/chats', async () => chats.list());
   app.post('/v1/chats', async request => { const metadata=z.strictObject({bot_id:z.string().uuid().optional(),preferred_model:z.string().max(512).optional()}).parse(body(request)); return chats.create(key(request),metadata); });
   app.post('/v1/chats/:id/send', {bodyLimit:2*1024**2}, async request => exclusive(async () => {
-    const data = z.strictObject({ model: z.string().min(1).max(512), model_key:z.string().max(512).optional(), content: z.string().trim().min(1).max(131072), options:optionsSchema.optional(), retry:z.boolean().default(false),access:accessSchema.optional(),attachments:z.array(attachmentSchema).max(4).default([]) }).parse(body(request));
+    const data = z.strictObject({ model: z.string().min(1).max(512), model_key:z.string().max(512).optional(), content: z.string().trim().min(1).max(131072), options:optionsSchema.optional(), retry:z.boolean().default(false), edit:z.string().uuid().optional(), access:accessSchema.optional(),attachments:z.array(attachmentSchema).max(4).default([]) }).parse(body(request));
     if(library.quantizer.running)throw new Error('Aguarde a quantização terminar ou cancele-a.');
     if(crewTalk?.busy)throw new Error('Aguarde a conversa da equipe.');
     if(aux.busy||proMedia.busy)throw new Error('Aguarde o motor de voz ou imagem.');
     if(gateway.busy)throw new Error('A IA está atendendo uma chamada da API. Tente em instantes.');
-    return chats.send(id(request), data.model, data.content, key(request), data.options, data.retry,data.access,data.attachments,data.model_key);
+    return chats.send(id(request), data.model, data.content, key(request), data.options, data.retry,data.access,data.attachments,data.model_key,data.edit);
   }));
   app.post('/v1/chats/:id/stop', async request => { z.strictObject({}).parse(body(request)); return chats.stop(id(request)); });
   app.post('/v1/chats/:id/rename',async request=>{const {title}=z.strictObject({title:z.string().trim().min(1).max(100)}).parse(body(request));return chats.rename(id(request),title);});

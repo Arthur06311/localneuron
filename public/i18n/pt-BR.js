@@ -318,6 +318,8 @@ export default {
   'chat.stats.omitted': '{count} mensagens antigas fora do contexto atual',
   'chat.stats.length': 'limite de resposta atingido',
   'chat.copy': 'Copiar',
+  'chat.edit': 'Editar',
+  'chat.edit.placeholder': 'Edite a mensagem… Esc cancela',
   'chat.retry': '↻ Gerar novamente',
   'chat.continue': 'Continuar',
   'chat.previous': '{count} respostas anteriores',
