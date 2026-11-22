@@ -18,6 +18,7 @@ const paths = {
  arrow: '<path d="M12 19V5m-6 6 6-6 6 6"/>',
  star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9Z"/>',
  pin: '<path d="M12 17v5"/><path d="M15 4H9v7l-2 2h10l-2-2V4"/>',
+ pencil: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
  compare: '<path d="M9 3H5v18h4m6-18h4v18h-4M9 8h6m-6 8h6"/>',
  lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>',
  image: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 15-4.5-4.5L7 20"/>',

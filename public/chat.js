@@ -26,6 +26,12 @@ import { mascotHTML } from "./mascot.js";
 import { replySpeedText } from "./reply-speed.js";
 import { createChatAssist } from "./chat-assist.js";
 import { icon } from "./icons.js";
+import {
+  beginMessageEdit,
+  editButton,
+  messageEditDraft,
+  messageEditOnInput,
+} from "./chat-edit.js";
 import { createVoice } from "./voice.js";
 import { marked } from "./vendor/marked.js";
 import DOMPurify from "./vendor/purify.js";
@@ -134,7 +140,8 @@ export function createChatUI({
     preparing = false,
     refreshBusy = false,
     panelOpen = false,
-    lastHTML = "";
+    lastHTML = "",
+    editing = null;
   function renameDialog(title, label = t("chat.renameTitle"), max = 100) {
     return new Promise((resolve) => {
       const dialog = document.createElement("dialog");
@@ -166,6 +173,18 @@ export function createChatUI({
   const selected = () => chats.find((c) => c.id === current),
     pending = () =>
       chats.some((c) => c.messages.some((m) => m.status === "pending"));
+  function cancelMessageEdit(restore) {
+    if (!editing) return;
+    const id = current || "new";
+    const draft = messageEditDraft(editing);
+    editing = null;
+    if (restore) {
+      drafts.set(id, draft);
+      const input = $("#chat-input");
+      if (input) input.value = draft;
+    }
+    if ($("#chat-messages")) draw();
+  }
   const windowTitle = createWindowTitle();
   let windowBlurred = document.hasFocus() === false;
   function windowIsFocused() {
@@ -257,6 +276,7 @@ export function createChatUI({
     },
     onFork: async (result) => {
       await voice.stop();
+      cancelMessageEdit(true);
       current = result.id;
       chats = await api("/chats");
       drafts.set(current, result.draft);
@@ -570,11 +590,13 @@ export function createChatUI({
     if ($("#chat-approvals").innerHTML !== approvalHTML)
       $("#chat-approvals").innerHTML = approvalHTML;
     const guestState = rememberGuestStart();
+    const lastUserId = [...messages].reverse().find((item) => item.role === "user")?.id;
+    const editingLocked = preparing || messages.some((item) => item.status === "pending");
     const html = messages.length
       ? messages
           .map((m, index) => {
             const stats = m.stats;
-            return `<article class="chat-message ${m.role}" data-message-id="${m.id}">${m.role === "assistant" && index === messages.length - 1 ? mascotHTML(m.error || m.status === "error" || m.status === "stopped" ? "attention" : m.status === "pending" ? "thinking" : "success", "reply") : ""}<strong>${m.role === "user" ? t("chat.you") : `<span data-chat-model="${index}"></span>`}</strong><div class="message-text">${m.role === "assistant" ? markdown(m.content || "") : escape(m.content)}</div>${m.status === "pending" && !m.content ? `<p class="thinking-label">${m.phase === "thinking" ? t("chat.thinking") : t("chat.preparingReply")}</p>` : ""}${m.error ? `<p class="message-error">${escape(m.error)}</p>` : ""}${m.activities?.length ? `<details class="tool-activity" ${m.status === "pending" ? "open" : ""}><summary><span data-i18n-steps="${index}"></span></summary>${m.activities.map((a, step) => `<div class="tool-step"><span>${a.status === "complete" ? "✓" : a.status === "error" || a.status === "denied" ? "!" : "◌"}</span><div><strong>${escape(a.label)}</strong><small>${escape(a.detail || { running: t("chat.step.running"), approval: t("chat.step.approval"), complete: t("chat.step.complete"), denied: t("chat.step.denied"), error: t("chat.step.error") }[a.status] || a.status)}</small>${a.artifact ? `<a class="quiet" href="/v1/assistant/artifacts/${escape(a.artifact)}" download><span data-i18n-download="${index}" data-i18n-step="${step}"></span></a>${a.previous_artifact ? ` <a class="quiet" href="/v1/assistant/artifacts/${escape(a.previous_artifact)}" download>${t("chat.previousFile")}</a>` : ""}` : ""}</div></div>`).join("")}</details>` : ""}${stats ? `<div class="answer-stats"><span data-i18n-stats="${index}"></span></div>` : ""}${replySpeedText(m.stats)}${assist.extras(m)}<div class="answer-actions">${assist.actions(m)}${m.content ? `<button class="quiet" data-chat-copy="${m.id}">${t("chat.copy")}</button>` : ""}${m.role === "assistant" && index === messages.length - 1 && m.status !== "pending" ? `<button class="quiet" data-chat-retry>${t("chat.retry")}</button>${stats?.finish_reason === "length" ? `<button class="quiet" data-chat-continue>${t("chat.continue")}</button>` : ""}` : ""}${m.versions?.length ? `<details><summary><span data-i18n-previous="${index}"></span></summary>${m.versions.map((v) => `<div class="previous-answer">${markdown(v.content || v.error || t("chat.interrupted"))}</div>`).join("")}</details>` : ""}</div></article>`;
+            return `<article class="chat-message ${m.role}" data-message-id="${m.id}">${m.role === "assistant" && index === messages.length - 1 ? mascotHTML(m.error || m.status === "error" || m.status === "stopped" ? "attention" : m.status === "pending" ? "thinking" : "success", "reply") : ""}<strong>${m.role === "user" ? t("chat.you") : `<span data-chat-model="${index}"></span>`}</strong><div class="message-text">${m.role === "assistant" ? markdown(m.content || "") : escape(m.content)}</div>${m.status === "pending" && !m.content ? `<p class="thinking-label">${m.phase === "thinking" ? t("chat.thinking") : t("chat.preparingReply")}</p>` : ""}${m.error ? `<p class="message-error">${escape(m.error)}</p>` : ""}${m.activities?.length ? `<details class="tool-activity" ${m.status === "pending" ? "open" : ""}><summary><span data-i18n-steps="${index}"></span></summary>${m.activities.map((a, step) => `<div class="tool-step"><span>${a.status === "complete" ? "✓" : a.status === "error" || a.status === "denied" ? "!" : "◌"}</span><div><strong>${escape(a.label)}</strong><small>${escape(a.detail || { running: t("chat.step.running"), approval: t("chat.step.approval"), complete: t("chat.step.complete"), denied: t("chat.step.denied"), error: t("chat.step.error") }[a.status] || a.status)}</small>${a.artifact ? `<a class="quiet" href="/v1/assistant/artifacts/${escape(a.artifact)}" download><span data-i18n-download="${index}" data-i18n-step="${step}"></span></a>${a.previous_artifact ? ` <a class="quiet" href="/v1/assistant/artifacts/${escape(a.previous_artifact)}" download>${t("chat.previousFile")}</a>` : ""}` : ""}</div></div>`).join("")}</details>` : ""}${stats ? `<div class="answer-stats"><span data-i18n-stats="${index}"></span></div>` : ""}${replySpeedText(m.stats)}${assist.extras(m)}<div class="answer-actions">${assist.actions(m)}${m.content ? `<button class="quiet" data-chat-copy="${m.id}">${t("chat.copy")}</button>` : ""}${editButton({ message: m, lastUserId, busy: editingLocked, pressed: editing?.id === m.id, label: t("chat.edit"), icon: icon("pencil") })}${m.role === "assistant" && index === messages.length - 1 && m.status !== "pending" ? `<button class="quiet" data-chat-retry>${t("chat.retry")}</button>${stats?.finish_reason === "length" ? `<button class="quiet" data-chat-continue>${t("chat.continue")}</button>` : ""}` : ""}${m.versions?.length ? `<details><summary><span data-i18n-previous="${index}"></span></summary>${m.versions.map((v) => `<div class="previous-answer">${v.question ? `<p class="muted">${t("chat.previousQuestion")}</p><p>${escape(v.question)}</p>` : ""}${markdown(v.content || v.error || t("chat.interrupted"))}</div>`).join("")}</details>` : ""}</div></article>`;
           })
           .join("")
       : `<div class="chat-welcome">${showGuestStart({ state: guestState, messages, chats }) ? guestStartHtml(escape) : ""}${mascotHTML("welcome", "chat")}<span class="eyebrow">${t("chat.welcome.eyebrow")}</span><h2>${t("chat.welcome.title")}</h2><p>${t("chat.welcome.body")}</p><p class="chat-offline-line" data-chat-offline></p><div class="chat-suggestions"><button data-chat-example="${t("chat.suggest.explain.prompt")}">${t("chat.suggest.explain.label")}</button><button data-chat-example="${t("chat.suggest.edit.prompt")}">${t("chat.suggest.edit.label")}</button><button data-chat-example="${t("chat.suggest.idea.prompt")}">${t("chat.suggest.idea.label")}</button></div>${!preferred ? `<button class="primary" data-chat-library>${t("chat.firstModel")}</button>` : ""}</div>`;
@@ -641,14 +663,27 @@ export function createChatUI({
       welcome: messages.length === 0,
       sent: readStoredSends(localStorage),
     });
+    const composer = $("#chat-input");
+    if (composer)
+      composer.placeholder = editing
+        ? t("chat.edit.placeholder")
+        : t("chat.input.placeholder");
   }
   async function send(retry = false) {
     if (preparing || pending() || voice.busy() || assist.busy()) return;
     const input = $("#chat-input"),
       draftId = current || "new",
       content = retry ? "" : input.value.trim(),
-      key = $("#chat-model").value;
-    if (!retry && !content) return;
+      key = $("#chat-model").value,
+      editId = retry || !editing?.id ? "" : editing.id;
+    if (!retry && !content) {
+      if (editId) {
+        editing = null;
+        drafts.set(draftId, "");
+        if ($("#chat-messages")) draw();
+      }
+      return;
+    }
     if (noModelLoaded(key)) {
       const note = $("#chat-no-model");
       if (note) note.hidden = false;
@@ -696,6 +731,7 @@ export function createChatUI({
         drafts.set(current, input.value);
         drafts.delete(draftId);
       }
+      if (editId && editing?.id !== editId) return;
       await api(`/chats/${current}/send`, {
         method: "POST",
         body: {
@@ -704,13 +740,15 @@ export function createChatUI({
           content: retry ? t("chat.retryPrompt") : content,
           options: effectiveOptions,
           retry,
+          ...(editId ? { edit: editId } : {}),
           access,
-          attachments: retry ? [] : assist.attachments(current),
+          attachments: retry || editId ? [] : assist.attachments(current),
         },
       });
       if (!retry) {
         recordSentMessage(localStorage);
-        assist.clear(current);
+        if (!editId) assist.clear(current);
+        editing = null;
         if (input.value.trim() === content) {
           input.value = "";
           drafts.delete(draftId);
@@ -736,8 +774,15 @@ export function createChatUI({
       localStorage.setItem("colmeia-generation", JSON.stringify(options));
       syncQuick();
     }
-    if (e.target.id === "chat-input")
+    if (e.target.id === "chat-input") {
+      if (editing && !messageEditOnInput(editing, e.target.value)) {
+        editing = null;
+        drafts.set(current || "new", "");
+        if ($("#chat-messages")) draw();
+        return;
+      }
       drafts.set(current || "new", e.target.value);
+    }
     if (e.target.id === "chat-search") draw();
   });
   document.addEventListener('change', async e=>{
@@ -784,8 +829,27 @@ export function createChatUI({
       return;
     }
     if (runNewConversationShortcut(e)) return;
-    if (e.key === "Escape" && $("#chat-history") && !$("#chat-history").hidden)
+    if (e.key === "Escape" && editing && e.target?.id === "chat-input") {
+      e.preventDefault();
+      cancelMessageEdit(true);
+      $("#chat-input")?.focus();
+      return;
+    }
+    if (e.key === "Escape" && $("#chat-history") && !$("#chat-history").hidden) {
       toggleHistory(false);
+      return;
+    }
+    if (
+      e.key === "Escape" &&
+      editing &&
+      isVisible() &&
+      !document.querySelector("dialog[open]")
+    ) {
+      e.preventDefault();
+      cancelMessageEdit(true);
+      $("#chat-input")?.focus();
+      return;
+    }
     if (
       e.target.id === "chat-input" &&
       e.key === "Enter" &&
@@ -901,6 +965,7 @@ export function createChatUI({
         assistant = await api("/assistant");
         draw();
       } else if (b.hasAttribute("data-chat-choose-model")) {
+        cancelMessageEdit(true);
         const input = $("#chat-input");
         if (input) drafts.set(current || "new", input.value);
         showLibrary({ smallLocalFirst: true });
@@ -910,6 +975,7 @@ export function createChatUI({
       } else if (b.hasAttribute("data-chat-new")) {
         if (preparing) return;
         await voice.stop();
+        cancelMessageEdit(true);
         current = null;
         toggleHistory(false);
         $("#chat-input").value = drafts.get("new") || "";
@@ -919,6 +985,7 @@ export function createChatUI({
       } else if (b.dataset.chatId) {
         if (preparing) return;
         await voice.stop();
+        cancelMessageEdit(true);
         current = b.dataset.chatId;
         const savedModel=selected()?.preferred_model;if(savedModel&&models.installed.some(m=>m.key===savedModel)){$("#chat-model").value=savedModel;preferred=savedModel;guidance();}
         toggleHistory(false);
@@ -930,6 +997,7 @@ export function createChatUI({
         if (!isVisible() || !$("#chat-input") || preparing || pending() || voice.busy() || assist.busy()) return;
         const prompt = guestStartPrompt(b.dataset.guestStart);
         if (!prompt) return;
+        cancelMessageEdit(false);
         const input = $("#chat-input");
         const key = modelForGuestStart({
           installed: models?.installed || [],
@@ -958,6 +1026,7 @@ export function createChatUI({
       } else if (b.hasAttribute("data-guest-start-close")) {
         dismissGuestStart();
       } else if (b.dataset.chatExample) {
+        cancelMessageEdit(false);
         $("#chat-input").value = b.dataset.chatExample;
         drafts.set(current || "new", b.dataset.chatExample);
         $("#chat-input").focus();
@@ -967,6 +1036,27 @@ export function createChatUI({
           await navigator.clipboard.writeText(m.content);
           toast(t("chat.copied"));
         }
+      } else if (b.dataset.chatEdit) {
+        if (preparing || pending() || b.disabled) return;
+        const messages = selected()?.messages || [];
+        const message = messages.find((m) => m.id === b.dataset.chatEdit);
+        const lastUserId = [...messages].reverse().find((m) => m.role === "user")?.id;
+        if (!message || message.role !== "user" || message.id !== lastUserId || !message.content)
+          return;
+        const input = $("#chat-input");
+        if (!input) return;
+        if (editing?.id === message.id) {
+          input.focus();
+          return;
+        }
+        editing = beginMessageEdit(input.value, message);
+        input.value = message.content;
+        drafts.set(current || "new", input.value);
+        draw();
+        input.focus();
+        const end = input.value.length;
+        if (typeof input.setSelectionRange === "function")
+          input.setSelectionRange(end, end);
       } else if (b.hasAttribute("data-chat-stop")) {
         for (const c of chats.filter((c) =>
           c.messages.some((m) => m.status === "pending"),
@@ -976,6 +1066,7 @@ export function createChatUI({
         draw();
       } else if (b.hasAttribute("data-chat-retry")) await send(true);
       else if (b.hasAttribute("data-chat-continue")) {
+        cancelMessageEdit(false);
         $("#chat-input").value =
           t("chat.continuePrompt");
         await send();
