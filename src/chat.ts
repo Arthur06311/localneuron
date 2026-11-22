@@ -189,6 +189,7 @@ export class Chats {
         )
           throw new Error("Nenhuma resposta disponível para gerar novamente.");
         let edited: ChatMessage | undefined;
+        let previousQuestion = "";
         if (editId) {
           const index = chat.messages.findIndex((m) => m.id === editId);
           const reply = chat.messages.at(-1);
@@ -199,6 +200,7 @@ export class Chats {
           )
             throw new Error("Só a última mensagem sua pode ser editada.");
           edited = chat.messages[index];
+          previousQuestion = edited.content;
           edited.content = content;
           edited.at = Date.now();
         }
@@ -223,7 +225,8 @@ export class Chats {
         if (retry || editId) {
           const previous = chat.messages.pop()!;
           const { versions, ...last } = previous;
-          answer.versions = [...(versions || []), last].slice(-20);
+          const archived = editId ? { ...last, question: previousQuestion } : last;
+          answer.versions = [...(versions || []), archived].slice(-20);
         } else chat.messages.push(user);
         chat.messages.push(answer);
         chat.at = user.at;

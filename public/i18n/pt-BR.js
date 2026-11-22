@@ -323,6 +323,7 @@ export default {
   'chat.retry': '↻ Gerar novamente',
   'chat.continue': 'Continuar',
   'chat.previous': '{count} respostas anteriores',
+  'chat.previousQuestion': 'Pergunta anterior',
   'chat.interrupted': 'Resposta interrompida',
   'chat.welcome.eyebrow': 'SEU ASSISTENTE LOCAL',
   'chat.welcome.title': 'Como posso ajudar?',

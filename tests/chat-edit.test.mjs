@@ -94,6 +94,10 @@ test('o Chat liga o lápis, o envio da edição e o cancelamento em pt-BR e en',
   assert.match(chat, /cancelMessageEdit\(true\)/);
   assert.match(chat, /messageEditOnInput\(editing, e\.target\.value\)/);
   assert.match(chat, /edit: editId/);
+  assert.match(chat, /v\.question/);
+  assert.match(chat, /chat\.previousQuestion/);
+  assert.equal(ptBR['chat.previousQuestion'], 'Pergunta anterior');
+  assert.equal(en['chat.previousQuestion'], 'Earlier question');
   assert.match(chat, /editing\?\.id !== editId/);
   assert.match(icons, /pencil:/);
   assert.match(server, /edit:z\.string\(\)\.uuid\(\)\.optional\(\)/);

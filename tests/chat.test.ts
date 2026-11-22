@@ -845,6 +845,7 @@ test("Editar a última mensagem substitui o texto e guarda a resposta anterior",
     assert.equal(pending.messages[3].id, edited.message_id);
     assert.equal(pending.messages[3].versions?.length, 1);
     assert.equal(pending.messages[3].versions?.[0].content, "Resposta 2");
+    assert.equal(pending.messages[3].versions?.[0].question, "Segunda");
     assert.equal(pending.title, "Primeira");
     await assert.rejects(
       chats.send(
@@ -875,6 +876,7 @@ test("Editar a última mensagem substitui o texto e guarda a resposta anterior",
     assert.equal(saved.messages[3].status, "complete");
     assert.equal(saved.messages[3].versions?.length, 1);
     assert.equal(saved.messages[3].versions?.[0].content, "Resposta 2");
+    assert.equal(saved.messages[3].versions?.[0].question, "Segunda");
     assert.deepEqual(seen[2], ["Primeira", "Resposta 1", "Segunda revisada"]);
     const replay = await chats.send(
       id,
@@ -891,9 +893,58 @@ test("Editar a última mensagem substitui o texto e guarda a resposta anterior",
     assert.equal(replay.message_id, edited.message_id);
     assert.equal(seen.length, 3);
     assert.equal((await chats.list())[0].messages[3].versions?.length, 1);
+    await chats.send(
+      id,
+      "local",
+      "Terceira",
+      "edit-again-0001",
+      {},
+      false,
+      {},
+      [],
+      undefined,
+      lastUser.id,
+    );
+    await chats.jobs.get(id)!.promise;
+    const twice = (await chats.list())[0];
+    assert.equal(twice.messages.length, 4);
+    assert.equal(twice.messages[0].content, "Primeira");
+    assert.equal(twice.messages[2].content, "Terceira");
+    assert.equal(twice.messages[3].content, "Resposta 4");
+    assert.equal(twice.messages[3].versions?.[0].content, "Resposta 2");
+    assert.equal(twice.messages[3].versions?.[0].question, "Segunda");
+    assert.equal(twice.messages[3].versions?.[1].content, "Resposta 3");
+    assert.equal(twice.messages[3].versions?.[1].question, "Segunda revisada");
   } finally {
     release();
     await chats.close();
+    await core.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+test("O servidor entrega /chat-edit.js para o módulo do Chat", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "colmeia-chat-edit-static-"));
+  const core = new Core(dir, resolve("."));
+  await core.init();
+  await core.setup("senha-teste-chat-estatico");
+  const { app } = await createApp(
+    core,
+    "test-token",
+    undefined,
+    undefined,
+    testConfig,
+  );
+  try {
+    const response = await app.inject({
+      method: "GET",
+      url: "/chat-edit.js",
+      headers: { host: "127.0.0.1:4317" },
+    });
+    assert.equal(response.statusCode, 200);
+    assert.match(String(response.headers["content-type"]), /javascript/);
+    assert.match(response.body, /export function editButton/);
+  } finally {
+    await app.close();
     await core.close();
     rmSync(dir, { recursive: true, force: true });
   }
