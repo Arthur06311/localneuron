@@ -380,6 +380,7 @@ export default {
   'chat.export.file': 'conversation.md',
   'assist.attach.title': 'PDF, DOCX, XLSX, text, and code · up to 4 files of 12 MiB',
   'assist.attach': '＋ Attach',
+  'assist.drop': 'Drop to attach',
   'assist.prompts': 'Commands',
   'assist.memory': 'Memory',
   'assist.search': 'Search',

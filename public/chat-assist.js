@@ -1,4 +1,5 @@
 import { format, t } from "./i18n.js";
+import { createChatDrop } from "./chat-drop.js";
 const presets = [
   [
     "Resumir documento",
@@ -75,6 +76,21 @@ const profiles = {
     readOnly: true,
   },
 };
+export const ATTACH_ACCEPT =
+  ".pdf,.docx,.xlsx,.csv,.txt,.md,.json,.js,.ts,.tsx,.py,.html,.css,.yaml,.yml,.rs,.go,.java,.c,.cpp";
+const ATTACH_EXTENSIONS = new Set(ATTACH_ACCEPT.split(","));
+const ATTACH_LIMIT = 4;
+const ATTACH_BYTES = 12 * 1024 ** 2;
+export function attachmentRejection(file, count) {
+  if (count >= ATTACH_LIMIT) return "Use até quatro anexos por mensagem.";
+  if (Number(file?.size) > ATTACH_BYTES) return file.name + ": limite de 12 MiB.";
+  const name = String(file?.name || "");
+  const dot = name.lastIndexOf(".");
+  const ext = dot >= 0 ? name.slice(dot).toLowerCase() : "";
+  if (!ATTACH_EXTENSIONS.has(ext))
+    return "Use PDF, DOCX, XLSX, CSV, texto ou arquivos de código.";
+  return "";
+}
 export function createChatAssist({
   api,
   E,
@@ -108,7 +124,7 @@ export function createChatAssist({
     return d;
   }
   function toolbar() {
-    return `<div class="chat-assist-bar"><button type="button" class="quiet" data-assist="attach" title="${t("assist.attach.title")}">${t("assist.attach")}</button><button type="button" class="quiet" data-assist="prompts">${t("assist.prompts")}</button><button type="button" class="quiet" data-assist="memory">${t("assist.memory")}</button><button type="button" class="quiet" data-assist="search">${t("assist.search")}</button><label class="chat-profile"><span class="sr-only">${t("assist.profile.label")}</span><select id="chat-tool-profile" aria-label="${t("assist.profile.label")}"><option value="custom">${t("assist.profile.custom")}</option><option value="chat">${t("assist.profile.chat")}</option><option value="local">${t("assist.profile.local")}</option><option value="research">${t("assist.profile.research")}</option></select></label><input id="chat-attachment-files" type="file" accept=".pdf,.docx,.xlsx,.csv,.txt,.md,.json,.js,.ts,.tsx,.py,.html,.css,.yaml,.yml,.rs,.go,.java,.c,.cpp" multiple hidden></div><div id="chat-attachment-drafts" class="chat-attachment-drafts" hidden></div><p id="chat-tool-hint" class="chat-tool-hint"></p>`;
+    return `<div class="chat-assist-bar"><button type="button" class="quiet" data-assist="attach" title="${t("assist.attach.title")}">${t("assist.attach")}</button><button type="button" class="quiet" data-assist="prompts">${t("assist.prompts")}</button><button type="button" class="quiet" data-assist="memory">${t("assist.memory")}</button><button type="button" class="quiet" data-assist="search">${t("assist.search")}</button><label class="chat-profile"><span class="sr-only">${t("assist.profile.label")}</span><select id="chat-tool-profile" aria-label="${t("assist.profile.label")}"><option value="custom">${t("assist.profile.custom")}</option><option value="chat">${t("assist.profile.chat")}</option><option value="local">${t("assist.profile.local")}</option><option value="research">${t("assist.profile.research")}</option></select></label><input id="chat-attachment-files" type="file" accept="${ATTACH_ACCEPT}" multiple hidden></div><div id="chat-attachment-drafts" class="chat-attachment-drafts" hidden></div><p id="chat-tool-hint" class="chat-tool-hint"></p>`;
   }
   function paint() {
     if (!isVisible() || !$("#chat-attachment-drafts")) return;
@@ -321,36 +337,26 @@ export function createChatAssist({
     });
     $("#chat-message-search").focus();
   }
-  document.addEventListener("change", async (e) => {
-    if (!isVisible()) return;
-    if (e.target.id === "chat-tool-profile") {
-      const profile = profiles[e.target.value];
-      if (profile && !isBusy()) {
-        setAccess({ ...getAccess(), ...profile });
-        paint();
-      }
-      return;
-    }
-    if (e.target.id !== "chat-attachment-files" || uploading || isBusy())
-      return;
-    const target = key(),
-      selected = [...e.target.files];
-    e.target.value = "";
+  function readAttachment(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1]);
+      reader.onerror = () => reject(Error("Não foi possível ler o arquivo."));
+      reader.readAsDataURL(file);
+    });
+  }
+  const blocked = () =>
+    uploading || isBusy() || Boolean(document.querySelector("dialog[open]"));
+  async function attachSelected(selected) {
+    if (!isVisible() || blocked()) return;
+    const target = key();
     uploading = true;
     paint();
     try {
       for (const file of selected) {
-        if (attachments(target).length >= 4)
-          throw Error("Use até quatro anexos por mensagem.");
-        if (file.size > 12 * 1024 ** 2)
-          throw Error(file.name + ": limite de 12 MiB.");
-        const data = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(String(reader.result).split(",")[1]);
-          reader.onerror = () =>
-            reject(Error("Não foi possível ler o arquivo."));
-          reader.readAsDataURL(file);
-        });
+        const reason = attachmentRejection(file, attachments(target).length);
+        if (reason) throw Error(reason);
+        const data = await readAttachment(file);
         const a = await api("/chats/attachments", {
           method: "POST",
           body: { name: file.name, data },
@@ -363,6 +369,21 @@ export function createChatAssist({
       uploading = false;
       paint();
     }
+  }
+  document.addEventListener("change", async (e) => {
+    if (!isVisible()) return;
+    if (e.target.id === "chat-tool-profile") {
+      const profile = profiles[e.target.value];
+      if (profile && !isBusy()) {
+        setAccess({ ...getAccess(), ...profile });
+        paint();
+      }
+      return;
+    }
+    if (e.target.id !== "chat-attachment-files" || blocked()) return;
+    const selected = [...e.target.files];
+    e.target.value = "";
+    await attachSelected(selected);
   });
   document.addEventListener("click", async (e) => {
     if (!isVisible()) return;
@@ -414,6 +435,11 @@ export function createChatAssist({
     } finally {
       if (b.isConnected) b.disabled = isBusy() || uploading;
     }
+  });
+  createChatDrop({
+    isActive: isVisible,
+    isBlocked: blocked,
+    onFiles: attachSelected,
   });
   return {
     toolbar,

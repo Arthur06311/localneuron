@@ -224,6 +224,32 @@
 #chat-attachment-files[hidden] {
   display: none !important;
 }
+.chat-drop-overlay {
+  position: fixed;
+  inset: 10px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  border: 1.5px solid var(--accent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+}
+.chat-drop-overlay[hidden] {
+  display: none;
+}
+.chat-drop-overlay p {
+  margin: 0;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
 
 #toast {
   top: 76px;

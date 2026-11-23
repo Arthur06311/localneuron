@@ -381,6 +381,7 @@ export default {
   'chat.export.file': 'conversa.md',
   'assist.attach.title': 'PDF, DOCX, XLSX, texto e código · até 4 arquivos de 12 MiB',
   'assist.attach': '＋ Anexar',
+  'assist.drop': 'Solte para anexar',
   'assist.prompts': 'Comandos',
   'assist.memory': 'Memória',
   'assist.search': 'Buscar',
