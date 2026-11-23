@@ -30,6 +30,7 @@ test('o Chat importa /chat-edit.js e a allowlist entrega esse módulo',async()=>
   const block=allowlist(server);
   const served=new Set([...block.matchAll(/['"]\/([^'"]+)['"]\s*:/g)].map(match=>match[1]));
   assert.match(block,/['"]\/chat-edit\.js['"]\s*:\s*\[\s*['"]chat-edit\.js['"]\s*,\s*['"]application\/javascript['"]\s*\]/);
+  assert.match(block,/['"]\/chat-drop\.js['"]\s*:\s*\[\s*['"]chat-drop\.js['"]\s*,\s*['"]application\/javascript['"]\s*\]/);
   async function filesIn(dir,prefix=''){
     const found=[];
     for(const name of await readdir(dir,{withFileTypes:true})){

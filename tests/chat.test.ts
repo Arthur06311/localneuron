@@ -949,3 +949,31 @@ test("O servidor entrega /chat-edit.js para o módulo do Chat", async () => {
     rmSync(dir, { recursive: true, force: true });
   }
 });
+test("O servidor entrega /chat-drop.js para soltar arquivos no Chat", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "colmeia-chat-drop-static-"));
+  const core = new Core(dir, resolve("."));
+  await core.init();
+  await core.setup("senha-teste-chat-estatico");
+  const { app } = await createApp(
+    core,
+    "test-token",
+    undefined,
+    undefined,
+    testConfig,
+  );
+  try {
+    const response = await app.inject({
+      method: "GET",
+      url: "/chat-drop.js",
+      headers: { host: "127.0.0.1:4317" },
+    });
+    assert.equal(response.statusCode, 200);
+    assert.match(String(response.headers["content-type"]), /javascript/);
+    assert.match(response.body, /export function createChatDrop/);
+    assert.match(response.body, /export function dragCarriesFiles/);
+  } finally {
+    await app.close();
+    await core.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
