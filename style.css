@@ -320,3 +320,55 @@ nav a[aria-current="page"],
 .offline-mod-icon svg,
 .offline-arrow svg { stroke: currentColor; fill: none; forced-color-adjust: auto }
 }
+@media print {
+:root,
+:root[data-theme="light"],
+:root[data-theme="dark"],
+:root:not([data-theme="dark"]) {
+  color-scheme: light;
+  --bg: #fff;
+  --panel: #fff;
+  --panel2: #fff;
+  --line: #b5b5b5;
+  --ink: #16181c;
+  --muted: #3f4752;
+  --accent: #1d4ed8;
+  --ok: #0b7a45;
+  --warn: #8a5a00;
+  --btn: #16181c;
+  --btn-ink: #fff;
+  --btn-hover: #16181c;
+  --meta: #3f4752;
+  --ghost-hover: #fff;
+  --selection: #c7d7fb;
+}
+html, body { background: #fff; color: var(--ink); }
+* { box-shadow: none; text-shadow: none; }
+.ph { background: #fff; }
+.download-card.recommended { border-color: #888; }
+.skip,
+header nav,
+.guide-nav,
+.doc-toc,
+.theme-toggle,
+.language,
+.header-actions,
+.hero-actions,
+.demo-30-actions,
+.offline-actions,
+.download-action,
+a.button,
+.closing > a { display: none; }
+header, .guide-header { position: static; top: auto; background: #fff; }
+.wrap, .hero, header, .guide-header, footer, main, main.doc, .guide-shell, .guide-main { max-width: none; }
+.guide-shell { display: block; }
+.table-wrap, pre, .prose pre, .demo-frames { overflow: visible; max-width: 100%; }
+.demo-frames { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.demo-frames li { flex: none; width: auto; max-width: 100%; min-width: 0; }
+table { min-width: 0; width: 100%; }
+pre, code { overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; }
+.cards article, .shot, .panel, .doc-block, .download-card, .install-guide, .install-cols article, .faq details, .prose details, .my-team-list li, .diagram, figure, pre, table, tr, h1, h2, h3 { break-inside: avoid; }
+h2, h3 { break-after: avoid; }
+main a[href^="http"]:not(.button):not(.download-action):not(:has(img))::after { content: " (" attr(href) ")"; font-weight: 400; overflow-wrap: anywhere; }
+}
