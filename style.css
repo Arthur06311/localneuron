@@ -115,7 +115,7 @@ p,li{text-wrap:pretty}
 .download-action:hover{background:var(--btn-hover)}
 .unavailable{font-size:12px;color:var(--muted);max-width:12ch;text-align:right}
 .checksum{margin-top:8px;color:var(--muted);font-size:12px}
-.checksum summary{min-height:32px;display:flex;align-items:center}
+.checksum summary{min-height:32px;display:flex;align-items:center;gap:12px;list-style:none}
 .checksum code,.install-command{display:block;overflow-wrap:anywhere;font-size:11px;line-height:1.5;color:var(--muted);padding-top:4px}
 .download-alternative{display:inline-flex;margin-top:8px;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:13px;min-height:32px;align-items:center}
 .download-note{color:var(--muted);font-size:13px;grid-column:1/-1;margin:4px 0 0}
@@ -173,7 +173,11 @@ td{color:var(--muted)}
 
 .faq-list{display:grid;gap:8px}
 .faq details,.prose details{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:10px 12px}
-.faq summary,.prose summary{font-weight:600;min-height:32px;display:flex;align-items:center}
+.faq summary,.prose summary{font-weight:600;min-height:32px;display:flex;align-items:center;gap:12px;list-style:none}
+.faq summary::after,.prose summary::after,.checksum summary::after{content:"";width:.5em;height:.5em;margin-left:auto;flex-shrink:0;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .15s ease}
+.faq details[open]>summary::after,.prose details[open]>summary::after,.checksum[open]>summary::after{transform:rotate(225deg)}
+.faq summary::-webkit-details-marker,.prose summary::-webkit-details-marker,.checksum summary::-webkit-details-marker{display:none}
+.faq summary::marker,.prose summary::marker,.checksum summary::marker{content:none}
 .faq details p{margin:8px 0 0}
 
 .docs-banner,.closing{display:flex;justify-content:space-between;gap:16px;align-items:center}
@@ -257,7 +261,7 @@ header,.guide-header,.wrap,.hero,main.doc,.guide-shell{padding-left:16px;padding
 .facts div{grid-template-columns:1fr;gap:2px}
 footer .brand{width:100%}
 }
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.faq summary::after,.prose summary::after,.checksum summary::after{transition:none!important}}
 @media (forced-colors: active) {
 :root { forced-color-adjust: auto }
 .button,
@@ -319,6 +323,9 @@ nav a[aria-current="page"],
 .offline-icon svg,
 .offline-mod-icon svg,
 .offline-arrow svg { stroke: currentColor; fill: none; forced-color-adjust: auto }
+.faq summary::after,
+.prose summary::after,
+.checksum summary::after { border-color: currentColor; forced-color-adjust: auto }
 }
 @media print {
 :root,
@@ -346,6 +353,9 @@ html, body { background: #fff; color: var(--ink); }
 * { box-shadow: none; text-shadow: none; }
 .ph { background: #fff; }
 .download-card.recommended { border-color: #888; }
+.faq summary::after,
+.prose summary::after,
+.checksum summary::after { display: none; }
 .skip,
 header nav,
 .guide-nav,
