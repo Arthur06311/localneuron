@@ -262,6 +262,30 @@ header,.guide-header,.wrap,.hero,main.doc,.guide-shell{padding-left:16px;padding
 footer .brand{width:100%}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.faq summary::after,.prose summary::after,.checksum summary::after{transition:none!important}}
+/* Stronger secondary text and borders when the OS asks for more contrast.
+   Selectors match the theme rules above, so this wins for the toggle and for
+   prefers-color-scheme. forced-colors and print follow and still win. */
+@media (prefers-contrast: more) {
+:root,
+:root[data-theme="dark"] {
+  --muted: #aeb4bb;
+  --line: #6a737c;
+  --accent: #8aaff8;
+}
+:root[data-theme="light"] {
+  --muted: #363d47;
+  --line: #767f89;
+  --accent: #1e40af;
+}
+@media (prefers-color-scheme: light) {
+:root:not([data-theme="dark"]) {
+  --muted: #363d47;
+  --line: #767f89;
+  --accent: #1e40af;
+}
+}
+:focus-visible { outline-width: 3px }
+}
 @media (forced-colors: active) {
 :root { forced-color-adjust: auto }
 .button,
