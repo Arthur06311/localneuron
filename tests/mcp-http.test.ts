@@ -216,7 +216,8 @@ test("o Chat mostra a chamada e o resultado da ferramenta", async () => {
   const original = globalThis.fetch;
   let modelCalls = 0;
   globalThis.fetch = async (input, init) => {
-    if (String(input).startsWith(`http://127.0.0.1:${port}`)) return original(input, init);
+    const target = requestUrl(input);
+    if (target?.protocol === "http:" && target.hostname === "127.0.0.1" && target.port === String(port)) return original(input, init);
     const body = JSON.parse(String(init?.body));
     modelCalls += 1;
     if (modelCalls === 1) {
@@ -315,6 +316,15 @@ test("só o loopback dispensa aprovação", () => {
   assert.equal(mcpHostNeedsApproval("http://[::1]/api/mcp"), false);
   assert.equal(mcpHostNeedsApproval("https://example.com/mcp"), true);
 });
+
+function requestUrl(input: unknown) {
+  const raw = typeof input === "string" ? input : input instanceof URL ? input.href : "";
+  try {
+    return new URL(raw);
+  } catch {
+    return undefined;
+  }
+}
 
 function answeringServer(text: string, initialize: { count: number; calls: number }) {
   return createServer(async (req, res) => {
@@ -417,7 +427,7 @@ test("servidor fora do loopback exige aprovação e a recusa não envia a chamad
     const name = registry.definitions()[0].function.name;
     assert.equal(registry.needsApproval(name), true);
     globalThis.fetch = async (input, init) => {
-      if (String(input).includes("example.com")) {
+      if (requestUrl(input)?.hostname === "example.com") {
         remote += 1;
         throw new Error("não deveria contactar o servidor");
       }
