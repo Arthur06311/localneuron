@@ -825,6 +825,7 @@ export function createChatUI({
     syncQuick();
   });
   document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && e.isComposing) return;
     if (e.key === "Escape" && e.target.closest?.(".guest-start")) {
       e.preventDefault();
       dismissGuestStart();
@@ -851,6 +852,18 @@ export function createChatUI({
       cancelMessageEdit(true);
       $("#chat-input")?.focus();
       return;
+    }
+    if (
+      e.key === "Escape" &&
+      isVisible() &&
+      !document.querySelector("dialog[open]")
+    ) {
+      const stopButton = $("[data-chat-stop]");
+      if (stopButton && !stopButton.hidden && !stopButton.disabled) {
+        e.preventDefault();
+        stopButton.click();
+        return;
+      }
     }
     if (
       e.target.id === "chat-input" &&
