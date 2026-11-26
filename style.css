@@ -465,3 +465,65 @@ pre { white-space: pre-wrap; }
 h2, h3 { break-after: avoid; }
 main a[href^="http"]:not(.button):not(.download-action):not(:has(img))::after { content: " (" attr(href) ")"; font-weight: 400; overflow-wrap: anywhere; }
 }
+
+/* NeuralGames page */
+.ng-main{max-width:1120px;margin:0 auto;padding:28px 20px 72px}
+.ng-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(260px,.95fr);gap:28px;align-items:center}
+.ng-hero > *{min-width:0}
+.ng-form{display:grid;gap:8px;margin-top:22px}
+.ng-form h2{font-size:clamp(18px,2vw,22px);max-width:34ch}
+.ng-label{font-weight:600;font-size:13px}
+.ng-row{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.ng-row input{flex:1 1 12rem;min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font:inherit}
+.ng-row input::placeholder{color:var(--muted);opacity:1}
+.ng-row .button{min-height:44px;padding:10px 16px}
+.ng-row .button:disabled{cursor:progress;opacity:.65}
+.ng-consent{margin:0;color:var(--muted);font-size:13px;max-width:62ch}
+.ng-status{margin:0;font-size:14px;font-weight:600}
+.ng-status:not(:empty){min-height:1.5em}
+.ng-status.is-positive{color:var(--ok)}
+.ng-status.is-error{color:var(--warn)}
+.ng-note{margin-top:14px}
+.ng-preview{margin:0;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:12px;display:grid;gap:10px}
+.ng-preview figcaption{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin:0;color:var(--muted);font-family:var(--mono);font-size:12px}
+.ng-preview figcaption span:last-child{color:var(--ok)}
+.ng-map{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px}
+.ng-map span{display:block;aspect-ratio:1;border-radius:2px;background:var(--panel2)}
+.ng-map span.is-on{background:var(--accent)}
+.ng-map span.is-on{background:color-mix(in srgb,var(--accent) 72%,var(--panel))}
+.ng-map span.is-actor{background:var(--accent)}
+.ng-code{margin:0}
+.ng-code code{display:block;overflow-x:auto;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);font-family:var(--mono);font-size:12px;line-height:1.5}
+.ng-section{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.ng-section h2{margin-bottom:12px}
+.ng-steps{margin:0;padding-left:1.4rem;display:grid;gap:10px;max-width:68ch}
+.ng-steps li{color:var(--muted);padding-left:.35rem}
+.ng-steps li::marker{color:var(--accent);font-family:var(--mono);font-weight:600}
+.ng-features{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ng-features li{position:relative;margin:0;padding:12px 12px 12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--muted)}
+.ng-features li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;background:var(--accent)}
+.ng-why{margin:0;max-width:68ch;color:var(--muted)}
+.ng-page .theme-toggle,.ng-page .language,.ng-page .language select,.ng-page nav a,.ng-footer a,.ng-footer .brand{min-height:44px}
+.ng-footer p{flex:1 1 16rem;max-width:62ch;margin:0}
+@media(max-width:900px){
+.ng-hero{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+.ng-row input{font-size:16px}
+}
+@media(max-width:640px){
+.ng-main{padding-left:16px;padding-right:16px}
+.ng-row{flex-direction:column}
+.ng-row .button{width:100%}
+}
+@media(forced-colors:active){
+.ng-preview,.ng-code code,.ng-features li,.ng-row input,.ng-form .button{border:1px solid ButtonText;forced-color-adjust:auto}
+.ng-map span{border:1px solid ButtonText;background:Canvas;forced-color-adjust:auto}
+.ng-map span.is-on{background:CanvasText;forced-color-adjust:auto}
+.ng-map span.is-actor{background:Highlight;forced-color-adjust:auto}
+.ng-steps li::marker,.ng-features li::before{color:Highlight;background:Highlight;forced-color-adjust:auto}
+.ng-status.is-positive{color:LinkText}
+.ng-status.is-error{color:LinkText}
+.ng-row .button:disabled{opacity:1}
+.ng-row input{background:Field;color:FieldText}
+}
