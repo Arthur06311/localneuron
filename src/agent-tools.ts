@@ -219,6 +219,8 @@ export class Toolbox {
     });
     return this.status();
   }
+  // Every chat reply calls this. It probes each saved MCP server with initialize and tools/list.
+  // McpServers keeps a short in-memory TTL so that handshake is not repeated until the TTL expires.
   prepareExternalMcp(signal?: AbortSignal) {
     return this.mcpServers?.prepare(signal) ?? Promise.resolve();
   }
@@ -226,8 +228,8 @@ export class Toolbox {
     return this.mcpServers?.definitions() ?? [];
   }
   definitions(access: Access, connections: string[] = [], options?: { externalMcp?: boolean }): ToolDefinition[] {
+    if (!access.enabled) return [];
     const external = options?.externalMcp === false ? [] : this.externalMcpDefinitions();
-    if (!access.enabled) return external;
     return [...(Object.keys(schemas) as ToolName[])
       .filter((name) =>
         name === "computer_info"
@@ -387,10 +389,16 @@ export class Toolbox {
       if(!this.mcpServers)throw new Error('Servidores MCP indisponíveis.');
       let args:unknown;
       try{args=JSON.parse(raw);}catch{throw new Error('Argumentos da ferramenta inválidos.');}
+      const signal=AbortSignal.any([context.signal,AbortSignal.timeout(6*60*1000)]);
+      if(this.mcpServers.needsApproval(name)){
+        const allow=await this.approval(context.chat,name,'Usar ferramenta da conexão MCP',JSON.stringify({tool:name,arguments:args},null,2),signal,context.notify);
+        if(!allow)throw Error('Ferramenta MCP não autorizada.');
+        signal.throwIfAborted();
+      }
       const id=randomUUID(),label=this.mcpServers.label(name),at=Date.now();
       context.notify({id,tool:name,label,status:'running',at,detail:JSON.stringify(args).slice(0,500)});
       try{
-        const result=await this.mcpServers.call(name,args,context.chat,context.signal);
+        const result=await this.mcpServers.call(name,args,context.chat,signal);
         context.notify({id,tool:name,label,status:result.isError?'error':'complete',at,detail:`${label}(${JSON.stringify(args).slice(0,400)})\n${result.text.slice(0,1600)}`});
         return {text:result.text,isError:result.isError,documentUpdated:result.documentUpdated};
       }catch(error){

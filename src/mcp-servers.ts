@@ -32,6 +32,20 @@ type Live = {
 
 const exposed = /^mcphttp_([a-f0-9]{32})_(\d+)$/;
 const DOCUMENT_LIMIT = 180_000;
+/** Reuse of initialize and tools/list between chat replies. */
+export const MCP_PROBE_TTL_MS = 30_000;
+
+/** Public and private hosts need a person to allow the call. Loopback does not. */
+export function mcpHostNeedsApproval(url: string) {
+  let host = "";
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    return true;
+  }
+  host = host.replace(/^\[|\]$/g, "").toLowerCase();
+  return host !== "127.0.0.1" && host !== "::1" && host !== "localhost";
+}
 
 function atomic(path: string, value: unknown) {
   const tmp = path + ".tmp";
@@ -54,7 +68,7 @@ export class McpServers {
   private file: string;
   private documentsFile: string;
   private live = new Map<string, Live>();
-  private attempted = new Set<string>();
+  private probedUntil = new Map<string, number>();
   private documents: DocumentRow[] = [];
   constructor(directory: string) {
     this.file = join(directory, "mcp-servers.json");
@@ -107,6 +121,14 @@ export class McpServers {
   label(name: string) {
     return this.locate(name)?.tool.name || name;
   }
+  needsApproval(name: string) {
+    const located = this.locate(name);
+    if (!located) return true;
+    return mcpHostNeedsApproval(located.server.url);
+  }
+  private rememberProbe(id: string) {
+    this.probedUntil.set(id, Date.now() + MCP_PROBE_TTL_MS);
+  }
   definitions(): ToolDefinition[] {
     const tools: ToolDefinition[] = [];
     for (const config of this.read()) {
@@ -145,7 +167,7 @@ export class McpServers {
   async connect(id: string, timeoutMs = 12000, signal?: AbortSignal) {
     const config = this.read().find((item) => item.id === id);
     if (!config) throw new Error("Servidor MCP não encontrado.");
-    this.attempted.add(id);
+    this.rememberProbe(id);
     assertMcpUrl(config.url);
     await assertMcpResolved(new URL(config.url), false, lookup);
     const live: Live = { tools: [], connected: false, serverName: "", protocol: "" };
@@ -165,12 +187,19 @@ export class McpServers {
     const current = this.read().find((item) => item.id === id);
     if (!current) {
       this.live.delete(id);
+      this.probedUntil.delete(id);
       throw new Error("Servidor MCP não encontrado.");
     }
+    this.rememberProbe(id);
     return this.present(current);
   }
-  async prepare(signal?: AbortSignal) {
-    const pending = this.read().filter((item) => !this.attempted.has(item.id));
+  /**
+   * Every chat reply calls this for all registered servers.
+   * Each server outside the in-memory TTL is probed with initialize and tools/list.
+   * A probe inside the TTL is reused, so the handshake is not repeated on every reply.
+   */
+  async prepare(signal?: AbortSignal, now = Date.now()) {
+    const pending = this.read().filter((item) => (this.probedUntil.get(item.id) ?? 0) <= now);
     await Promise.all(pending.map((item) => this.connect(item.id, 12000, signal).catch(() => {})));
   }
   async add(input: unknown) {
@@ -192,7 +221,7 @@ export class McpServers {
     if (!servers.some((item) => item.id === id)) throw new Error("Servidor MCP não encontrado.");
     this.write(servers.filter((item) => item.id !== id));
     this.live.delete(id);
-    this.attempted.delete(id);
+    this.probedUntil.delete(id);
     this.forget(id);
     return { ok: true };
   }

@@ -2,14 +2,15 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { mkdtemp, rm } from "node:fs/promises";
+import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { agentReply } from "../src/agent.js";
-import { Toolbox } from "../src/agent-tools.js";
+import { Toolbox, accessSchema } from "../src/agent-tools.js";
 import { optionsSchema } from "../src/inference.js";
 import { callMcpTool, McpHttpError, probeMcp } from "../src/mcp-http.js";
-import { McpServers } from "../src/mcp-servers.js";
+import { MCP_PROBE_TTL_MS, McpServers, mcpHostNeedsApproval } from "../src/mcp-servers.js";
 
 type Body = { method?: string; id?: unknown; params?: Record<string, unknown> };
 
@@ -301,6 +302,140 @@ test("modelo sem chamada de ferramenta avisa em vez de falhar em silêncio", asy
     assert.equal(typeof result === "string" ? result : result.text, "Posso responder em texto.");
     assert.ok(activities.some((item) => item.tool === "mcp_unsupported"));
     assert.equal(calls, 0);
+  } finally {
+    globalThis.fetch = original;
+    await close(server);
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("só o loopback dispensa aprovação", () => {
+  assert.equal(mcpHostNeedsApproval("http://127.0.0.1:9/api/mcp"), false);
+  assert.equal(mcpHostNeedsApproval("http://localhost/api/mcp"), false);
+  assert.equal(mcpHostNeedsApproval("http://[::1]/api/mcp"), false);
+  assert.equal(mcpHostNeedsApproval("https://example.com/mcp"), true);
+});
+
+function answeringServer(text: string, initialize: { count: number; calls: number }) {
+  return createServer(async (req, res) => {
+    const body = await readJson(req);
+    if (body.method === "initialize") initialize.count += 1;
+    if (body.method === "notifications/initialized") return reply(res, 200, { jsonrpc: "2.0", id: null, result: {} });
+    if (body.method === "initialize")
+      return reply(res, 200, { jsonrpc: "2.0", id: body.id, result: { protocolVersion: "2024-11-05", serverInfo: { name: "fixture" } } });
+    if (body.method === "tools/list")
+      return reply(res, 200, { jsonrpc: "2.0", id: body.id, result: { tools: [jogoTool] } });
+    if (body.method === "tools/call") {
+      initialize.calls += 1;
+      return reply(res, 200, { jsonrpc: "2.0", id: body.id, result: { content: [{ type: "text", text }], isError: false } });
+    }
+    return reply(res, 200, { jsonrpc: "2.0", id: body.id, error: { code: -32601, message: "método" } });
+  });
+}
+
+test("a resposta reutiliza initialize e tools/list dentro do TTL", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "neuron-mcp-ttl-"));
+  const seen = { count: 0, calls: 0 };
+  const server = answeringServer("ok", seen);
+  const { url } = await listen(server);
+  const registry = new McpServers(directory);
+  try {
+    await registry.add({ url });
+    const afterAdd = seen.count;
+    assert.equal(afterAdd, 1);
+    await registry.prepare();
+    assert.equal(seen.count, afterAdd);
+    await registry.prepare(undefined, Date.now() + MCP_PROBE_TTL_MS + 1000);
+    assert.equal(seen.count, afterAdd + 1);
+  } finally {
+    await close(server);
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("ferramentas externas ficam ocultas quando o chat desliga as ferramentas", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "neuron-mcp-off-"));
+  const seen = { count: 0, calls: 0 };
+  const server = answeringServer("ok", seen);
+  const { url } = await listen(server);
+  const registry = new McpServers(directory);
+  const box = new Toolbox(directory);
+  box.mcpServers = registry;
+  try {
+    await registry.add({ url });
+    assert.deepEqual(box.definitions(accessSchema.parse({ enabled: false })), []);
+    assert.ok(box.definitions(accessSchema.parse({ enabled: true, computer: false, web: false, files: false, terminal: false })).some((tool) => tool.function.name.startsWith("mcphttp_")));
+  } finally {
+    await close(server);
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("servidor em loopback executa sem pedir aprovação", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "neuron-mcp-loop-"));
+  const seen = { count: 0, calls: 0 };
+  const server = answeringServer("feito", seen);
+  const { url } = await listen(server);
+  const registry = new McpServers(directory);
+  const box = new Toolbox(directory);
+  box.mcpServers = registry;
+  try {
+    await registry.add({ url });
+    const name = registry.definitions()[0].function.name;
+    const activities: { status: string }[] = [];
+    const result = await box.run(name, '{"titulo":"Pulo"}', accessSchema.parse({ enabled: true, computer: false, web: false, files: false, terminal: false }), {
+      chat: randomUUID(),
+      signal: AbortSignal.timeout(3000),
+      notify: (activity) => {
+        activities.push(activity);
+        if (activity.status === "approval") box.approve(activity.id, false);
+      },
+      privateRead: false,
+    });
+    assert.equal(seen.calls, 1);
+    assert.equal((result as { text: string }).text, "feito");
+    assert.equal(activities.some((item) => item.status === "approval"), false);
+  } finally {
+    await close(server);
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("servidor fora do loopback exige aprovação e a recusa não envia a chamada", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "neuron-mcp-remote-"));
+  const seen = { count: 0, calls: 0 };
+  const server = answeringServer("não devia", seen);
+  const { url } = await listen(server);
+  const registry = new McpServers(directory);
+  const box = new Toolbox(directory);
+  box.mcpServers = registry;
+  const original = globalThis.fetch;
+  let remote = 0;
+  try {
+    const added = await registry.add({ url });
+    writeFileSync(join(directory, "mcp-servers.json"), JSON.stringify({ servers: [{ id: added.id, url: "https://example.com/mcp" }] }));
+    const name = registry.definitions()[0].function.name;
+    assert.equal(registry.needsApproval(name), true);
+    globalThis.fetch = async (input, init) => {
+      if (String(input).includes("example.com")) {
+        remote += 1;
+        throw new Error("não deveria contactar o servidor");
+      }
+      return original(input, init);
+    };
+    await assert.rejects(
+      () => box.run(name, '{"titulo":"Pulo"}', accessSchema.parse({ enabled: true, computer: false, web: false, files: false, terminal: false }), {
+        chat: randomUUID(),
+        signal: AbortSignal.timeout(3000),
+        notify: (activity) => {
+          if (activity.status === "approval") box.approve(activity.id, false);
+        },
+        privateRead: false,
+      }),
+      /Ferramenta MCP não autorizada/,
+    );
+    assert.equal(seen.calls, 0);
+    assert.equal(remote, 0);
   } finally {
     globalThis.fetch = original;
     await close(server);
