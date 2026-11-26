@@ -1,5 +1,6 @@
 import type {ComputerControl} from './computer-control.js';
 import type {Connections} from './connections.js';
+import type {McpServers} from './mcp-servers.js';
 import { cpus, platform, release, totalmem, uptime } from "node:os";
 import {
   basename,
@@ -147,6 +148,7 @@ const textExtensions = new Set([
 export class Toolbox {
   connections?: Connections;
   computerControl?: ComputerControl;
+  mcpServers?: McpServers;
   private root: string | null = null;
   private file: string;
   private artifactDirectory: string;
@@ -217,8 +219,17 @@ export class Toolbox {
     });
     return this.status();
   }
-  definitions(access: Access, connections: string[] = []): ToolDefinition[] {
+  // Every chat reply calls this. It probes each saved MCP server with initialize and tools/list.
+  // McpServers keeps a short in-memory TTL so that handshake is not repeated until the TTL expires.
+  prepareExternalMcp(signal?: AbortSignal) {
+    return this.mcpServers?.prepare(signal) ?? Promise.resolve();
+  }
+  externalMcpDefinitions() {
+    return this.mcpServers?.definitions() ?? [];
+  }
+  definitions(access: Access, connections: string[] = [], options?: { externalMcp?: boolean }): ToolDefinition[] {
     if (!access.enabled) return [];
+    const external = options?.externalMcp === false ? [] : this.externalMcpDefinitions();
     return [...(Object.keys(schemas) as ToolName[])
       .filter((name) =>
         name === "computer_info"
@@ -243,7 +254,7 @@ export class Toolbox {
             additionalProperties: false,
           },
         },
-      })),...(this.connections?.definitions(connections,access.readOnly)??[]),...(access.computer&&!access.readOnly?(this.computerControl?.definitions()??[]):[])];
+      })),...(this.connections?.definitions(connections,access.readOnly)??[]),...(access.computer&&!access.readOnly?(this.computerControl?.definitions()??[]):[]), ...external];
   }
   approve(id: string, allow: boolean) {
     const item = this.pending.get(id);
@@ -373,6 +384,28 @@ export class Toolbox {
       throw new Error("Ferramenta não habilitada: " + name);
     if(name.startsWith('browser_')||name.startsWith('desktop_')){
       const args=JSON.parse(raw);const allow=await this.approval(context.chat,name,'Controle do computador: '+name,JSON.stringify(args,null,2),context.signal,context.notify);if(!allow)throw Error('Controle não autorizado.');if(!this.computerControl)throw Error('Controle indisponível.');return this.computerControl.run(name,args,context.signal);
+    }
+    if(name.startsWith('mcphttp_')){
+      if(!this.mcpServers)throw new Error('Servidores MCP indisponíveis.');
+      let args:unknown;
+      try{args=JSON.parse(raw);}catch{throw new Error('Argumentos da ferramenta inválidos.');}
+      const signal=AbortSignal.any([context.signal,AbortSignal.timeout(6*60*1000)]);
+      if(this.mcpServers.needsApproval(name)){
+        const allow=await this.approval(context.chat,name,'Usar ferramenta da conexão MCP',JSON.stringify({tool:name,arguments:args},null,2),signal,context.notify);
+        if(!allow)throw Error('Ferramenta MCP não autorizada.');
+        signal.throwIfAborted();
+      }
+      const id=randomUUID(),label=this.mcpServers.label(name),at=Date.now();
+      context.notify({id,tool:name,label,status:'running',at,detail:JSON.stringify(args).slice(0,500)});
+      try{
+        const result=await this.mcpServers.call(name,args,context.chat,signal);
+        context.notify({id,tool:name,label,status:result.isError?'error':'complete',at,detail:`${label}(${JSON.stringify(args).slice(0,400)})\n${result.text.slice(0,1600)}`});
+        return {text:result.text,isError:result.isError,documentUpdated:result.documentUpdated};
+      }catch(error){
+        if(context.signal.aborted)throw error;
+        context.notify({id,tool:name,label,status:'error',at,detail:(error as Error).message});
+        throw error;
+      }
     }
     if(name.startsWith('mcp_')){
       const args=JSON.parse(raw),signal=AbortSignal.any([context.signal,AbortSignal.timeout(6*60*1000)]);
