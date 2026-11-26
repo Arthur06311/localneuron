@@ -262,6 +262,65 @@ header,.guide-header,.wrap,.hero,main.doc,.guide-shell{padding-left:16px;padding
 footer .brand{width:100%}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.faq summary::after,.prose summary::after,.checksum summary::after{transition:none!important}}
+/* Touch (pointer: coarse): 44px targets. Mouse / pointer: fine is unchanged.
+   forced-colors and print follow and still win. */
+@media (pointer: coarse) {
+  nav a,
+  .guide-nav a,
+  header .brand,
+  .guide-header .brand,
+  .text-link,
+  .button,
+  .button.small,
+  .theme-toggle,
+  footer button,
+  footer a,
+  .language,
+  .language select,
+  .checksum summary,
+  .faq summary,
+  .prose summary,
+  .doc-toc summary,
+  .download-alternative,
+  .guide-top-links a {
+    min-height: 44px;
+  }
+  nav a,
+  .guide-nav a,
+  .guide-top-links a {
+    min-width: 44px;
+    flex-shrink: 0;
+  }
+  footer button,
+  footer a {
+    display: inline-flex;
+    align-items: center;
+  }
+  .download-action,
+  .closing a,
+  dialog > button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  dialog > button {
+    display: grid;
+    place-items: center;
+  }
+  /* Nowrap guide links stay in the nav scroller instead of widening the page. */
+  .doc-toc {
+    min-width: 0;
+    max-width: 100%;
+  }
+  /* Home header: the logo and the actions do not fit on one row on a phone.
+     Stack them so the logo stays a real target and the page does not overflow. */
+  @media (max-width: 720px) {
+    header {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "brand" "actions" "nav";
+    }
+    .header-actions { flex-wrap: wrap; }
+  }
+}
 /* Stronger secondary text and borders when the OS asks for more contrast.
    Selectors match the theme rules above, so this wins for the toggle and for
    prefers-color-scheme. forced-colors and print follow and still win. */
