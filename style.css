@@ -261,7 +261,18 @@ header,.guide-header,.wrap,.hero,main.doc,.guide-shell{padding-left:16px;padding
 .facts div{grid-template-columns:1fr;gap:2px}
 footer .brand{width:100%}
 }
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.faq summary::after,.prose summary::after,.checksum summary::after{transition:none!important}}
+/* In-page #hash landing spot. #main is the skip-link target, so it stays quiet.
+   Background only — :focus-visible keeps the accent outline. */
+:target:not(#main){
+  border-radius:6px;
+  background-color:color-mix(in srgb,var(--accent) 20%,transparent);
+  animation:ln-anchor-fade 2.4s ease-out forwards;
+}
+@keyframes ln-anchor-fade{
+  0%,60%{background-color:color-mix(in srgb,var(--accent) 20%,transparent)}
+  100%{background-color:transparent}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.faq summary::after,.prose summary::after,.checksum summary::after{transition:none!important}:target:not(#main){animation:none}}
 /* Touch (pointer: coarse): 44px targets. Mouse / pointer: fine is unchanged.
    forced-colors and print follow and still win. */
 @media (pointer: coarse) {
@@ -409,6 +420,13 @@ nav a[aria-current="page"],
 .faq summary::after,
 .prose summary::after,
 .checksum summary::after { border-color: currentColor; forced-color-adjust: auto }
+:target:not(#main) {
+  background-color: transparent;
+  box-shadow: none;
+  animation: none;
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}
 }
 @media print {
 :root,
@@ -464,6 +482,12 @@ pre { white-space: pre-wrap; }
 .cards article, .shot, .panel, .doc-block, .download-card, .install-guide, .install-cols article, .faq details, .prose details, .my-team-list li, .diagram, figure, pre, table, tr, h1, h2, h3 { break-inside: avoid; }
 h2, h3 { break-after: avoid; }
 main a[href^="http"]:not(.button):not(.download-action):not(:has(img))::after { content: " (" attr(href) ")"; font-weight: 400; overflow-wrap: anywhere; }
+:target:not(#main) {
+  background: none;
+  box-shadow: none;
+  outline: none;
+  animation: none;
+}
 }
 
 /* NeuralGames page */
